@@ -168,7 +168,7 @@ void bhEne11_Init(BH_PWORK* epw)
     
     EXP0_UC(0x56) = 0;
     
-    if (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60) == NULL)
+    if (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) == NULL)
     {
         sys->ef.id = 0x105;
         sys->ef.flg = 1;
@@ -186,15 +186,15 @@ void bhEne11_Init(BH_PWORK* epw)
         
         if (eff_id >= 0)
         {
-            *(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60) = &eff[eff_id];
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 0;
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60) = S32(&eff[eff_id]);
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 0;
             
         }
     }
     else 
     {
-        (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 0;
-        (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->ct2 = 0;
+        (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 0;
+        (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->ct2 = 0;
     }
     
     epw->clp_jno[0] = 1;
@@ -215,7 +215,7 @@ void bhEne11_Brain(BH_PWORK* epw)
 // 100% matching!
 void bhEne11_BR00(BH_PWORK* epw)
 {
-    if ((*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->ct2 != 0)
+    if ((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->ct2 != 0)
     {
         EXP0_UC(0x56) = 1;
     }
@@ -227,10 +227,10 @@ void bhEne11_BR00(BH_PWORK* epw)
             sys->rm_flg |= 1;
         }
     } 
-    else if ((sys->rm_flg & 1) && ((*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 == 2)) 
+    else if ((sys->rm_flg & 1) && ((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 == 2)) 
     {
         EXP0_UC(0x56) = 1;
-        (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->ct2 = 1;
+        (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->ct2 = 1;
     }
 }
 
@@ -1010,11 +1010,11 @@ void bhEne11_CollisionBoxEdge2(BH_PWORK* epw)
 
         if (bhCollisionCheckLine(&p[i], &p2[i]) == NULL)
         {
-            *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x58) = bhEne03_GetWall(epw);
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x58) = S32(bhEne03_GetWall(epw));
 
-            if (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x58) != NULL)
+            if (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x58)) != NULL)
             {
-                bhEne03_CollisionBoxEdge(*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x58), (NJS_VECTOR *)&epw->px, epw->ar);
+                bhEne03_CollisionBoxEdge(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x58)), (NJS_VECTOR *)&epw->px, epw->ar);
                 break;
             }
         }
@@ -1101,9 +1101,9 @@ void bhEne11_MoveNearWall(BH_PWORK* epw)
     pt.y = epw->py + vd.y;
     pt.z = epw->pz + vd.z;
     
-    *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x58) = bhCollisionCheckLine((NJS_VECTOR *)&epw->px, &pt);
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x58) = S32(bhCollisionCheckLine((NJS_VECTOR *)&epw->px, &pt));
     
-    if (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x58) != NULL)
+    if (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x58)) != NULL)
     {
         epw->px = epw->pxb = pt.x;
         epw->py = epw->pyb = pt.y;
@@ -1117,22 +1117,22 @@ void bhEne11_LightControl(BH_PWORK* epw, int flg)
     switch (flg) 
     {                          
         case 0:
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 1;
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->axp = 0x38E;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 1;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->axp = 0x38E;
             break;
             
         case 1:
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 3;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 3;
             break;
             
         case 2:
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 0;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 0;
             break;
             
         case 3:
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 = 2;
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->ax = 0x38E;
-            (*(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x60))->axp = 0x38E;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 = 2;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->ax = 0x38E;
+            (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->axp = 0x38E;
             break;
     }
 }

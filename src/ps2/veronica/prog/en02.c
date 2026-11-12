@@ -774,48 +774,48 @@ void bhEne02_Init(BH_PWORK* epw)
 	{
 		epw->exp0 = S32(bhEne_CallocWork(144, 8));
 
-		*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40) = bhSetEnemy(&child, rom->ene_n);
+		*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40) = S32(bhSetEnemy(&child, rom->ene_n));
 
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->type = 0;
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->type = 0;
 
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->lkwkp = S32((unsigned char*)epw);
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->mlwP  = S32(&epw->mdl[5]);
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->lkwkp = S32((unsigned char*)epw);
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->mlwP  = S32(&epw->mdl[5]);
 
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->obj_a = S32(P32(struct cnkobj *, epw->mdl[5].objP));
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->obj_b = S32(P32(struct cnkobj *, epw->mdl[6].objP));
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->obj_a = S32(P32(struct cnkobj *, epw->mdl[5].objP));
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->obj_b = S32(P32(struct cnkobj *, epw->mdl[6].objP));
 
-		*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 44) = bhSetEnemy(&child, rom->ene_n);
+		*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 44) = S32(bhSetEnemy(&child, rom->ene_n));
 
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 44))->type = 1;
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 44)))->type = 1;
 
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 44))->lkwkp = S32((unsigned char*)epw);
-		(*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 44))->mlwP  = S32(&epw->mdl[4]);
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 44)))->lkwkp = S32((unsigned char*)epw);
+		(P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 44)))->mlwP  = S32(&epw->mdl[4]);
 
 		for (i = 0; i < 16; i++)
 		{
-			*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)) = bhSetEnemy(&child, rom->ene_n);
+			*(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)) = S32(bhSetEnemy(&child, rom->ene_n));
 
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->type = 2;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->type = 2;
 
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->lkwkp = S32((unsigned char*)epw);
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->mlwP  = S32(&epw->mdl[1]);
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->lkwkp = S32((unsigned char*)epw);
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->mlwP  = S32(&epw->mdl[1]);
 		}
 
 		bhEne_SetCallFunc(bhEne02sub, 31);
 
-		*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124) = &sys->mwalp[sys->mwal_n];
+		*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124) = S32(&sys->mwalp[sys->mwal_n]);
 		
 		sys->mwal_n++;
 
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->flg = 0;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->flg = 0;
 
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->type = 3;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->type = 3;
 
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->w = 10.0f;
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->h = 0;
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->d = 0;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->w = 10.0f;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->h = 0;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->d = 0;
 
-		(*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 124))->attr = 0;
+		(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 124)))->attr = 0;
 	}
 
 	EXP0_I(112) = 1;
@@ -1089,8 +1089,8 @@ void bhEne02_MV02(BH_PWORK* epw)
     case 1:
         if (epw->frm_no == 196608) 
         {
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode2 = 1;
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode3 = 0;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode2 = 1;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode3 = 0;
         }
         
         if (epw->frm_no == 0) 
@@ -1182,8 +1182,8 @@ void bhEne02_MV02(BH_PWORK* epw)
         
         if ((epw->frm_no / 65536) == 15) 
         {
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode2 = 2;
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode3 = 0;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode2 = 2;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode3 = 0;
         }
         
         if (((epw->frm_no / 65536) < 44) && (!(plp->flg & 0x4))) 
@@ -1366,8 +1366,8 @@ void bhEne02_MV03(BH_PWORK* epw)
     case 0:
         sys->rm_flg |= 0x1;
         
-        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[44])->mode2 = 4;
-        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[44])->mode3 = 0;
+        (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[44]))->mode2 = 4;
+        (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[44]))->mode3 = 0;
         
         epw->ct0 = 35;
         
@@ -1400,8 +1400,8 @@ void bhEne02_MV03(BH_PWORK* epw)
     case 3:
         if (epw->frm_no == 983040)
         {
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode2 = 1;
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode3 = 0;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode2 = 1;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode3 = 0;
         }
 
         if (epw->frm_no == 0)
@@ -1618,8 +1618,8 @@ void bhEne02_MV04(BH_PWORK* epw)
     case 1:
         if ((epw->frm_no / 65536) == 20) 
         {
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode2 = 2;
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode3 = 0;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode2 = 2;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode3 = 0;
             
             epw->flg &= ~0x40;
         }
@@ -2016,11 +2016,11 @@ void bhEne02_DD00(BH_PWORK* epw)
         {
             owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10];
             
-            (*(ATR_WORK**)&P32(unsigned char *, epw->exp0)[124])->flg = 1;
+            (P32(ATR_WORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[124]))->flg = 1;
             
-            (*(ATR_WORK**)&P32(unsigned char *, epw->exp0)[124])->px = owk->mtx[12];
-            (*(ATR_WORK**)&P32(unsigned char *, epw->exp0)[124])->py = epw->py;
-            (*(ATR_WORK**)&P32(unsigned char *, epw->exp0)[124])->pz = owk->mtx[14];
+            (P32(ATR_WORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[124]))->px = owk->mtx[12];
+            (P32(ATR_WORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[124]))->py = epw->py;
+            (P32(ATR_WORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[124]))->pz = owk->mtx[14];
         }
 
         if ((epw->frm_no > 10354688) && (epw->frm_no < 12189696)) 
@@ -2144,13 +2144,13 @@ void bhEne02_DD00(BH_PWORK* epw)
         {
             epw->flg |= 0x100000;
             
-            (*(ATR_WORK**)&P32(unsigned char *, epw->exp0)[124])->flg = 0;
+            (P32(ATR_WORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[124]))->flg = 0;
         }
 
         if (epw->frm_no == 21626880)
         {
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode2 = 2;
-            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mode3 = 0;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode2 = 2;
+            (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mode3 = 0;
         }
 
         if ((epw->frm_no > 10878976) && (epw->frm_no < 11796480)) 
@@ -2214,8 +2214,8 @@ void bhEne02_DD01(BH_PWORK* epw)
         
         epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
         
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->mode2 = 2;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 40))->mode3 = 0;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->mode2 = 2;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 40)))->mode3 = 0;
         
         epw->mode3++;
         break;
@@ -2976,9 +2976,9 @@ void bhEne02_DamageInit(BH_PWORK* epw)
                     
                     if (epw->type == 1)
                     {
-                        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->mdflg |= 0x1;
+                        (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->mdflg |= 0x1;
                         
-                        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->flg &= ~0x48;
+                        (P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epw->exp0)[40]))->flg &= ~0x48;
                     }
                 }
                 else if (epw->total_dam > 50)
@@ -3106,9 +3106,9 @@ void bhEne02_WarpCheck(BH_PWORK* epw)
 
 	hp = bhCheckFloorEnemy(epw->flr_no, plp->px, plp->pz);
 
-	if (((hp != NULL) && (hp != *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 116))) && (hp->prm0 == 2))
+	if (((hp != NULL) && (hp != P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 116)))) && (hp->prm0 == 2))
 	{
-		*(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 116) = hp;
+		*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 116) = S32(hp);
 
 		if (hp->prm1 == 0)
 		{
@@ -3148,16 +3148,16 @@ void bhEne02_FallingRock(BH_PWORK* epw)
 
 	for (i = 0; i < 16; i++)
 	{
-		if ((*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->mode2 == 0)
+		if ((P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->mode2 == 0)
 		{
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->mode2 = 3;
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->mode3 = 0;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->mode2 = 3;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->mode3 = 0;
 
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->px = (dx + (80.0f * (-rand() / -2147483648.0f))) - 40.0f;
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->py = dy;
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->pz = (dz + (80.0f * (-rand() / -2147483648.0f))) - 40.0f;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->px = (dx + (80.0f * (-rand() / -2147483648.0f))) - 40.0f;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->py = dy;
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->pz = (dz + (80.0f * (-rand() / -2147483648.0f))) - 40.0f;
 
-			(*(BH_PWORK**)((P32(unsigned char *, epw->exp0) + 48) + (i * 4)))->mlwP = S32(&epw->mdl[(int)(3.0f * (-rand() / -2147483648.0f)) + 1]);
+			(P32(BH_PWORK *, *(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 48) + (i * 4))))->mlwP = S32(&epw->mdl[(int)(3.0f * (-rand() / -2147483648.0f)) + 1]);
 
 			if (--num == 0)
 			{

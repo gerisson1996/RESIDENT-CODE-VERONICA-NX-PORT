@@ -2605,13 +2605,13 @@ void bhEne01_Init(BH_PWORK* epw)
 		EXP0_I(0x24) = -1;
 		if (!(epw->flg & 0x80)){
 			epw->exp1 = S32((unsigned char*)bhEne01_SetLinkEnemy(epw, 1, 1));
-			*(void**)(P32(unsigned char *, epw->exp0) + 0x10) = bhEne01_SetLinkEnemy(epw, 0, 0x1f);
+			*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x10) = S32(bhEne01_SetLinkEnemy(epw, 0, 0x1f));
 			bhEne_SetCallFunc(bhEne01Head, 0x1f);
-			*(void**)(P32(unsigned char *, epw->exp0) + 0x0) = bhEne01_SetLinkEnemy(epw, 0, 0x20);
-			*(void**)(P32(unsigned char *, epw->exp0) + 0x4) = bhEne01_SetLinkEnemy(epw, 0, 0x20);
+			*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x0) = S32(bhEne01_SetLinkEnemy(epw, 0, 0x20));
+			*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4) = S32(bhEne01_SetLinkEnemy(epw, 0, 0x20));
 			bhEne_SetCallFunc(bhEne01Arm, 0x20);
-			*(void**)(P32(unsigned char *, epw->exp0) + 0x8) = bhEne01_SetLinkEnemy(epw, 0, 0x21);
-			*(void**)(P32(unsigned char *, epw->exp0) + 0xc) = bhEne01_SetLinkEnemy(epw, 0, 0x21);
+			*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8) = S32(bhEne01_SetLinkEnemy(epw, 0, 0x21));
+			*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xc) = S32(bhEne01_SetLinkEnemy(epw, 0, 0x21));
 			bhEne_SetCallFunc(bhEne01Leg, 0x21);
 			if (epw->mdlver == 5 || epw->mdlver == 6 || epw->mdlver == 22 || (unsigned int)(epw->mdlver - 35) < 4){
 				epp = bhEne01_SetLinkEnemy(epw, 11, 0x22);
@@ -2625,7 +2625,7 @@ void bhEne01_Init(BH_PWORK* epw)
 				} else {
 					epp->mdl[0] = epw->mdl[2];
 				}
-				*(void**)(P32(unsigned char *, epw->exp0) + 0x14) = epp;
+				*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14) = S32(epp);
 				bhEne_SetCallFunc(bhEne01Cap, 0x22);
 			}
 			if (epw->mdlver == 21 || epw->mdlver == 22) {
@@ -2637,7 +2637,7 @@ void bhEne01_Init(BH_PWORK* epw)
                 epp->skp[0] = S32(P32(int *, epw->skp[2]));
                 epp->mdl[0] = epw->mdl[2];
                 epp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
-                *(void**)(P32(unsigned char *, epw->exp0) + 0x18) = epp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x18) = S32(epp);
                 bhEne_SetCallFunc(bhEne01Worm, 0x23);
                 epp->exp1 = S32((unsigned char*)epw);
             }
@@ -2650,7 +2650,7 @@ void bhEne01_Init(BH_PWORK* epw)
 
                 epp->mdl[0] = epw->mdl[2];
 
-                *(void**)(P32(unsigned char *, epw->exp0) + 0x1c) = epp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x1c) = S32(epp);
                 bhEne_SetCallFunc(bhEne01Bom, 0x24);
                 
                 
@@ -2661,7 +2661,7 @@ void bhEne01_Init(BH_PWORK* epw)
                 epp2->mlwP = S32(epp2->mdl);
                 epp2->mdl[0] = epw->mdl[3];
                 
-                *(void**)(P32(unsigned char *, epw->exp0) + 0x20) = epp2;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x20) = S32(epp2);
                 bhEne_SetCallFunc(bhEne01Scope, 0x25);
             }
         
@@ -2679,7 +2679,7 @@ void bhEne01_Init(BH_PWORK* epw)
         
         // addr = epw->exp0;
         for (i = 0; i < 7; i++) {
-            sv_child[i] = ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i]; 
+            sv_child[i] = P32(BH_PWORK *, ((ps2ptr_t*)P32(unsigned char *, epw->exp0))[i]); 
         }
         
         addr = P32(unsigned char *, epw->exp0);
@@ -2691,7 +2691,7 @@ void bhEne01_Init(BH_PWORK* epw)
         }
     
         for (i = 0; i < 7; i++) {
-            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i] = sv_child[i];
+            ((ps2ptr_t*)P32(unsigned char *, epw->exp0))[i] = S32(sv_child[i]);
         }
         *(int*)(P32(unsigned char *, epw->exp0) + 0x24) = sv_sdw_no;
     }
@@ -4233,7 +4233,7 @@ void bhEne01_CollCheckWall(BH_PWORK* epw)
     ps.x = plp->px;
     ps.y = 0.5f + plp->py;
     ps.z = plp->pz;
-    *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x70) = bhCollisionCheckLine((NJS_VECTOR*)&epw->px, &ps);
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x70) = S32(bhCollisionCheckLine((NJS_VECTOR*)&epw->px, &ps));
 
     t = EXP0_I(0x40) & 0xF;
     
@@ -5391,7 +5391,7 @@ void bhEne01_MV03(BH_PWORK* epw)
                 }
                 
                 plp->flg |= 4;
-                epp = *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x18);
+                epp = P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x18));
                 epp->flg |= 0x100000;
                 epp->px = epw->px;
                 epp->py = epw->py;
@@ -11743,7 +11743,7 @@ int bhEne01_WormCheck(BH_PWORK* epw)
     BH_PWORK* ep;
     int i;
 
-    epp = *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x18);
+    epp = P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x18));
     ep = ene;
     
     if ((sys->ply_id != 1 )||
@@ -11850,14 +11850,14 @@ int bhEne01_KaidanCheck(BH_PWORK* epw)
         {
             if (plp->flr_no > epw->flr_no)
             {
-                *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                 bhSetUseKaidanFlag(epw, hp, idx);
                 return 1;
             }
         } 
         else if (plp->flr_no < epw->flr_no)
         {
-            *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
             bhSetUseKaidanFlag(epw, hp, idx);
             return 1;
         }
@@ -11914,7 +11914,7 @@ void bhEne01_FlyingCap(BH_PWORK* epw, int tbl_no)
 	BH_PWORK* sepw;
 	NJS_CNK_OBJECT* obj;
 
-	sepw = *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x14);
+	sepw = P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14));
 	if (sepw != NULL)
     {
 		obj = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);

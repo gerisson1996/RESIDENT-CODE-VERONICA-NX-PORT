@@ -1532,7 +1532,7 @@ void bhEne26_CollCheckWall(BH_PWORK* epw)
     ps.y = plp->py;
     ps.z = plp->pz;
     
-    *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x70) = bhCollisionCheckLine((NJS_VECTOR*)&epw->px, &ps);
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x70) = S32(bhCollisionCheckLine((NJS_VECTOR*)&epw->px, &ps));
 
     t = EXP0_I(0x40) & 0xF;
     

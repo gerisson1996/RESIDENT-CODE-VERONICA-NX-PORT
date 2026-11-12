@@ -1620,7 +1620,7 @@ void _fmCnkCalcNormal(MASK_WORK* fm)
     NJS_POINT3* dvp1, *dnp1;  
     NJS_POINT3 norm;   
     VLIST_WORK* list;  
-    NJS_POINT3** nvp;  
+    ps2ptr_t* nvp;   /* PC: slots (NJS_POINT3**) */  
     unsigned int vofs; 
 
     dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->vtop];
@@ -1628,7 +1628,7 @@ void _fmCnkCalcNormal(MASK_WORK* fm)
     
     list = P32(struct VLIST_WORK *, fm->vlist);
     
-    nvp = (NJS_POINT3**)P32(NJS_POINT3 *, fm->nvpt);
+    nvp = (ps2ptr_t*)P32(NJS_POINT3 *, fm->nvpt);
     
     vofs = fm->vofs;
     
@@ -1643,7 +1643,7 @@ void _fmCnkCalcNormal(MASK_WORK* fm)
         
         for (i = 0; i++ < list->nvnum; )
         {
-            njGetPlaneNormal2(dvp1, nvp[0], nvp[1], &norm);
+            njGetPlaneNormal2(dvp1, P32(NJS_POINT3*, nvp[0]), P32(NJS_POINT3*, nvp[1]), &norm);
             
             njUnitVector(&norm);
             

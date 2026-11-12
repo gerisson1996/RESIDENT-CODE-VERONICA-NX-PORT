@@ -2555,7 +2555,7 @@ static void PoisonAttack(O_WRK* op)
 
     njSubVector(&attack_v, &col.c);
 
-    if (*(short*)(*(unsigned char**)(P32(unsigned char *, op->exp0) + 0x2F0) + 0x5A) & 1)
+    if (*(short*)(P32(unsigned char *, *(ps2ptr_t*)(P32(unsigned char *, op->exp0) + 0x2F0)) + 0x5A) & 1)
     {
         return;
     }

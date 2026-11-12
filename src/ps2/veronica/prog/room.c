@@ -590,8 +590,8 @@ void bhFinishRoom()
 /* sys->et_lp[100][16][16] is indexed [type][model version][textured sub-model]: zombie model
    versions 16..42 ran into the next types' rows (21 = Gulp Worm model 5, 32..42 = Black Widow
    0..10). Versions 16 and up get rows of their own here (no retail room needs the alias). */
-static NJS_TEXLIST* pc_et_lp_hi[100][48][16];
-NJS_TEXLIST** pc_et_lp(int id, int ver) { return ver >= 16 && ver < 64 ? pc_et_lp_hi[id][ver - 16] : sys->et_lp[id][ver]; }
+static ps2ptr_t pc_et_lp_hi[100][48][16];   /* slots, as sys->et_lp */
+ps2ptr_t* pc_et_lp(int id, int ver) { return ver >= 16 && ver < 64 ? pc_et_lp_hi[id][ver - 16] : sys->et_lp[id][ver]; }
 void pc_et_lp_clear(void) { memset(pc_et_lp_hi, 0, sizeof(pc_et_lp_hi)); }
 #define ET_LP(id, ver) pc_et_lp(id, ver)
 #else
@@ -651,13 +651,13 @@ void bhSetEneMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno)
                     {
                         P32(struct ML_WORK *, epp->mlwP)->flg |= 0x200;
                         
-                        ET_LP(ep->id, mdlno)[mdlver] = P32(NJS_TEXLIST *, P32(struct ML_WORK *, epp->mlwP)->texP);
+                        ET_LP(ep->id, mdlno)[mdlver] = P32(struct ML_WORK *, epp->mlwP)->texP;
                     } 
                     else
                     {
                         P32(struct ML_WORK *, epp->mlwP)->flg &= ~0x200;
                         
-                        P32(struct ML_WORK *, epp->mlwP)->texP = S32(ET_LP(ep->id, mdlno)[mdlver]);
+                        P32(struct ML_WORK *, epp->mlwP)->texP = ET_LP(ep->id, mdlno)[mdlver];
                     }
                 } 
                 else
@@ -666,7 +666,7 @@ void bhSetEneMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno)
                     
                     if (mdlver >= 0) 
                     {
-                        P32(struct ML_WORK *, epp->mlwP)->texP = S32(ET_LP(ep->id, mdlno)[mdlver]);
+                        P32(struct ML_WORK *, epp->mlwP)->texP = ET_LP(ep->id, mdlno)[mdlver];
                     }
                 }
                 

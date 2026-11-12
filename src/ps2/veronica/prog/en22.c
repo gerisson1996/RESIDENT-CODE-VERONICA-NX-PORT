@@ -663,11 +663,11 @@ void bhEne22_ChgDmgMode(BH_PWORK* epw)
     {
         if (EXP0_I(0x8) & 0x1000)
         {
-            if (((*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->flg != 0)
-                && ((*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->id == 353)
-                && ((BH_PWORK*)P32(unsigned char *, (*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->lkwkp) == epw))
+            if (((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->flg != 0)
+                && ((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->id == 353)
+                && ((BH_PWORK*)P32(unsigned char *, (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->lkwkp) == epw))
             {
-                (*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->mode0 = 4;
+                (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->mode0 = 4;
             }
 
             if (EXP0_I(0x8) & 0x80000)
@@ -1721,11 +1721,11 @@ void bhEne22_MV04(BH_PWORK* epw)
                 epw->mode2 = 2;
                 epw->mode3 = 0;
 
-                if (((*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->flg != 0)
-                    && ((*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->id == 353)
-                    && ((BH_PWORK*)P32(unsigned char *, (*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->lkwkp) == epw))
+                if (((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->flg != 0)
+                    && ((P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->id == 353)
+                    && ((BH_PWORK*)P32(unsigned char *, (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->lkwkp) == epw))
                 {
-                    (*(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C))->mode0 = 4;
+                    (P32(O_WRK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C)))->mode0 = 4;
                 }
 
                 if (EXP0_I(0x8) & 0x80000)
@@ -2352,7 +2352,7 @@ void bhEne22_SparkEffect(BH_PWORK* epw, int frm)
         }
 
         EXP0_I(0x18) = 0;
-        *(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C) = NULL;
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C) = S32(NULL);
     }
     else if ((frm >= 30) && (frm < 70))
     {
@@ -2416,7 +2416,7 @@ void bhEne22_SparkEffect(BH_PWORK* epw, int frm)
 
     if (frm == 11)
     {
-        *(O_WRK**)(P32(unsigned char *, epw->exp0) + 0x4C) = bhEne22_SetElectricLightEffect(epw);
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4C) = S32(bhEne22_SetElectricLightEffect(epw));
         bhEne22_SetLight(epw, 4, &ps, 1);
         EXP0_I(0x8) |= 0x1000;
     }

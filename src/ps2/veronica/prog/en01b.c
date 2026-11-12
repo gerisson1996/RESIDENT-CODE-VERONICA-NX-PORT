@@ -319,12 +319,12 @@ void bhEne01_NG03B(BH_PWORK* epw)
             {
                 bhEne01_CutHead(epp, 0);
                 
-                sepw = *(BH_PWORK**)&P32(unsigned char *, epp->exp0)[16];
+                sepw = P32(BH_PWORK *, *(ps2ptr_t*)&P32(unsigned char *, epp->exp0)[16]);
             
                 if (sepw != NULL)
                 {
-                    *(unsigned int**)&P32(unsigned char *, sepw->exp0)[0] = &P32(struct cnkobj *, P32(struct ML_WORK *, epp->mlwP)->objP)[11].evalflags;
-                    *(unsigned int**)&P32(unsigned char *, sepw->exp0)[4] = &P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[11].flg;
+                    *(ps2ptr_t*)&P32(unsigned char *, sepw->exp0)[0] = S32(&P32(struct cnkobj *, P32(struct ML_WORK *, epp->mlwP)->objP)[11].evalflags);
+                    *(ps2ptr_t*)&P32(unsigned char *, sepw->exp0)[4] = S32(&P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[11].flg);
             
                     sepw->ay = (epw->ay + 32768) & 0xFFFF;
                     

@@ -627,7 +627,8 @@ void bhEne03(BH_PWORK* epw)
 // 100% matching!
 void bhEne03_Init(BH_PWORK* epw)
 {
-    BH_PWORK** epw2, *ep, *ep_leader;    
+    ps2ptr_t* epw2;   /* PC: BH_PWORK** in the work area = slots */
+    BH_PWORK *ep, *ep_leader;    
     O_WORK* owk;         
     int i;              
 
@@ -708,47 +709,47 @@ void bhEne03_Init(BH_PWORK* epw)
             }
         }
 
-        epw2 = (BH_PWORK**)&EXP0_C(128); 
+        epw2 = (ps2ptr_t*)&EXP0_C(128); 
         
         for (i = 0; i < 8; i++) 
         {
-            *epw2 = bhSetEnemy(&ene03_child, rom->ene_n);
+            *epw2 = S32(bhSetEnemy(&ene03_child, rom->ene_n));
             
-            (*epw2)->type = 0;
+            P32(BH_PWORK*, *epw2)->type = 0;
             
-            (*epw2)->lkwkp = S32((unsigned char*)epw);
-            (*epw2)->lkono = i >= 4;
+            P32(BH_PWORK*, *epw2)->lkwkp = S32((unsigned char*)epw);
+            P32(BH_PWORK*, *epw2)->lkono = i >= 4;
             
-            (*epw2)->lox = 0;
-            (*epw2)->loy = 0;
-            (*epw2)->loz = 0;
+            P32(BH_PWORK*, *epw2)->lox = 0;
+            P32(BH_PWORK*, *epw2)->loy = 0;
+            P32(BH_PWORK*, *epw2)->loz = 0;
             
-            (*epw2)->mdflg |= 0x1;
-            (*epw2)->mdflg |= 0x20;
+            P32(BH_PWORK*, *epw2)->mdflg |= 0x1;
+            P32(BH_PWORK*, *epw2)->mdflg |= 0x20;
             
             owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[BrokenParts[i]];
             
-            (*epw2)->mtx = S32(&owk->mtx);
+            P32(BH_PWORK*, *epw2)->mtx = S32(&owk->mtx);
             
-            (*epw2++)->exp1 = S32((unsigned char*)owk);
+            P32(BH_PWORK*, *epw2++)->exp1 = S32((unsigned char*)owk);
         }
 
         bhEne_SetCallFunc(bhEne03s, 31);
         
-        epw2 = (BH_PWORK**)&EXP0_C(168);
+        epw2 = (ps2ptr_t*)&EXP0_C(168);
         
         for (i = 0; i < 15; i++) 
         {
-            *epw2 = bhSetEnemy(&ene24, rom->ene_n);
+            *epw2 = S32(bhSetEnemy(&ene24, rom->ene_n));
             
-            (*epw2)->lkwkp = S32((unsigned char*)epw);
-            (*epw2)->lkono = 0;
+            P32(BH_PWORK*, *epw2)->lkwkp = S32((unsigned char*)epw);
+            P32(BH_PWORK*, *epw2)->lkono = 0;
             
-            (*epw2)->lox = 0;
-            (*epw2)->loy = 0;
-            (*epw2)->loz = 0;
+            P32(BH_PWORK*, *epw2)->lox = 0;
+            P32(BH_PWORK*, *epw2)->loy = 0;
+            P32(BH_PWORK*, *epw2)->loz = 0;
             
-            (*epw2++)->mlwP = S32(&epw->mdl[1]);
+            P32(BH_PWORK*, *epw2++)->mlwP = S32(&epw->mdl[1]);
         }
     }
 
@@ -788,11 +789,11 @@ void bhEne03_Init(BH_PWORK* epw)
     NJS_POINT3 p; 
 	int sdw;      
 
-    epw2 = (BH_PWORK**)&EXP0_C(168);
+    epw2 = (ps2ptr_t*)&EXP0_C(168);
         
     for (i = 0; i < 15; i++) 
     {
-        (*epw2++)->mdflg |= 0x1;
+        P32(BH_PWORK*, *epw2++)->mdflg |= 0x1;
     }
 
     EPW_EXP1_I(0) = 0;
@@ -802,7 +803,7 @@ void bhEne03_Init(BH_PWORK* epw)
         
     njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ay);
 
-    *(ATR_WORK**)&EXP0_I(96) = NULL;
+    *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
     if ((epw->type & 0x2))
     {
@@ -810,7 +811,7 @@ void bhEne03_Init(BH_PWORK* epw)
         p.y = epw->py + 999.0f;
         p.z = epw->pz;
         
-        if ((*(ATR_WORK**)&EXP0_I(96) = bhCollisionCheckLine((NJS_POINT3*)&epw->px, &p)) != NULL) 
+        if ((P32(ATR_WORK *, *(ps2ptr_t*)&EXP0_I(96) = S32(bhCollisionCheckLine((NJS_POINT3*)&epw->px, &p)))) != NULL) 
         {
             EXP0_C(105) = 1;
             
@@ -826,7 +827,7 @@ void bhEne03_Init(BH_PWORK* epw)
     {
         EXP0_C(105) = 0;
         
-        *(ATR_WORK**)&EXP0_I(96) = bhEne03_GetWall(epw);
+        *(ps2ptr_t*)&EXP0_I(96) = S32(bhEne03_GetWall(epw));
     }
 
     epw->pxb = epw->px;
@@ -1998,7 +1999,7 @@ void bhEne03_MV11(BH_PWORK* epw)
         
         epw->flg &= ~0x20;
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->mode3++;
     case 1:
@@ -2124,7 +2125,7 @@ void bhEne03_MV14(BH_PWORK* epw)
         {
             njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &v, (NJS_VECTOR*)&EXP0_F(84));
             
-            *(ATR_WORK**)&EXP0_I(96) = NULL;
+            *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
             
             epw->mode3++;
         }
@@ -2232,7 +2233,7 @@ void bhEne03_MV15(BH_PWORK* epw)
         {
             njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &vwork, (NJS_VECTOR*)&EXP0_F(84));
             
-            *(ATR_WORK**)&EXP0_I(96) = NULL;
+            *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
             
             EXP0_I(108) = 0;
             EXP0_F(112) = 1.0f; 
@@ -2345,7 +2346,7 @@ void bhEne03_MV16(BH_PWORK* epw)
         epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         epw->ct1 = 8;
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->mode3++;
     case 1:
@@ -2492,7 +2493,7 @@ void bhEne03_MV18(BH_PWORK* epw)
 
             epw->flg &= ~0x10;
             
-            *(ATR_WORK**)&EXP0_I(96) = NULL;
+            *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
             
             epw->mode3++;
         }
@@ -2658,7 +2659,7 @@ void bhEne03_MV19(BH_PWORK* epw)
             
             epw->mtn_no = 45;
             
-            *(ATR_WORK**)&EXP0_I(96) = NULL;
+            *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
             
             epw->mode3++;
         }
@@ -2692,7 +2693,7 @@ void bhEne03_MV19(BH_PWORK* epw)
             
             if (epw->type == 1) 
             {
-                *(ATR_WORK**)&EXP0_I(96) = bhEne03_GetWall(epw);
+                *(ps2ptr_t*)&EXP0_I(96) = S32(bhEne03_GetWall(epw));
             }
         }
         
@@ -3354,7 +3355,7 @@ void bhEne03_DG02(BH_PWORK* epw)
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->ar = 0.1f;
         
@@ -3590,7 +3591,7 @@ void bhEne03_DG07(BH_PWORK* epw)
         EXP0_F(88) = EXP0_F(20);
         EXP0_F(92) = EXP0_F(24);
         
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->ct0 = 8;
         
@@ -3930,7 +3931,7 @@ void bhEne03_DG11(BH_PWORK* epw)
             EXP0_F(92) = EXP0_F(24); 
         }
         
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->flg |= 0x30;
         
@@ -4122,7 +4123,7 @@ void bhEne03_DG12(BH_PWORK* epw)
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
         }
         
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->flg |= 0x30;
         
@@ -4358,7 +4359,7 @@ void bhEne03_DD01(BH_PWORK* epw)
             epw->pzb = epw->pz;
         }
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->ar = 0.1f;
         
@@ -4497,7 +4498,7 @@ void bhEne03_DD02(BH_PWORK* epw)
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->flg  &= ~0x8;
         epw->flg2 |=  0x1;
@@ -4675,7 +4676,7 @@ void bhEne03_DD04(BH_PWORK* epw)
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
         P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
-        *(ATR_WORK**)&EXP0_I(96) = NULL;
+        *(ps2ptr_t*)&EXP0_I(96) = S32(NULL);
         
         epw->flg |= 0x30;
         
@@ -6187,10 +6188,10 @@ int bhEne03_CollisionBoxEdge2(BH_PWORK* epw)
 
 		if (bhCollisionCheckLine(&p[i], &p2[i]) == 0)
         {
-            *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60) = bhEne03_GetWall(epw);
-    		if (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60) != NULL)
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60) = S32(bhEne03_GetWall(epw));
+    		if (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) != NULL)
             {
-                bhEne03_CollisionBoxEdge(*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60), (NJS_POINT3*)&epw->px, epw->ar);
+                bhEne03_CollisionBoxEdge(P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)), (NJS_POINT3*)&epw->px, epw->ar);
                 break;
             }    			
         }         
@@ -6208,9 +6209,9 @@ void bhEne03_CollisionLine(BH_PWORK* epw)
     if (hp != NULL)
     {        
         bhGetHitCollisionNormal(&n);
-        if (((*(ATR_WORK **)((char *)P32(unsigned char *, epw->exp0) + (0x60))) == NULL) && (n.y > 0.0f))
+        if (((P32(ATR_WORK *, *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + (0x60)))) == NULL) && (n.y > 0.0f))
         {
-            (*(ATR_WORK **)((char *)P32(unsigned char *, epw->exp0) + (0x60))) = hp;
+            (*(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + (0x60))) = S32(hp);
         }
     }
 }

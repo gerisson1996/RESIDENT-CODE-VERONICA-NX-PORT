@@ -3372,7 +3372,7 @@ void bhEff_E12_FireManager(O_WRK* op)
 void bhEff_E12_FireBurstDraw(O_WRK* owp)
 {
     O_WRK* op;
-    O_WRK** opp;
+    ps2ptr_t* opp;   /* PC: slots (O_WRK**) */
     int num; // modified original position from DWARF
     char atr[192];
 
@@ -3390,11 +3390,11 @@ void bhEff_E12_FireBurstDraw(O_WRK* owp)
     
     njFogDisable();
 
-    opp = (O_WRK**)&P32(unsigned char *, owp->exp0)[4];
+    opp = (ps2ptr_t*)&P32(unsigned char *, owp->exp0)[4];
     
     for (num = owp->ct0; num != 0; )
     {
-        op = *opp++;
+        op = P32(O_WRK*, *opp++);
         
         num--;
         

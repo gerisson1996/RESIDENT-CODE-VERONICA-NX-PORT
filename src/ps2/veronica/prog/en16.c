@@ -260,9 +260,9 @@ void bhEne16_MV02(BH_PWORK* epw)
                     v.y = epw->py - epw->yn;
                     v.z = epw->pz - epw->zn;
   
-                    pos.x = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->lox;
-                    pos.y = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->loy;
-                    pos.z = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->loz;
+                    pos.x = (P32(BH_PWORK *, *(ps2ptr_t*)P32(unsigned char *, epw->exp0)))->lox;
+                    pos.y = (P32(BH_PWORK *, *(ps2ptr_t*)P32(unsigned char *, epw->exp0)))->loy;
+                    pos.z = (P32(BH_PWORK *, *(ps2ptr_t*)P32(unsigned char *, epw->exp0)))->loz;
                     bhSetEffGunSpark(&pos, &v, 0xFFF8F8A0, 0x4CE04010, WpnTab[13].hiteff - 4);
                     gap.wpn_no = 0xD;
                     gap.ay = bhArcTan2(v.x, v.z);

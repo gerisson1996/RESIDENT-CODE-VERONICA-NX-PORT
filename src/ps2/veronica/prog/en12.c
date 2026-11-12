@@ -2129,9 +2129,9 @@ void bhEne12_SetFireBintaEffect(BH_PWORK* epw, int act)
             eno = bhSetEffectTb(&sys->ef, &efp->ofp, (unsigned char*)epw, efp->jno);
             
             if (eno != -1) {
-                ((O_WRK**)(P32(unsigned char *, epw->exp0)))[i + 10] = &eff[eno];
-                ((O_WRK**)(P32(unsigned char *, epw->exp0)))[i + 10]->ct0 = efp->life;
-                ((O_WRK**)(P32(unsigned char *, epw->exp0)))[i + 10]->ct1 = efp->delay;
+                ((ps2ptr_t*)(P32(unsigned char *, epw->exp0)))[i + 10] = S32(&eff[eno]);
+                P32(O_WRK *, ((ps2ptr_t*)(P32(unsigned char *, epw->exp0)))[i + 10])->ct0 = efp->life;
+                P32(O_WRK *, ((ps2ptr_t*)(P32(unsigned char *, epw->exp0)))[i + 10])->ct1 = efp->delay;
             }
 
             i++;
@@ -2143,7 +2143,7 @@ void bhEne12_SetFireBintaEffect(BH_PWORK* epw, int act)
         i = 0; 
         efp = alex_eff_tab;
         while (efp->jno != 0) {
-            op = ((O_WRK**)(P32(unsigned char *, epw->exp0)))[i + 10];
+            op = P32(O_WRK *, ((ps2ptr_t*)(P32(unsigned char *, epw->exp0)))[i + 10]);
             if (op != NULL && (op->flg & 1) != 0 && op->id == 274) {
                 op->mode0 = 3;
             }

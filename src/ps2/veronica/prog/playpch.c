@@ -481,7 +481,7 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
             ppP->mode &= ~0x4;
         }
         
-        *P32_POSTINC(struct BH_PWORK **, ppP->endPP) = P32(struct BH_PWORK *, topP->ewP);
+        *P32_POSTINC(ps2ptr_t*, ppP->endPP) = topP->ewP;   /* PC: endPP walks LckTbl, slots */
     }
     
     return (int)PS2_ADDR(topP);

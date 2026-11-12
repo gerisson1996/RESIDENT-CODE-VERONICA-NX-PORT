@@ -2205,7 +2205,7 @@ void bhEne09_CollCheckWall(BH_PWORK* epw)
         ps.z = epw->pz + epw->aoz;
         
         hp = bhCheckWallType(&ps, epw->flg, epw->ar, epw->ah);
-        *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x50) = hp;
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x50) = S32(hp);
 
         if ((EXP0_I(0x18) & 0xF) == 1)
         {
@@ -3095,7 +3095,7 @@ void bhEne09_Brain(BH_PWORK* epw)
                         {
                             bhGetHitCollisionNormal(&pos);
                             
-                            *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x54) = hp;
+                            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x54) = S32(hp);
                             
                             if (hp->type == 0) 
                             {
@@ -3158,7 +3158,7 @@ void bhEne09_Brain(BH_PWORK* epw)
                     
                     hp = bhEne09_GetCloseEnemyAtari(epw, temp, 0xFFU);
                     
-                    *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x54) = hp;
+                    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x54) = S32(hp);
                     
                     if (hp != NULL)
                     {
@@ -3183,7 +3183,7 @@ void bhEne09_Brain(BH_PWORK* epw)
                 {
                     hp = bhEne09_GetCloseEnemyAtari(epw, hp->prm1, hp->prm3);
                     
-                    *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x54) = hp;
+                    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x54) = S32(hp);
                     
                     if (hp != NULL)
                     {
@@ -3206,7 +3206,7 @@ void bhEne09_Brain(BH_PWORK* epw)
                 EXP0_F(0x34) = EXP0_F(0x4C);
             }
             
-            if (bhEne09_JumpCheck(epw, *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x54)) != 0) 
+            if (bhEne09_JumpCheck(epw, P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x54))) != 0) 
             {
                 EXP0_I(0x18) &= 0xFDFFFFFF;
             }
@@ -6350,7 +6350,7 @@ void bhEne09_DG05(BH_PWORK* epw)
             
             EXP0_F(0x58) = 0.0f;
             
-            hp = *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x54);
+            hp = P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x54));
             
             if (hp->type == 0) 
             {

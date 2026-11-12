@@ -1118,8 +1118,8 @@ void bhEff302(O_WRK* oP)
         EFF302PRM_WORK* prmP; 
         int i;               
         int* timP;          
-        NJS_POINT3** bufPP;  
-        float** spdPP;       
+        ps2ptr_t* bufPP;   /* PC: slots (NJS_POINT3**) */  
+        ps2ptr_t* spdPP;   /* PC: slots (float**) */       
         NJS_POINT3* dirP;     
         int ax, ay, az;               
         int tmp;             
@@ -1165,8 +1165,8 @@ void bhEff302(O_WRK* oP)
         {
             *timP = -prmP->stg_timer[i];
             
-            *bufPP = &e02bP->vtx_pos[i * 16];
-            *spdPP = &e02aP->vtx_spd[i * 16];
+            *bufPP = S32(&e02bP->vtx_pos[i * 16]);
+            *spdPP = S32(&e02aP->vtx_spd[i * 16]);
             
             if (*timP > 0)
             {

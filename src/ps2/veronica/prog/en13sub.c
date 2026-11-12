@@ -145,7 +145,7 @@ void bhEne13B_MV01(BH_PWORK* epw)
     O_WORK* owk;
     int i, j;
     int num;
-    BH_PWORK** ep;
+    ps2ptr_t* ep;   /* PC: slots (BH_PWORK**) */
     NJS_POINT3 p1;
 	float x, y, z; // not from DWARF
 
@@ -372,11 +372,11 @@ void bhEne13B_MV01(BH_PWORK* epw)
 
                 for (j = 0; j < num; j++, ep++)
                 {
-                    if ((((*ep)->flg & 0x20)) && (bhEne_AttackHitCheck(*ep, (NJS_POINT3*)&owk->mtx[12], 4.0f)))
+                    if (((P32(BH_PWORK*, *ep)->flg & 0x20)) && (bhEne_AttackHitCheck(P32(BH_PWORK*, *ep), (NJS_POINT3*)&owk->mtx[12], 4.0f)))
                     {
-						(*ep)->flg |= 0x4;
+						P32(BH_PWORK*, *ep)->flg |= 0x4;
 						
-						(*ep)->dam[0] = 100;
+						P32(BH_PWORK*, *ep)->dam[0] = 100;
                     }
                 }
             }

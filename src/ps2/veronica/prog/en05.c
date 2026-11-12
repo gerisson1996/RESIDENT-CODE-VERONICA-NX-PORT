@@ -1012,14 +1012,14 @@ void bhEne05_Init(BH_PWORK* epw)
     {
         epw->exp0 = S32(bhEne_CallocWork(132, 8));
        
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64)) = bhSetEnemy(&ene05_child, rom->ene_n);
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->lkwkp = S32((unsigned char*)epw);
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->lkono = 0;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->lox = 0.0f;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->loy = 0.0f;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->loz = 0.0f;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->mdflg |= 0x21;
-        (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x64))->mtx = S32(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].mtx);
+        (*(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)) = S32(bhSetEnemy(&ene05_child, rom->ene_n));
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->lkwkp = S32((unsigned char*)epw);
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->lkono = 0;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->lox = 0.0f;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->loy = 0.0f;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->loz = 0.0f;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->mdflg |= 0x21;
+        (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x64)))->mtx = S32(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].mtx);
         bhEne_SetCallFunc(bhEne05s, 31);
     }
     
@@ -1045,14 +1045,14 @@ void bhEne05_Init(BH_PWORK* epw)
     epw->lok_jno = 4;
     epw->cpcl = S32(CapColTab);
 
-    *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) = NULL;
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60) = S32(NULL);
     ep = ene;
     
     for (i = 0; i < sys->ewk_n; i++, ep++)
     {    
         if ((ep != epw) && (ep->flg & 1) && (ep->id == 5))
         {
-            *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) = ep;
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60) = S32(ep);
             break;
         }
     }
@@ -1089,10 +1089,10 @@ void bhEne05_BR00(BH_PWORK* epw)
     // not present in DWARF
     float tx, tz;
 
-    if ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) != NULL) &&
-        ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60))->flg & 2))
+    if ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) != NULL) &&
+        ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->flg & 2))
     {
-        *(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) = NULL;
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60) = S32(NULL);
     }
 
     if (plp->hp < 0)
@@ -1107,8 +1107,8 @@ void bhEne05_BR00(BH_PWORK* epw)
     }
 
     if ((EXP0_UC(0x14) != 0) && (EXP0_F(0x0) > 20.0f) &&
-        ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) == NULL) ||
-         (EXP0_F(0x0) < *(float*)(P32(unsigned char *, (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60))->exp0)))))
+        ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) == NULL) ||
+         (EXP0_F(0x0) < *(float*)(P32(unsigned char *, (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->exp0)))))
     {
         if (epw->mode2 != 2)
         {
@@ -1117,8 +1117,8 @@ void bhEne05_BR00(BH_PWORK* epw)
         }
     }
 
-    if ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) != NULL) &&
-        ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60))->mode0 == 3))
+    if ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) != NULL) &&
+        ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->mode0 == 3))
     {
         EXP0_UC(0x14) = 1;
         if (epw->mode2 != 2)
@@ -1131,7 +1131,7 @@ void bhEne05_BR00(BH_PWORK* epw)
     ang = (short)((epw->ay + NJM_DEG_ANG(45.0f)) & ~0x3FFF);
     tx = epw->px - 7.0f * njSin(ang);
     tz = epw->pz - 7.0f * njCos(ang);
-    *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = NULL;
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(NULL);
 
     if (epw->flr_no != plp->flr_no)
     {
@@ -1142,7 +1142,7 @@ void bhEne05_BR00(BH_PWORK* epw)
             {
                 if (ang == (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90.0f)))
                 {
-                    *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                     EXP0_F(0x68) = epw->px - (10.0f + 3.0f * hp->attr) * njSin(ang);
                     EXP0_F(0x70) = epw->pz - (10.0f + 3.0f * hp->attr) * njCos(ang);
 
@@ -1183,7 +1183,7 @@ void bhEne05_BR00(BH_PWORK* epw)
         {
             if (ang == (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90.0f)))
             {
-                *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                 EXP0_F(0x68) = epw->px - 20.0f * njSin(ang);
                 EXP0_F(0x70) = epw->pz - 20.0f * njCos(ang);
 
@@ -1217,7 +1217,7 @@ void bhEne05_BR00(BH_PWORK* epw)
         {
             if (ang == (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90.0f)))
             {
-                *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
 
                 if (hp->prm1 < 0x15)
                 {
@@ -1275,7 +1275,7 @@ void bhEne05_BR00(BH_PWORK* epw)
             ang2 = (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90.0f));
             if (ang == ang2)
             {
-                *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                 EXP0_F(0x68) = epw->px - 15.0f * njSin(ang);
                 EXP0_F(0x70) = epw->pz - 15.0f * njCos(ang);
                 EXP0_F(0x6C) = epw->py;
@@ -1298,8 +1298,8 @@ void bhEne05_BR00(BH_PWORK* epw)
         return;
     }
 
-    if (!(epw->type & 1) && (*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) != NULL) &&
-        ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60))->flg & 4) && bhEne05_CheckJump(epw))
+    if (!(epw->type & 1) && (P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) != NULL) &&
+        ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->flg & 4) && bhEne05_CheckJump(epw))
     {
         epw->mode1 = 0;
         epw->mode2 = 5;
@@ -1334,8 +1334,8 @@ void bhEne05_BR00(BH_PWORK* epw)
     kubikari = 0;
     hikkaki = 0;
 
-    if ((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60) == NULL) ||
-        !((*(BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x60))->flg & 0x40000000))
+    if ((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)) == NULL) ||
+        !((P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x60)))->flg & 0x40000000))
     {
         if ((plp->hp < crit_hp[sys->ply_id]) && (EXP0_F(0x0) < 30.0f))
         {
@@ -5375,7 +5375,7 @@ void bhEne05_InitDamage(BH_PWORK* epw)
                                           5, 12, 15);
                 if ((hp != NULL) && (((short)(((DamageAngle + NJM_DEG_ANG(180.0f)) + NJM_DEG_ANG(45.0f)) & ~0x3FFF)) == (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90))))
                 {
-                    *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                     epw->mode2 = 12;
                     DamageAngle = ((short)(((DamageAngle + NJM_DEG_ANG(180.0f)) + NJM_DEG_ANG(45.0f)) & ~0x3FFF)) + NJM_DEG_ANG(180.0f);
                 }
@@ -5462,7 +5462,7 @@ void bhEne05_InitDamage(BH_PWORK* epw)
             {
                 if (((short)(((DamageAngle + NJM_DEG_ANG(180.0f)) + NJM_DEG_ANG(45.0f)) & ~0x3FFF)) == (short)(-(hp->prm1 & 3) * NJM_DEG_ANG(90)))
                 {
-                    *(ATR_WORK**)(P32(unsigned char *, epw->exp0) + 0x74) = hp;
+                    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x74) = S32(hp);
                     epw->mode2 = 7;
                     DamageAngle = ((short)(((DamageAngle + NJM_DEG_ANG(180.0f)) + NJM_DEG_ANG(45.0f)) & ~0x3FFF)) - NJM_DEG_ANG(180.0f);
                 }

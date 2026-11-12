@@ -792,7 +792,7 @@ void bhEne17_CollCheck(BH_PWORK* epw)
 // 100% matching!
 void bhEne17_CollCheckWall(BH_PWORK* ewp) 
 {
-    *(ATR_WORK**)((char*)P32(unsigned char *, ewp->exp0) + 64) = bhCheckWallType((NJS_POINT3*)&ewp->px, ewp->flg, ewp->ar, ewp->ah);
+    *(ps2ptr_t*)((char*)P32(unsigned char *, ewp->exp0) + 64) = S32(bhCheckWallType((NJS_POINT3*)&ewp->px, ewp->flg, ewp->ar, ewp->ah));
     
     if ((((unsigned int*)(P32(unsigned char *, ewp->exp0)))[2] & 0xF) == 1 && (ewp->flg & 0x10)) {
         bhCheckDansa(ewp);

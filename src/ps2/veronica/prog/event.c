@@ -9887,7 +9887,7 @@ int Sub_controll()
         if (P32(struct BH_PWORK *, bhCetask->work)->id == 1)
         {
             ((char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[12] = 1;
-            ((void**)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]);
+            ((ps2ptr_t*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
         }
         
         P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;
@@ -9931,7 +9931,7 @@ int Sub_controll()
         if (P32(struct BH_PWORK *, bhCetask->work)->id == 1) 
         {
             ((char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[12] = 1;
-            ((void**)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]);
+            ((ps2ptr_t*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
         }
         
         P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;

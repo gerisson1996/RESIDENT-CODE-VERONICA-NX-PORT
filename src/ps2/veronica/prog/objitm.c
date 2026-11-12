@@ -1323,7 +1323,7 @@ void bhObj005(O_WRK* op)
             
             wty += zp + (xp * sys->wt_zp);
             
-            *(NJS_POINT4**)pp = (NJS_POINT4*)wty;
+            *(ps2ptr_t*)pp = S32((NJS_POINT4*)wty);
             
             pp++;  
             pp++; 

@@ -26,12 +26,12 @@ static const NJS_MKEY_A_MOD NullMka;
    differently: docs/ARCHITECTURE.md "Determinism"), and the PS2's addresses are not known. During the
    reads, an array whose read would come from that table is replaced by a copy that ends in its
    first key (frame frm_num of a looping motion is its frame 0); everything else reads as retail. */
-typedef struct { void** slot[3]; void* orig[3]; int n; } PcKeyPatch;
+typedef struct { ps2ptr_t* slot[3]; ps2ptr_t orig[3]; int n; } PcKeyPatch;   /* the patched slots and what they held */
 static unsigned char pc_keybuf[3][0x10000];
 
-static void pc_patch_key(PcKeyPatch* pp, MN_WORK* mnwP, void** slot, int size, int frm)
+static void pc_patch_key(PcKeyPatch* pp, MN_WORK* mnwP, ps2ptr_t* slot, int size, int frm)
 {
-    unsigned char* keys = *slot;
+    unsigned char* keys = P32(unsigned char*, *slot);
     unsigned char* tbl = (unsigned char*)P32(struct NJS_MDATA2_MOD *, mnwP->md2P);
 
     if (keys == NULL || keys + (frm + 1) * size <= tbl || keys + frm * size >= tbl + mnwP->obj_num * sizeof(NJS_MDATA2_MOD))
@@ -41,8 +41,8 @@ static void pc_patch_key(PcKeyPatch* pp, MN_WORK* mnwP, void** slot, int size, i
     memcpy(pc_keybuf[pp->n], keys, frm * size);
     memcpy(pc_keybuf[pp->n] + frm * size, keys, size);
     pp->slot[pp->n] = slot;
-    pp->orig[pp->n] = keys;
-    *slot = pc_keybuf[pp->n++];
+    pp->orig[pp->n] = *slot;
+    *slot = S32(pc_keybuf[pp->n++]);
 }
 
 static void pc_patch_oob_keys(MN_WORK* mnwP, int frm_no, PcKeyPatch* pp)
@@ -57,7 +57,7 @@ static void pc_patch_oob_keys(MN_WORK* mnwP, int frm_no, PcKeyPatch* pp)
         pc_patch_key(pp, mnwP, &P32(struct NJS_MDATA2_MOD *, mnwP->md2P)[i].p[0], 12, frm);
         pc_patch_key(pp, mnwP, &P32(struct NJS_MDATA2_MOD *, mnwP->md2P)[i].p[1], 6, frm);
     }
-    pc_patch_key(pp, mnwP, (void**)&mnwP->atrP, 2, frm);
+    pc_patch_key(pp, mnwP, &mnwP->atrP, 2, frm);
 }
 
 static void pc_unpatch_oob_keys(PcKeyPatch* pp)

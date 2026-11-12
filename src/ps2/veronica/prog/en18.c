@@ -363,7 +363,7 @@ void bhEne18(BH_PWORK* epw)
     if (((BH_PWORK *)P32(unsigned char *, epw->lkwkp))->stflg & 0x01000000) 
     {
         epw->stflg |= 0x01000000;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
     }
     
     bhCalcModel(epw);
@@ -422,20 +422,20 @@ void bhEne18_Init(BH_PWORK* epw)
     {
         epw->exp0 = S32(bhEne_CallocWork(0x18, 8));
         
-        *(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4) = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
-        *(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8) = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)[1].objP);
-        *(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC) = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)[2].objP);
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4) = S32(P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP));
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8) = S32(P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)[1].objP));
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC) = S32(P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)[2].objP));
         
-        *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14) = &sys->mwalp[sys->mwal_n];
+        *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14) = S32(&sys->mwalp[sys->mwal_n]);
         
         sys->mwal_n++;
         
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->type = 3;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = 0.0f;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->h = 0.0f;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->d = 0.0f;
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->attr = 0;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->type = 3;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = 0.0f;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->h = 0.0f;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->d = 0.0f;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->attr = 0;
     }
 
     if (epw->type < 4) return;
@@ -630,7 +630,7 @@ void bhEne18_MV00(BH_PWORK* epw)
     switch (epw->mode3)
     {
         case 0:
-            P32(struct ML_WORK *, epw->mlwP)->objP = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
+            P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
         
             epw->shp_ct = 0.0f;
             epw->mdflg &= ~2;
@@ -654,13 +654,13 @@ void bhEne18_MV01(BH_PWORK* epw)
             
             if (epw->shp_ct < 1000.0f)
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
             } 
             else 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct -= 1000.0f;
             }
@@ -696,12 +696,12 @@ void bhEne18_MV02(BH_PWORK* epw)
             
             ep = (BH_PWORK *)P32(unsigned char *, epw->lkwkp);
             
-            (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 1;
+            (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 1;
             
             njUnitMatrix(NULL);
             njRotateY(NULL, ep->ay);
-            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px));
-            njAddVector((NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px), (NJS_VECTOR *)&ep->px);
+            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px));
+            njAddVector((NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px), (NJS_VECTOR *)&ep->px);
             
             epw->mode3++;
         case 1:
@@ -709,29 +709,29 @@ void bhEne18_MV02(BH_PWORK* epw)
             
             if (epw->shp_ct < 1000.0f)
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             
             else if (epw->shp_ct < 2000.0f) 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct -= 1000.0f;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = 10.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = 10.0f;
             }
             else 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct = 3000.0f - epw->shp_ct;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             
             epw->ct0++;
@@ -748,7 +748,7 @@ void bhEne18_MV02(BH_PWORK* epw)
                 epw->mode2 = 0;
                 epw->mode3 = 0;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
             }
             
             break;
@@ -783,12 +783,12 @@ void bhEne18_MV04(BH_PWORK* epw)
             
             ep = (BH_PWORK *)P32(unsigned char *, epw->lkwkp);
             
-            (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 1;
+            (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 1;
             
             njUnitMatrix(NULL);
             njRotateY(NULL, ep->ay);
-            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px));
-            njAddVector((NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px), (NJS_VECTOR *)&ep->px);
+            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px));
+            njAddVector((NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px), (NJS_VECTOR *)&ep->px);
             
             epw->mode3++;
         case 1:
@@ -803,27 +803,27 @@ void bhEne18_MV04(BH_PWORK* epw)
             
             if (epw->shp_ct < 1000.0f) 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             else if (epw->shp_ct < 2000.0f) 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct -= 1000.0f;
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = 10.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = 10.0f;
             }
             else 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct = 3000.0f - epw->shp_ct;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             
             epw->ct0++;
@@ -840,7 +840,7 @@ void bhEne18_MV04(BH_PWORK* epw)
                 epw->mode2 = 0;
                 epw->mode3 = 0;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
             }
             
             break;
@@ -869,12 +869,12 @@ void bhEne18_MV05(BH_PWORK* epw)
             
             ep = (BH_PWORK *)P32(unsigned char *, epw->lkwkp);
             
-            (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 1;
+            (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 1;
             
             njUnitMatrix(NULL);
             njRotateY(NULL, ep->ay);
-            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px));
-            njAddVector((NJS_VECTOR *)&((*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->px), (NJS_VECTOR *)&ep->px);
+            njCalcVector(NULL, &pos[epw->ct1], (NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px));
+            njAddVector((NJS_VECTOR *)&((P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->px), (NJS_VECTOR *)&ep->px);
             
             epw->mode3++;
         case 1:
@@ -889,27 +889,27 @@ void bhEne18_MV05(BH_PWORK* epw)
             
             if (epw->shp_ct < 1000.0f) 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             else if (epw->shp_ct < 2000.0f) 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x8));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x8)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct -= 1000.0f;
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = 10.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = 10.0f;
             }
             else 
             {
-                epw->obj_a = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
-                epw->obj_b = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0xC));
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0xC)));
                 
                 epw->shp_ct = 3000.0f - epw->shp_ct;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->w = (10.0f * epw->shp_ct) / 1000.0f;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->w = (10.0f * epw->shp_ct) / 1000.0f;
             }
             
             epw->ct0++;
@@ -926,7 +926,7 @@ void bhEne18_MV05(BH_PWORK* epw)
                 epw->mode2 = 0;
                 epw->mode3 = 0;
                 
-                (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
+                (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
             }
             
             break;
@@ -950,14 +950,14 @@ void bhEne18_Die(BH_PWORK* epw)
 {
     epw->flg |= 2;
     
-    P32(struct ML_WORK *, epw->mlwP)->objP = S32(*(NJS_CNK_OBJECT **)(P32(unsigned char *, epw->exp0) + 0x4));
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x4)));
     
     epw->shp_ct = 0.0f;
     epw->mdflg &= ~2;
     
-    if (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14) != NULL) 
+    if (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)) != NULL) 
     {
-        (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x14))->flg = 0;
+        (P32(ATR_WORK *, *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x14)))->flg = 0;
     }
 }
 

@@ -280,7 +280,7 @@ void bhEne06_Init(BH_PWORK* epw)
 	int i;
 	BH_PWORK* ep_leader;
 	BH_PWORK* ep;
-	BH_PWORK** epw2;
+	ps2ptr_t* epw2;   /* PC: BH_PWORK** in the work area = slots */
 	O_WORK* owk;
     
     // not present in DWARF
@@ -349,18 +349,18 @@ void bhEne06_Init(BH_PWORK* epw)
 			}
 		}
 
-		epw2 = (BH_PWORK**)(P32(unsigned char *, epw->exp0) + 0x34);
+		epw2 = (ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x34);
 		for (i = 0; i < 14; i++, epw2++)
         {
 			ene_n = rom->ene_n;
-			*epw2 = bhSetEnemy((EGG_WORK*)&ene06_child, ene_n);
-			(*epw2)->lkwkp = S32((unsigned char*)epw);
-			(*epw2)->lkono = i;
-			(*epw2)->lox = 0.0f;
-			(*epw2)->loy = 0.0f;
-			(*epw2)->loz = 0.0f;
-			(*epw2)->mdflg |= 1;
-			(*epw2)->mtx = S32(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[BrokenParts[i]].mtx);
+			*epw2 = S32(bhSetEnemy((EGG_WORK*)&ene06_child, ene_n));
+			P32(BH_PWORK*, *epw2)->lkwkp = S32((unsigned char*)epw);
+			P32(BH_PWORK*, *epw2)->lkono = i;
+			P32(BH_PWORK*, *epw2)->lox = 0.0f;
+			P32(BH_PWORK*, *epw2)->loy = 0.0f;
+			P32(BH_PWORK*, *epw2)->loz = 0.0f;
+			P32(BH_PWORK*, *epw2)->mdflg |= 1;
+			P32(BH_PWORK*, *epw2)->mtx = S32(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[BrokenParts[i]].mtx);
         }
 		bhEne_SetCallFunc((void (*)(BH_PWORK*))&bhEne06s, 31);
 	}
@@ -374,7 +374,7 @@ void bhEne06_Init(BH_PWORK* epw)
 		sdw = bhSetShadow(SdwTab, (unsigned char*)epw, 0, 5.0f, 4.0f, 4.0f);
 		eff[sdw].mdlver = 1;
 		epw->flg |= 0x800;
-		*(O_WRK **)((P32(unsigned char *, epw->exp0) + 0x84)) = &eff[sdw];
+		*(ps2ptr_t*)((P32(unsigned char *, epw->exp0) + 0x84)) = S32(&eff[sdw]);
 	}
 
 	epw->stflg &= ~8;
@@ -1312,8 +1312,8 @@ void bhEne06_DG00(BH_PWORK* epw) {
         pno = (int)(4.0f * njRandom());
         owk[parts[pno]].flg |= 3;
         
-	    (*(unsigned char **)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4))[12] = 1;
-	    (*(unsigned char **)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4))[14] = 1;
+	    (P32(unsigned char *, *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4)))[12] = 1;
+	    (P32(unsigned char *, *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4)))[14] = 1;
         
         EXP0_F(0x70) = 1.0f;
         
@@ -1408,8 +1408,8 @@ void bhEne06_DG01(BH_PWORK* epw)
         pno = (int)(4.0f * njRandom());
         owk[parts[pno]].flg |= 3;
         
-	    (*(unsigned char **)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4))[12] = 1;
-	    (*(unsigned char **)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4))[14] = 1;
+	    (P32(unsigned char *, *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4)))[12] = 1;
+	    (P32(unsigned char *, *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x34 + pno * 4)))[14] = 1;
         
         bhEne_CallSE(epw, (NJS_POINT3*)&epw->px, 8964);
         epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
@@ -1863,7 +1863,7 @@ void bhEne06_CollisionWalls(BH_PWORK* epw)
     epw->py += ofp.y;
     epw->pz += ofp.z;
     
-    *(ATR_WORK**)((char *)P32(unsigned char *, epw->exp0) + 0x18) = bhEne03_Collision(epw);
+    *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x18) = S32(bhEne03_Collision(epw));
     
     epw->px -= ofp.x;
     epw->py -= ofp.y;
@@ -1885,7 +1885,7 @@ void bhEne06_FloorCollision(BH_PWORK* epw)
     {
         bhGetHitCollisionNormal((NJS_VECTOR*)((char *)P32(unsigned char *, epw->exp0) + 0x78));
         njUnitVector((NJS_VECTOR*)((char *)P32(unsigned char *, epw->exp0) + 0x78));
-        *(ATR_WORK**)((char *)P32(unsigned char *, epw->exp0) + 0x18) = hp;
+        *(ps2ptr_t*)((char *)P32(unsigned char *, epw->exp0) + 0x18) = S32(hp);
         
         if (EXP0_F(0x7C) > 0.9f)
         {

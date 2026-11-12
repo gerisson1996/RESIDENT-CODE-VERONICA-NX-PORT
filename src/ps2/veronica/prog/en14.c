@@ -210,12 +210,12 @@ void bhEne14(BH_PWORK* epw)
         bhEne14_PlayerControl(epw);
     }
     
-    *(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x244) = NULL;
+    *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x244) = S32(NULL);
     for (i = 0, op = eff; i < 512; i++, op++)
     {
         if ((op->flg & 1) && !(op->stflg & 0x1000000) && (op->id == 130) && (op->type == 4))
         {
-            *(O_WRK **)(P32(unsigned char *, epw->exp0) + 0x244) = op;
+            *(ps2ptr_t*)(P32(unsigned char *, epw->exp0) + 0x244) = S32(op);
             break;
         }
     }
