@@ -33,7 +33,12 @@ int cdvd_read_sectors(uint32_t lsn, uint32_t count, void* dst)
     if (!iso) return 0;
     if (fseeko(iso, (off_t)lsn * SECTOR, SEEK_SET) != 0) return 0;
     { extern void pc_tex_invalidate(const void*, unsigned int); pc_tex_invalidate(dst, count * SECTOR); }   /* native textures */
-    return (int)(fread(dst, SECTOR, count, iso) == count ? count : 0);
+    if (fread(dst, SECTOR, count, iso) != count) {
+        static int said;
+        if (said++ < 4) host_log("cdvd: read of %u sectors at %u to %p failed%c", count, lsn, dst, 10);
+        return 0;
+    }
+    return (int)count;
 }
 
 static uint32_t le32(const uint8_t* p) { return p[0] | (p[1] << 8) | (p[2] << 16) | ((uint32_t)p[3] << 24); }

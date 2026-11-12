@@ -367,6 +367,8 @@ int main(int argc, char** argv)
 #ifndef _WIN32
     if (getenv("RECVX_WATCHDOG")) { signal(SIGALRM, watchdog); alarm((unsigned)atoi(getenv("RECVX_WATCHDOG"))); }
     { extern void profile_start(void); profile_start(); }
+#else
+    if (getenv("RECVX_WATCHDOG")) { extern void log_watchdog(int); log_watchdog(atoi(getenv("RECVX_WATCHDOG"))); }
 #endif
     config_load();
     parse_args(argc, argv);   /* command line overrides the saved settings */

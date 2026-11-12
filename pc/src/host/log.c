@@ -242,6 +242,53 @@ void log_start(const char* path)
    the Windows build keeps frame pointers (pc/CMakeLists.txt), so EBP is the frame chain */
 static void out_file(void* f, const char* p, size_t n) { fwrite(p, 1, n, (FILE*)f); }
 
+/* debugging aid, RECVX_WATCHDOG=<seconds>: after that time every other thread's program counter and
+   frame chain go to stderr and the program exits (a hang in a headless run); addr2line names them */
+#include <tlhelp32.h>
+static int SDLCALL watchdog_thread(void* arg)
+{
+    Sleep((DWORD)(uintptr_t)arg * 1000);
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+    THREADENTRY32 te = { sizeof(te) };
+    DWORD pid = GetCurrentProcessId(), self = GetCurrentThreadId();
+    fputs("watchdog: threads\n", stderr);
+    if (snap != INVALID_HANDLE_VALUE && Thread32First(snap, &te)) do {
+        if (te.th32OwnerProcessID != pid || te.th32ThreadID == self) continue;
+        HANDLE th = OpenThread(THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT, FALSE, te.th32ThreadID);
+        CONTEXT c;
+        if (!th) continue;
+        memset(&c, 0, sizeof(c));
+        c.ContextFlags = CONTEXT_CONTROL | CONTEXT_INTEGER;
+        if (SuspendThread(th) != (DWORD)-1 && GetThreadContext(th, &c)) {
+#ifdef _WIN64
+            uintptr_t pc_ = c.Rip, *fp = (uintptr_t*)c.Rbp;
+#else
+            uintptr_t pc_ = c.Eip, *fp = (uintptr_t*)c.Ebp;
+#endif
+            fprintf(stderr, " thread %lu: 0x%llX", (unsigned long)te.th32ThreadID, (unsigned long long)pc_);
+#ifdef _WIN64
+            (void)fp;   /* unwind tables: system DLLs keep no frame pointer */
+            for (int i = 0; i < 32 && c.Rip; i++) {
+                DWORD64 base; void* hd; DWORD64 est;
+                PRUNTIME_FUNCTION rf = RtlLookupFunctionEntry(c.Rip, &base, NULL);
+                if (!rf) { if (IsBadReadPtr((void*)c.Rsp, 8)) break; c.Rip = *(DWORD64*)c.Rsp; c.Rsp += 8; }   /* leaf */
+                else RtlVirtualUnwind(UNW_FLAG_NHANDLER, base, c.Rip, rf, &c, &hd, &est, NULL);
+                if (c.Rip) fprintf(stderr, " 0x%llX", (unsigned long long)c.Rip);
+            }
+#else
+            for (int i = 0; i < 24 && fp && !IsBadReadPtr(fp, 2 * sizeof(*fp)); i++, fp = (uintptr_t*)fp[0])
+                fprintf(stderr, " 0x%llX", (unsigned long long)fp[1]);
+#endif
+            fputc('\n', stderr);
+        }
+        CloseHandle(th);
+    } while (Thread32Next(snap, &te));
+    fflush(stderr);
+    TerminateProcess(GetCurrentProcess(), 3);
+    return 0;
+}
+void log_watchdog(int seconds) { SDL_DetachThread(SDL_CreateThread(watchdog_thread, "watchdog", (void*)(uintptr_t)seconds)); }
+
 static LONG WINAPI on_fatal(EXCEPTION_POINTERS* ep)
 {
     static LONG entered;
@@ -259,8 +306,22 @@ static LONG WINAPI on_fatal(EXCEPTION_POINTERS* ep)
     len = snprintf(msg, sizeof(msg), "\nfatal exception 0x%08lX at 0x%08llX (esp 0x%08llX), frame chain:",
                        ep->ExceptionRecord->ExceptionCode, pc_, sp_);
     FILE* f;
+#ifdef _WIN64
+    {   /* unwind tables (x64 code keeps no frame chain) */
+        CONTEXT u = *c;
+        (void)fp;
+        for (int i = 0; i < 32 && u.Rip && len < (int)sizeof(msg) - 24; i++) {
+            DWORD64 base, est; void* hd;
+            PRUNTIME_FUNCTION rf = RtlLookupFunctionEntry(u.Rip, &base, NULL);
+            if (!rf) { if (IsBadReadPtr((void*)u.Rsp, 8)) break; u.Rip = *(DWORD64*)u.Rsp; u.Rsp += 8; }
+            else RtlVirtualUnwind(UNW_FLAG_NHANDLER, base, u.Rip, rf, &u, &hd, &est, NULL);
+            if (u.Rip) len += snprintf(msg + len, sizeof(msg) - len, " 0x%08llX", (unsigned long long)u.Rip);
+        }
+    }
+#else
     for (int i = 0; i < 32 && fp && !IsBadReadPtr(fp, 2 * sizeof(*fp)) && len < (int)sizeof(msg) - 16; i++, fp = (uintptr_t*)fp[0])
         len += snprintf(msg + len, sizeof(msg) - len, " 0x%08llX", (unsigned long long)fp[1]);
+#endif
     fprintf(stderr, "%s\n", msg);
     fflush(stderr);
     if ((f = fopen(crash_path, "w"))) {

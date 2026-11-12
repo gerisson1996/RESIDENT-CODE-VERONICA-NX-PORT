@@ -119,3 +119,6 @@ cnkobj
 obj
 # Katana SDK structures embedded in the game's (SYS_WORK.ms_per)
 PDS_PERIPHERAL
+# Katana GD file system: the game places the handles at a literal offset after the work area
+GDS_FS_HANDLE
+GDS_FS_WORK
