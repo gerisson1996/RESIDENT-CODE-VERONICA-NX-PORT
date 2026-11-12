@@ -1507,7 +1507,7 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
     }
 #endif 
         
-    pCnk = (CHUNK_HEAD*)((int)pCnk | 0x30000000);
+    pCnk = (CHUNK_HEAD*)PS2_HOST(((int)PS2_ADDR(pCnk) | 0x30000000));
     
     pCnk++;
     
@@ -2547,7 +2547,7 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
                     p[0] = 0;
                     p[1] = vu1func_tag;
                     
-                    sceDmaSend((sceDmaChan*)D1_CHCR, (void*)((unsigned int)ulpP | 0x80000000));
+                    sceDmaSend((sceDmaChan*)D1_CHCR, (void*)PS2_HOST(((unsigned int)PS2_ADDR(ulpP) | 0x80000000)));
                     
                     Ps2_chunk_buff_flip ^= 1;
                 }
@@ -3069,7 +3069,7 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
                     p[0] = 0;
                     p[1] = vu1func_tag;
                     
-                    sceDmaSend((sceDmaChan*)D1_CHCR, (void*)((unsigned int)ulpP | 0x80000000));
+                    sceDmaSend((sceDmaChan*)D1_CHCR, (void*)PS2_HOST(((unsigned int)PS2_ADDR(ulpP) | 0x80000000)));
                     
                     Ps2_chunk_buff_flip ^= 1;
                 }

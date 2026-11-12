@@ -415,7 +415,7 @@ unsigned int bhIfelCk()
     
     bhScePtr += 2;
     
-    G_Sp = (unsigned int*)((int)bhScePtr + (v0 >> 8));
+    G_Sp = (unsigned int*)PS2_HOST(((int)PS2_ADDR(bhScePtr) + (v0 >> 8)));
     
     G_Sp++;
 
@@ -13125,7 +13125,7 @@ void bhScenarioCheck(unsigned char* next_ptr)
     
     bhIfelFlg = 0;
     
-    bhScePtr = &bhScePtr[(int)next_ptr];
+    bhScePtr = &bhScePtr[(int)PS2_ADDR(next_ptr)];
 
     while (TRUE) 
     {

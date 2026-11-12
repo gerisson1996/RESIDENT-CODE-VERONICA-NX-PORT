@@ -137,7 +137,7 @@ void bhInitSystem()
     sys->memp = freemem; 
     sys->endp = njpmemp;
     
-    sys->memp += (int)&sys->save_end - (int)&sys->version;
+    sys->memp += (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version);
     
     TypewriterKeepMemory();
     
@@ -1138,7 +1138,7 @@ void bhSysCallMovie()
             sys->mvi_flg = 0;
         }
         
-        sys->memp = (unsigned char*)(((int)sys->memp + 63) & ~0x3F);
+        sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
         sys->mvi_memp = sys->memp;
         
         sys->mvi_md++;
@@ -1419,7 +1419,7 @@ void bhSysCallMonitor()
 
             pc_load_from = "the game start";
 #endif
-            sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+            sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
             
             sys->sdm_flg = 0xE;
             
@@ -1472,7 +1472,7 @@ void bhSysCallMonitor()
         case 3:
             if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0)) 
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
                 
@@ -1510,7 +1510,7 @@ void bhSysCallMonitor()
         case 6:
             if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4)) != 0)) 
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), sys->memp);
                 
@@ -1530,7 +1530,7 @@ void bhSysCallMonitor()
         case 8:
             if (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0) 
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
                 
@@ -1595,7 +1595,7 @@ void bhSysCallMonitor()
         case 21:
             if (GetReadFileStatus() == 0) 
             {
-                sz = (int)&sys->save_end - (int)&sys->version;
+                sz = (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version);
                 
                 njMemCopy(&sys->version, sys->pdm_dp, sz);
                 
@@ -1660,7 +1660,7 @@ void bhSysCallMonitor()
         case 0:
             if ((GetReadFileStatus() != 1) && (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0)) 
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
                 
@@ -1720,8 +1720,8 @@ void bhSysCallMonitor()
                     {
                         bhInitReadRDT();
                         
-                        sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64); 
-                        sys->rdtp = (unsigned char*)ALIGN_DOWN((int)sys->endp - sz, 64); 
+                        sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)); 
+                        sys->rdtp = (unsigned char*)PS2_HOST(ALIGN_DOWN((int)PS2_ADDR(sys->endp) - sz, 64)); 
 #ifdef TARGET_PC
                         if (sys->rdtp < sys->memp)   /* the PS2 read it over the persistent data below */
                             host_fatal("%s: packed room file (%d KB) does not fit the room arena (%d KB free)", sys->mes, sz >> 10, (int)(sys->endp - sys->memp) >> 10);
@@ -1878,7 +1878,7 @@ void bhSysCallMonitor()
             case 4:
                 if ((GetReadFileStatus() != 1) && (GetInsideFileSize(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4)) != 0)) 
                 {
-                    sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                    sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                     
                     RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), sys->memp);
                     
@@ -1906,7 +1906,7 @@ void bhSysCallMonitor()
                 
                 if (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0) 
                 {
-                    sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                    sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                     
                     RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
                     
@@ -2098,7 +2098,7 @@ void bhSysCallMonitor()
             {
                 sys->sbs_sp = sys->memp;
                 
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 if (rom->mdl.texP != NULL) 
                 {
@@ -2114,7 +2114,7 @@ void bhSysCallMonitor()
         case 1:
             if (GetInsideFileSize(sys->itm_partid, 145) != 0)
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->itm_partid, 145, sys->memp);
                 
@@ -2206,7 +2206,7 @@ void bhSysCallMonitor()
                 
                 if ((*(int*)datp & 0x80000000)) 
                 { 
-                    datp = (unsigned char*)ALIGN_UP((int)(datp + 4), 32); 
+                    datp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR((datp + 4)), 32)); 
                 } 
                 else 
                 { 
@@ -2231,7 +2231,7 @@ void bhSysCallMonitor()
 
             sys->sbs_sp = sys->memp;
             
-            sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+            sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
             
             if (rom->mdl.texP != NULL)
             {
@@ -2244,7 +2244,7 @@ void bhSysCallMonitor()
         case 1: 
             if (GetInsideFileSize(sys->sys_partid, 2) != 0) 
             {
-                sys->memp = (unsigned char*)ALIGN_UP((int)sys->memp, 64);
+                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
                 
                 RequestReadInsideFile(sys->sys_partid, 2, sys->memp);
                 

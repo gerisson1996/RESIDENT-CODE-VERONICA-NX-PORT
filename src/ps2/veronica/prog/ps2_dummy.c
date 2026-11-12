@@ -512,8 +512,8 @@ void Ps2AddPrim(unsigned long prim, void* dp, unsigned int num, unsigned int cli
             ((UNKNOWN*)(p + 4))->unkC &= ~0x8000;
         }
         
-        p = (unsigned long*)((int)p + 48); 
-        dp = (unsigned long*)((int)dp + 48);
+        p = (unsigned long*)PS2_HOST(((int)PS2_ADDR(p) + 48)); 
+        dp = (unsigned long*)PS2_HOST(((int)PS2_ADDR(dp) + 48));
     } 
     
     if ((prim & 0x20000000000000)) 
@@ -1611,7 +1611,7 @@ void Ps2ClearOT()
     
     Ps2_ot_list_no = 0;
     
-    Ps2_PP = (void*)((int)&Ps2_PBUFF | 0x30000000); 
+    Ps2_PP = (void*)PS2_HOST(((int)PS2_ADDR(&Ps2_PBUFF) | 0x30000000)); 
     
     for (i = 0; i < 4096; i++) 
     {
@@ -1630,7 +1630,7 @@ void Ps2AddOT(void* p, unsigned int num, float z, unsigned long prim)
 #ifdef TARGET_PC
     /* neither the list nor the packet buffer was bounds-checked: a full one drops the primitive
        (translucent and sorted strips of a very large room, docs/modding/ROOM_FORMAT.md "Limits and budgets") */
-    if ((Ps2_ot_list_no >= PC_OT_ENTRIES) || (((unsigned char*)Ps2_PP + 64 + (((num * 3) + 1) * 16)) > (unsigned char*)((int)&Ps2_PBUFF | 0x30000000) + PC_PBUFF_SIZE))
+    if ((Ps2_ot_list_no >= PC_OT_ENTRIES) || (((unsigned char*)Ps2_PP + 64 + (((num * 3) + 1) * 16)) > (unsigned char*)PS2_HOST(((int)PS2_ADDR(&Ps2_PBUFF) | 0x30000000)) + PC_PBUFF_SIZE))
     {
         static int warned;
 
@@ -1643,7 +1643,7 @@ void Ps2AddOT(void* p, unsigned int num, float z, unsigned long prim)
         return;
     }
 
-    if ((pc_ot_poly != 0) && (((unsigned char*)Ps2_PP + 64 + (((num * 3) + 3) * 16)) > (unsigned char*)((int)&Ps2_PBUFF | 0x30000000) + PC_PBUFF_SIZE))
+    if ((pc_ot_poly != 0) && (((unsigned char*)Ps2_PP + 64 + (((num * 3) + 3) * 16)) > (unsigned char*)PS2_HOST(((int)PS2_ADDR(&Ps2_PBUFF) | 0x30000000)) + PC_PBUFF_SIZE))
     {
         pc_ot_poly = 0;   /* no room for the tag: the entry as the original */
     }
@@ -1847,7 +1847,7 @@ int Ps2DrawOTagSub(int start_no)
                 return 4096;
             }
             
-            if ((int)p->tp != -1) 
+            if ((int)PS2_ADDR(p->tp) != -1) 
             { 
                 if (tex_cache_num >= 64) 
                 { 
@@ -2297,7 +2297,7 @@ int Ps2CheckTextureAlpha(void* pp)
         return (unsigned short)temp2->ClutChange;
     }
     
-    cp = (unsigned int*)((int)pp + temp2->ImageSize + 256);
+    cp = (unsigned int*)PS2_HOST(((int)PS2_ADDR(pp) + temp2->ImageSize + 256));
     
     num = temp2->ClutSize >> 2;
     

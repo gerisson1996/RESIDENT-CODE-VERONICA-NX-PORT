@@ -278,7 +278,7 @@ int LoadToVram(unsigned long tbp, u_long128* addr, int tbw, int psm, int pos, in
 // 100% matching!
 void *UncAddr(void *val)
 {
-    return (void*)(((u_int)val & UNCMASK)|UNCBASE);
+    return (void*)PS2_HOST((((u_int)PS2_ADDR(val) & UNCMASK)|UNCBASE));
 }
 
 // 99.83% matching
@@ -354,7 +354,7 @@ int Send_Tim2_dataEx(void* tim2_top_adr, unsigned long send_image_adr, unsigned 
     TIM2_PICTUREHEADER* ph;
     unsigned int id;
     int is_new, r;
-    ph = (TIM2_PICTUREHEADER*)((int)tim2_top_adr + (((unsigned char*)tim2_top_adr)[5] != 0 ? 128 : 16));
+    ph = (TIM2_PICTUREHEADER*)PS2_HOST(((int)PS2_ADDR(tim2_top_adr) + (((unsigned char*)tim2_top_adr)[5] != 0 ? 128 : 16)));
     if (pc_native_rtex() && ph->ImageType == TIM2_RGB32 && ph->ClutType == 0 &&
         pc_rtex_bind((char*)ph + ph->HeaderSize, (unsigned int)send_image_adr, (unsigned int)send_clut_adr))
         return Send_Tim2_dataEx_(tim2_top_adr, send_image_adr, send_clut_adr, 0);   /* a captured render texture */
@@ -374,11 +374,11 @@ int Send_Tim2_dataEx(void* tim2_top_adr, unsigned long send_image_adr, unsigned 
 
     if (((unsigned char*)tim2_top_adr)[5] != 0) 
     {
-        pPhead = (TIM2_PICTUREHEADER*)((int)tim2_top_adr + 128);
+        pPhead = (TIM2_PICTUREHEADER*)PS2_HOST(((int)PS2_ADDR(tim2_top_adr) + 128));
     }
     else
     {
-        pPhead = (TIM2_PICTUREHEADER*)((int)tim2_top_adr + 16);
+        pPhead = (TIM2_PICTUREHEADER*)PS2_HOST(((int)PS2_ADDR(tim2_top_adr) + 16));
     }
     
 #ifdef TARGET_PC
@@ -578,11 +578,11 @@ void Ps2PxlconvCheck(void* timadr)
 
     if (((unsigned char*)timadr)[5] == 0) 
     {
-        ph = (TIM2_PICTUREHEADER*)((int)timadr + 16);
+        ph = (TIM2_PICTUREHEADER*)PS2_HOST(((int)PS2_ADDR(timadr) + 16));
     }
     else 
     {
-        ph = (TIM2_PICTUREHEADER*)((int)timadr + 128);
+        ph = (TIM2_PICTUREHEADER*)PS2_HOST(((int)PS2_ADDR(timadr) + 128));
     }
     
     if (((ph->ImageWidth < 1024) && (ph->ImageHeight < 1024)) && ((ph->ImageWidth > 128) && (ph->ImageHeight > 128)) && ((ph->ImageType == 5) || (ph->ImageType == 4)))
@@ -729,7 +729,7 @@ label_0f:
     DPUT_D_PCR(4); 
     DPUT_D_STAT(4); 
 
-    DPUT_D2_TADR((int)tags); 
+    DPUT_D2_TADR((int)PS2_ADDR(tags)); 
     DPUT_D2_CHCR(261); 
 } 
 

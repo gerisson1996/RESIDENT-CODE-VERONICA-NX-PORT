@@ -90,7 +90,7 @@ void bhInitEffect()
     
     sys->ef_tlist.nbTexture = 0;
     
-    sys->ef_ct = bhSetMemPvpTexture(&sys->ef_tlist, (unsigned char*)(((int)dp + 31) & ~0x1F), 0);
+    sys->ef_ct = bhSetMemPvpTexture(&sys->ef_tlist, (unsigned char*)PS2_HOST((((int)PS2_ADDR(dp) + 31) & ~0x1F)), 0);
     
     sys->ef_tlist.nbTexture = sys->ef_ct;
     
@@ -108,7 +108,7 @@ void bhInitEffect()
     
     for (i = 0; i < 30; i++) 
     {
-        sys->ef_pbkb[i] = *(unsigned char*)(sys->ef_tlist.textures[sys->ef_tn[i]].texaddr + 4);
+        sys->ef_pbkb[i] = *(unsigned char*)PS2_HOST((sys->ef_tlist.textures[sys->ef_tn[i]].texaddr + 4));
     } 
     
     sys->ss_flg |= 0x40;
@@ -139,7 +139,7 @@ void bhSetFontTexture(void* datp)
             }                          
         }                              
         
-        dp = (unsigned char*)(((int)dp + 31) & ~0x1F);
+        dp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(dp) + 31) & ~0x1F));
         
         sys->ef_tlist.textures = sys->ef_tex;                  
         sys->ef_tlist.nbTexture = 0;                                        
@@ -213,11 +213,11 @@ int bhPushEffectWork()
     unsigned int pssz;
     int nb; // not from the debugging symbols
 
-    pssz = ((int)&sys->ob_nlgn - (int)&sys->ef_poln) + 0x9C000; 
+    pssz = ((int)PS2_ADDR(&sys->ob_nlgn) - (int)PS2_ADDR(&sys->ef_poln)) + 0x9C000; 
     
-    sys->ef_psp = (unsigned char*)((unsigned int)(sys->memp + 3) & ~0x3);
+    sys->ef_psp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 3)) & ~0x3));
 
-    if ((unsigned int)&sys->ef_psp[pssz] >= (unsigned int)sys->endp)
+    if ((unsigned int)PS2_ADDR(&sys->ef_psp[pssz]) >= (unsigned int)PS2_ADDR(sys->endp))
     {
         sys->ef_psp = NULL;
         
@@ -226,7 +226,7 @@ int bhPushEffectWork()
     
     njMemCopy4(sys->ef_psp, eff, 0x27000);
     
-    nb = (int)&sys->ob_nlgn - (int)&sys->ef_poln;
+    nb = (int)PS2_ADDR(&sys->ob_nlgn) - (int)PS2_ADDR(&sys->ef_poln);
     
     njMemCopy4(sys->ef_psp + 0x9C000, &sys->ef_poln, (unsigned int)nb / 4);
     
@@ -242,7 +242,7 @@ void bhPopEffectWork()
     {
         njMemCopy4(eff, sys->ef_psp, 0x27000);
         
-        nb = (int)&sys->ob_nlgn - (int)&sys->ef_poln;
+        nb = (int)PS2_ADDR(&sys->ob_nlgn) - (int)PS2_ADDR(&sys->ef_poln);
         
         njMemCopy4(&sys->ef_poln, sys->ef_psp + 0x9C000, (unsigned int)nb / 4);
     }
@@ -267,7 +267,7 @@ unsigned int bhGetGidx(O_WRK* op)
         tnp = &tlp->textures[op->tex_id + op->ani_ct];
     }
     
-    return ((NJS_TEXMEMLIST*)tnp->texaddr)->globalIndex;
+    return ((NJS_TEXMEMLIST*)PS2_HOST(tnp->texaddr))->globalIndex;
 }
 
 // 100% matching! 
@@ -984,7 +984,7 @@ void bhDrawPolEffect(unsigned int* owp, int ct)
     { 
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
         
         if (((op->flg & 0x1000000)) || ((op->stflg & 0x1000000)) || (((sys->gm_flg & 0x4000)) && ((op->mdflg & 0x40))))
         {
@@ -1066,7 +1066,7 @@ void bhDrawMdfEffect(unsigned int* owp, int ct)
     { 
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
         
         if (((op->flg & 0x1000000)) || ((op->stflg & 0x1000000)) || (((sys->gm_flg & 0x4000)) && ((op->mdflg & 0x40))))
         {
@@ -1133,7 +1133,7 @@ void bhDrawLinEffect(unsigned int* owp, int ct)
     {
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
         
         if (((op->flg & 0x1000000)) || ((op->stflg & 0x1000000)) || (((sys->gm_flg & 0x4000)) && ((op->mdflg & 0x40))))
         {
@@ -1200,7 +1200,7 @@ void bhDrawNtxEffect3D(unsigned int* owp, int ct)
     {
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
 #ifdef TARGET_PC
         pc_effect_tag(op);   /* frame interpolation: this effect's polygons (pc/glue/view_glue.c) */
 #endif
@@ -1323,7 +1323,7 @@ void bhDrawTrsEffect3D(unsigned int* owp, int ct)
     {
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
 #ifdef TARGET_PC
         pc_effect_tag(op);   /* frame interpolation: this effect's polygons (pc/glue/view_glue.c) */
 #endif
@@ -1469,7 +1469,7 @@ void bhDrawOpqEffect3D(unsigned int* owp, int ct)
     {
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
 #ifdef TARGET_PC
         pc_effect_tag(op);   /* frame interpolation: this effect's polygons (pc/glue/view_glue.c) */
 #endif
@@ -1609,7 +1609,7 @@ void bhDrawThlEffect3D(unsigned int* owp, int ct)
     {
         njPushMatrixEx();
         
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
 #ifdef TARGET_PC
         pc_effect_tag(op);   /* frame interpolation: this effect's polygons (pc/glue/view_glue.c) */
 #endif
@@ -1767,7 +1767,7 @@ void bhDrawNtxEffect2D(unsigned int* owp, int ct)
     
     while (ct--) 
     {
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
         
         if (((!(op->flg & 0x1000000)) && (!(op->stflg & 0x1000000))) && ((!(sys->gm_flg & 0x4000)) || (!(op->mdflg & 0x40)))) 
         {
@@ -1783,7 +1783,7 @@ void bhDrawTrsEffect2D(unsigned int* owp, int ct)
     
     while (ct--) 
     {
-        op = (O_WRK*)*owp++;
+        op = (O_WRK*)PS2_HOST(*owp++);
         
         if (((!(op->flg & 0x1000000)) && (!(op->stflg & 0x1000000)) && (op->tex_id >= 0)) && ((!(sys->gm_flg & 0x4000)) || (!(op->mdflg & 0x40))))  
         {

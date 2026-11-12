@@ -703,7 +703,7 @@ void npCalcMorphing(NJS_CNK_OBJECT* obj_a, NJS_CNK_OBJECT* obj_b, float no, int 
             
             ulSize += 64 - (ulSize & 0x3F);
             
-            np.mxp[128][2] = (NJS_MATRIX*)((int)np.mxp[128][2] + ulSize);
+            np.mxp[128][2] = (NJS_MATRIX*)PS2_HOST(((int)PS2_ADDR(np.mxp[128][2]) + ulSize));
             
             npTransform(obj_a, obj_b, no, i);
         }
@@ -736,7 +736,7 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
     dp = (NJS_POINT4*)((HDR_PS*)fp + 1); 
     fp = (NJS_POINT4*)np.vlp2[ono]; 
 
-    fp = (NJS_POINT4*)((int)fp | 0x30000000); 
+    fp = (NJS_POINT4*)PS2_HOST(((int)PS2_ADDR(fp) | 0x30000000)); 
 
     ((HDR_PS*)fp)->ucType = pSrc->ucType; 
     ((HDR_PS*)fp)->ucAttr = pSrc->ucAttr; 
@@ -1033,7 +1033,7 @@ void npGetWHDSizeSub(NJS_CNK_OBJECT* objp, NJS_POINT3* whd)
         
         if (pHdrPs->ucType == 51)
         {
-            ps4 = (NJS_POINT4*)((unsigned int)pHdrPs + 64);
+            ps4 = (NJS_POINT4*)PS2_HOST(((unsigned int)PS2_ADDR(pHdrPs) + 64));
             
             for (i = pHdrPs->usIndexMax; i-- != 0; )
             {
@@ -1054,12 +1054,12 @@ void npGetWHDSizeSub(NJS_CNK_OBJECT* objp, NJS_POINT3* whd)
                     whd->z = fabsf(pd4.z);
                 }
                 
-                ps4 = (NJS_POINT4*)((unsigned int)ps4 + 32);
+                ps4 = (NJS_POINT4*)PS2_HOST(((unsigned int)PS2_ADDR(ps4) + 32));
             }
         } 
         else 
         {
-            ps3 = (NJS_POINT3*)((unsigned int)pHdrPs + 8);
+            ps3 = (NJS_POINT3*)PS2_HOST(((unsigned int)PS2_ADDR(pHdrPs) + 8));
             
             for (i = pHdrPs->usIndexMax; i-- != 0; ) 
             {
@@ -1080,7 +1080,7 @@ void npGetWHDSizeSub(NJS_CNK_OBJECT* objp, NJS_POINT3* whd)
                     whd->z = fabsf(pd3.z);
                 }
                 
-                ps3 = (NJS_POINT3*)((unsigned int)ps3 + 24);
+                ps3 = (NJS_POINT3*)PS2_HOST(((unsigned int)PS2_ADDR(ps3) + 24));
             }
         }
     }
@@ -2036,7 +2036,7 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                     
                     nb = *np.sknp++;
     
-                    pHdr1 = (HDR_PS*)((int)pHdr1 | 0x30000000); 
+                    pHdr1 = (HDR_PS*)PS2_HOST(((int)PS2_ADDR(pHdr1) | 0x30000000)); 
     
                     pHdr1->ucType = pHdr0->ucType;
                     pHdr1->ucAttr = pHdr0->ucAttr; 
@@ -2468,7 +2468,7 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
                         
                         nb = *np.sknp++;
         
-                        pHdr1 = (HDR_PS*)((int)pHdr1 | 0x30000000); 
+                        pHdr1 = (HDR_PS*)PS2_HOST(((int)PS2_ADDR(pHdr1) | 0x30000000)); 
         
                         pHdr1->ucType = pHdr0->ucType;
                         pHdr1->ucAttr = pHdr0->ucAttr; 

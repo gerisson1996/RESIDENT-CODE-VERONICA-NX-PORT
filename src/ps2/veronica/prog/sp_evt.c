@@ -1928,7 +1928,7 @@ void bhControlComEvtScript()
             mstb = comevt_message_tab[sys->com_num];
             
             wcpa = (char*)ce->word[*ce->scp++];
-            wcpb = (char*)mstb[*ce->scp++];
+            wcpb = (char*)PS2_HOST(mstb[*ce->scp++]);
             
             bit = *ce->scp++;
             

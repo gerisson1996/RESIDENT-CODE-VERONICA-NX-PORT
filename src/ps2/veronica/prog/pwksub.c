@@ -17,7 +17,7 @@ unsigned char* bhGetFreeMemory(int size, int param) // second parameter is not p
 {
     unsigned char *temp; // not from the debugging symbols
     
-    sys->memp = (unsigned char*)(((int)sys->memp + 63) & ~0x3F);
+    sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
     
 #ifdef TARGET_PC
     if (((sys->memp + size) - freemem) > 12845056 + PC_ARENA_EXTRA) 
@@ -47,11 +47,11 @@ void bhCalcLinkModel(BH_PWORK* pp)
     int i;
     unsigned int flg; // not from DWARF
 
-    flg = (unsigned int)pp & ~0x80000000;
+    flg = (unsigned int)PS2_ADDR(pp) & ~0x80000000;
     
     for (ep = ene, i = 0; i < sys->ewk_n; i++, ep++)
     {
-        if ((((unsigned int)ep & ~0x80000000) != flg) && (((ep->flg & 0x1)) && ((ep->flg & 0x80))) && (((unsigned int)ep->lkwkp & ~0x80000000) == flg) && (ep->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(ep) & ~0x80000000) != flg) && (((ep->flg & 0x1)) && ((ep->flg & 0x80))) && (((unsigned int)PS2_ADDR(ep->lkwkp) & ~0x80000000) == flg) && (ep->mlwP != NULL))
         {
             bhCalcModel(ep);
         }
@@ -59,7 +59,7 @@ void bhCalcLinkModel(BH_PWORK* pp)
     
     for (op = sys->obwp, i = 0; i < rom->obj_n; i++, op++)
     {
-        if ((((unsigned int)op & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)op->lkwkp & ~0x80000000) == flg) && (op->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg) && (op->mlwP != NULL))
         {
             bhCalcModel((BH_PWORK*)op);
         }
@@ -67,7 +67,7 @@ void bhCalcLinkModel(BH_PWORK* pp)
     
     for (op = sys->itwp, i = 0; i < rom->itm_n; i++, op++)
     {
-        if ((((unsigned int)op & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)op->lkwkp & ~0x80000000) == flg) && (op->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg) && (op->mlwP != NULL))
         {
             bhCalcModel((BH_PWORK*)op);
         }
@@ -75,7 +75,7 @@ void bhCalcLinkModel(BH_PWORK* pp)
     
     for (op = eff, i = 0; i < 512; i++, op++)
     {
-        if ((((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)op->lkwkp & ~0x80000000) == flg)) 
+        if ((((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg)) 
         {
             njSetMatrix(op->mtx, &((BH_PWORK*)op->lkwkp)->mlwP->owP[op->lkono].mtx);
             

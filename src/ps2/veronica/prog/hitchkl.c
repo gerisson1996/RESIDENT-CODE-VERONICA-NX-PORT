@@ -765,7 +765,7 @@ int bhCollisionCheckL2MDL(NJS_POINT3* p1, NJS_POINT3* p2, NJS_CNK_MODEL* mdl, NJ
     
     pnum = ((unsigned char*)pPol)[4];
 
-    pd = (NJS_POINT3*)(((int)sys->memp + 31) & ~0x1F);
+    pd = (NJS_POINT3*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
     
     pPol += 3;
 

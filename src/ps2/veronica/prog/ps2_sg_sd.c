@@ -107,10 +107,10 @@ SDE_ERR	sdBankDownload( SDMEMBLK handle, const SDE_DATA_TYPE bank_type, const Si
             
             SdrSendReq(0);
             
-            snd_data = (void*)handle->m_Member[1];
+            snd_data = (void*)PS2_HOST(handle->m_Member[1]);
             
-            ee_trans_hd_address = (unsigned int)snd_data + ((unsigned int*)snd_data)[0];
-            ee_trans_bd_address = (unsigned int)snd_data + ((unsigned int*)snd_data)[2];
+            ee_trans_hd_address = (unsigned int)PS2_ADDR(snd_data) + ((unsigned int*)snd_data)[0];
+            ee_trans_bd_address = (unsigned int)PS2_ADDR(snd_data) + ((unsigned int*)snd_data)[2];
             
             iop_trans_offset = 0;
             
@@ -128,11 +128,11 @@ SDE_ERR	sdBankDownload( SDMEMBLK handle, const SDE_DATA_TYPE bank_type, const Si
             iop_packet_flag = 0;
             break;
         case SDE_DATA_TYPE_SHOT_BANK:
-            snd_data = (void*)handle->m_Member[1];
+            snd_data = (void*)PS2_HOST(handle->m_Member[1]);
             
             temp = (unsigned int*)((char*)snd_data + ((unsigned int*)snd_data)[0]);
             
-            if ((!((unsigned int)temp & 0x3)) && (*temp != 0)) 
+            if ((!((unsigned int)PS2_ADDR(temp) & 0x3)) && (*temp != 0)) 
             {
                 chk_snd_work = (SND_WORK*)*__midi_handle_top;
                 
@@ -146,8 +146,8 @@ SDE_ERR	sdBankDownload( SDMEMBLK handle, const SDE_DATA_TYPE bank_type, const Si
                 
                 SdrSendReq(0);
                 
-                ee_trans_hd_address = (int)snd_data + ((unsigned int*)snd_data)[0];
-                ee_trans_bd_address = (int)snd_data + ((unsigned int*)snd_data)[2];
+                ee_trans_hd_address = (int)PS2_ADDR(snd_data) + ((unsigned int*)snd_data)[0];
+                ee_trans_bd_address = (int)PS2_ADDR(snd_data) + ((unsigned int*)snd_data)[2];
                 
                 iop_trans_offset = 0;
                 
@@ -193,7 +193,7 @@ SDE_ERR	sdDrvInit( SDMEMBLK handle)
     
     SdrGetStateSend(16, 2048);
     
-    iop_buff = (int)sceSifAllocIopHeap(12288);
+    iop_buff = (int)PS2_ADDR(sceSifAllocIopHeap(12288));
     
     if (iop_buff < 0) 
     {
@@ -205,7 +205,7 @@ SDE_ERR	sdDrvInit( SDMEMBLK handle)
     {
         printf("IOP memory 0x%08x(size:%d) is allocated\n", iop_buff, 12288);
         
-        iop_zero_buff = (int)sceSifAllocIopHeap(2048);
+        iop_zero_buff = (int)PS2_ADDR(sceSifAllocIopHeap(2048));
     }
     
     if (iop_zero_buff < 0)
@@ -218,7 +218,7 @@ SDE_ERR	sdDrvInit( SDMEMBLK handle)
     {
         printf("IOP memory 0x%08x(size:%d) is allocated\n", iop_zero_buff, 2048);
         
-        _0_buf = (char*)((int)&trans_0_buff[127] & ~0x7F);
+        _0_buf = (char*)PS2_HOST(((int)PS2_ADDR(&trans_0_buff[127]) & ~0x7F));
         
         memset(_0_buf, 0, 2048);
         
@@ -226,7 +226,7 @@ SDE_ERR	sdDrvInit( SDMEMBLK handle)
         
         iRingBufNum = 10;
         
-        iop_read_buff = (int)sceSifAllocIopHeap(327696);
+        iop_read_buff = (int)PS2_ADDR(sceSifAllocIopHeap(327696));
     }
     
     if (iop_read_buff < 0)
@@ -359,7 +359,7 @@ SDE_ERR	sdMemBlkSetPrm( SDMEMBLK handle, const Void *src_blk_ptr, const Sint32 s
             return SDE_ERR_HANDLE_NULL;
         }
         
-        handle->m_Member[1] = (unsigned int)src_blk_ptr;
+        handle->m_Member[1] = (unsigned int)PS2_ADDR(src_blk_ptr);
         handle->m_Member[2] = src_blk_sz;
         
         __snd_set_end_func__ = callback_func;
@@ -1389,7 +1389,7 @@ int sndr_trans_func()
             
             SdrSendReq(0);
             
-            if ((__snd_set_end_func__ != NULL) && ((int)__snd_set_end_func__ != -1))
+            if ((__snd_set_end_func__ != NULL) && ((int)PS2_ADDR(__snd_set_end_func__) != -1))
             {
                 (*__snd_set_end_func__)(__snd_end_func_arg__);
             }
@@ -1409,7 +1409,7 @@ int sndr_trans_func()
             
             for (i = 0; i < ee_trans_hd_size; i++)
             {
-                MIDI_HD_CHECK[trans_bank_num] += ((char*)ee_trans_hd_address)[i];
+                MIDI_HD_CHECK[trans_bank_num] += ((char*)PS2_HOST(ee_trans_hd_address))[i];
             }
             
             while ((ee_trans_cue = CpSifDmaTransEEToIOP(ee_trans_hd_address, iop_trans_hd_address, ee_trans_hd_size, 0, 0)) == 0);
@@ -1524,7 +1524,7 @@ int sndr_trans_func()
             
             SdrSendReq(0);
             
-            if ((__snd_set_end_func__ != NULL) && ((int)__snd_set_end_func__ != -1))
+            if ((__snd_set_end_func__ != NULL) && ((int)PS2_ADDR(__snd_set_end_func__) != -1))
             {
                 (*__snd_set_end_func__)(__snd_end_func_arg__);
             }
@@ -1547,7 +1547,7 @@ int sndr_trans_func()
             
             for (i = 0; i < ee_trans_hd_size; i++)
             {
-                SE_HD_CHECK[trans_bank_num] += ((char*)ee_trans_hd_address)[i];
+                SE_HD_CHECK[trans_bank_num] += ((char*)PS2_HOST(ee_trans_hd_address))[i];
             }
             
             while ((ee_trans_cue = CpSifDmaTransEEToIOP(ee_trans_hd_address, iop_trans_hd_address, ee_trans_hd_size, 0, 0)) == 0);
@@ -1663,7 +1663,7 @@ int sndr_trans_func()
             
             SdrSendReq(0);
             
-            if ((__snd_set_end_func__ != NULL) && ((int)__snd_set_end_func__ != -1))
+            if ((__snd_set_end_func__ != NULL) && ((int)PS2_ADDR(__snd_set_end_func__) != -1))
             {
                 (*__snd_set_end_func__)(__snd_end_func_arg__);
             }
@@ -1921,7 +1921,7 @@ SDE_ERR	sdMultiUnitDownload( SDMEMBLK handle)
         MIDI_BANK[2] = 2;
         MIDI_BANK[3] = 3;
         
-        UnitAddress = (char*)handle->m_Member[1];
+        UnitAddress = (char*)PS2_HOST(handle->m_Member[1]);
         
         sdBankDownload(handle, SDE_DATA_TYPE_SHOT_BANK, 0); 
 
@@ -1932,7 +1932,7 @@ SDE_ERR	sdMultiUnitDownload( SDMEMBLK handle)
             SdrSendReq(0);
         } while (snd_data_down_load != 0); 
         
-        handle->m_Member[1] = (int)(UnitAddress + ((int*)UnitAddress)[4]);
+        handle->m_Member[1] = (int)PS2_ADDR((UnitAddress + ((int*)UnitAddress)[4]));
         handle->m_Member[2] = ((int*)UnitAddress)[5];
         
         sdBankDownload(handle, SDE_DATA_TYPE_MIDI_SEQ_BANK, 1); 

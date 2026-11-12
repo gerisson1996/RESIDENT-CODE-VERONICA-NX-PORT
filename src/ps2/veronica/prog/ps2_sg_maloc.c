@@ -61,7 +61,7 @@ void* syMalloc(unsigned int nbytes) // this function might have actually been ba
 label:
     if (search_work->pNext_work == NULL) 
     { 
-        search_work->pNext_work = (HM*)ALIGN(GET_NEXT_WRK(search_work), 4);
+        search_work->pNext_work = (HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4));
         
         search_work->pNext_work->pNext_work = NULL; 
     } 
@@ -71,7 +71,7 @@ label:
 
         temp = search_work->pNext_work;
         
-        search_work->pNext_work = (HM*)ALIGN(GET_NEXT_WRK(search_work), 4); 
+        search_work->pNext_work = (HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4)); 
         
         search_work->pNext_work->pNext_work = temp; 
     }

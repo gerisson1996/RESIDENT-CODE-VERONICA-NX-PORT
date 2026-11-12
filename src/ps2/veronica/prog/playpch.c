@@ -484,7 +484,7 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
         *ppP->endPP++ = topP->ewP;
     }
     
-    return (int)topP;
+    return (int)PS2_ADDR(topP);
 }
 
 // 100% matching!

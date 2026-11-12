@@ -1456,7 +1456,7 @@ void bhEne23_MV06(BH_PWORK* epw)
         
         epw->mtn_add = 65536;
 
-        epw->ayp = (short)((((ATR_WORK*)EXP0_I(260))->prm1 & 0x3) * -16384);
+        epw->ayp = (short)((((ATR_WORK*)PS2_HOST(EXP0_I(260)))->prm1 & 0x3) * -16384);
 
         epw->ct0 = 8;
 
@@ -1730,7 +1730,7 @@ void bhEne23_MV11(BH_PWORK* epw)
 
             *(ATR_WORK**)&EXP0_I(96) = bhEne03_GetWall(epw);
             
-            epw->py = ((ATR_WORK*)EXP0_I(96))->py;
+            epw->py = ((ATR_WORK*)PS2_HOST(EXP0_I(96)))->py;
 
             epw->flg  |=  0x20;
             epw->flg  |=  0x4000000;
@@ -3118,7 +3118,7 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
         epw->py += body.y;
         epw->pz += body.z;
 
-        bhEne03_Collision2(epw, (ATR_WORK*)EXP0_I(96));
+        bhEne03_Collision2(epw, (ATR_WORK*)PS2_HOST(EXP0_I(96)));
 
         epw->px -= body.x;
         epw->py -= body.y;
@@ -3140,7 +3140,7 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
         } 
         else 
         {
-            bhEne03_Collision2(epw, (ATR_WORK*)EXP0_I(96));
+            bhEne03_Collision2(epw, (ATR_WORK*)PS2_HOST(EXP0_I(96)));
         }
     }
 

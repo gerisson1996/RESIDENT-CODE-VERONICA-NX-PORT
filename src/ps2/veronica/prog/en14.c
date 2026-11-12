@@ -656,12 +656,12 @@ void bhEne14_MV04(BH_PWORK* epw)
         {
             if (*(int *)(epw->exp0 + 0x244) != 0)
             {
-                ln.px = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x10);
-                ln.py = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x14);
-                ln.pz = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x18);
-                ln.vx = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x64);
-                ln.vy = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x68);
-                ln.vz = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x6C);
+                ln.px = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x10));
+                ln.py = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x14));
+                ln.pz = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x18));
+                ln.vx = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x64));
+                ln.vy = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x68));
+                ln.vz = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x6C));
                 
                 if (njDistanceP2L((NJS_POINT3*)&epw->xn, &ln, &cp) < 20.0f)
                 {
@@ -832,12 +832,12 @@ void bhEne14_MV11(BH_PWORK* epw)
 
         if (*(int *)(epw->exp0 + 0x244) != 0)
         {
-            ln.px = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x10);
-            ln.py = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x14);
-            ln.pz = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x18);
-            ln.vx = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x64);
-            ln.vy = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x68);
-            ln.vz = *(float *)(*(int *)(epw->exp0 + 0x244) + 0x6C);
+            ln.px = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x10));
+            ln.py = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x14));
+            ln.pz = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x18));
+            ln.vx = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x64));
+            ln.vy = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x68));
+            ln.vz = *(float *)PS2_HOST((*(int *)(epw->exp0 + 0x244) + 0x6C));
 
             if (njDistanceP2L((NJS_POINT3*)&epw->xn, &ln, &cp) < 20.0f)
                 epw->mode3 = 1;

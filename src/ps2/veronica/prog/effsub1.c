@@ -6755,7 +6755,7 @@ void bhEff110(O_WRK* op)
         case 0:     
             if (!(sys->gm_flg & 0x1)) 
             {
-                sys->memp = (unsigned char*)(((int)sys->memp + 31) & ~0x1F);
+                sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
                 
                 njSetTextureInfo(&sys->ren_info, (unsigned short*)sys->memp, 2817, 512, 512);
                 njSetTextureName(sys->ren_tex, &sys->ren_info, 1, 0x40800000);
@@ -6977,7 +6977,7 @@ void bhEff111(O_WRK* op)
         {
             bhGarbageTexture(tbuf, 256);
             
-            sys->memp = (unsigned char*)(((int)sys->memp + 31) & ~0x1F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
             
             njSetTextureInfo(&sys->ren_info, (unsigned short*)sys->memp, 2817, 512, 512);
             njSetTextureName(&sys->ef_tex[sys->ef_ct], &sys->ren_info, sys->ren_gid, 0x40800000);

@@ -44,10 +44,10 @@ void bhInitMask(BH_PWORK* pp)
     
     ((int*)pp->exp0)[8] = fm->head->nFace;
     
-    ((int*)pp->exp0)[265] = (unsigned int)fm->face; 
-    ((int*)pp->exp0)[267] = (unsigned int)fm->face; 
+    ((int*)pp->exp0)[265] = (unsigned int)PS2_ADDR(fm->face); 
+    ((int*)pp->exp0)[267] = (unsigned int)PS2_ADDR(fm->face); 
     
-    *(int*)(&pp->exp0[(*(int*)(pp->exp0 + 8)) * 4] + 36) = (int)fm->list;
+    *(int*)(&pp->exp0[(*(int*)(pp->exp0 + 8)) * 4] + 36) = (int)PS2_ADDR(fm->list);
     
     pp->mlwP->owP[6].flg |= 0x4;
     pp->mlwP->owP[7].flg |= 0x4;
@@ -116,10 +116,10 @@ void bhControlMask(BH_PWORK* pp)
                 
                 pp->flg2 &= ~0x80;
                 
-                if ((*(unsigned char*)((int*)pp->exp0)[266] == 0) || ((*(unsigned char*)((int*)pp->exp0)[266] & 0xFF) == pp->id)) 
+                if ((*(unsigned char*)PS2_HOST(((int*)pp->exp0)[266]) == 0) || ((*(unsigned char*)PS2_HOST(((int*)pp->exp0)[266]) & 0xFF) == pp->id)) 
                 {
-                    fm->fnum = *(int*)(((int*)pp->exp0)[266] + 4);
-                    fm->face = (PARAM_WORK*)(((int*)pp->exp0)[266] + 8);
+                    fm->fnum = *(int*)PS2_HOST((((int*)pp->exp0)[266] + 4));
+                    fm->face = (PARAM_WORK*)PS2_HOST((((int*)pp->exp0)[266] + 8));
                     
                     fm->head->nFace = fm->fnum;
                     
@@ -138,7 +138,7 @@ void bhControlMask(BH_PWORK* pp)
             {
                 if (lip->flag == 0)
                 {
-                    lip->top = (unsigned char*)((int*)pp->exp0)[268];
+                    lip->top = (unsigned char*)PS2_HOST(((int*)pp->exp0)[268]);
                     
                     lip->ptr = lip->top;
                     
@@ -164,7 +164,7 @@ void bhControlMask(BH_PWORK* pp)
                 
                 fbak = fm->face;
                 
-                fm->face = (PARAM_WORK*)((int*)pp->exp0)[267];
+                fm->face = (PARAM_WORK*)PS2_HOST(((int*)pp->exp0)[267]);
                 
                 fmSetLipSyncParam(fm, (PARAM_WORK*)((unsigned char*)fm->face + (((int*)pp->exp0)[4] * 984)), lip, 0x3FFF000);
                 
@@ -215,7 +215,7 @@ void bhControlMask(BH_PWORK* pp)
                 ((int*)pp->exp0)[0] &= ~0x31;
                 
                 fm->fnum = ((int*)pp->exp0)[8];
-                fm->face = (PARAM_WORK*)((int*)pp->exp0)[265];
+                fm->face = (PARAM_WORK*)PS2_HOST(((int*)pp->exp0)[265]);
                 
                 fm->head->nFace = fm->fnum;
                 
@@ -276,7 +276,7 @@ int bhSetMask(BH_PWORK* pp, int msk_no, int frm_no)
         
         datp += 4;
         
-        ((int*)pp->exp0)[266] = (int)datp;
+        ((int*)pp->exp0)[266] = (int)PS2_ADDR(datp);
         
         datp = &datp[sz]; 
     }
@@ -318,7 +318,7 @@ int bhSetLip(BH_PWORK* pp, int mls_no)
         
         datp += 4;
         
-        ((int*)pp->exp0)[268] = (int)datp;
+        ((int*)pp->exp0)[268] = (int)PS2_ADDR(datp);
         
         datp = &datp[sz]; 
     }

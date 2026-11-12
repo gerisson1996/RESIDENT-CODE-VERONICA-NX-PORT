@@ -1674,9 +1674,9 @@ O_WRK* rySetShadow(BH_PWORK* ewP, int obj0, int obj1, int obj2, float off_a, flo
         
         owP = ewP->mlwP->owP;
         
-        oP->ct0 = (int)&owP[obj0].mtx[12]; // this doesn't look too healthy
-        oP->ct1 = (int)&owP[obj1].mtx[12];
-        oP->ct2 = (int)&owP[obj2].mtx[12];
+        oP->ct0 = (int)PS2_ADDR(&owP[obj0].mtx[12]); // this doesn't look too healthy
+        oP->ct1 = (int)PS2_ADDR(&owP[obj1].mtx[12]);
+        oP->ct2 = (int)PS2_ADDR(&owP[obj2].mtx[12]);
     }
     
     return oP;
@@ -1697,14 +1697,14 @@ void bhEff304(O_WRK* oP)
     NJS_POINT3 dlt; 
     BH_PWORK* ewP;   
 
-    p0P = (NJS_POINT3*)oP->ct0;
-    p1P = (NJS_POINT3*)oP->ct1;
+    p0P = (NJS_POINT3*)PS2_HOST(oP->ct0);
+    p1P = (NJS_POINT3*)PS2_HOST(oP->ct1);
     
     pp.x = (p0P->x + p1P->x) * 0.5f;
     pp.y = (p0P->y + p1P->y) * 0.5f;
     pp.z = (p0P->z + p1P->z) * 0.5f;
     
-    p2P = (NJS_POINT3*)oP->ct2;
+    p2P = (NJS_POINT3*)PS2_HOST(oP->ct2);
 
     ra =   p1P->x - p0P->x;
     ra *=  p1P->x - p0P->x;

@@ -133,7 +133,7 @@ void bhReadPlayerData()
             {
                 datp += 4;
                 
-                datp = (unsigned char*)(((int)datp + 31) & ~0x1F);
+                datp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(datp) + 31) & ~0x1F));
                 
                 temp &= ~0x80000000;
             } 
@@ -154,7 +154,7 @@ void bhReadPlayerData()
         }
     }
     
-    sys->memp = (unsigned char*)(((int)&sys->plmdlp[dt0] + 256) & ~0xFF);
+    sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(&sys->plmdlp[dt0]) + 256) & ~0xFF));
     
     for (i = 0; i < plp->mdl_n; i++) 
     {
@@ -218,7 +218,7 @@ void bhReadWeaponData()
     {
         dp += 4;
         
-        dp = (unsigned char*)(((int)dp + 63) & ~0x3F);
+        dp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(dp) + 63) & ~0x3F));
         
         temp &= ~0x80000000;
     }
@@ -236,7 +236,7 @@ void bhReadWeaponData()
             bhSetMemPvpTexture(op->mlwP->texP, dp, 0);
         }
         
-        op->mlwP->owP = (O_WORK*)(((int)&mp[msz] + 255) & ~0xFF);
+        op->mlwP->owP = (O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF));
         
         memset(op->mlwP->owP, 0, op->mlwP->obj_num * 80);
         
@@ -279,7 +279,7 @@ void bhReadWeaponData()
     {
         dp += 4;
         
-        dp = (unsigned char*)(((int)dp + 63) & ~0x3F);
+        dp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(dp) + 63) & ~0x3F));
         
         sz &= ~0x80000000;
     }
@@ -297,7 +297,7 @@ void bhReadWeaponData()
             bhSetMemPvpTexture(op->mlwP->texP, dp, 0);
         }
         
-        op->mlwP->owP = (O_WORK*)(((int)&mp[msz] + 255) & ~0xFF);
+        op->mlwP->owP = (O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF));
         
         memset(op->mlwP->owP, 0, op->mlwP->obj_num * 80);
         
@@ -344,7 +344,7 @@ void bhReadWeaponData()
 // 100% matching!
 unsigned char* bhKeepObjWork(ML_WORK* mp, unsigned char* sp)
 {
-    sp = (unsigned char*)(((int)sp + 15) & ~0xF);
+    sp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sp) + 15) & ~0xF));
     
     mp->owP = (O_WORK*)sp;
     

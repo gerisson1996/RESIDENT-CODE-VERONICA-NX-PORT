@@ -40,7 +40,7 @@ static void wait_alarm(int id, unsigned short time, int thid)
 // 100% matching!
 int SdrDelayThread(int hsync)
 { 
-	if (SetAlarm(hsync, (AlarmCallBack)wait_alarm, (void*)GetThreadId()) < 0) 
+	if (SetAlarm(hsync, (AlarmCallBack)wait_alarm, (void*)PS2_HOST(GetThreadId())) < 0) 
     { 
         printf("SDR: SdrDelayThread: Error: SetAlarm faild.\n"); 
         
@@ -165,7 +165,7 @@ int SdrInit()
     
     iop_data_adr_top = SdrGetState(19, 0);
 
-    while (sceSifGetOtherData(&rd, (void*)iop_data_adr_top, (void*)iop_data_adr, 64, 0) != 0)
+    while (sceSifGetOtherData(&rd, (void*)PS2_HOST(iop_data_adr_top), (void*)iop_data_adr, 64, 0) != 0)
     {
         CpEEWait(1000);
     }
@@ -601,7 +601,7 @@ int SdrSendReq(int mode)
             mode = 1;
         }
         
-        if (sceSifCallRpc(&ClientData, 0, mode, (void*)sbuff, dma_size, (void*)sbuff, 0, (sceSifEndFunc)cb_sifRpc_snd, (void*)SmId_send) < 0)
+        if (sceSifCallRpc(&ClientData, 0, mode, (void*)sbuff, dma_size, (void*)sbuff, 0, (sceSifEndFunc)cb_sifRpc_snd, (void*)PS2_HOST(SmId_send)) < 0)
         {
             printf("SDR: SdrSendReq: Error: Rpc faild.\n");
             
@@ -646,7 +646,7 @@ int SdrGetStateSend(int command, int data)
     
     getbuff[0] = data;
     
-    if (sceSifCallRpc(&GetStClientData, command, 1, (void*)getbuff, 16, (void*)getbuff, 16, (sceSifEndFunc)cb_sifRpc, (void*)SmId_get) < 0)
+    if (sceSifCallRpc(&GetStClientData, command, 1, (void*)getbuff, 16, (void*)getbuff, 16, (sceSifEndFunc)cb_sifRpc, (void*)PS2_HOST(SmId_get)) < 0)
     {
         printf("SDR: SdrGetStateSend: Error: Rpc faild.\n");
         
@@ -997,7 +997,7 @@ int get_iopsnd_info()
 {
     sceSifReceiveData rd;
 
-    if (sceSifGetOtherData(&rd, (void*)get_adrs, (void*)&get_iop_buff, sizeof(SND_STATUS), 0) == 0) 
+    if (sceSifGetOtherData(&rd, (void*)PS2_HOST(get_adrs), (void*)&get_iop_buff, sizeof(SND_STATUS), 0) == 0) 
     {
         memcpy((void*)&get_iop_snddata, (void*)&get_iop_buff, sizeof(SND_STATUS));
         

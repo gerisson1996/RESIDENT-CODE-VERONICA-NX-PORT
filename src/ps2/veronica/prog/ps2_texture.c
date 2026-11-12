@@ -245,11 +245,11 @@ int bhSetMemPvpTexture(NJS_TEXLIST* tlp, unsigned char* datp, int offset)
 
                     palno = et_of + ((bk_id & 0x3F) * 16);
                     
-                    sz = (int)&palbuf[((bk_id / 64) * 64) * 16]; 
+                    sz = (int)PS2_ADDR(&palbuf[((bk_id / 64) * 64) * 16]); 
                     
                     palno *= 4; 
                     
-                    palp = (unsigned char*)(palno + sz); 
+                    palp = (unsigned char*)PS2_HOST((palno + sz)); 
 
                     if (et_ct == 256)
                     {
@@ -420,7 +420,7 @@ char* bhCopyTexmem2MainmemSub(NJS_TEXLIST* tlp, char* adr)
     
     for (i = 0; i < num; i++) 
     {
-        tmp = (NJS_TEXMEMLIST*)tlp->textures[i].texaddr; 
+        tmp = (NJS_TEXMEMLIST*)PS2_HOST(tlp->textures[i].texaddr); 
         
         Ps2_tex_save->tmem[i] = *tmp; 
         
@@ -463,13 +463,13 @@ void bhCopyMainmem2Texmem(NJS_TEXLIST* tlp)
             
             ((TIM2_PICTUREHEADER_EX*)addr[no].texinfo.texsurface.pSurface)->admin.count++; 
             
-            tlp->textures[i].texaddr = (unsigned int)&addr[no]; 
+            tlp->textures[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
         } 
         else 
         { 
             if ((no = SearchNullNumber()) >= 0) 
             { 
-                tlp->textures[i].texaddr = (unsigned int)&addr[no]; 
+                tlp->textures[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
             } 
             else
             { 

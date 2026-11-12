@@ -5632,7 +5632,7 @@ EFF5SNOWRECT* CreateEff5SnowRect(int lSnowMax)
             return NULL;
         }
         
-        pSnowGrp->pPointTop = (NJS_POINT3*)((int)pSnowGrp->pPointTop + 4);
+        pSnowGrp->pPointTop = (NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(pSnowGrp->pPointTop) + 4));
         
         if (lSnowRest >= 100) 
         {
@@ -5656,7 +5656,7 @@ EFF5SNOWRECT* CreateEff5SnowRect(int lSnowMax)
         return NULL;
     }
     
-    pSnow->pSnowVector = (NJS_POINT3*)((int)pSnow->pSnowVector + 4);
+    pSnow->pSnowVector = (NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(pSnow->pSnowVector) + 4));
     
     pVector = pSnow->pSnowVector; 
     

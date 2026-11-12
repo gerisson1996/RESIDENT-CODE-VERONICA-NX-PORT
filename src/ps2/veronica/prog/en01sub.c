@@ -268,9 +268,9 @@ void bhEne01Arm_DG00(BH_PWORK* epw)
 
     epp = (BH_PWORK*)epw->lkwkp;
     
-    obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+    obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
     
-    owk = (O_WORK*)EXP0_I(4);
+    owk = (O_WORK*)PS2_HOST(EXP0_I(4));
 
     switch (epw->mode3)
     {
@@ -309,7 +309,7 @@ void bhEne01Arm_DG00(BH_PWORK* epw)
 
         epw->ct0++;
 
-        owk = (O_WORK*)EXP0_I(4) + (EXP0_I(8) - 1);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + (EXP0_I(8) - 1);
 
         ps.x = epw->py;
         ps.y = 0;
@@ -332,7 +332,7 @@ void bhEne01Arm_DG00(BH_PWORK* epw)
         
         break;
     case 2:
-        owk = (O_WORK*)EXP0_I(4) + (EXP0_I(8) - 1);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + (EXP0_I(8) - 1);
         
         EXP0_F(100) += 0.2f - (0.08f * epw->ct0);
         
@@ -358,7 +358,7 @@ void bhEne01Arm_DG00(BH_PWORK* epw)
         owk[0].mtx[14] = pd.z;
         owk[0].mtx[13] = pd.y;
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + (EXP0_I(8) - 1);
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + (EXP0_I(8) - 1);
 
         for (i = 0; i < (EXP0_I(8) - 1); i++) 
         {
@@ -371,7 +371,7 @@ void bhEne01Arm_DG00(BH_PWORK* epw)
             obj--;
         }
 
-        if (((O_WORK*)EXP0_I(4))[1].mtx[13] < (rom->grand[epw->flr_no + 2] + 1.0f)) 
+        if (((O_WORK*)PS2_HOST(EXP0_I(4)))[1].mtx[13] < (rom->grand[epw->flr_no + 2] + 1.0f)) 
         {
             epw->ct0 = 0;
             
@@ -428,7 +428,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         njInvertMatrix(&lcmat[0]);
         
-        njSetMatrix(&lcmat[1], &((O_WORK*)EXP0_I(4))[2].mtx);
+        njSetMatrix(&lcmat[1], &((O_WORK*)PS2_HOST(EXP0_I(4)))[2].mtx);
         
         njMultiMatrix(&lcmat[0], &lcmat[1]);
         
@@ -440,7 +440,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         epw->yn = obj[12].pos[1];
         epw->zn = obj[12].pos[2];
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + (EXP0_I(8) - 1);
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + (EXP0_I(8) - 1);
         
         obj->ang[0] = obj->ang[1] = obj->ang[2] = 0;
 
@@ -468,13 +468,13 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         njTranslate(&lcmat[0], -1.0f, 0.5f, 0);
 
-        owk = (O_WORK*)EXP0_I(4) + (EXP0_I(8) - 1);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + (EXP0_I(8) - 1);
         
         njSetMatrix(&owk[0].mtx, &lcmat[0]);
         
         epw->ct0++;
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
         if (obj->ang[1] <= 32768) 
         {
@@ -487,7 +487,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
             epw->mode3++;
         }
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + (EXP0_I(8) - 1);
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + (EXP0_I(8) - 1);
         
         for (i = 0; i < (EXP0_I(8) - 1); owk--, obj--, i++)
         {
@@ -512,7 +512,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
             bhEne_SetBlood2(epp, 1, (NJS_POINT3*)&epw->xn, 0);
         }
 
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
         owk[0].mtx[13] -= 0.1f * epw->ct0;
         
@@ -525,7 +525,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
             epw->mode3++;
         }
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
         for (i = 0; i < (EXP0_I(8) - 1); owk++, obj++, i++) 
         {
@@ -538,7 +538,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         epw->ct0++;
         break;
     case 3:
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
         owk[0].mtx[13] += 0.2f - (0.08f * epw->ct0);
         
@@ -553,9 +553,9 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         njRotateY(&lcmat[0], epw->ct0 * -256);
 
-        ((NJS_CNK_OBJECT*)EXP0_I(0))[1].ang[1] += epw->ct0 * -192;
+        ((NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)))[1].ang[1] += epw->ct0 * -192;
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
         for (i = 0; i < (EXP0_I(8) - 1); obj++, i++) 
         {
@@ -567,7 +567,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
 
         if (lcmat[1][13] < (0.5f + rom->grand[epw->flr_no + 2])) 
         {
-            ((NJS_CNK_OBJECT*)EXP0_I(0))[1].ang[1] += (epw->ct0 - 1) * 256;
+            ((NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)))[1].ang[1] += (epw->ct0 - 1) * 256;
             
             epw->mode3++;
             
@@ -582,9 +582,9 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         break;
     case 4:
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
         obj->ang[1] += epw->ct0 * 256;
         
@@ -602,7 +602,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
 
         if (lcmat[2][13] < (1.0f + rom->grand[epw->flr_no + 2])) 
         {
-            ((NJS_CNK_OBJECT*)EXP0_I(0))[1].ang[1] -= (epw->ct0 - 1) * 256;
+            ((NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)))[1].ang[1] -= (epw->ct0 - 1) * 256;
             
             epw->mode3++;
             
@@ -617,7 +617,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         break;
     case 5:
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
         owk->mtx[13] += 0.2f - (0.1f * epw->ct0);
 
@@ -632,7 +632,7 @@ void bhEne01Arm_DG01(BH_PWORK* epw)
         
         epw->ct0++;
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
         for (i = 0; i < (EXP0_I(8) - 1); owk++, obj++, i++) 
         {
@@ -717,12 +717,12 @@ void bhEne01Leg_DG00(BH_PWORK* epw)
     case 0:
         epw->ct0 = 0;
         
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0);
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0));
         
         obj[0].ang[0] = obj[0].ang[1] = obj[0].ang[2] = 0;
         obj[1].ang[0] = obj[1].ang[1] = obj[1].ang[2] = 0;
 
-        owk = (O_WORK*)EXP0_I(4) + 1;
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + 1;
         
         njSetMatrix((NJS_MATRIX*)&epw->exp0[48], &owk->mtx);
         
@@ -742,7 +742,7 @@ void bhEne01Leg_DG00(BH_PWORK* epw)
         
         epw->ct0++;
 
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
         pd.x = owk[0].mtx[12];
         pd.y = owk[0].mtx[13] - 1.0f;
@@ -752,7 +752,7 @@ void bhEne01Leg_DG00(BH_PWORK* epw)
 
         if ((hp == NULL) || ((hp != NULL) && (hp->type != 7)))
         {
-            owk = (O_WORK*)EXP0_I(4) + 1;
+            owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + 1;
             
             njRotateXYZ((NJS_MATRIX*)&epw->exp0[48], 0, 0, epw->ax);
             njRotateXYZ(&owk[0].mtx,                 0, 0, epw->ax);
@@ -760,13 +760,13 @@ void bhEne01Leg_DG00(BH_PWORK* epw)
             epw->ax += epw->wax;
         }
 
-        owk = (O_WORK*)EXP0_I(4);
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4));
         
         if (((hp != NULL) && (hp->type == 7)) || (owk[1].mtx[13] > owk[0].mtx[13]))
         {
             owk->mtx[13] += -100.0f;
             
-            obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+            obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
 
             njSetMatrix(&owk[1].mtx, &owk[0].mtx);
             
@@ -777,9 +777,9 @@ void bhEne01Leg_DG00(BH_PWORK* epw)
             break;
         }
 
-        obj = (NJS_CNK_OBJECT*)EXP0_I(0) + 1;
+        obj = (NJS_CNK_OBJECT*)PS2_HOST(EXP0_I(0)) + 1;
         
-        owk = (O_WORK*)EXP0_I(4) + 1;
+        owk = (O_WORK*)PS2_HOST(EXP0_I(4)) + 1;
 
         njSetMatrix(&owk[-1].mtx, &owk[0].mtx);
         
@@ -852,7 +852,7 @@ void bhEne01Head_DG00(BH_PWORK* epw)
 
     ep = (BH_PWORK*)epw->lkwkp;
     
-    owk = (O_WORK*)EXP0_I(4);
+    owk = (O_WORK*)PS2_HOST(EXP0_I(4));
 
     switch (epw->mode3) 
     {

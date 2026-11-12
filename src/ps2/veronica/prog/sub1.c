@@ -3584,7 +3584,7 @@ void StatusMain()
         
         sitem.keep = sitem.keepbackup;
         
-        memset(sitem.keep, NULL, 0x20000);
+        memset(sitem.keep, 0, 0x20000);   /* NULL in the original */
         
         swork.statusflg &= ~0x400000;
     }

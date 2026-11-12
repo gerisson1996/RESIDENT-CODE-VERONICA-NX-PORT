@@ -759,7 +759,7 @@ void SetQuadUv2Ex(float u, float v, float SizeX, float SizeY, unsigned int ListN
     float TexY;
     NJS_TEXMEMLIST* temp; // not from the debugging symbols
 
-    temp = (NJS_TEXMEMLIST*)AdvTexList[ListNo].textures[TexNo].texaddr; 
+    temp = (NJS_TEXMEMLIST*)PS2_HOST(AdvTexList[ListNo].textures[TexNo].texaddr); 
     
     TexX = (temp->texinfo.texsurface.nWidth >= 0) ? temp->texinfo.texsurface.nWidth : temp->texinfo.texsurface.nWidth / 3; 
     TexY = (temp->texinfo.texsurface.nHeight >= 0) ? temp->texinfo.texsurface.nHeight : temp->texinfo.texsurface.nHeight / 3; 
@@ -1002,7 +1002,7 @@ float AdvEasyDispMessage(float PosX, float PosY, unsigned int MessageNo)
 
     temp2 = (ADV_WORK*)&AdvWork; 
 
-    smp = (unsigned char*)((int)temp2->MsgPtr + ((int*)temp2->MsgPtr)[MessageNo + 1]); 
+    smp = (unsigned char*)PS2_HOST(((int)PS2_ADDR(temp2->MsgPtr) + ((int*)temp2->MsgPtr)[MessageNo + 1])); 
     
     dmp = syMalloc(1024); 
     
@@ -1088,7 +1088,7 @@ float AutoSaveLoadEasyDispMessage(float PosX, float PosY, unsigned char* ucpMsbT
 
     sy = PosY;
     
-    smp = (unsigned char*)((int)ucpMsbTop + ((int*)ucpMsbTop)[MessageNo + 1]); 
+    smp = (unsigned char*)PS2_HOST(((int)PS2_ADDR(ucpMsbTop) + ((int*)ucpMsbTop)[MessageNo + 1])); 
     
     dmp = syMalloc(1024); 
     

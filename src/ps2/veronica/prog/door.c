@@ -109,7 +109,7 @@ int bhReadDoorData()
             {
                 next = *pacP;
                 
-                pacP = (int*)((int)pacP + next);
+                pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                 
                 next = *pacP++;
                 
@@ -117,7 +117,7 @@ int bhReadDoorData()
                 {
                     bhMlbBinRealize(pacP, &dwP->dor_mdl);
                     
-                    pacP = (int*)((int)pacP + next);
+                    pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                     
                     next = *pacP++;
                     
@@ -125,7 +125,7 @@ int bhReadDoorData()
                     {
                         dwP->tex_pacP = pacP;
                         
-                        pacP = (int*)((int)pacP + next);
+                        pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                         
                         next = *pacP++;
                         
@@ -133,7 +133,7 @@ int bhReadDoorData()
                         {
                             RequestDoorSoundBank(*pacP);
                             
-                            pacP = (int*)((int)pacP + next);
+                            pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                             
                             next = *pacP++;
                             
@@ -221,7 +221,7 @@ void bhSetDoor()
     dwP = &DoorWrk;
 
     phP = (PH_WORK*)dwP->dmo_prmP;
-    ptP = (void*)((int)dwP->dmo_prmP + 4);
+    ptP = (void*)PS2_HOST(((int)PS2_ADDR(dwP->dmo_prmP) + 4));
     
     if (dwP->cse_no < phP->prm_num) 
     {
@@ -263,7 +263,7 @@ void bhSetDoor()
     PT_WORK* ptP; 
         
     phP = (PH_WORK*)dwP->dmo_prmP;
-    ptP = (PT_WORK*)((int)phP + 4);
+    ptP = (PT_WORK*)PS2_HOST(((int)PS2_ADDR(phP) + 4));
         
     if (dwP->cse_no < phP->prm_num) 
     {
@@ -271,19 +271,19 @@ void bhSetDoor()
     }
         
     dwP->fde_prcP = FadeProcTbl[ptP->fde_no].procP;
-    dwP->fpP = (void*)((int)phP + ptP->fde_off);
+    dwP->fpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->fde_off));
         
     dwP->vew_prcP = ViewProcTbl[ptP->vew_no].procP;
-    dwP->vpP = (void*)((int)phP + ptP->vew_off);
+    dwP->vpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->vew_off));
         
     dwP->dor_prcP = DoorProcTbl[ptP->dor_no].procP;
-    dwP->dpP = (void*)((int)phP + ptP->dor_off);
+    dwP->dpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->dor_off));
         
     dwP->lgt_prcP = LightProcTbl[ptP->lgt_no].procP;
-    dwP->lpP = (void*)((int)phP + ptP->lgt_off);
+    dwP->lpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->lgt_off));
         
     dwP->pru_prcP = PuruProcTbl[ptP->pru_no].procP;
-    dwP->ppP = (void*)((int)phP + ptP->pru_off);
+    dwP->ppP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->pru_off));
     }
     
     if ((dwP->dmo_atr & 0x1)) 

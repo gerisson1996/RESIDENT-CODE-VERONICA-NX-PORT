@@ -870,12 +870,12 @@ void bhEne04_CollCheckWall(BH_PWORK* epw)
     	ps.x = plp->px;
     	ps.y = plp->py;
     	ps.z = plp->pz;
-    	EXP0_I(0x44) = (int)bhCollisionCheckLine((NJS_POINT3*)&epw->px, &ps);
+    	EXP0_I(0x44) = (int)PS2_ADDR(bhCollisionCheckLine((NJS_POINT3*)&epw->px, &ps));
     
     	EXP0_US(0x6) = (EXP0_US(0x6) << 1) & 0xE;
     
     	hp = bhCheckWallType((NJS_POINT3*)&epw->px, epw->flg, epw->ar, epw->ah);
-    	EXP0_I(0x3C) = (int)hp;
+    	EXP0_I(0x3C) = (int)PS2_ADDR(hp);
     	if (hp != 0)
     	{
     		EXP0_US(0x6) |= 1;
@@ -895,7 +895,7 @@ void bhEne04_CollCheckWall(BH_PWORK* epw)
     		hp = bhEne_CollisionCheckWall2(epw, &ps, &ops, &pd, 2.5f, epw->ah);
     		if (hp != 0)
     		{
-    			EXP0_I(0x3C) = (int)hp;
+    			EXP0_I(0x3C) = (int)PS2_ADDR(hp);
     		}
     
     		epw->px += pd.x;
@@ -1379,15 +1379,15 @@ void bhEne04_EneSearch(BH_PWORK* epw)
     {
         if (bhSearchPlayer(epw, 18204) != -1)
         {
-            if ((unsigned char*)EXP0_I(0x44) == NULL)
+            if ((unsigned char*)PS2_HOST(EXP0_I(0x44)) == NULL)
             {
                 EXP0_UC(0) |= 0x20;
             }
             else
             {
-                if (*(unsigned char*)(EXP0_I(0x44) + 1) == 1 || 
-                    *(unsigned char*)(EXP0_I(0x44) + 1) == 3 || 
-                    *(unsigned char*)(EXP0_I(0x44) + 1) == 5) 
+                if (*(unsigned char*)PS2_HOST((EXP0_I(0x44) + 1)) == 1 || 
+                    *(unsigned char*)PS2_HOST((EXP0_I(0x44) + 1)) == 3 || 
+                    *(unsigned char*)PS2_HOST((EXP0_I(0x44) + 1)) == 5) 
                 {
                     EXP0_UC(0) |= 0x20;
                 }
@@ -2711,23 +2711,23 @@ void bhEne04_MV11(BH_PWORK* epw)
     switch (epw->mode3)
     {
     case 0:
-        if (*(unsigned char*)((char*)EXP0_I(0x40) + 0x20) == 0)
+        if (*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x20) == 0)
         {
             EXP0_UC(0x5) = 0;
-            epw->yn = epw->py + (*(unsigned char*)((char*)EXP0_I(0x40) + 0x22) * 2);
+            epw->yn = epw->py + (*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x22) * 2);
             EXP0_I(0x10) |= 0x10000;
         } 
         else
         {
-            EXP0_C(0x5) = *(unsigned char*)((char*)EXP0_I(0x40) + 0x22);
-            epw->yn = epw->py - (*(unsigned char*)((char*)EXP0_I(0x40) + 0x22) * 2);
+            EXP0_C(0x5) = *(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x22);
+            epw->yn = epw->py - (*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x22) * 2);
             EXP0_I(0x10) &= ~0x10000;
         }
         
         EXP0_C(0x4) = epw->flr_no;
         EXP0_I(0x10) |= 0x10;
         
-        epw->axp = kaidan_ang[*(unsigned char*)((char*)EXP0_I(0x40) + 0x21)];
+        epw->axp = kaidan_ang[*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x21)];
         epw->ayp = (epw->axp - epw->ay) & 0xFFFF;
         if (epw->ayp > 32768)
         {
@@ -3261,7 +3261,7 @@ void bhEne04_DG01(BH_PWORK* epw)
         EXP0_I(0x10) &= ~0x20;
         
         epw->flg2 |= 1;
-        epw->ay = kaidan_ang[*(unsigned char*)((char*)EXP0_I(0x40) + 0x21)];
+        epw->ay = kaidan_ang[*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x40)) + 0x21)];
         epw->py = 3.8f + epw->mlwP->owP->mtx[13];
         
         if (EXP0_I(0x10) & 0x10000)
@@ -3936,14 +3936,14 @@ int bhEne04_KaidanCheck(BH_PWORK* epw)
         {
             if (plp->flr_no > epw->flr_no)
             {
-                EXP0_I(0x40) = (int)hp;
+                EXP0_I(0x40) = (int)PS2_ADDR(hp);
                 bhSetUseKaidanFlag(epw, hp, idx);
                 return 1;
             }
         } 
         else if (plp->flr_no < epw->flr_no)
         {
-            EXP0_I(0x40) = (int)hp;
+            EXP0_I(0x40) = (int)PS2_ADDR(hp);
             bhSetUseKaidanFlag(epw, hp, idx);
             return 1;
         }

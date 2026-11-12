@@ -561,7 +561,7 @@ void bhEne12_Init(BH_PWORK* epw)
         sys->ef.flg = 1;
 
         eno = bhSetEffectTb(&sys->ef, 0, 0, 0);
-        EXP0_I(0x20) = (int)&eff[eno];
+        EXP0_I(0x20) = (int)PS2_ADDR(&eff[eno]);
 
     }
 
@@ -1612,25 +1612,25 @@ void bhEne12_FixedLegPos(BH_PWORK* epw)
         case 5:
         case 6:
             if (epw->mtn_md & 2) {
-                EXP0_I(24) = ((fno >= 17) && (fno <= 47)) ? (int)(&joint_tree[2][2]) : (int)(&joint_tree[5][1]);
+                EXP0_I(24) = ((fno >= 17) && (fno <= 47)) ? (int)PS2_ADDR((&joint_tree[2][2])) : (int)PS2_ADDR((&joint_tree[5][1]));
             } else {
-                EXP0_I(24) = ((fno >= 17) && (fno <= 47)) ? (int)(&joint_tree[5][1]) : (int)(&joint_tree[2][2]);
+                EXP0_I(24) = ((fno >= 17) && (fno <= 47)) ? (int)PS2_ADDR((&joint_tree[5][1])) : (int)PS2_ADDR((&joint_tree[2][2]));
             }
             
             break;
 
         case 12:
             if (epw->mtn_md & 2) {
-                EXP0_I(24) = (fno <= 12) ? (int)(&joint_tree[5][1]) : (int)(&joint_tree[2][2]);
+                EXP0_I(24) = (fno <= 12) ? (int)PS2_ADDR((&joint_tree[5][1])) : (int)PS2_ADDR((&joint_tree[2][2]));
             } else {
-                EXP0_I(24) = (fno <= 12) ? (int)(&joint_tree[2][2]) : (int)(&joint_tree[5][1]);
+                EXP0_I(24) = (fno <= 12) ? (int)PS2_ADDR((&joint_tree[2][2])) : (int)PS2_ADDR((&joint_tree[5][1]));
             }
             
             break;
         }
 
         if (EXP0_I(24) != 0) {
-            bhCalcFixOffset(epw, (char*)EXP0_I(24), 0, &ret);
+            bhCalcFixOffset(epw, (char*)PS2_HOST(EXP0_I(24)), 0, &ret);
             epw->px -= ret.x;
             epw->pz -= ret.z;
         }
@@ -1822,7 +1822,7 @@ void bhEne12_FlameLiquid(BH_PWORK* epw, NJS_VECTOR* pos, int time)
             eff[eno].aox = n.x;
             eff[eno].aoy = n.y;
             eff[eno].aoz = n.z;
-            eff[eno].exp1 = (unsigned char*)EXP0_I(32);
+            eff[eno].exp1 = (unsigned char*)PS2_HOST(EXP0_I(32));
             eff[eno].ax = (int)(10430.381f * acosf(n.y));
             eff[eno].ay =  bhArcTan2(n.x, n.z);
             eff[eno].ct0 = time;
@@ -1946,7 +1946,7 @@ void bhEne12_Blood(BH_PWORK* epw, int num)
             eff[eno].aox = 0.0f;
             eff[eno].aoy = 1.0f;
             eff[eno].aoz = 0.0f;
-            eff[eno].exp1 = (unsigned char*)EXP0_I(32);
+            eff[eno].exp1 = (unsigned char*)PS2_HOST(EXP0_I(32));
             eff[eno].ct0 = 60;
         }
     }
@@ -1985,7 +1985,7 @@ int bhEne12_AvoidWall(BH_PWORK* epw)
         }
     }
 
-    return (int)hp;
+    return (int)PS2_ADDR(hp);
 }
 
 // 100% matching!

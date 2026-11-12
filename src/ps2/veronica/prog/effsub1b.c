@@ -654,7 +654,7 @@ void bhEff135(O_WRK* op)
                 
                 if (!(&sys->zanp[8 * i] >= (sys->zan_memp + 0x200000))) 
                 {
-                    sys->zanp = (unsigned char*)(((int)&sys->zanp[8 * i] + 63) & ~0x3F);
+                    sys->zanp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(&sys->zanp[8 * i]) + 63) & ~0x3F));
                     
                     ef_Zanzo[0] = ef_Zanzo[1] = ef_Zanzo[2] = ef_Zanzo[3] = ef_Zanzo[4] = ef_Zanzo[5] = NULL;
                     
@@ -770,7 +770,7 @@ void bhEff136(O_WRK* op)
         
         i += 64 - (i % 64);
         
-        op->exp0 = (unsigned char*)(((O_WRK*)&eff->exp0)[op->type].flg + (i * op->flr_no));
+        op->exp0 = (unsigned char*)PS2_HOST((((O_WRK*)&eff->exp0)[op->type].flg + (i * op->flr_no)));
 
         if (pwp->skp[op->mdlver] != NULL) 
         {

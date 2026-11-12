@@ -126,7 +126,7 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
         0
     }; 
     
-    __file_handle = (GDFS_HANDLE*)((int)gdfs_work + 4308);
+    __file_handle = (GDFS_HANDLE*)PS2_HOST(((int)PS2_ADDR(gdfs_work) + 4308));
     
     __gds_fs_work = gdfs_work;
     
@@ -213,7 +213,7 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
     
     __current_dir = dirbuf;
     
-    __gdfs_dir_ent = (GDFS_DIRREC_ENT*)((int)dirbuf + 104);
+    __gdfs_dir_ent = (GDFS_DIRREC_ENT*)PS2_HOST(((int)PS2_ADDR(dirbuf) + 104));
     
     __current_dir->dir_num = 0;
     

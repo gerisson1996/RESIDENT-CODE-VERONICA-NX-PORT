@@ -562,7 +562,7 @@ void RankingTextureInit()
         
         if (sz != 0)
         {
-            sys->memp = (unsigned char*)(((int)sys->memp + 0x3F) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
              
             RequestReadIsoFile("sysmes.ald", sys->memp);
             
@@ -600,7 +600,7 @@ void RankingTextureInit()
     case 2:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0)) 
         {
-            sys->memp = (unsigned char*)(((int)sys->memp + 0x3F) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
             
             RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
             
@@ -622,7 +622,7 @@ void RankingTextureInit()
         {
             sys->sbs_sp = sys->memp;
             
-            sys->memp = (unsigned char*)(((int)sys->memp + 0x3F) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
             
             rk->mode_00 = 5;
         }
@@ -631,7 +631,7 @@ void RankingTextureInit()
     case 5:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->itm_partid, no + 277) != 0))
         {
-            sys->memp = (unsigned char*)(((int)sys->memp + 0x3F) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
             
             RequestReadInsideFile(sys->itm_partid, no + 277, sys->memp);
             

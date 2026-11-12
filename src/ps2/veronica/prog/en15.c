@@ -2571,7 +2571,7 @@ static void PoisonAttack(O_WRK* op)
     } 
     else
     {
-        if (*(short *)(*(int *)(op->exp0 + 0x2F0) + 0x5C) > 5)
+        if (*(short *)PS2_HOST((*(int *)(op->exp0 + 0x2F0) + 0x5C)) > 5)
         {
             if (njRandom() < 0.6)
             {
@@ -2580,7 +2580,7 @@ static void PoisonAttack(O_WRK* op)
         }
         else
         {
-            (*(short *)(*(int *)(op->exp0 + 0x2F0) + 0x5C))++;
+            (*(short *)PS2_HOST((*(int *)(op->exp0 + 0x2F0) + 0x5C)))++;
         }
 
         plp->flg |= 4;

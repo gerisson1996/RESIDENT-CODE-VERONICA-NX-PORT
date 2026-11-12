@@ -2918,7 +2918,7 @@ void bhEff_E12_Fire(O_WRK* op)
         
         if (temp->ct0 < 300) 
         {
-            ((int*)&exp0[4])[temp->ct0] = (int)op;
+            ((int*)&exp0[4])[temp->ct0] = (int)PS2_ADDR(op);
             
             temp->ct0++;
         }

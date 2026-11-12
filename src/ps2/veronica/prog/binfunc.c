@@ -33,7 +33,7 @@ int bhMlbBinRealize(void* bin_datP, ML_WORK* mlwP)
     {
         mlwP->flg = status;
         
-        objP = (NJS_CNK_OBJECT*)((int)bin_datP + obj_off);
+        objP = (NJS_CNK_OBJECT*)PS2_HOST(((int)PS2_ADDR(bin_datP) + obj_off));
         
         mlwP->obj_num = obj_num;
         mlwP->objP = objP;
@@ -42,7 +42,7 @@ int bhMlbBinRealize(void* bin_datP, ML_WORK* mlwP)
         {
             if (objP->child != (void*)-1) 
             {
-                objP->child = (void*)((int)objP->child + (int)bin_datP);
+                objP->child = (void*)PS2_HOST(((int)PS2_ADDR(objP->child) + (int)PS2_ADDR(bin_datP)));
             } 
             else 
             {
@@ -51,7 +51,7 @@ int bhMlbBinRealize(void* bin_datP, ML_WORK* mlwP)
             
             if (objP->sibling != (void*)-1) 
             {
-                objP->sibling = (void*)((int)objP->sibling + (int)bin_datP);
+                objP->sibling = (void*)PS2_HOST(((int)PS2_ADDR(objP->sibling) + (int)PS2_ADDR(bin_datP)));
             }
             else 
             {
@@ -60,15 +60,15 @@ int bhMlbBinRealize(void* bin_datP, ML_WORK* mlwP)
             
             if (objP->model != (void*)-1) 
             {
-                objP->model = (void*)((int)objP->model + (int)bin_datP);
+                objP->model = (void*)PS2_HOST(((int)PS2_ADDR(objP->model) + (int)PS2_ADDR(bin_datP)));
                 
                 if (!(status & 0x80))
                 {
-                    bhBscBinRealize((NJS_MODEL*)objP->model, (unsigned int)bin_datP);
+                    bhBscBinRealize((NJS_MODEL*)objP->model, (unsigned int)PS2_ADDR(bin_datP));
                 } 
                 else
                 {
-                    bhCnkBinRealize(objP->model, (unsigned int)bin_datP); 
+                    bhCnkBinRealize(objP->model, (unsigned int)PS2_ADDR(bin_datP)); 
                 }
             }
             else 
@@ -80,15 +80,15 @@ int bhMlbBinRealize(void* bin_datP, ML_WORK* mlwP)
     
     if (tex_off != -1)
     {
-        mlwP->texP = (void*)((int)bin_datP + tex_off);
+        mlwP->texP = (void*)PS2_HOST(((int)PS2_ADDR(bin_datP) + tex_off));
         
-        mlwP->texP->textures = (NJS_TEXNAME*)((char*)mlwP->texP->textures + (int)bin_datP);
+        mlwP->texP->textures = (NJS_TEXNAME*)((char*)mlwP->texP->textures + (int)PS2_ADDR(bin_datP));
         
         namP = mlwP->texP->textures;
         
         for (tex_num = mlwP->texP->nbTexture; tex_num != 0; tex_num--, namP++) 
         {
-            namP->filename = (void*)((char*)namP->filename + (int)bin_datP);
+            namP->filename = (void*)((char*)namP->filename + (int)PS2_ADDR(bin_datP));
         }
     }
     
@@ -105,34 +105,34 @@ int bhBscBinRealize(NJS_MODEL* mdlP, unsigned int dat_off)
     {
         mdlP->nbPoint &= ~0x80000000;
         
-        if ((int)mdlP->points != -1) 
+        if ((int)PS2_ADDR(mdlP->points) != -1) 
         {
             mdlP->points = (NJS_POINT3*)((char*)mdlP->points + dat_off);
         }
         
-        if ((int)mdlP->normals != -1) 
+        if ((int)PS2_ADDR(mdlP->normals) != -1) 
         {
             mdlP->normals = (NJS_VECTOR*)((char*)mdlP->normals + dat_off);
         }
         
-        if ((int)mdlP->meshsets != -1) 
+        if ((int)PS2_ADDR(mdlP->meshsets) != -1) 
         {
             mshP = mdlP->meshsets = (NJS_MESHSET*)((char*)mdlP->meshsets + dat_off);
         }
         
-        if ((int)mdlP->mats != -1)
+        if ((int)PS2_ADDR(mdlP->mats) != -1)
         {
             mdlP->mats = (NJS_MATERIAL*)((char*)mdlP->mats + dat_off);
         }
         
         for (i = 0; i < mdlP->nbMeshset; i++, mshP++) 
         {
-            if ((int)mshP->meshes != -1) 
+            if ((int)PS2_ADDR(mshP->meshes) != -1) 
             {
                 mshP->meshes = (short*)((char*)mshP->meshes + dat_off);
             }
             
-            if ((int)mshP->attrs != -1) 
+            if ((int)PS2_ADDR(mshP->attrs) != -1) 
             {
                 mshP->attrs = (unsigned int*)((char*)mshP->attrs + dat_off);
             }
@@ -141,7 +141,7 @@ int bhBscBinRealize(NJS_MODEL* mdlP, unsigned int dat_off)
                 mshP->attrs = NULL;
             }
             
-            if ((int)mshP->normals != -1)
+            if ((int)PS2_ADDR(mshP->normals) != -1)
             {
                 mshP->normals = (NJS_VECTOR*)((char*)mshP->normals + dat_off);
             } 
@@ -150,7 +150,7 @@ int bhBscBinRealize(NJS_MODEL* mdlP, unsigned int dat_off)
                 mshP->normals = NULL;
             }
             
-            if ((int)mshP->vertcolor != -1) 
+            if ((int)PS2_ADDR(mshP->vertcolor) != -1) 
             {
                 mshP->vertcolor = (NJS_COLOR*)((char*)mshP->vertcolor + dat_off);
             }
@@ -159,7 +159,7 @@ int bhBscBinRealize(NJS_MODEL* mdlP, unsigned int dat_off)
                 mshP->vertcolor = NULL;
             }
             
-            if ((int)mshP->vertuv != -1) 
+            if ((int)PS2_ADDR(mshP->vertuv) != -1) 
             {
                 mshP->vertuv = (NJS_COLOR*)((char*)mshP->vertuv + dat_off);
             } 
@@ -180,12 +180,12 @@ int bhCnkBinRealize(NJS_CNK_MODEL* mdlP, unsigned int dat_off)
     {
         mdlP->r = -mdlP->r; 
         
-        if ((int)mdlP->vlist != -1)
+        if ((int)PS2_ADDR(mdlP->vlist) != -1)
         { 
             mdlP->vlist = (int*)((char*)mdlP->vlist + dat_off); 
         }
         
-        if ((int)mdlP->plist != -1)
+        if ((int)PS2_ADDR(mdlP->plist) != -1)
         {
             mdlP->plist = (short*)((char*)mdlP->plist + dat_off); 
         }
@@ -202,9 +202,9 @@ int bhMnbBinRealize(void* bin_datP, MN_WORK* mnwP)
     void* dat_topP;     
     int i;               
     
-    dat_topP = (void*)((int)bin_datP + ((unsigned short*)bin_datP)[2]);
-    mtnP = (NJS_MOTION*)((int)dat_topP + ((int*)bin_datP)[2]);
-    md2P = (NJS_MDATA2_MOD*)((int)mtnP->mdata + (int)dat_topP);
+    dat_topP = (void*)PS2_HOST(((int)PS2_ADDR(bin_datP) + ((unsigned short*)bin_datP)[2]));
+    mtnP = (NJS_MOTION*)PS2_HOST(((int)PS2_ADDR(dat_topP) + ((int*)bin_datP)[2]));
+    md2P = (NJS_MDATA2_MOD*)PS2_HOST(((int)PS2_ADDR(mtnP->mdata) + (int)PS2_ADDR(dat_topP)));
     
     mtnP->mdata = md2P;
     
@@ -219,7 +219,7 @@ int bhMnbBinRealize(void* bin_datP, MN_WORK* mnwP)
     
     if (((int*)bin_datP)[3] != -1) 
     {
-        mnwP->atrP = (unsigned short*)((int)dat_topP + ((int*)bin_datP)[3]);
+        mnwP->atrP = (unsigned short*)PS2_HOST(((int)PS2_ADDR(dat_topP) + ((int*)bin_datP)[3]));
     }
     
     for (i = 0; i < ((unsigned short*)bin_datP)[3]; i++, md2P++)
@@ -230,7 +230,7 @@ int bhMnbBinRealize(void* bin_datP, MN_WORK* mnwP)
         } 
         else 
         {
-            md2P->p[0] = (void*)((char*)md2P->p[0] + (int)dat_topP);
+            md2P->p[0] = (void*)((char*)md2P->p[0] + (int)PS2_ADDR(dat_topP));
         }
         
         if (md2P->p[1] == (void*)-1) 
@@ -239,7 +239,7 @@ int bhMnbBinRealize(void* bin_datP, MN_WORK* mnwP)
         } 
         else 
         {
-            md2P->p[1] = (void*)((char*)md2P->p[1] + (int)dat_topP);
+            md2P->p[1] = (void*)((char*)md2P->p[1] + (int)PS2_ADDR(dat_topP));
         }
     }
     

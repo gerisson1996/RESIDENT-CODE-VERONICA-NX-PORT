@@ -5868,7 +5868,7 @@ void bhCheckEnemies(BH_PWORK* pp)
         {
             enep = &ene[i];
             
-            if (((((enep->flg & 0x1)) && ((enep->flg & 0x8))) && (!(enep->stflg & 0x1000000))) && ((((unsigned int)pp & ~0x80000000)) != (((unsigned int)enep & ~0x80000000))) && ((((((unsigned int)pp & ~0x80000000)) != (((unsigned int)plp & ~0x80000000))) || ((enep->flg & 0x40))) && ((!(enep->flg & 0x80)) || (!(((O_WRK*)enep->lkwkp)->stflg & 0x1000000))))) 
+            if (((((enep->flg & 0x1)) && ((enep->flg & 0x8))) && (!(enep->stflg & 0x1000000))) && ((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(enep) & ~0x80000000))) && ((((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(plp) & ~0x80000000))) || ((enep->flg & 0x40))) && ((!(enep->flg & 0x80)) || (!(((O_WRK*)enep->lkwkp)->stflg & 0x1000000))))) 
             {
                 ex1 = enep->px + enep->aox;
                 ey1 = enep->py + enep->aoy;

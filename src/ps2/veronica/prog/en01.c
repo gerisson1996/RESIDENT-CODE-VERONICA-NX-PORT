@@ -2728,7 +2728,7 @@ void bhEne01_Init(BH_PWORK* epw)
         epw->mtn_tp = (unsigned char*)en01_flipTree2;
         
         
-        epp = (BH_PWORK*)*(int*)((char*)epw + 0x2EC);
+        epp = (BH_PWORK*)PS2_HOST(*(int*)((char*)epw + 0x2EC));
         epw->type = epp->type;
         epw->hp = epp->hp;
         epw->px = epp->px;
@@ -2774,7 +2774,7 @@ void bhEne01_Init(BH_PWORK* epw)
             epw->mdflg &= ~0x400;
             EXP0_I(0x3C) = 0xFFB2B2B2;
             npSetAllMatColor(epw->mlwP->objP, epw->mlwP->obj_num, EXP0_I(0x3C));
-            epp = (BH_PWORK*)*(int*)((char*)epw->exp0 + 0x14);
+            epp = (BH_PWORK*)PS2_HOST(*(int*)((char*)epw->exp0 + 0x14));
             if (epp != NULL){
                 epp->mdflg &= ~0x400;
                 npSetAllMatColor(epp->mlwP->objP, epp->mlwP->obj_num, EXP0_I(0x3C));
@@ -3841,7 +3841,7 @@ void bhEne01_DamageAdd(BH_PWORK* epw)
             epp->mdflg |= 0x400;
             EPP_EXP0_I(0x3C) = 0xFF000000;
             npSetAllMatColor(epp->mlwP->objP, epp->mlwP->obj_num, EPP_EXP0_I(0x3C));
-            epp2 = (BH_PWORK*)*(int*)((char*)epw->exp0 + 0x14);
+            epp2 = (BH_PWORK*)PS2_HOST(*(int*)((char*)epw->exp0 + 0x14));
             if ((epp2 != NULL) && (epp2->flg & 0x80))
             {
                 epp2->mdflg |= 0x400;
@@ -4781,7 +4781,7 @@ int bhEne01_ActionModeCheck(BH_PWORK *epw)
 
         plp->flg |= 4;
 
-        epp = (BH_PWORK *)EXP0_I(0x18);
+        epp = (BH_PWORK *)PS2_HOST(EXP0_I(0x18));
         epp->flg |= 0x100000;
         epp->px = epw->px;
         epp->py = epw->py;
@@ -5556,7 +5556,7 @@ void bhEne01_MV04(BH_PWORK* epw)
                 EXP0_I(0x44) &= ~0x8;
                 EXP0_I(0x40) &= ~0x240240;
     
-                epp = (BH_PWORK*)(*(int*)&epw->exp0[0x18]);
+                epp = (BH_PWORK*)PS2_HOST((*(int*)&epw->exp0[0x18]));
                 
                 epp->flg = (epp->flg | 0x100000);
                 epp->px = epw->px;
@@ -5779,7 +5779,7 @@ void bhEne01_MV04(BH_PWORK* epw)
     
                 plp->flg |= 4; 
     
-                epp = (BH_PWORK*)(*(int*)&epw->exp0[0x18]);
+                epp = (BH_PWORK*)PS2_HOST((*(int*)&epw->exp0[0x18]));
                     
                 epp->flg |= 0x100000;
                 epp->px = epw->px;
@@ -6126,24 +6126,24 @@ void bhEne01_MV08(BH_PWORK* epw)
             CEPW_EXP0_I(0x40) &= ~0x3000000;
         }
 
-        if (*(unsigned char*)((char*)EXP0_I(0x74) + 0x20) == 0)
+        if (*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x20) == 0)
         {
             EXP0_I(0x40) |= 0x800000;
             EXP0_C(0x2E) = 0;
-            epw->yn = epw->py + (*(unsigned char*)((char*)EXP0_I(0x74) + 0x22) * 2);
+            epw->yn = epw->py + (*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x22) * 2);
         } 
         else
         {
             EXP0_I(0x40) &= ~0x800000;
-            EXP0_C(0x2E) = *(unsigned char*)((char*)EXP0_I(0x74) + 0x22);
-            epw->yn = epw->py - ((*(unsigned char*)((char*)EXP0_I(0x74) + 0x22) * 2));
+            EXP0_C(0x2E) = *(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x22);
+            epw->yn = epw->py - ((*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x22) * 2));
         }
 
         EXP0_C(0x2D) = epw->flr_no;
         EXP0_I(0x40) |= 0x400000;
         EXP0_I(0x44) |= 8;
         epw->flg2 |= 1;
-        epw->axp = kaidan_ang[*(unsigned char*)((char*)EXP0_I(0x74) + 0x21)];
+        epw->axp = kaidan_ang[*(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x21)];
         epw->ayp = (unsigned short)(epw->axp - epw->ay);
         
         if (epw->ayp > NJM_DEG_ANG(180.0f))
@@ -6154,7 +6154,7 @@ void bhEne01_MV08(BH_PWORK* epw)
         epw->ayp /= 10;
         EXP0_I(0x40) &= ~0xF;
         epw->way = 256;
-        epw->ct1 = *(unsigned char*)((char*)EXP0_I(0x74) + 0x22) - 2;
+        epw->ct1 = *(unsigned char*)((char*)PS2_HOST(EXP0_I(0x74)) + 0x22) - 2;
         epw->ct0 = 10;
         EXP0_F(0x64) = epw->px;
         EXP0_F(0x68) = epw->py;

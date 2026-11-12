@@ -555,7 +555,7 @@ void bhEne03(BH_PWORK* epw)
             bhEne_CheckEnemiesBall(epw);
         }
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL)
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL)
         {
             switch (EXP0_C(105))
             {
@@ -574,7 +574,7 @@ void bhEne03(BH_PWORK* epw)
             }
         }
         
-        if ((ATR_WORK*)EXP0_I(96) == NULL)
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) == NULL)
         {
             bhEne03_CollisionLine(epw);
             
@@ -822,7 +822,7 @@ void bhEne03_Init(BH_PWORK* epw)
         epw->type &= ~0x2;
     }
     
-    if ((ATR_WORK*)EXP0_I(96) == NULL) 
+    if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) == NULL) 
     {
         EXP0_C(105) = 0;
         
@@ -1529,7 +1529,7 @@ void bhEne03_MV05(BH_PWORK* epw)
             switch (EXP0_C(106))
             {     
             case 0:
-                hp = (ATR_WORK*)EXP0_I(100);    
+                hp = (ATR_WORK*)PS2_HOST(EXP0_I(100));    
                 
                 if (hp->type == 0)
                 {
@@ -1549,27 +1549,27 @@ void bhEne03_MV05(BH_PWORK* epw)
                 
                 break;
             case 1:
-                if (((ATR_WORK*)EXP0_I(100))->type == 0) 
+                if (((ATR_WORK*)PS2_HOST(EXP0_I(100)))->type == 0) 
                 {
-                    epw->py = ((ATR_WORK*)EXP0_I(100))->py;
+                    epw->py = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->py;
                 } 
                 else 
                 {
-                    epw->py = ((ATR_WORK*)EXP0_I(100))->py + ((ATR_WORK*)EXP0_I(100))->h;
+                    epw->py = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->py + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->h;
                 }
                 
                 break;
             case 5:
-                epw->pz = ((ATR_WORK*)EXP0_I(100))->pz + ((ATR_WORK*)EXP0_I(100))->d;
+                epw->pz = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->pz + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->d;
                 break;
             case 3:
-                epw->pz = ((ATR_WORK*)EXP0_I(100))->pz;
+                epw->pz = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->pz;
                 break;
             case 4:
-                epw->px = ((ATR_WORK*)EXP0_I(100))->px;
+                epw->px = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->px;
                 break;
             case 2:
-                epw->px = ((ATR_WORK*)EXP0_I(100))->px + ((ATR_WORK*)EXP0_I(100))->w;
+                epw->px = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->px + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->w;
                 break;
             }
 
@@ -1724,7 +1724,7 @@ void bhEne03_MV07(BH_PWORK* epw)
             switch (EXP0_C(106)) 
             {
             case 0:
-                hp = (ATR_WORK*)EXP0_I(100);
+                hp = (ATR_WORK*)PS2_HOST(EXP0_I(100));
                 
                 if (hp->type == 0) 
                 {
@@ -1744,27 +1744,27 @@ void bhEne03_MV07(BH_PWORK* epw)
                 
                 break;
             case 1:
-                if (((ATR_WORK*)EXP0_I(100))->type == 0) 
+                if (((ATR_WORK*)PS2_HOST(EXP0_I(100)))->type == 0) 
                 {
-                    epw->py = ((ATR_WORK*)EXP0_I(100))->py;
+                    epw->py = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->py;
                 } 
                 else 
                 {
-                    epw->py = ((ATR_WORK*)EXP0_I(100))->py + ((ATR_WORK*)EXP0_I(100))->h;
+                    epw->py = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->py + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->h;
                 }
                 
                 break;
             case 5:
-                epw->pz = ((ATR_WORK*)EXP0_I(100))->pz + ((ATR_WORK*)EXP0_I(100))->d;
+                epw->pz = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->pz + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->d;
                 break;
             case 3:
-                epw->pz = ((ATR_WORK*)EXP0_I(100))->pz;
+                epw->pz = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->pz;
                 break;
             case 4:
-                epw->px = ((ATR_WORK*)EXP0_I(100))->px;
+                epw->px = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->px;
                 break;
             case 2:
-                epw->px = ((ATR_WORK*)EXP0_I(100))->px + ((ATR_WORK*)EXP0_I(100))->w;
+                epw->px = ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->px + ((ATR_WORK*)PS2_HOST(EXP0_I(100)))->w;
                 break;
             }
 
@@ -2028,7 +2028,7 @@ void bhEne03_MV11(BH_PWORK* epw)
         
         break;
     case 2:
-        hp = (ATR_WORK*)EXP0_I(96);
+        hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
         
         if (hp != NULL) 
         {
@@ -2044,7 +2044,7 @@ void bhEne03_MV11(BH_PWORK* epw)
             
             epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
 
-            hp = (ATR_WORK*)EXP0_I(96);
+            hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
             
             if (hp->type == 7) 
             {
@@ -2151,7 +2151,7 @@ void bhEne03_MV14(BH_PWORK* epw)
             epw->mode3++;
         }
     case 4:
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -2165,7 +2165,7 @@ void bhEne03_MV14(BH_PWORK* epw)
             
             epw->mtn_add = 65536;
 
-            hp = (ATR_WORK*)EXP0_I(96);
+            hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
             
             if (hp->type == 7) 
             {
@@ -2268,7 +2268,7 @@ void bhEne03_MV15(BH_PWORK* epw)
             njGetMatrix((NJS_MATRIX*)epw->exp0);
         }
 
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -2282,7 +2282,7 @@ void bhEne03_MV15(BH_PWORK* epw)
             
             epw->mtn_add = 65536;
 
-            hp = (ATR_WORK*)EXP0_I(96);   
+            hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));   
             
             if (hp->type == 7) 
             {
@@ -2363,7 +2363,7 @@ void bhEne03_MV16(BH_PWORK* epw)
             njRotateX((NJS_MATRIX*)epw->exp0, 4004);
         }
 
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -3360,7 +3360,7 @@ void bhEne03_DG02(BH_PWORK* epw)
         
         epw->mode3++;
     case 1:
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             epw->mtn_no = 18;
             epw->frm_no = 0;
@@ -3626,7 +3626,7 @@ void bhEne03_DG07(BH_PWORK* epw)
             njGetMatrix((NJS_MATRIX*)epw->exp0);
         }
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -3835,7 +3835,7 @@ void bhEne03_DG10(BH_PWORK* epw)
             epw->ct0--;
         }
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -3989,13 +3989,13 @@ void bhEne03_DG11(BH_PWORK* epw)
             epw->ct0--;
         }
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
             bhEne03_MakeMatrix(epw);
             
-            hp = (ATR_WORK*)EXP0_I(96);
+            hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
             
             if (hp->type == 7) 
             {
@@ -4171,7 +4171,7 @@ void bhEne03_DG12(BH_PWORK* epw)
             epw->ct0--;
         }
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -4404,7 +4404,7 @@ void bhEne03_DD01(BH_PWORK* epw)
             epw->ct0--;
         }
 
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
@@ -4506,7 +4506,7 @@ void bhEne03_DD02(BH_PWORK* epw)
         
         epw->mode3++;
     case 1:
-        if ((ATR_WORK*)EXP0_I(96) != NULL)
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL)
         {
             EXP0_C(105) = 0;
             
@@ -4719,15 +4719,15 @@ void bhEne03_DD04(BH_PWORK* epw)
             njGetMatrix((NJS_MATRIX*)epw->exp0);
         }
 
-        hp = (ATR_WORK*)EXP0_I(96);
+        hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
         
-        if ((ATR_WORK*)EXP0_I(96) != NULL) 
+        if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
         {
             EXP0_C(105) = 0;
             
             bhEne03_MakeMatrix(epw);
 
-            hp = (ATR_WORK*)EXP0_I(96);
+            hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
             
             if (hp->type == 7)
             {
@@ -5111,7 +5111,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
     epw->py += trans.y;
     epw->pz += trans.z;
 
-    if ((ATR_WORK*)EXP0_I(96) != NULL) 
+    if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
     {
         epw->px += body.x;
         epw->py += body.y;
@@ -5121,7 +5121,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
         epw->py -= 3.0f * EXP0_F(36);
         epw->pz -= 3.0f * EXP0_F(40);
         
-        if (bhEne03_Collision2(epw, (ATR_WORK*)EXP0_I(96)) != NULL)
+        if (bhEne03_Collision2(epw, (ATR_WORK*)PS2_HOST(EXP0_I(96))) != NULL)
         {
             ret = 1;
         }
@@ -5130,7 +5130,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
         epw->py += 3.0f * EXP0_F(36);
         epw->pz += 3.0f * EXP0_F(40);
         
-        if (bhEne03_Collision2(epw, (ATR_WORK*)EXP0_I(96)) != NULL) 
+        if (bhEne03_Collision2(epw, (ATR_WORK*)PS2_HOST(EXP0_I(96))) != NULL) 
         {
             ret = 1;
         }
@@ -5141,7 +5141,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
             epw->py += 2.0f * EXP0_F(36);
             epw->pz += 2.0f * EXP0_F(40);
             
-            if (bhEne03_Collision2(epw, (ATR_WORK*)EXP0_I(96)) != NULL) 
+            if (bhEne03_Collision2(epw, (ATR_WORK*)PS2_HOST(EXP0_I(96))) != NULL) 
             {
                 ret = 1;
             }
@@ -5180,7 +5180,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
     epw->py -= trans.y;
     epw->pz -= trans.z;
 
-    if ((ATR_WORK*)EXP0_I(96) != NULL) 
+    if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
     {
         switch (EXP0_C(105)) 
         {

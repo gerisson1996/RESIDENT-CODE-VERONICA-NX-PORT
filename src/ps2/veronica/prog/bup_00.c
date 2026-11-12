@@ -203,7 +203,7 @@ void TypeWriterTextureInit()
             
             if (sz != 0)
             {
-                sys->memp = (unsigned char*)((unsigned int)(sys->memp + 63) & ~0x3F);
+                sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
                 
                 RequestReadIsoFile("sysmes.ald", sys->memp);
                 
@@ -244,7 +244,7 @@ void TypeWriterTextureInit()
     case 2:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0))
         {
-            sys->memp = (unsigned char*)((unsigned int)(sys->memp + 63) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
             
             RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
             
@@ -266,7 +266,7 @@ void TypeWriterTextureInit()
         {
             if (GetReadFileStatus() != 1)
             {
-                sys->memp = (unsigned char*)((unsigned int)(sys->memp + 63) & ~0x3F);
+                sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
                 
                 if (rom->mdl.texP != NULL)
                 {
@@ -285,7 +285,7 @@ void TypeWriterTextureInit()
     case 5:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->itm_partid, 144) != 0))
         {
-            sys->memp = (unsigned char*)((unsigned int)(sys->memp + 63) & ~0x3F);
+            sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
             
             RequestReadInsideFile(sys->itm_partid, 144, sys->memp);
             

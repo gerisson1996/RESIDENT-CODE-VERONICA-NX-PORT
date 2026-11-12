@@ -186,7 +186,7 @@ NJS_CNK_OBJECT* _fmCnkSearchObject(MASK_WORK* fm, NJS_CNK_OBJECT* root, char id)
 // 100% matching!
 void _fmGetVChunkType(MASK_WORK* fm)
 {
-    fm->vtype = *(unsigned short*)*(unsigned int*)fm->src;
+    fm->vtype = *(unsigned short*)PS2_HOST(*(unsigned int*)fm->src);
 
     switch (fm->vtype)
     {
@@ -583,7 +583,7 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
 #ifndef TARGET_PC
             *nlist++ = (int)&dvp[*nlist * vofs];
 #else
-            *nlist = (int)&dvp[*nlist * vofs];   /* unsequenced in the original; retail reads, then advances */
+            *nlist = (int)PS2_ADDR(&dvp[*nlist * vofs]);   /* unsequenced in the original; retail reads, then advances */
             nlist++;
 #endif
         } 

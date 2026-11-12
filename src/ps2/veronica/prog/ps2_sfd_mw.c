@@ -59,9 +59,9 @@ MWPLY ps2mwPlyCreateSofdec(MWS_PLY_CPRM_SFD* cprm, char* fname)
     
     sprintf(read_name, "%s%s;1", "\\MOVIE\\", fname);
     
-    infile.iopBuf = (unsigned char*)iop_read_buff;
+    infile.iopBuf = (unsigned char*)PS2_HOST(iop_read_buff);
     
-    sceCdStInit(iRingBufNum * 16, iRingBufNum, (((unsigned int)infile.iopBuf + 15) / 16) * 16);
+    sceCdStInit(iRingBufNum * 16, iRingBufNum, (((unsigned int)PS2_ADDR(infile.iopBuf) + 15) / 16) * 16);
 
     while (sceCdSearchFile(&infile.fp, read_name) == 0)
     {

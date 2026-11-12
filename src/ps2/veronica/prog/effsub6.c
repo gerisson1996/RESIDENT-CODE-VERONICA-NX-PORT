@@ -46,7 +46,7 @@ void bhEff085(O_WRK* op)
                 
                 tnp2 = (NJS_TEXNAME*)&enep->mlwP->texP->textures[3];
                 
-                op->exp0 = (unsigned char*)tnp2->texaddr; 
+                op->exp0 = (unsigned char*)PS2_HOST(tnp2->texaddr); 
                 
                 tnp2->texaddr = tnp->texaddr;
             }
@@ -61,7 +61,7 @@ void bhEff085(O_WRK* op)
             {
                 enep2 = &ene[effp->lkno];
                 
-                enep2->mlwP->texP->textures[3].texaddr = (int)op->exp0;
+                enep2->mlwP->texP->textures[3].texaddr = (int)PS2_ADDR(op->exp0);
             }
             
             op->mode1 = 0;

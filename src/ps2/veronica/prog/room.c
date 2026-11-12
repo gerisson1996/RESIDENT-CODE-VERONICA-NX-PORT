@@ -78,9 +78,9 @@ void bhSetRoom()
     
     njMemCopy(rom, &reladr[*(unsigned int*)(reladr + 16)], 1004);
     
-    for (romp = (unsigned int*)rom; (unsigned int)romp < (unsigned int)&rom->dmp00; romp++) 
+    for (romp = (unsigned int*)rom; (unsigned int)PS2_ADDR(romp) < (unsigned int)PS2_ADDR(&rom->dmp00); romp++) 
     {
-        *romp = (unsigned int)sys->rdtp + *romp;
+        *romp = (unsigned int)PS2_ADDR(sys->rdtp) + *romp;
     }
     
     cp = rom->cutp;
@@ -334,7 +334,7 @@ void bhSetRoom()
             
             sys->ef_tlist.nbTexture = sys->ef_ct;
             
-            sys->ef_pbkb[efp->id] = *(unsigned char*)(sys->ef_tlist.textures[sys->ef_tn[efp->id]].texaddr + 4);
+            sys->ef_pbkb[efp->id] = *(unsigned char*)PS2_HOST((sys->ef_tlist.textures[sys->ef_tn[efp->id]].texaddr + 4));
         }
     }
 #ifdef TARGET_PC
@@ -393,7 +393,7 @@ void bhFinishRoom()
             }
             else 
             {
-                sys->memp = (unsigned char*)(((int)sys->memp + 7) & ~0x7);
+                sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 7) & ~0x7));
                 
                 pwp->mnwP = (MN_WORK*)sys->memp;
                 
@@ -416,7 +416,7 @@ void bhFinishRoom()
     }
     else 
     {
-        sys->memp = (unsigned char*)(((int)sys->memp + 0x7) & ~0x7);
+        sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x7) & ~0x7));
         
         sys->rmthp = (MN_WORK*)sys->memp;
         
@@ -775,7 +775,7 @@ void bhSetObjMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno) // thir
     {
         npSetMemory((unsigned char*)epp->mdl, sizeof(O_WRK) / 50, 0);
         
-        if (((unsigned char*)datp[0] == (unsigned char*)'M') && ((unsigned char*)datp[1] == (unsigned char*)'D') && ((unsigned char*)datp[2] == (unsigned char*)'L')) 
+        if (((unsigned char*)PS2_HOST(datp[0]) == (unsigned char*)'M') && ((unsigned char*)PS2_HOST(datp[1]) == (unsigned char*)'D') && ((unsigned char*)PS2_HOST(datp[2]) == (unsigned char*)'L')) 
         {
             bhMlbBinRealize(datp, epp->mdl);
         }
@@ -1073,7 +1073,7 @@ void bhPushGameData()
     sys->ply_wno[sys->ply_id] = plp->wpnr_no;
     sys->ply_hp[sys->ply_id] = plp->hp;
     
-    npCopyMemory(freemem, (unsigned char*)&sys->version, (int)&sys->save_end - (int)&sys->version);
+    npCopyMemory(freemem, (unsigned char*)&sys->version, (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version));
 }
 
 // 100% matching!
@@ -1083,7 +1083,7 @@ void bhPopGameData()
     
     bhExitGame();
     
-    npCopyMemory((unsigned char*)&sys->version, freemem, (int)&sys->save_end - (int)&sys->version);
+    npCopyMemory((unsigned char*)&sys->version, freemem, (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version));
     
     if (sys->retry_ct < 99) 
     {

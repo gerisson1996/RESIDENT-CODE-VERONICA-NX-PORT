@@ -33,7 +33,7 @@ void	njDrawSprite2D( NJS_SPRITE *sp, Int n, Float pri, Uint32 attr )
         pri = -1.0f;
     }
     
-    tmp = (NJS_TEXMEMLIST*)sp->tlist->textures[ap->texid].texaddr;
+    tmp = (NJS_TEXMEMLIST*)PS2_HOST(sp->tlist->textures[ap->texid].texaddr);
     
     Ps2TexLoad(tmp);
     

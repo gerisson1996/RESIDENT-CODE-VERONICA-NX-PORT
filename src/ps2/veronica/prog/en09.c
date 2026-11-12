@@ -3958,7 +3958,7 @@ void bhEne09_MV04(BH_PWORK* epw)
             
             EXP0_I(0x18) &= 0xFFFF7FFF;
 
-            hp = (ATR_WORK *)*(int *)(epw->exp0 + 0x54);
+            hp = (ATR_WORK *)PS2_HOST(*(int *)(epw->exp0 + 0x54));
 
             epw->axp = (unsigned short)epw->axp;
             

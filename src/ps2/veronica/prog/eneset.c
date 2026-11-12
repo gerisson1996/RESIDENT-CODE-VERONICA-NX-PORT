@@ -1076,7 +1076,7 @@ void* bhEne_CallocWork(int size, int param) // second parameter not present on D
         return NULL;
     }
     
-    sys->memp = (unsigned char*)(((unsigned int)sys->memp + 63) & ~0x3F);
+    sys->memp = (unsigned char*)PS2_HOST((((unsigned int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
     
     ret_addr = sys->memp;
 

@@ -561,7 +561,7 @@ void bhEne06_MV01(BH_PWORK* epw)
 
         if (epw->ct2 != 0)
         {
-            ((BH_PWORK*)EXP0_I(0x84))->sy += (4.0f - ((BH_PWORK*)EXP0_I(0x84))->sy) / (float)epw->ct2;
+            ((BH_PWORK*)PS2_HOST(EXP0_I(0x84)))->sy += (4.0f - ((BH_PWORK*)PS2_HOST(EXP0_I(0x84)))->sy) / (float)epw->ct2;
             epw->ct2--;
         }
     }
@@ -902,7 +902,7 @@ void bhEne06_MV08(BH_PWORK* epw)
             epw->px = epw->px + ((EXP0_F(0x28)- epw->px) / epw->ct1);   
             epw->pz = epw->pz + ((EXP0_F(0x30) - epw->pz) / epw->ct1);
             
-            ((BH_PWORK*)EXP0_I(0x84))->sy += (2.0f - ((BH_PWORK*)EXP0_I(0x84))->sy) / (float)epw->ct1;
+            ((BH_PWORK*)PS2_HOST(EXP0_I(0x84)))->sy += (2.0f - ((BH_PWORK*)PS2_HOST(EXP0_I(0x84)))->sy) / (float)epw->ct1;
             
             epw->ct1--;
         }
@@ -1764,8 +1764,8 @@ void bhEne06_DD03(BH_PWORK* epw)
         for (i = 0; i < 12U; i++)
         {
             owk[BrokenParts[i]].flg |= 3;
-            *(char *)(*(int *)(epw->exp0 + i * 4 + 0x34) + 0xC) = 1;
-            *(char *)(*(int *)(epw->exp0 + i * 4 + 0x34) + 0xE) = (i < 4);
+            *(char *)PS2_HOST((*(int *)(epw->exp0 + i * 4 + 0x34) + 0xC)) = 1;
+            *(char *)PS2_HOST((*(int *)(epw->exp0 + i * 4 + 0x34) + 0xE)) = (i < 4);
         }
         
         epw->mlwP->objP[1].evalflags |= 8;

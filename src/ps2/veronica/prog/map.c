@@ -124,7 +124,7 @@ void bhInitMap(enum_2 set_mod)
         
         if (mwP->rom_texP != NULL) 
         {
-            sys->memp = (unsigned char*)(((int)sys->memp + 31) & ~0x1F);
+            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
             
             mwP->rom_bakP = sys->memp;
             
@@ -220,9 +220,9 @@ static int bhReadMapData(char* namP)
             bhReleaseFreeMemory(mwP->map_bufP);
         }
         
-        mwP->map_bufP = bhGetFreeMemory(GetInsideFileSize(mwP->prti_no, (unsigned int)namP), 32);
+        mwP->map_bufP = bhGetFreeMemory(GetInsideFileSize(mwP->prti_no, (unsigned int)PS2_ADDR(namP)), 32);
         
-        if (RequestReadInsideFile(mwP->prti_no, (unsigned int)namP, mwP->map_bufP) == 0) 
+        if (RequestReadInsideFile(mwP->prti_no, (unsigned int)PS2_ADDR(namP), mwP->map_bufP) == 0) 
         {
             mwP->fil_mode = 2;
             break;
@@ -379,7 +379,7 @@ int bhControlMap()
         {
             mlwP = mwP->MrkMdl;
             
-            pacP = (int*)((int)pacP + *pacP);
+            pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + *pacP));
             
             next = *pacP++;
             
@@ -387,7 +387,7 @@ int bhControlMap()
             {
                 bhMlbBinRealize(pacP, mlwP);
                 
-                pacP = (int*)((int)pacP + next);
+                pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                 
                 next = *pacP++;
                 
@@ -400,7 +400,7 @@ int bhControlMap()
             
             if (next != -1) 
             {
-                pacP = (int*)((int)pacP + next); 
+                pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next)); 
                 
                 next = *pacP++;
             }
@@ -411,7 +411,7 @@ int bhControlMap()
                 
                 if (next != -1) 
                 {
-                    pacP = (int*)((int)pacP + next); 
+                    pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next)); 
                     
                     next = *pacP++;
                 }
@@ -470,7 +470,7 @@ int bhControlMap()
         
         if (*pacP++ == 0x4341504D)
         {
-            pacP = (int*)((int)pacP + *pacP);
+            pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + *pacP));
             
             next = *pacP++;
             
@@ -478,7 +478,7 @@ int bhControlMap()
             
             if (next != -1) 
             {
-                pacP = (int*)((int)pacP + next);
+                pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                 
                 next = *pacP++;
                 
@@ -492,7 +492,7 @@ int bhControlMap()
                 {
                     mwP->status |= 0x10;
                     
-                    bhSetMemPvpTexture(mwP->stg_texP, (unsigned char*)(((int)pacP + next) + 4), 0); 
+                    bhSetMemPvpTexture(mwP->stg_texP, (unsigned char*)PS2_HOST((((int)PS2_ADDR(pacP) + next) + 4)), 0); 
                 }
             }
             
@@ -1231,7 +1231,7 @@ static int MapGetFloorNo(void* datP, int rom_no, float pos_y)
     
     key = 100.0f * rom_no;
     
-    ftP = (FT_WRK*)((int)datP + ((short*)datP)[2]);
+    ftP = (FT_WRK*)PS2_HOST(((int)PS2_ADDR(datP) + ((short*)datP)[2]));
     
     do 
     {
@@ -1456,7 +1456,7 @@ static void MapEntrySprite(mp_set set_no, int mode)
     
     if (fwP != NULL) 
     {
-        fwP->param0 = (int)&mwP->map_mode;
+        fwP->param0 = (int)PS2_ADDR(&mwP->map_mode);
         fwP->param1 = ssP->act_bit;
         fwP->param2 = ssP->spr_no;
         
@@ -1740,9 +1740,9 @@ static FT_WORK* MapEntryTask(int(*tskP)(FTS_WORK*), mp_mod chg_mde, int param0)
     
     if (fwP != NULL) 
     {
-        fwP->param0 = (int)&mwP->map_mode;
+        fwP->param0 = (int)PS2_ADDR(&mwP->map_mode);
         fwP->param1 = chg_mde; 
-        fwP->param2 = (int)tskP;
+        fwP->param2 = (int)PS2_ADDR(tskP);
         
         fwP->FreeWrk[0] = param0;
 
@@ -1811,7 +1811,7 @@ static int FtskMapRead(FTS_WORK* ftsP)
         
         ftsP->param3++;
     case 1:
-        if (bhReadMapData((char*)ftsP->param0) != 0) 
+        if (bhReadMapData((char*)PS2_HOST(ftsP->param0)) != 0) 
         {
             bol = 0;
         }

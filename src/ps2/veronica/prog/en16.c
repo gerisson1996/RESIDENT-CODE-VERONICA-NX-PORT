@@ -47,7 +47,7 @@ void bhEne16(BH_PWORK* epw)
         bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
         if (EXP0_I(0) != 0)
         {
-            ((char*)EXP0_I(0))[0xC] = 2;
+            ((char*)PS2_HOST(EXP0_I(0)))[0xC] = 2;
         }
     }
     bhCalcModel(epw);
@@ -90,9 +90,9 @@ void bhEne16_Init(BH_PWORK* epw)
         eff_id = bhSetEffectTb(&sys->ef, NULL, (unsigned char*)epw, 0);
         if (eff_id >= 0)
         {
-            EXP0_I(0) = (int)&eff[eff_id];
-            ((char*)EXP0_I(0))[0xC] = 0;
-            bhEff_E16_LaserSight((O_WRK*)((char*)EXP0_I(0)));
+            EXP0_I(0) = (int)PS2_ADDR(&eff[eff_id]);
+            ((char*)PS2_HOST(EXP0_I(0)))[0xC] = 0;
+            bhEff_E16_LaserSight((O_WRK*)((char*)PS2_HOST(EXP0_I(0))));
         }
     }
     epw->mdflg |= 1;
@@ -141,7 +141,7 @@ void bhEne16_MV00(BH_PWORK* epw)
 {
     if (EXP0_I(0) != 0)
     {
-        ((char*)EXP0_I(0))[0xC] = 1;
+        ((char*)PS2_HOST(EXP0_I(0)))[0xC] = 1;
     }
 }
 
@@ -150,7 +150,7 @@ void bhEne16_MV01(BH_PWORK* epw)
 {
     if (EXP0_I(0) != 0)
     {
-        ((char*)EXP0_I(0))[0xC] = 2;
+        ((char*)PS2_HOST(EXP0_I(0)))[0xC] = 2;
     }
 }
 
@@ -173,9 +173,9 @@ void bhEne16_MV02(BH_PWORK* epw)
     switch (epw->mode3) 
     {
     case 0:       
-        if ((BH_PWORK*)EXP0_I(0x0) != NULL)
+        if ((BH_PWORK*)PS2_HOST(EXP0_I(0x0)) != NULL)
         {
-            ((BH_PWORK*)EXP0_I(0x0))->mode0 = 2;
+            ((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->mode0 = 2;
         }
         epw->ct0 = 30;
         epw->ct1 = 7;
@@ -199,7 +199,7 @@ void bhEne16_MV02(BH_PWORK* epw)
     case 2:
         if (njScalor((NJS_VECTOR*)&epw->aox) < 0.5f)
         {
-            if (((BH_PWORK*)EXP0_I(0x0) != NULL) && (((BH_PWORK*)EXP0_I(0x0))->ct0 > 0))
+            if (((BH_PWORK*)PS2_HOST(EXP0_I(0x0)) != NULL) && (((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->ct0 > 0))
             {
                 epw->ct0 = 30;
                 epw->mode3++;
@@ -218,13 +218,13 @@ void bhEne16_MV02(BH_PWORK* epw)
             epw->ct1--;
             bhEne_CallEffectSE((NJS_POINT3*)&epw->px, 74497);
 
-            if (((BH_PWORK*)EXP0_I(0x0) != NULL) && ((int)((BH_PWORK*)EXP0_I(0x3D4)) > 0) && !(plp->stflg & 0x30))
+            if (((BH_PWORK*)PS2_HOST(EXP0_I(0x0)) != NULL) && ((int)PS2_ADDR(((BH_PWORK*)PS2_HOST(EXP0_I(0x3D4)))) > 0) && !(plp->stflg & 0x30))
             {
                 plp->dvx = epw->xn - epw->px;
                 plp->dvy = epw->yn - epw->py;
                 plp->dvz = epw->zn - epw->pz;
 
-                bhEne_SetBloodEffectBurst(plp, 2, ((BH_PWORK*)EXP0_I(0x0))->ct0, (NJS_POINT3*)&((BH_PWORK*)EXP0_I(0x0))->gpx, 1);
+                bhEne_SetBloodEffectBurst(plp, 2, ((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->ct0, (NJS_POINT3*)&((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->gpx, 1);
                 if (150 < plp->hp)
                 {
                     plp->hp -= plp->hp / 2;
@@ -253,7 +253,7 @@ void bhEne16_MV02(BH_PWORK* epw)
             } 
             else
             {
-                hp = (ATR_WORK*)(BH_PWORK*)EXP0_I(0x2F0); 
+                hp = (ATR_WORK*)(BH_PWORK*)PS2_HOST(EXP0_I(0x2F0)); 
                 if ((hp != NULL) && (bhCheckWallAttrB89(hp) != 0))
                 {
                     v.x = epw->px - epw->xn;
@@ -314,9 +314,9 @@ void bhEne16_MV02(BH_PWORK* epw)
         else
         {
 
-            if ((BH_PWORK*)EXP0_I(0x0) != NULL)
+            if ((BH_PWORK*)PS2_HOST(EXP0_I(0x0)) != NULL)
             {
-                ((BH_PWORK*)EXP0_I(0x0))->mode0 = 1;
+                ((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->mode0 = 1;
             }
             epw->mode3 = 6;
             epw->ct0 = 0x5A;
@@ -366,7 +366,7 @@ void bhEne16_MV02(BH_PWORK* epw)
             }
         }
 
-        if (((BH_PWORK*)EXP0_I(0x0) != NULL) && (((BH_PWORK*)EXP0_I(0x0))->ct0 > 0))
+        if (((BH_PWORK*)PS2_HOST(EXP0_I(0x0)) != NULL) && (((BH_PWORK*)PS2_HOST(EXP0_I(0x0)))->ct0 > 0))
         {
             epw->aox *= 0.7f;
             epw->aoy *= 0.7f;

@@ -2158,10 +2158,10 @@ void bhEne05_MV07(BH_PWORK* epw)
     case 0:
         if (EXP0_I(0x74) != 0)
         {
-            if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x21) < 8)
+            if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x21)) < 8)
             {
-                rom->etcp[*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22)].attr |= 0x400000;
-                rom->etcp[*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x23)].attr |= 0x400000;
+                rom->etcp[*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22))].attr |= 0x400000;
+                rom->etcp[*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x23))].attr |= 0x400000;
             }
         }
         epw->flr_no = -128;
@@ -2191,7 +2191,7 @@ void bhEne05_MV07(BH_PWORK* epw)
             epw->mode3++;
             epw->flg &= ~0x2000000;
             epw->ay = epw->ayp;
-            if ((*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x21) >= 0x18) && (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x21) < 33))
+            if ((*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x21)) >= 0x18) && (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x21)) < 33))
             {
                 h = 13.0f;
                 EXP0_F(0x6C) = (6.0f + epw->py);
@@ -2252,10 +2252,10 @@ void bhEne05_MV07(BH_PWORK* epw)
             epw->stflg &= ~0x100000;
             epw->py = bhGetGroundPosition((NJS_POINT3*)&epw->px);
 
-            if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x21) < 8)
+            if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x21)) < 8)
             {
-                rom->etcp[*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22)].attr &= ~0x400000;
-                rom->etcp[*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x23)].attr &= ~0x400000;
+                rom->etcp[*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22))].attr &= ~0x400000;
+                rom->etcp[*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x23))].attr &= ~0x400000;
             }
         } 
         else 
@@ -2550,7 +2550,7 @@ void bhEne05_MV12(BH_PWORK* epw)
         epw->flg |= 0x4000000;
         epw->flg |= 0x10000000;
 
-        if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22) == 0)
+        if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22)) == 0)
         {
             epw->mtn_no = 44;
         } 
@@ -2640,7 +2640,7 @@ void bhEne05_MV12(BH_PWORK* epw)
             epw->pxb = epw->px;
             epw->pzb = epw->pz;
 
-            if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22) == 0)
+            if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22)) == 0)
             {
 
                 epw->pyb = epw->py = 9.1f + EXP0_F(0x6C);
@@ -2681,7 +2681,7 @@ void bhEne05_MV13(BH_PWORK* epw)
         epw->flg |= 0x4000000;
         epw->flg |= 0x10000000;
 
-        if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22) == 0)
+        if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22)) == 0)
         {
             epw->mtn_no = 45;
         } 
@@ -2766,7 +2766,7 @@ void bhEne05_MV13(BH_PWORK* epw)
             epw->pxb = epw->px;
             epw->pzb = epw->pz;
 
-            if (*(unsigned char *)(*(int *)(epw->exp0 + 0x74) + 0x22) == 0)
+            if (*(unsigned char *)PS2_HOST((*(int *)(epw->exp0 + 0x74) + 0x22)) == 0)
             {
 
                 epw->pyb = epw->py = EXP0_F(0x6C) - 8.9f;
@@ -4886,38 +4886,38 @@ void bhEne05_FixedLegPos(BH_PWORK* epw)
             {
                 if (fno < 10)
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[1];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[1]);
                 } 
                 else
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[2];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[2]);
                 }
             } 
             else
             {
                 if (fno < 10)
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[2];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[2]);
                 } 
                 else
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[1];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[1]);
                 }
             }                       
             break;
 
         case 46:
-            EXP0_I(0x7C) = (int)joint_tree[1];            
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[1]);            
             break;
 
         case 22:
             if (fno < 17)
             {
-                EXP0_I(0x7C) = (int)joint_tree[1];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[1]);
             } 
             else
             {
-                EXP0_I(0x7C) = (int)joint_tree[2];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[2]);
             }            
             break;
 
@@ -4929,22 +4929,22 @@ void bhEne05_FixedLegPos(BH_PWORK* epw)
             {
                 if (fno < 6)
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[9];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[9]);
                 } 
                 else
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[8];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
                 }
             } 
             else 
             {
                 if (fno < 6)
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[8];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
                 } 
                 else
                 {
-                    EXP0_I(0x7C) = (int)joint_tree[9];
+                    EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[9]);
                 }
             }            
             break;
@@ -4952,26 +4952,26 @@ void bhEne05_FixedLegPos(BH_PWORK* epw)
     case 33:
         if ((fno <= 15) || (fno >= 41))
         {
-            EXP0_I(0x7C) = (int)joint_tree[8];
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
         }
         else if (fno < 41)
         {
-            EXP0_I(0x7C) = (int)joint_tree[9];
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[9]);
         }
         break;
 
         case 34:
-            EXP0_I(0x7C) = (int)joint_tree[8];            
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);            
             break;
 
         case 18:
             if (fno < 15)
             {
-                EXP0_I(0x7C) = (int)joint_tree[5];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[5]);
             } 
             else
             {
-                EXP0_I(0x7C) = (int)joint_tree[8];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
             }
             
             break;
@@ -4979,32 +4979,32 @@ void bhEne05_FixedLegPos(BH_PWORK* epw)
         case 19:
             if (fno < 15)
             {
-                EXP0_I(0x7C) = (int)(joint_tree[0]);
+                EXP0_I(0x7C) = (int)PS2_ADDR((joint_tree[0]));
             } 
             else if (fno < 42)
             {
-                EXP0_I(0x7C) = (int)joint_tree[9];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[9]);
             } 
             else
             {
-                EXP0_I(0x7C) = (int)joint_tree[8];
+                EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
             }
             
             break;
 
         case 2:
-            EXP0_I(0x7C) = (int)joint_tree[8];
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[8]);
             
             break;
 
         case 7:
         case 10:
-            EXP0_I(0x7C) = (int)joint_tree[9];            
+            EXP0_I(0x7C) = (int)PS2_ADDR(joint_tree[9]);            
             break;
         }
 
         if (EXP0_I(0x7C) != 0) {
-            bhCalcFixOffset(epw, (char*)EXP0_I(0x7C), 0, &ret);
+            bhCalcFixOffset(epw, (char*)PS2_HOST(EXP0_I(0x7C)), 0, &ret);
             epw->px -= ret.x;
             epw->pz -= ret.z;
         }
@@ -5760,7 +5760,7 @@ int bhEne05_CheckBackAttack(BH_PWORK* epw)
         return 0;
     } 
 
-    epp = (BH_PWORK*)EXP0_I(0x60);
+    epp = (BH_PWORK*)PS2_HOST(EXP0_I(0x60));
     if ((epp != NULL) && (bhEne_CheckDirTarget(plp, epp->px, epp->pz, 10922) == 0))
     {
         return 0;
