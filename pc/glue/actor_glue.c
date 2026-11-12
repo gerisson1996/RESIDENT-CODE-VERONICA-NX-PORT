@@ -716,7 +716,7 @@ int actor_find(const ActorModel* am, ActorData* out)
     snprintf(name, sizeof(name), "RM_%04d.RDX", am->room);
     if (!load_rdx(am->room)) return 0;
     rw = (const ROM_WORK*)(room + hdr->hed00);
-    recs = (const ETTY_WORK*)(room + (unsigned int)rw->enep);
+    recs = (const ETTY_WORK*)(room + (unsigned int)PS2_ADDR(rw->enep));
     n = rw->ene_n;
     if (am->rec >= n || recs[am->rec].id != am->id || recs[am->rec].mdlver != am->mdlver || !(recs[am->rec].flg & 0x1)) {
         host_log("actor: %s: record %d of %s is not type %d version %d\n", am->name, am->rec, name, am->id, am->mdlver);
@@ -755,7 +755,7 @@ const unsigned char* actor_fx_tex(int rm, int fx)
     int ids[64], m = 0, i, j, k = -1, cnt;
     if (!load_rdx(rm)) return NULL;
     rw = (const ROM_WORK*)(room + hdr->hed00);
-    e = (const EF_WRK*)(room + (unsigned int)rw->effp);
+    e = (const EF_WRK*)(room + (unsigned int)PS2_ADDR(rw->effp));
     for (i = 0; i < rw->eff_n && m < 64; i++)
         if ((e[i].id >= 30 && e[i].id < 100) || e[i].id >= 400) {
             for (j = 0; j < m && ids[j] != e[i].id; j++);
@@ -778,8 +778,8 @@ static int load_room_model(Disguise* d, int idx)
     unsigned char own[16] = { 0 };
 
     if (!actor_find(am, &a)) return 0;
-    mofs = (int)((unsigned int)a.mdl & 63);   /* keep the data's alignment */
-    if (a.mtn) nofs = ((mofs + a.mlen + 63) & ~63) + (int)((unsigned int)a.mtn & 63);
+    mofs = (int)((unsigned int)PS2_ADDR(a.mdl) & 63);   /* keep the data's alignment */
+    if (a.mtn) nofs = ((mofs + a.mlen + 63) & ~63) + (int)((unsigned int)PS2_ADDR(a.mtn) & 63);
     if (mofs + a.mlen > KEEP_SIZE || nofs + a.nlen > KEEP_SIZE) { host_log("actor: %s does not fit\n", am->name); return 0; }
 
     unload(d);
@@ -1489,7 +1489,7 @@ static void face_step(Disguise* d, const BH_PWORK* ep)
     e[268] = s[268];                        /* the lip data (bhSetLip) */
     *(LIP_WORK*)d->w.exp2 = *(const LIP_WORK*)ep->exp2;
     if (e[268] && e[268] != d->lip) {   /* a new line: its highest phoneme (pairs phoneme, time; 0xFF ends) */
-        const unsigned char* p = (const unsigned char*)e[268];
+        const unsigned char* p = (const unsigned char*)PS2_HOST(e[268]);
         int k;
         d->lip = e[268];
         for (d->lip_max = k = 0; k < 4096 && p[k] != 0xFF; k += 2) if (p[k] > d->lip_max) d->lip_max = p[k];

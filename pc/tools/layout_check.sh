@@ -11,13 +11,17 @@
 #           -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRECVX_LAYOUT_PAD=20500 && ninja -C build-pad recvx
 #     pc/tools/layout_check.sh build/pc/recvx build-pad/pc/recvx scratch/layout
 #   Run to run: the same binary twice.
-# Env: LAST (default 1800), MODES (default "vanilla enhanced"), MAX_SECS per run (default 600),
+# Env: VIDEO_DRIVER (default offscreen; "windows" on Windows, where offscreen needs an EGL library),
+#      LAST (default 1800), MODES (default "vanilla enhanced"), MAX_SECS per run (default 600),
 #      INI (extra recvx.ini lines, e.g. "save_system = 1" for the memory card; not
 #      "difficulty_select = 1": its menu step moves the game's start off the script's frames).
 # Dumps are 640x480 BMPs (~1.2 MB, ~300 per run); OUTDIR is removed first. Never commit it.
 set -u
 A=$(realpath "$1"); B=$(realpath "$2"); OUT=$(realpath -m "$3")
 ISO=${4:-${RECVX_ISO:-$(dirname "$(realpath "$0")")/../../ISO/SLUS-20184 ROM.iso}}
+# MSYS/Cygwin shell running a native Windows binary: hand it Windows paths (arguments and
+# environment are not always converted)
+if command -v cygpath >/dev/null 2>&1; then OUT=$(cygpath -m "$OUT"); ISO=$(cygpath -m "$ISO"); fi
 LAST=${LAST:-1800}; MAX_SECS=${MAX_SECS:-600}
 last=$(printf "frame_%05d.bmp" "$LAST")
 newgame="100:down,103:-,110:cross,113:-,160:cross,163:-,200:cross,203:-,240:cross,243:-,280:cross,283:-"
@@ -27,7 +31,7 @@ run() { # BIN DIR MODE
   # show_fps: the counter is drawn into the in-between dumps; difficulty_select: NEW GAME starts the
   # game at once (the script's frames; builds without the difficulty menu compare); INI: more lines
   { echo "show_fps = 0"; echo "difficulty_select = 0"; [ -n "${INI:-}" ] && printf "%s\n" "$INI"; } > "$2/save/recvx.ini"
-  SDL_VIDEO_DRIVER=offscreen SDL_AUDIO_DRIVER=dummy RECVX_SKIP_MOVIES=1 RECVX_MODS="$2/mods" \
+  SDL_VIDEO_DRIVER=${VIDEO_DRIVER:-offscreen} SDL_AUDIO_DRIVER=dummy RECVX_SKIP_MOVIES=1 RECVX_MODS="$2/mods" \
   RECVX_TELEPORT=1:0:6:0 RECVX_EQUIP=20:5:60 RECVX_INF_AMMO=1 RECVX_INPUT="$newgame,$walk" \
   RECVX_INTERP_T=0.5 RECVX_DUMP_FRAMES="$2/frames" RECVX_DUMP_EVERY=10 RECVX_DUMP_FROM=300 \
   timeout -s KILL "$MAX_SECS" "$1" "$ISO" --skip-intro --size 640x480 --"$3" --save-dir "$2/save" \

@@ -166,7 +166,7 @@ void spawn_room_setup(void) { pool_n = 0; pc_enemy_added = 0; sound_release(); }
 /* a copy at the source's alignment (mod 64) */
 static unsigned char* pool_copy(const unsigned char* src, int len)
 {
-    int at = ((pool_n + 63) & ~63) + (int)((unsigned int)src & 63);
+    int at = ((pool_n + 63) & ~63) + (int)((unsigned int)PS2_ADDR(src) & 63);
     if (at + len > POOL_SIZE) return NULL;
     memcpy(pool + at, src, len);
     pool_n = at + len;
@@ -180,8 +180,8 @@ static int room_tex_push(void)
     const NJS_TEXLIST* t = rom->mdl.texP;
     int i, n = 0;
     for (i = 0; t && i < (int)t->nbTexture; i++) {
-        const NJS_TEXMEMLIST* m = (const NJS_TEXMEMLIST*)t->textures[i].texaddr;
-        if ((unsigned int)m < (unsigned int)Ps2_tex_info || (unsigned int)m >= (unsigned int)(Ps2_tex_info + Ps2_texmemlist_num) || !m->texinfo.texsurface.TextureSize)
+        const NJS_TEXMEMLIST* m = (const NJS_TEXMEMLIST*)PS2_HOST(t->textures[i].texaddr);
+        if ((unsigned int)PS2_ADDR(m) < (unsigned int)PS2_ADDR(Ps2_tex_info) || (unsigned int)PS2_ADDR(m) >= (unsigned int)PS2_ADDR((Ps2_tex_info + Ps2_texmemlist_num)) || !m->texinfo.texsurface.TextureSize)
             return (int)sys->rdtsz - (int)((const RDT_WORK*)sys->rdtp)->hed04;
         n += m->texinfo.texsurface.TextureSize;
     }
@@ -255,7 +255,7 @@ static void fx_load(const ActorModel* am, int variant)
     sys->ef_tn[fx] = sys->ef_ct;
     sys->ef_ct += n;
     sys->ef_tlist.nbTexture = sys->ef_ct;
-    sys->ef_pbkb[fx] = *(unsigned char*)(sys->ef_tlist.textures[sys->ef_tn[fx]].texaddr + 4);
+    sys->ef_pbkb[fx] = *(unsigned char*)PS2_HOST((sys->ef_tlist.textures[sys->ef_tn[fx]].texaddr + 4));
     host_log("spawn: type %d: effect texture %d from RM_%04d (%d textures)\n", am->id, fx, am->room, n);
 }
 

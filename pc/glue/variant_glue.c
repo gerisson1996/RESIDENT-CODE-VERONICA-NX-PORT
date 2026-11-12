@@ -121,8 +121,8 @@ static int donor_load(int type, int ver)
     if (key == donor_key) return 1;
     donor_key = -1;
     if (!am || !actor_find(am, &a) || !a.mtn) return 0;
-    mofs = (int)((unsigned int)a.mdl & 63);   /* (the data's alignment kept) */
-    nofs = ((mofs + a.mlen + 63) & ~63) + (int)((unsigned int)a.mtn & 63);
+    mofs = (int)((unsigned int)PS2_ADDR(a.mdl) & 63);   /* (the data's alignment kept) */
+    nofs = ((mofs + a.mlen + 63) & ~63) + (int)((unsigned int)PS2_ADDR(a.mtn) & 63);
     if (nofs + a.nlen > DONOR_SIZE) return 0;
     memcpy(dbuf + mofs, a.mdl, a.mlen);
     memcpy(dbuf + nofs, a.mtn, a.nlen);

@@ -180,7 +180,7 @@ void vbrank_draw(void)
     stream_movie(14208, frame_shown);   /* the texture TEX0_2 below samples: this frame */
     D2_SyncTag();
 
-    tag = (void*)((u_int)new_tags | UNCBASE);
+    tag = (void*)PS2_HOST(((u_int)PS2_ADDR(new_tags) | UNCBASE));
 
     u = (__image_w__ - 1) * 16;
     v = (__image_h__ - 1) * 16;

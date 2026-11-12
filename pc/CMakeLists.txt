@@ -105,8 +105,16 @@ target_compile_options(recvx_game PRIVATE
 # permerrors the decomp needs are switched off one by one). GCC 13 (CI) only warns: the ctest
 # decomp_declarations checks it there. Missing returns and uninitialized locals are listed by
 # pc/tools/decomp_warnings.py. The port's own glue gets warnings.
+if(RECVX_64)
+    # 64-bit: a pointer no longer fits an int. Every pointer<->integer conversion is an error, so
+    # each goes through pc_ptr.h (P32/S32/PS2_ADDR/PS2_HOST) or intptr_t. -w would hide -Werror=...,
+    # so the other warnings are switched off by group instead.
+    set_source_files_properties(${GAME_SOURCES} PROPERTIES COMPILE_OPTIONS
+        "-Wno-incompatible-pointer-types;-Wno-return-mismatch;-Wno-multichar;-Wno-overflow;-Wno-div-by-zero;-Wno-attributes;-Wno-pointer-sign;-Wno-discarded-qualifiers;-Wno-builtin-declaration-mismatch;-Wno-shift-count-overflow;-Wno-implicit-int;-Wno-deprecated-declarations;-Wno-pointer-compare;-Wno-format;-Wno-unused-value;-Werror=pointer-to-int-cast;-Werror=int-to-pointer-cast;-Werror=int-conversion")
+else()
 set_source_files_properties(${GAME_SOURCES} PROPERTIES COMPILE_OPTIONS
     "-w;-Wno-incompatible-pointer-types;-Wno-int-conversion;-Wno-return-mismatch")
+endif()
 set_source_files_properties(${GLUE_SOURCES} PROPERTIES COMPILE_OPTIONS "-Wall;-Wno-unused-function")
 if(WIN32)
     # GCC (not MSVC) bitfield layout, as on Linux and the EE
@@ -151,6 +159,14 @@ target_compile_options(recvx_platform PRIVATE
     -fno-strict-aliasing -fwrapv -ffp-contract=off -msse2 -mfpmath=sse
     -Wall -Wno-unused-function
 )
+if(RECVX_64)
+    target_compile_definitions(recvx_game PRIVATE RECVX_64=1)
+    target_compile_definitions(recvx_platform PRIVATE RECVX_64=1)
+    target_compile_options(recvx_platform PRIVATE
+        $<$<COMPILE_LANGUAGE:C>:-Werror=pointer-to-int-cast -Werror=int-to-pointer-cast -Werror=int-conversion -Werror=incompatible-pointer-types -Werror=implicit-function-declaration>)
+    set_source_files_properties(${GLUE_SOURCES} PROPERTIES COMPILE_OPTIONS
+        "-Wall;-Wno-unused-function;-Werror=pointer-to-int-cast;-Werror=int-to-pointer-cast;-Werror=int-conversion;-Werror=incompatible-pointer-types")
+endif()
 target_link_libraries(recvx_platform PRIVATE SDL3::SDL3 imgui)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_compile_options(recvx_platform PRIVATE -fno-pie)
@@ -182,8 +198,14 @@ if(WIN32)
     # Same address window as Linux: fixed image base, no ASLR relocation; large-address-aware
     # gives the 32-bit exe 4 GB on 64-bit Windows (Linux already uses addresses above 2 GB). -static: libstdc++,
     # libgcc and winpthread go into the exe, only system DLLs (UCRT, opengl32, ...) remain.
+    if(RECVX_64)
+        # stage 1a: same window, so every game object and the heap's first gigabytes fit a 32-bit slot
+        target_link_options(recvx PRIVATE -static -Wl,--image-base,0x30000000 -Wl,--disable-dynamicbase
+                            -Wl,--disable-high-entropy-va -Wl,--stack,8388608)
+    else()
     target_link_options(recvx PRIVATE -static -Wl,--image-base,0x30000000 -Wl,--disable-dynamicbase -Wl,--large-address-aware
                         -Wl,--stack,8388608)
+    endif()
 endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Place the image inside the PS2 address window (see docs/ARCHITECTURE.md, "Data model and memory").

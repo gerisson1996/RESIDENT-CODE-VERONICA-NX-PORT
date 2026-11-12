@@ -2,11 +2,18 @@ cmake_minimum_required(VERSION 3.20)
 project(recvx_pc VERSION 1.1.0 LANGUAGES C CXX)   # the release version
 include(cmake/version.cmake)
 
-# The decomp's data files and code assume the EE's 32-bit pointers. Phase 1
-# targets x86-32; a 64-bit build needs the 32-bit-window memory model first.
-if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
-    message(FATAL_ERROR "recvx_pc must currently be built as 32-bit. "
-                        "Linux: -DCMAKE_TOOLCHAIN_FILE=cmake/linux-i686.cmake; Windows: -A Win32")
+# The decomp's data files and code assume the EE's 32-bit pointers. The supported build is
+# x86-32; RECVX_64 opts into the 64-bit build, where disc structures keep 32-bit pointer slots
+# (pc/include/pc_ptr.h, docs/superpowers/specs/2026-11-11-build-64bit-pc-design.md).
+option(RECVX_64 "64-bit build (work in progress)" OFF)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT RECVX_64)
+    message(FATAL_ERROR "recvx_pc is built as 32-bit unless -DRECVX_64=ON. "
+                        "Linux: -DCMAKE_TOOLCHAIN_FILE=cmake/linux-i686.cmake; Windows: cmake/mingw-i686.cmake")
+elseif(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "unsupported pointer size")
+endif()
+if(RECVX_64 AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "RECVX_64 needs a 64-bit toolchain (cmake/mingw-x86_64.cmake)")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -25,5 +32,5 @@ endif()
 
 set(RECVX_DECOMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/decomp" CACHE PATH "recvx-decomp checkout")
 
-#enable_testing()
+enable_testing()
 add_subdirectory(pc)

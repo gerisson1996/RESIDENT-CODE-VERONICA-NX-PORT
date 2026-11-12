@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <assert.h>
+#include "pc_ptr.h"
 
 /* CRI xpt: pre-empt the EE-only mode(TI) typedefs. */
 #define _TYPEDEF_Uint64

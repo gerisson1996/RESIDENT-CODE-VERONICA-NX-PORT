@@ -20,7 +20,9 @@
 #undef CreateThread
 #endif
 #include "ps2_platform.h"
+#include "pc_ptr.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifndef _WIN32
@@ -130,3 +132,12 @@ void* ps2_dma_ptr(uint32_t addr)
     if (addr < 0x10000000u) addr |= 0x30000000u; /* physical address (masked with 0x0FFFFFFF) */
     return (void*)(uintptr_t)addr;
 }
+
+#if UINTPTR_MAX != 0xFFFFFFFFu
+/* a host pointer that does not fit a 32-bit slot or DMA field (pc_ptr.h) */
+void ps2_ptr_fail(const void* p, const char* file, int line)
+{
+    host_fatal("host pointer %p does not fit a PS2 address (%s:%d)", p, file, line);
+    abort();
+}
+#endif

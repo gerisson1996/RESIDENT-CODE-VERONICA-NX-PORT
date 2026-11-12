@@ -246,15 +246,21 @@ static LONG WINAPI on_fatal(EXCEPTION_POINTERS* ep)
 {
     static LONG entered;
     const CONTEXT* c = ep->ContextRecord;
-    uint32_t* fp = (uint32_t*)c->Ebp;
+#ifdef _WIN64
+    uintptr_t* fp = (uintptr_t*)c->Rbp;
+    unsigned long long pc_ = c->Rip, sp_ = c->Rsp;
+#else
+    uintptr_t* fp = (uintptr_t*)c->Ebp;
+    unsigned long long pc_ = c->Eip, sp_ = c->Esp;
+#endif
     char msg[512];
     int len;
     if (InterlockedExchange(&entered, 1)) for (;;) Sleep(INFINITE);   /* another thread is writing the report */
-    len = snprintf(msg, sizeof(msg), "\nfatal exception 0x%08lX at 0x%08lX (esp 0x%08lX), frame chain:",
-                       ep->ExceptionRecord->ExceptionCode, (unsigned long)c->Eip, (unsigned long)c->Esp);
+    len = snprintf(msg, sizeof(msg), "\nfatal exception 0x%08lX at 0x%08llX (esp 0x%08llX), frame chain:",
+                       ep->ExceptionRecord->ExceptionCode, pc_, sp_);
     FILE* f;
-    for (int i = 0; i < 32 && fp && !IsBadReadPtr(fp, 8) && len < (int)sizeof(msg) - 16; i++, fp = (uint32_t*)fp[0])
-        len += snprintf(msg + len, sizeof(msg) - len, " 0x%08X", fp[1]);
+    for (int i = 0; i < 32 && fp && !IsBadReadPtr(fp, 2 * sizeof(*fp)) && len < (int)sizeof(msg) - 16; i++, fp = (uintptr_t*)fp[0])
+        len += snprintf(msg + len, sizeof(msg) - len, " 0x%08llX", (unsigned long long)fp[1]);
     fprintf(stderr, "%s\n", msg);
     fflush(stderr);
     if ((f = fopen(crash_path, "w"))) {
