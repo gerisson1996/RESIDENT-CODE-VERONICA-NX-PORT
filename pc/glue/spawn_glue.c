@@ -36,7 +36,7 @@
 
 void host_log(const char* fmt, ...);
 void _exit(int);
-NJS_TEXLIST** pc_et_lp(int id, int ver);   /* room.c: sys->et_lp[id][ver] */
+ps2ptr_t* pc_et_lp(int id, int ver);   /* room.c: sys->et_lp[id][ver] */
 extern unsigned int Ps2_texmemlist_num;
 void enemy_extras_frame(void);          /* enemyopt_glue.c */
 void variant_spawned(int slot, int id); /* variant_glue.c */
@@ -276,7 +276,7 @@ static void unrealize(BH_PWORK* ep)
     for (j = 0; j < ep->mdl_n; j++)
         if (ep->mdl[j].flg & 0x200)
             for (v = 0; v < 16; v++)
-                if (pc_et_lp(ep->id, ep->mdlver)[v] == P32(NJS_TEXLIST *, ep->mdl[j].texP)) pc_et_lp(ep->id, ep->mdlver)[v] = NULL;
+                if (pc_et_lp(ep->id, ep->mdlver)[v] == ep->mdl[j].texP) pc_et_lp(ep->id, ep->mdlver)[v] = 0;
     ep->flg = 0;
     bhCheckEneWorkNum();
 }

@@ -88,6 +88,47 @@ def slot_type(t):
     if c.kind == T.POINTER: return t, dims
     return None
 
+def demacro(data):
+    """Same-length stand-ins for P32(T, e) and S32(e), for parsing only: libclang gives no usable
+    range for an expression inside a macro argument.
+        P32(T, e) -> (  (T) e)    when e is a unary/postfix expression (stays a primary expression,
+                                  so a following [i] or ->m still applies to the cast's result)
+                  -> (   T)(e)    otherwise (e has a binary operator or an assignment)
+        S32(e)    -> !  (e)"""
+    b = bytearray(data); i = 0
+    while True:
+        i = data.find(b'32(', i)
+        if i < 0: break
+        k = i - 1
+        if k < 0 or data[k:k + 1] not in (b'P', b'S') or (k > 0 and (data[k - 1:k].isalnum() or data[k - 1:k] == b'_')):
+            i += 3; continue
+        if data[k:k + 1] == b'S':
+            b[k:k + 3] = b'!  '
+        else:
+            d = 0; j = i + 3; comma = -1; close = -1
+            while j < len(data):
+                c = data[j:j + 1]
+                if c in b'([': d += 1
+                elif c in b')]':
+                    if d == 0: close = j; break
+                    d -= 1
+                elif c == b',' and d == 0 and comma < 0: comma = j
+                j += 1
+            if comma > 0 and close > 0 and data[comma + 1:comma + 2] == b' ':
+                e = data[comma + 2:close].decode('latin-1')
+                flat = []; d = 0
+                for c in e:
+                    if c in '([': d += 1
+                    elif c in ')]': d -= 1
+                    elif d == 0: flat.append(c)
+                flat = ''.join(flat).replace('->', '').lstrip('*&!~- ')
+                if re.search(r'[=+<>&|?:^%/*,-]', flat):
+                    b[k:k + 4] = b'(   '; b[comma:comma + 2] = b')('
+                else:
+                    b[k:k + 4] = b'(  ('; b[comma:comma + 2] = b') '
+        i += 3
+    return bytes(b)
+
 class Files:
     def __init__(self): self.text = {}; self.raw = {}
     def get(self, path):
@@ -288,11 +329,19 @@ def main():
                 # nested anonymous struct members
                 collect_fields(ch)
 
+    # parse P32/S32 without their macros (demacro): every project source that uses them
+    unsaved = []
+    for base in (ROOT + '/decomp/src/ps2/veronica/prog', ROOT + '/decomp/include/ps2/veronica/prog', ROOT + '/pc/glue', ROOT + '/pc/include', ROOT + '/pc/src'):
+        for dp, _, fns in os.walk(base):
+            for n in fns:
+                if n.endswith(('.c', '.h', '.inc')) and n != 'pc_ptr.h':
+                    fp = norm(os.path.join(dp, n)); d = files.get(fp)
+                    if b'P32(' in d or b'S32(' in d: unsaved.append((fp, demacro(d).decode('latin-1')))
     for e in cc:
         p = norm(e['file'])
         if not in_project(p) or not p.endswith('.c'): continue
         if only and not any(p.endswith(o) for o in only): continue
-        tu = idx.parse(e['file'], args=tu_args(e))
+        tu = idx.parse(e['file'], args=tu_args(e), unsaved_files=unsaved)
         seen_tu += 1
         errs = [d for d in tu.diagnostics if d.severity >= 3]
         if errs: print('note: %s: %d parse errors, first: %s' % (p[len(ROOT) + 1:], len(errs), errs[0].spelling[:100]), file=sys.stderr)

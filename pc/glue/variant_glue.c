@@ -378,7 +378,7 @@ static int headless(BH_PWORK* r)
 {
     BH_PWORK* part;
     if (!pc_head_blowoff_on() || r < ene || r >= ene + 128 || r->id != 1 || (r->flg & 0x80) || !P32(unsigned char *, r->exp0) || *(int*)(P32(unsigned char *, r->exp0) + 0x78) != -1) return 0;
-    part = *(BH_PWORK**)(P32(unsigned char *, r->exp0) + 0x10);
+    part = P32(BH_PWORK *, *(ps2ptr_t*)(P32(unsigned char *, r->exp0) + 0x10));
     return !(part >= ene && part < ene + 128 && part->mode0 == 3);
 }
 

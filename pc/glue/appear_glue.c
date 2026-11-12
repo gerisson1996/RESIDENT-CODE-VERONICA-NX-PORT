@@ -64,9 +64,7 @@ static void setup_hair(int chr)
 static unsigned char self_mdl[131072] __attribute__((aligned(64)));
 static struct {
     ML_WORK mdl[16];
-    int* skp[16];
-    NJS_CNK_OBJECT* mbp[16];
-    NJS_TEXLIST* txp[16];
+    ps2ptr_t skp[16], mbp[16], txp[16];   /* as BH_PWORK: slots */
     int mdl_n, mlw;
 } self_orig;
 static int self_mesh = -1, self_fail = -1, self_tex_gone;
@@ -129,7 +127,7 @@ static void self_put_back(void)
 {
     ML_WORK cur = *P32(struct ML_WORK *, plp->mlwP);
     int i;
-    for (i = 0; i < 16; i++) { plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = S32(self_orig.skp[i]); plp->mbp[i] = S32(self_orig.mbp[i]); plp->txp[i] = S32(self_orig.txp[i]); }
+    for (i = 0; i < 16; i++) { plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = self_orig.skp[i]; plp->mbp[i] = self_orig.mbp[i]; plp->txp[i] = self_orig.txp[i]; }
     plp->mdl_n = self_orig.mdl_n;
     plp->mlwP = S32(&plp->mdl[self_orig.mlw]);
     self_carry_pose(&cur);
@@ -157,7 +155,7 @@ static int self_load(int mesh)
         return 0;
     }
     for (i = plp->mdl_n; i < self_orig.mdl_n; i++) {   /* sub-models only the original has (moth egg) */
-        plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = S32(self_orig.skp[i]); plp->mbp[i] = S32(self_orig.mbp[i]); plp->txp[i] = S32(self_orig.txp[i]);
+        plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = self_orig.skp[i]; plp->mbp[i] = self_orig.mbp[i]; plp->txp[i] = self_orig.txp[i];
     }
     plp->mlwP = S32(&plp->mdl[0]);
     P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg |= 0x8;   /* as bhSetPlayer */
@@ -203,7 +201,7 @@ static void self_cine_hair(void)
     self_cine = want;
     m = plp->mdl[v];
     if (want && mesh) {   /* the head part of the model the game loaded (self_orig) */
-        plp->mdl[v] = self_orig.mdl[v]; plp->skp[v] = S32(self_orig.skp[v]); plp->mdl_n = self_orig.mdl_n;
+        plp->mdl[v] = self_orig.mdl[v]; plp->skp[v] = self_orig.skp[v]; plp->mdl_n = self_orig.mdl_n;
     }
     if (want || mesh) setup_hair(want ? sys->ply_id : self_mesh & 3);   /* (as bhSetPlayer / self_load) */
     else op->flg = 0;   /* (as self_actor) */
