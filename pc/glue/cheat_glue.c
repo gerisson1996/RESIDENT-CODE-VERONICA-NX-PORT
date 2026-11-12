@@ -77,7 +77,7 @@ static int carried(int id)
 static int has_spot(int item)
 {
     for (int i = 0; i < rom->flr_n; i++) {
-        const ATR_WORK* z = &rom->flrp[i];
+        const ATR_WORK* z = &P32(struct ATR_WORK *, rom->flrp)[i];
         if (z->type == 0 && (z->prm0 == item || z->prm1 == item || z->prm2 == item || z->prm3 == item)) return 1;
     }
     return 0;
@@ -112,7 +112,7 @@ extern unsigned int (*bhScenarioJmpT[256])();
 static void note_site(int item);
 int pc_unlock_held(int item)
 {
-    const unsigned int* t = (const unsigned int*)rom->evtp;
+    const unsigned int* t = (const unsigned int*)P32(struct EVT_WORK *, rom->evtp);
     int part, ok;
     if (!key_item(item)) return 0;
     part = pc_script_part(t, (unsigned int)(bhScePtr - (const unsigned char*)t));
@@ -125,7 +125,7 @@ static ATR_WORK* atr(int kind, int ix)
 {
     int etc = kind == W_ETC || kind == W_ETC_ON;
     if (kind == W_RM || ix >= (etc ? rom->etc_n : rom->flr_n)) return NULL;
-    return etc ? &rom->etcp[ix] : &rom->flrp[ix];
+    return etc ? &P32(struct ATR_WORK *, rom->etcp)[ix] : &P32(struct ATR_WORK *, rom->flrp)[ix];
 }
 static Val get(int kind, int ix)
 {
@@ -188,7 +188,7 @@ static int parse_part(Site* s, const unsigned char* d, unsigned int o, unsigned 
 /* the block's tests hold now */
 static int tests_hold(const Site* s)
 {
-    unsigned char *keep = bhScePtr, *d = (unsigned char*)rom->evtp;
+    unsigned char *keep = bhScePtr, *d = (unsigned char*)P32(struct EVT_WORK *, rom->evtp);
     unsigned int* sp = G_Sp;
     int fl = bhIfelFlg, ok = 1;
     evaluating = 1;
@@ -202,7 +202,7 @@ static int tests_hold(const Site* s)
    test fails (G_Sp - 1): behind its Endif, or into the else part behind an ElseCk m, which ends m further */
 static void note_site(int item)
 {
-    unsigned char* d = (unsigned char*)rom->evtp;
+    unsigned char* d = (unsigned char*)P32(struct EVT_WORK *, rom->evtp);
     unsigned int q = (unsigned int)(bhScePtr - 2 - d), f = (unsigned int)((unsigned char*)(G_Sp - 1) - d), o, p;
     Site* s = &site[nsite];
     int i;
@@ -244,7 +244,7 @@ static void unlock_switch(void)
 {
     int i, j, want;
     if (g_cheat.unlock == unlock_applied || recording) return;
-    if (!sys->tk_flg || !(sys->sp_flg & 0x2) || (sys->cb_flg & 0x1) || (sys->gm_flg & 0x9) || !rom || !rom->evtp) return;   /* in a room, not leaving it */
+    if (!sys->tk_flg || !(sys->sp_flg & 0x2) || (sys->cb_flg & 0x1) || (sys->gm_flg & 0x9) || !rom || !P32(struct EVT_WORK *, rom->evtp)) return;   /* in a room, not leaving it */
     unlock_applied = g_cheat.unlock;
     for (i = 0; i < nsite; i++) {
         Site* s = &site[i];
@@ -271,7 +271,7 @@ int pc_unlock_examine(void)
     int n = 0;
     if (!g_cheat.unlock || plp != &ply || !(sys->cb_flg & 0x200) || sys->flr_idx >= (unsigned int)rom->flr_n) return 0;
     {
-        const ATR_WORK* z = &rom->flrp[sys->flr_idx];
+        const ATR_WORK* z = &P32(struct ATR_WORK *, rom->flrp)[sys->flr_idx];
         const unsigned char p[4] = { z->prm0, z->prm1, z->prm2, z->prm3 };
         if (z->type != 0) return 0;
         for (int i = 0; i < 4; i++)
@@ -350,11 +350,11 @@ static void publish(char* out, int size, const unsigned int* tab, int i)
 static void read_names(void)
 {
     static const unsigned int* built;
-    if (sys->mes_ip == built) return;
-    built = sys->mes_ip;
-    for (int id = 0; id < CHEAT_ITEMS; id++) publish(g_cheat.names[id], sizeof(g_cheat.names[id]), sys->mes_ip, id);
+    if (P32(unsigned int *, sys->mes_ip) == built) return;
+    built = P32(unsigned int *, sys->mes_ip);
+    for (int id = 0; id < CHEAT_ITEMS; id++) publish(g_cheat.names[id], sizeof(g_cheat.names[id]), P32(unsigned int *, sys->mes_ip), id);
     /* the save menu's room names (the teleport lists, pc/src/host/teleport.c): message 215 + RoomNameSwitch of the second table */
-    for (int k = 1; k < 19 && sys->mes_sp && sys->mes_sp[0] > 233; k++) publish(g_cheat.rooms[k], sizeof(g_cheat.rooms[k]), sys->mes_sp, 215 + k);
+    for (int k = 1; k < 19 && P32(unsigned int *, sys->mes_sp) && P32(unsigned int *, sys->mes_sp)[0] > 233; k++) publish(g_cheat.rooms[k], sizeof(g_cheat.rooms[k]), P32(unsigned int *, sys->mes_sp), 215 + k);
 }
 
 /* Music on a room change without a door. The room scripts turn their music and ambience off as
@@ -418,7 +418,7 @@ void cheat_room_warp(int stg, int rom, int pos, int rcase)
     for (c = 0; c <= 9 && !room_case_exists(stg, rom, rcase); c++)
         if (room_case_exists(stg, rom, c)) { host_log("warp: room %d/%d has no case %d: case %d\n", stg, rom, rcase, c); rcase = c; }
     sys->rcase = (char)rcase;
-    plp->mnwP = plp->mnwPb;
+    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
     warp_sound = 1;
     bhSetDoorDemo(0, stg, rom, pos, 255);
 }
@@ -495,7 +495,7 @@ static void scripted(unsigned int* inv)
         in_room >= f && !(sys->gm_flg & 0x9) && !(sys->cb_flg & 0x1)) {
         printf("test: warp to (%.1f %.1f) in %d/%d\n", x, z, a, b);
         {   /* the player and its collision points move together: no wall check across the jump */
-            EXP_WORK* e = (EXP_WORK*)plp->exp0;
+            EXP_WORK* e = (EXP_WORK*)P32(unsigned char *, plp->exp0);
             float dx = x - plp->px, dz = z - plp->pz;
             plp->px += dx; plp->pxb += dx; plp->pz += dz; plp->pzb += dz; plp->ay = c;
             plp->flg &= ~0xC0000;   /* not placed by the legs of the last pose (bhFixPosition) */
@@ -627,12 +627,12 @@ static void scripted(unsigned int* inv)
         ap = ap[n] == ',' ? ap + n + 1 : NULL;
     }
     spawn_frame(clock);   /* RECVX_SPAWN (pc/glue/spawn_glue.c) */
-    if (eq && sscanf(eq, "%d:%d:%d%n", &f, &a, &b, &n) == 3 && clock >= f && sys->mn_mode0 == 0 && plp->mnwP) {
+    if (eq && sscanf(eq, "%d:%d:%d%n", &f, &a, &b, &n) == 3 && clock >= f && sys->mn_mode0 == 0 && P32(struct MN_WORK *, plp->mnwP)) {
         printf("test: equip item %d at game frame %d\n", a, clock);
         inv[2] = (unsigned int)a << 16 | b;
         inv[0] = 0;
         plp->wpnr_no = 0;
-        swork.pip = inv;
+        swork.pip = S32(inv);
         WeaponSet(2, 2);   /* weapon number from the item (incl. its ammo kind), slot, model load */
         for (eq += n, c = 3; c < 12 && sscanf(eq, ",%d:%d%n", &a, &b, &n) == 2; eq += n) inv[c++] = (unsigned int)a << 16 | b;
         eq = *eq == ';' ? eq + 1 : NULL;   /* "...;frame:item:count": equip another later (a weapon switch) */
@@ -682,7 +682,7 @@ void cheat_frame(void)
     inv = &sys->itm[sys->ply_id * 16];
     max_hp = sys->gm_mode == 2 ? 320 : 160;
     slots = (sys->gm_flg & 0x8000000) ? 10 : 8;
-    if (sys->mes_ip) read_names();
+    if (P32(unsigned int *, sys->mes_ip)) read_names();
     item_trace(inv);
     if (sys->tk_flg && (sys->sp_flg & 0x2)) scripted(inv);   /* in game */
     unlock_switch();

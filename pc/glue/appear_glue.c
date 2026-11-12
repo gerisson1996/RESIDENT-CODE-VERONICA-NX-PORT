@@ -31,13 +31,13 @@ static float self_bone[22][3];
 static void save_bones(ML_WORK* m, float (*bone)[3])
 {
     int i;
-    for (i = 1; i < (int)m->obj_num && i < 22; i++) memcpy(bone[i], m->objP[i].pos, sizeof(bone[i]));
+    for (i = 1; i < (int)m->obj_num && i < 22; i++) memcpy(bone[i], P32(struct cnkobj *, m->objP)[i].pos, sizeof(bone[i]));
 }
 
 static void keep_bones(ML_WORK* m, float (*bone)[3])
 {
     int i;
-    for (i = 1; i < (int)m->obj_num && i < 22; i++) memcpy(m->objP[i].pos, bone[i], sizeof(bone[i]));
+    for (i = 1; i < (int)m->obj_num && i < 22; i++) memcpy(P32(struct cnkobj *, m->objP)[i].pos, bone[i], sizeof(bone[i]));
 }
 
 static int read_part(int file)   /* into part_file (actor_glue.c afs_read) */
@@ -51,7 +51,7 @@ static int read_part(int file)   /* into part_file (actor_glue.c afs_read) */
    character `chr` (actor_glue.c player_hair) */
 static void setup_hair(int chr)
 {
-    player_hair(sys->obwp, plp, chr, NULL, NULL);
+    player_hair(P32(struct O_WRK *, sys->obwp), plp, chr, NULL, NULL);
 }
 
 /* The chosen part file's model is loaded into a buffer of its own (the motions into the sink), so
@@ -77,14 +77,14 @@ static int self_cine;                   /* self_cine_hair: the character's own h
    carry node positions (bone lengths). For another mesh both are put back every tick. */
 static struct { NJS_CNK_OBJECT* objP; unsigned char* lkwkp; int lkono; float lox, loy, loz; } self_part;
 
-static int self_ours(void) { return plp->mdl[0].objP && (unsigned char*)plp->mdl[0].objP >= self_mdl && (unsigned char*)plp->mdl[0].objP < self_mdl + sizeof(self_mdl); }
+static int self_ours(void) { return P32(struct cnkobj *, plp->mdl[0].objP) && (unsigned char*)P32(struct cnkobj *, plp->mdl[0].objP) >= self_mdl && (unsigned char*)P32(struct cnkobj *, plp->mdl[0].objP) < self_mdl + sizeof(self_mdl); }
 
 static void self_release(ML_WORK* mdl, int n)
 {
     int i;
     if (self_tex_gone) return;   /* njReleaseTextureAll took them */
     for (i = 0; i < n; i++)
-        if (mdl[i].texP) njReleaseTexture(mdl[i].texP);
+        if (P32(NJS_TEXLIST *, mdl[i].texP)) njReleaseTexture(P32(NJS_TEXLIST *, mdl[i].texP));
     bhGarbageTexture(NULL, 0);
 }
 
@@ -116,29 +116,29 @@ void appear_player_unload(void) { self_restore(); }
    stood then, another room's coordinates after a door). Also no blend from the T-pose. */
 static void self_carry_pose(const ML_WORK* from)
 {
-    ML_WORK* to = plp->mlwP;
+    ML_WORK* to = P32(struct ML_WORK *, plp->mlwP);
     int i, n = from->obj_num < to->obj_num ? from->obj_num : to->obj_num;
-    if (!from->objP || !to->objP || !from->owP || !to->owP || from->objP == to->objP) return;
-    memcpy(to->objP[0].pos, from->objP[0].pos, sizeof(to->objP[0].pos));
-    for (i = 0; i < n && i < 22; i++) memcpy(to->objP[i].ang, from->objP[i].ang, sizeof(to->objP[i].ang));
-    bhCalcTree((NJS_MATRIX*)plp->mtx, to);
+    if (!P32(struct cnkobj *, from->objP) || !P32(struct cnkobj *, to->objP) || !P32(struct O_WORK *, from->owP) || !P32(struct O_WORK *, to->owP) || P32(struct cnkobj *, from->objP) == P32(struct cnkobj *, to->objP)) return;
+    memcpy(P32(struct cnkobj *, to->objP)[0].pos, P32(struct cnkobj *, from->objP)[0].pos, sizeof(P32(struct cnkobj *, to->objP)[0].pos));
+    for (i = 0; i < n && i < 22; i++) memcpy(P32(struct cnkobj *, to->objP)[i].ang, P32(struct cnkobj *, from->objP)[i].ang, sizeof(P32(struct cnkobj *, to->objP)[i].ang));
+    bhCalcTree((NJS_MATRIX*)P32(float (*)[16], plp->mtx), to);
 }
 
 /* called with the original model in place (self_mesh < 0) */
 static void self_put_back(void)
 {
-    ML_WORK cur = *plp->mlwP;
+    ML_WORK cur = *P32(struct ML_WORK *, plp->mlwP);
     int i;
-    for (i = 0; i < 16; i++) { plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = self_orig.skp[i]; plp->mbp[i] = self_orig.mbp[i]; plp->txp[i] = self_orig.txp[i]; }
+    for (i = 0; i < 16; i++) { plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = S32(self_orig.skp[i]); plp->mbp[i] = S32(self_orig.mbp[i]); plp->txp[i] = S32(self_orig.txp[i]); }
     plp->mdl_n = self_orig.mdl_n;
-    plp->mlwP = &plp->mdl[self_orig.mlw];
+    plp->mlwP = S32(&plp->mdl[self_orig.mlw]);
     self_carry_pose(&cur);
 }
 
 static int self_load(int mesh)
 {
-    MN_WORK *mnw = plp->mnwP, *mnwb = plp->mnwPb;
-    int i, mlw = plp->mlwP - plp->mdl, ok = 1;
+    MN_WORK *mnw = P32(struct MN_WORK *, plp->mnwP), *mnwb = P32(struct MN_WORK *, plp->mnwPb);
+    int i, mlw = P32(struct ML_WORK *, plp->mlwP) - plp->mdl, ok = 1;
     if (!read_part(mesh + 10)) return 0;
     memcpy(self_orig.mdl, plp->mdl, sizeof(self_orig.mdl));
     memcpy(self_orig.skp, plp->skp, sizeof(self_orig.skp));
@@ -149,26 +149,26 @@ static int self_load(int mesh)
     self_tex_gone = 0;
     memset(plp->skp, 0, sizeof(plp->skp));   /* the loader would apply stale skin pointers */
     player_model_read(plp, part_file, self_mdl, sink.bmt, sink.mth, sink.zmt);
-    plp->mnwP = mnw; plp->mnwPb = mnwb;
-    for (i = 0; i < plp->mdl_n; i++) ok &= plp->mdl[i].owP != NULL;
+    plp->mnwP = S32(mnw); plp->mnwPb = S32(mnwb);
+    for (i = 0; i < plp->mdl_n; i++) ok &= P32(struct O_WORK *, plp->mdl[i].owP) != NULL;
     if (!plp->mdl_n || !ok) {   /* keep the original */
         self_release(plp->mdl, plp->mdl_n);
         self_put_back();
         return 0;
     }
     for (i = plp->mdl_n; i < self_orig.mdl_n; i++) {   /* sub-models only the original has (moth egg) */
-        plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = self_orig.skp[i]; plp->mbp[i] = self_orig.mbp[i]; plp->txp[i] = self_orig.txp[i];
+        plp->mdl[i] = self_orig.mdl[i]; plp->skp[i] = S32(self_orig.skp[i]); plp->mbp[i] = S32(self_orig.mbp[i]); plp->txp[i] = S32(self_orig.txp[i]);
     }
-    plp->mlwP = &plp->mdl[0];
-    plp->mlwP->owP[7].flg |= 0x8;   /* as bhSetPlayer */
-    plp->mlwP->owP[11].flg |= 0x8;
+    plp->mlwP = S32(&plp->mdl[0]);
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg |= 0x8;   /* as bhSetPlayer */
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg |= 0x8;
     self_carry_pose(&self_orig.mdl[self_orig.mlw]);
     setup_hair(mesh & 3);
     self_cine = 0;
     {
-        O_WRK* op = &sys->obwp[2];
-        self_part.objP = (op->flg & 0x1) ? op->mdl[0].objP : NULL;
-        self_part.lkwkp = op->lkwkp; self_part.lkono = op->lkono;
+        O_WRK* op = &P32(struct O_WRK *, sys->obwp)[2];
+        self_part.objP = (op->flg & 0x1) ? P32(struct cnkobj *, op->mdl[0].objP) : NULL;
+        self_part.lkwkp = P32(unsigned char *, op->lkwkp); self_part.lkono = op->lkono;
         self_part.lox = op->lox; self_part.loy = op->loy; self_part.loz = op->loz;
     }
     save_bones(&plp->mdl[0], self_bone);
@@ -182,7 +182,7 @@ static int self_load(int mesh)
 static void self_actor(int idx)
 {
     int was = actor_shown(0);
-    if (actor_set(0, idx)) { if (!self_cine) sys->obwp[2].flg = 0; }
+    if (actor_set(0, idx)) { if (!self_cine) P32(struct O_WRK *, sys->obwp)[2].flg = 0; }
     else if (was) { setup_hair(self_mesh >= 0 ? self_mesh & 3 : sys->ply_id); self_cine = 0; }
 }
 
@@ -193,42 +193,42 @@ static void self_actor(int idx)
 extern ETTY_WORK lkmtab[2];             /* player.c: the head parts (both sub-model 4) */
 static void self_cine_hair(void)
 {
-    O_WRK* op = &sys->obwp[2];
+    O_WRK* op = &P32(struct O_WRK *, sys->obwp)[2];
     int mesh = self_mesh >= 0 && self_ours(), want = (!g_appear_cutscene || actor_double_kept()) && (actor_shown(0) || mesh) && actor_double_acting();
-    int v = lkmtab[0].mdlver, n = plp->mdl_n, ono = op->lkono, *s = plp->skp[v];
-    unsigned char* lk = op->lkwkp;
+    int v = lkmtab[0].mdlver, n = plp->mdl_n, ono = op->lkono, *s = P32(int *, plp->skp[v]);
+    unsigned char* lk = P32(unsigned char *, op->lkwkp);
     float lox = op->lox;
     ML_WORK m;
     if (want == self_cine) return;
     self_cine = want;
     m = plp->mdl[v];
     if (want && mesh) {   /* the head part of the model the game loaded (self_orig) */
-        plp->mdl[v] = self_orig.mdl[v]; plp->skp[v] = self_orig.skp[v]; plp->mdl_n = self_orig.mdl_n;
+        plp->mdl[v] = self_orig.mdl[v]; plp->skp[v] = S32(self_orig.skp[v]); plp->mdl_n = self_orig.mdl_n;
     }
     if (want || mesh) setup_hair(want ? sys->ply_id : self_mesh & 3);   /* (as bhSetPlayer / self_load) */
     else op->flg = 0;   /* (as self_actor) */
-    plp->mdl[v] = m; plp->skp[v] = s; plp->mdl_n = n;
-    op->lkwkp = lk; op->lkono = ono; op->lox = lox;
+    plp->mdl[v] = m; plp->skp[v] = S32(s); plp->mdl_n = n;
+    op->lkwkp = S32(lk); op->lkono = ono; op->lox = lox;
     if (want && op->id == 1211) {   /* the ponytail's work: the player's, as bhObjClpn takes it linked to plp
                                        (linked to the double it took it from sys->memp, under a pending disc read) */
         op->flg |= 0x100000;
-        op->exp0 = &sys->pletcp[4096];
-        op->exp3 = sys->pletcp;
+        op->exp0 = S32(&P32(unsigned char *, sys->pletcp)[4096]);
+        op->exp3 = S32(P32(unsigned char *, sys->pletcp));
     }
 }
 
 /* every tick after bhControlPlayer (before the objects follow their links) */
 static void self_keep(void)
 {
-    O_WRK* op = &sys->obwp[2];
+    O_WRK* op = &P32(struct O_WRK *, sys->obwp)[2];
     self_cine_hair();
     if (actor_shown(0) && !self_cine) op->flg &= ~0x1;   /* also when the game set up the player again (story switch) */
     actor_source(0, plp, self_mesh >= 0 && self_ours() ? self_mesh & 3 : actor_shown(0) ? -1 : sys->ply_id, sys->ply_id, tps_aim_pitch());   /* gender-matched animations */
     actor_pose(0, plp);
     if (self_mesh < 0 || !self_ours()) return;
     keep_bones(&plp->mdl[0], self_bone);
-    if (self_part.objP && op->mdl[0].objP == self_part.objP) {
-        op->lkwkp = self_part.lkwkp; op->lkono = self_part.lkono;
+    if (self_part.objP && P32(struct cnkobj *, op->mdl[0].objP) == self_part.objP) {
+        op->lkwkp = S32(self_part.lkwkp); op->lkono = self_part.lkono;
         op->lox = self_part.lox; op->loy = self_part.loy; op->loz = self_part.loz;
         op->flg |= 0x80;
     }
@@ -273,7 +273,7 @@ void appear_textures_released(void)
 /* game.c bhMainSequence, after bhControlPlayer (while appear_on) */
 void appear_control(void)
 {
-    if (!plp || !plp->mnwP) return;
+    if (!plp || !P32(struct MN_WORK *, plp->mnwP)) return;
     self_keep();
     actor_double_tick();   /* the cutscene double as our model (its hands before the objects follow them) */
     in_game = 1;

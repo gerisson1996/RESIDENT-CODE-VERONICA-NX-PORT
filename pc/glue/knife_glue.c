@@ -69,7 +69,7 @@ static unsigned int load_hold(unsigned int pad)
 
 static void equip(int slot)
 {
-    swork.pip = inv();
+    swork.pip = S32(inv());
     WeaponSet(slot, slot);   /* as the inventory: weapon number, equipped slot, weapon file load */
     pc_weapon_load_started();
 }

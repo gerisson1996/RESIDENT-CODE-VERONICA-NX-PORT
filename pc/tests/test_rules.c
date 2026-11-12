@@ -17,20 +17,20 @@ static void enemies(void)
     unsigned char owner[8] = { 0 };
     PcEnemyProc snap[8] = { 0 }, helper[8] = { 0 };
     int i;
-    for (i = 0; i < 8; i++) { ene[i].id = 6; ene[i].lkwkp = NULL; }
+    for (i = 0; i < 8; i++) { ene[i].id = 6; ene[i].lkwkp = S32(NULL); }
     /* root walk: 3 links at most, only inside the array */
-    ene[1].lkwkp = (unsigned char*)&ene[0];
-    ene[2].lkwkp = (unsigned char*)&ene[1];
-    ene[3].lkwkp = (unsigned char*)&ene[2];
-    ene[4].lkwkp = (unsigned char*)&ene[3];
+    ene[1].lkwkp = S32((unsigned char*)&ene[0]);
+    ene[2].lkwkp = S32((unsigned char*)&ene[1]);
+    ene[3].lkwkp = S32((unsigned char*)&ene[2]);
+    ene[4].lkwkp = S32((unsigned char*)&ene[3]);
     CHECK(pc_root_in(&ene[0], ene, 8) == &ene[0]);
     CHECK(pc_root_in(&ene[3], ene, 8) == &ene[0]);
     CHECK(pc_root_in(&ene[4], ene, 8) == &ene[1]);   /* (a 4th link is not followed) */
     {
         static BH_PWORK outside;
-        ene[5].lkwkp = (unsigned char*)&outside;
+        ene[5].lkwkp = S32((unsigned char*)&outside);
         CHECK(pc_root_in(&ene[5], ene, 8) == &ene[5]);
-        ene[5].lkwkp = NULL;
+        ene[5].lkwkp = S32(NULL);
     }
     /* family: a part of the holder's root, or the leader of its type */
     CHECK(pc_family_in(&ene[2], &ene[3], ene, 8, owner));
@@ -40,7 +40,7 @@ static void enemies(void)
     ene[6].id = 3;
     CHECK(!pc_family_in(&ene[6], &ene[3], ene, 8, owner));   /* another type */
     ene[6].id = 6;
-    ene[6].lkwkp = (unsigned char*)&ene[7];
+    ene[6].lkwkp = S32((unsigned char*)&ene[7]);
     CHECK(!pc_family_in(&ene[6], &ene[3], ene, 8, owner));   /* linked: a part of something else */
     /* the function a step runs */
     snap[2] = p_b; helper[2] = p_c;

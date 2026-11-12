@@ -127,8 +127,8 @@ void spawn_textures_released(void) { tl_n = tn_n = 0; memset(spawned, 0, sizeof(
 void spawn_keep_texlist(const NJS_TEXLIST* l)
 {
     if (tl_n >= TEX_LISTS || tn_n + (int)l->nbTexture > TEX_NAMES) { host_log("spawn: texture list table full\n"); return; }
-    memcpy(&tn[tn_n], l->textures, l->nbTexture * sizeof(NJS_TEXNAME));
-    tl[tl_n].textures = &tn[tn_n];
+    memcpy(&tn[tn_n], P32(NJS_TEXNAME *, l->textures), l->nbTexture * sizeof(NJS_TEXNAME));
+    tl[tl_n].textures = S32(&tn[tn_n]);
     tl[tl_n++].nbTexture = l->nbTexture;
     tn_n += l->nbTexture;
     room_key = room_file_now();
@@ -138,7 +138,7 @@ static int empty_set(const MN_WORK* m)
 {
     int i;
     for (i = 0; m && i < 512; i++)
-        if (m[i].datP) return 0;
+        if (P32(void *, m[i].datP)) return 0;
     return 1;
 }
 
@@ -177,12 +177,12 @@ static unsigned char* pool_copy(const unsigned char* src, int len)
    while they are not all uploaded yet (the room load), the room file's texture section */
 static int room_tex_push(void)
 {
-    const NJS_TEXLIST* t = rom->mdl.texP;
+    const NJS_TEXLIST* t = P32(NJS_TEXLIST *, rom->mdl.texP);
     int i, n = 0;
     for (i = 0; t && i < (int)t->nbTexture; i++) {
-        const NJS_TEXMEMLIST* m = (const NJS_TEXMEMLIST*)PS2_HOST(t->textures[i].texaddr);
+        const NJS_TEXMEMLIST* m = (const NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, t->textures)[i].texaddr);
         if ((unsigned int)PS2_ADDR(m) < (unsigned int)PS2_ADDR(Ps2_tex_info) || (unsigned int)PS2_ADDR(m) >= (unsigned int)PS2_ADDR((Ps2_tex_info + Ps2_texmemlist_num)) || !m->texinfo.texsurface.TextureSize)
-            return (int)sys->rdtsz - (int)((const RDT_WORK*)sys->rdtp)->hed04;
+            return (int)sys->rdtsz - (int)((const RDT_WORK*)P32(unsigned char *, sys->rdtp))->hed04;
         n += m->texinfo.texsurface.TextureSize;
     }
     return n;
@@ -196,7 +196,7 @@ static int room_tex_push(void)
    bhReadWeaponData itself) */
 static int ready(void)
 {
-    return sys && plp && rom && sys->rdtp && (sys->tk_flg & 0x80) && (sys->sp_flg & 0x2) && !(sys->gm_flg & 0x9) && !(sys->cb_flg & 0x1) &&
+    return sys && plp && rom && P32(unsigned char *, sys->rdtp) && (sys->tk_flg & 0x80) && (sys->sp_flg & 0x2) && !(sys->gm_flg & 0x9) && !(sys->cb_flg & 0x1) &&
            !*(int*)&sys->mn_mode0;
 }
 
@@ -222,7 +222,7 @@ static void sound_load(const ActorModel* am)
     int k, b;
     if (am->id >= 100 || sound_bank[am->id]) return;
     for (k = 0; k < rom->ene_n; k++)
-        if (rom->enep[k].id == am->id) return;   /* the room's own type: its bank has the sounds */
+        if (P32(struct ETTY_WORK *, rom->enep)[k].id == am->id) return;   /* the room's own type: its bank has the sounds */
     b = snd_xbank_load(am->room);
     for (k = 0; !b && k < list_n; k++)   /* a source room without a bank 3 (Bandersnatch 2): another room of the type */
         if (entry(k)->id == am->id && entry(k)->room != am->room) b = snd_xbank_load(entry(k)->room);
@@ -246,7 +246,7 @@ static void fx_load(const ActorModel* am, int variant)
     const unsigned char* t;
     if (!fx || sys->ef_tn[fx]) return;   /* none needed, or the room has it */
     t = actor_fx_tex(am->room, fx);
-    if (!t || sys->ef_ct + 16 > 450 || sys->ef_ct != sys->ef_ctb + sys->ef_extn || sys->ef_tlist.textures != sys->ef_tex) {
+    if (!t || sys->ef_ct + 16 > 450 || sys->ef_ct != sys->ef_ctb + sys->ef_extn || P32(NJS_TEXNAME *, sys->ef_tlist.textures) != sys->ef_tex) {
         host_log("spawn: type %d: effect texture %d %s, those effects are not drawn\n", am->id, fx, t ? "does not fit" : "not found");
         return;
     }
@@ -255,7 +255,7 @@ static void fx_load(const ActorModel* am, int variant)
     sys->ef_tn[fx] = sys->ef_ct;
     sys->ef_ct += n;
     sys->ef_tlist.nbTexture = sys->ef_ct;
-    sys->ef_pbkb[fx] = *(unsigned char*)PS2_HOST((sys->ef_tlist.textures[sys->ef_tn[fx]].texaddr + 4));
+    sys->ef_pbkb[fx] = *(unsigned char*)PS2_HOST((P32(NJS_TEXNAME *, sys->ef_tlist.textures)[sys->ef_tn[fx]].texaddr + 4));
     host_log("spawn: type %d: effect texture %d from RM_%04d (%d textures)\n", am->id, fx, am->room, n);
 }
 
@@ -276,7 +276,7 @@ static void unrealize(BH_PWORK* ep)
     for (j = 0; j < ep->mdl_n; j++)
         if (ep->mdl[j].flg & 0x200)
             for (v = 0; v < 16; v++)
-                if (pc_et_lp(ep->id, ep->mdlver)[v] == ep->mdl[j].texP) pc_et_lp(ep->id, ep->mdlver)[v] = NULL;
+                if (pc_et_lp(ep->id, ep->mdlver)[v] == P32(NJS_TEXLIST *, ep->mdl[j].texP)) pc_et_lp(ep->id, ep->mdlver)[v] = NULL;
     ep->flg = 0;
     bhCheckEneWorkNum();
 }
@@ -323,8 +323,8 @@ const char* spawn_at(const ActorModel* am, const SpawnNote* n, int want, int mod
     }
     if (!actor_find(am, &a)) return "refused: not found on the disc";
     need = 12288 + 64 * 1024 + 256 * 1024 + room_tex_push() + 512 * 1024;   /* MN_WORKs, O_WORKs, the AI's work, the screens' copy, margin */
-    if (sys->endp - sys->memp < need) {
-        snprintf(msg, sizeof(msg), "refused: room memory full (%d KB free, %d KB needed)", (int)(sys->endp - sys->memp) >> 10, need >> 10);
+    if (P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp) < need) {
+        snprintf(msg, sizeof(msg), "refused: room memory full (%d KB free, %d KB needed)", (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10, need >> 10);
         return msg;
     }
     if (POOL_SIZE - pool_n < a.mlen + a.nlen + 128) {
@@ -351,7 +351,7 @@ const char* spawn_at(const ActorModel* am, const SpawnNote* n, int want, int mod
     ep = &ene[slot];
     for (j = t = 0, lists = 0; j < ep->mdl_n; j++) {   /* textures this room does not have yet */
         if (!textured[j]) continue;
-        if ((ep->mdl[j].flg & 0x200) && t < a.ntex && a.tex[t] && ep->mdl[j].texP) { texn += ep->mdl[j].texP->nbTexture; lists++; }
+        if ((ep->mdl[j].flg & 0x200) && t < a.ntex && a.tex[t] && P32(NJS_TEXLIST *, ep->mdl[j].texP)) { texn += P32(NJS_TEXLIST *, ep->mdl[j].texP)->nbTexture; lists++; }
         t++;
     }
     if (texn && (tex_free < texn + tkeep || (!loading && (tl_n + lists > TEX_LISTS || tn_n + texn > TEX_NAMES)))) {
@@ -360,7 +360,7 @@ const char* spawn_at(const ActorModel* am, const SpawnNote* n, int want, int mod
         return tex_full(tex_free, heap_free);
     }
     for (j = t = 0; j < ep->mdl_n; j++) {
-        NJS_TEXLIST* l = ep->mdl[j].texP;
+        NJS_TEXLIST* l = P32(NJS_TEXLIST *, ep->mdl[j].texP);
         if (!textured[j]) continue;
         if ((ep->mdl[j].flg & 0x200) && t < a.ntex && a.tex[t] && l) {
             bhSetMemPvpTexture(l, (unsigned char*)a.tex[t], 0);
@@ -368,18 +368,18 @@ const char* spawn_at(const ActorModel* am, const SpawnNote* n, int want, int mod
         }
         t++;
     }
-    if (sys->emtp[am->id] && !empty_set(sys->emtp[am->id])) {
-        ep->mnwP = ep->mnwPb = sys->emtp[am->id];
+    if (P32(MN_WORK *, sys->emtp[am->id]) && !empty_set(P32(MN_WORK *, sys->emtp[am->id]))) {
+        ep->mnwP = S32(P32(struct MN_WORK *, ep->mnwPb = S32(P32(MN_WORK *, sys->emtp[am->id]))));
         how = "the room's motions";
     } else if (a.mtn && (p = pool_copy(a.mtn, a.nlen))) {
         bhSetEneMtn(p, ep, am->id);   /* 512 MN_WORKs from sys->memp, sys->emtp[id] */
         how = "motions loaded";
     } else {                          /* none (as bhFinishRoom): an empty set */
-        if (!sys->emtp[am->id]) sys->emtp[am->id] = (MN_WORK*)bhGetFreeMemory(512 * sizeof(MN_WORK), 0);
-        ep->mnwP = ep->mnwPb = sys->emtp[am->id];
+        if (!P32(MN_WORK *, sys->emtp[am->id])) sys->emtp[am->id] = S32((MN_WORK*)bhGetFreeMemory(512 * sizeof(MN_WORK), 0));
+        ep->mnwP = S32(P32(struct MN_WORK *, ep->mnwPb = S32(P32(MN_WORK *, sys->emtp[am->id]))));
         how = "no motions";
     }
-    for (j = 0; j < ep->mdl_n; j++) sys->memp = bhKeepObjWork(&ep->mdl[j], sys->memp);
+    for (j = 0; j < ep->mdl_n; j++) sys->memp = S32(bhKeepObjWork(&ep->mdl[j], P32(unsigned char *, sys->memp)));
     bhCalcModel(ep);
     sound_load(am);
     fx_load(am, rec.type);
@@ -389,7 +389,7 @@ const char* spawn_at(const ActorModel* am, const SpawnNote* n, int want, int mod
     if (n->variant) variant_spawned(slot, n->variant);
     host_log("spawn: %s, type %d model %d variant %d from RM_%04d record %d, slot %d at %.1f %.1f %.1f, %d textures uploaded, "
              "%s (model %d KB, motions %d KB), %d KB room memory and %d KB spawn memory left, %d slots in use\n", am->name, am->id, am->mdlver, rec.type, am->room,
-             am->rec, slot, rec.px, rec.py, rec.pz, texn, how, a.mlen >> 10, a.nlen >> 10, (int)(sys->endp - sys->memp) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
+             am->rec, slot, rec.px, rec.py, rec.pz, texn, how, a.mlen >> 10, a.nlen >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
     return NULL;
 }
 
@@ -456,7 +456,7 @@ static void survey(void)
     static const char* rooms = (const char*)-1;
     static int all, ei, wait, in, sent, ok_n, tried;
     int stg, rno, n = 0, tex, heap, slot = -1, tl0 = tl_n, tn0 = tn_n, pool0 = pool_n;
-    unsigned char* memp0 = sys->memp;
+    unsigned char* memp0 = P32(unsigned char *, sys->memp);
     const char* r;
     if (rooms == (const char*)-1) { rooms = getenv("RECVX_SPAWN_SURVEY"); all = getenv("RECVX_SPAWN_SURVEY_ALL") != NULL; }
     if (!rooms) return;
@@ -476,13 +476,13 @@ static void survey(void)
         if (ei == 0) {
             actor_tex_free(&tex, &heap);
             printf("survey: room %d/%d (RM_%04d): %d texture entries and %d KB heap free, %d KB room memory free (screens copy %d KB), %d enemy slots in use\n",
-                   stg, rno, room_file_now(), tex, heap >> 10, (int)(sys->endp - sys->memp) >> 10, room_tex_push() >> 10,
+                   stg, rno, room_file_now(), tex, heap >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10, room_tex_push() >> 10,
                    (int)sys->ewk_n);
         }
         if (all) r = spawn(ei, 30.0f, NULL);
         else {
             SpawnNote note = { am->room, am->rec, am->id, am->mdlver, 0, plp->flr_no, 0, plp->px, plp->py, plp->pz + 30.0f, 0, 0 };
-            MN_WORK* emtp0 = sys->emtp[am->id];
+            MN_WORK* emtp0 = P32(MN_WORK *, sys->emtp[am->id]);
             r = spawn_at(am, &note, -1, 0, &slot);
             if (!r) {
                 r = "spawned (undone)";
@@ -490,8 +490,8 @@ static void survey(void)
                 while (tl_n > tl0) njReleaseTexture(&tl[--tl_n]);
                 tn_n = tn0;
                 bhGarbageTexture(NULL, 0);
-                sys->emtp[am->id] = emtp0;
-                sys->memp = memp0;
+                sys->emtp[am->id] = S32(emtp0);
+                sys->memp = S32(memp0);
                 pool_n = pool0;
                 spawned[slot] = 0;
             }
@@ -503,7 +503,7 @@ static void survey(void)
     }
     actor_tex_free(&tex, &heap);
     printf("survey: room %d/%d at the end: %d texture entries and %d KB heap free, %d KB room memory and %d KB spawn memory free, %d enemy slots in use\n",
-           stg, rno, tex, heap >> 10, (int)(sys->endp - sys->memp) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
+           stg, rno, tex, heap >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
     printf("survey: %d of %d spawned so far\n", ok_n, tried);
     rooms += n + (rooms[n] == ',');
     ei = 0; sent = 0;
@@ -543,7 +543,7 @@ void spawn_frame(int clock)
         trace_room = room_file_now();
         actor_tex_free(&tex, &heap);
         printf("test: game frame %d in RM_%04d: %d texture entries and %d KB heap free, %d KB room memory and %d KB spawn memory free, %d slots in use\n",
-               clock, trace_room, tex, heap >> 10, (int)(sys->endp - sys->memp) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
+               clock, trace_room, tex, heap >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10, (POOL_SIZE - pool_n) >> 10, (int)sys->ewk_n);
     }
     if (plp->hp < last_hp && last_hp - plp->hp < 400) printf("test: game frame %d player hit, hp %d -> %d\n", clock, last_hp, plp->hp);
     last_hp = plp->hp;

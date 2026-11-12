@@ -21,21 +21,21 @@ uint64_t gs_frame_count(void);
 static int ene_slot(void* p) { int k = (BH_PWORK*)p - ene; return p && k >= 0 && k < 128 ? k : 255; }
 
 /* an en01 grab hold: set when the grab starts, cleared by every release (~0x24080, ~0xA4080) */
-static int holding(BH_PWORK* ep) { return ep->exp0 && (*(int*)(ep->exp0 + 0x40) & 0x20000); }
+static int holding(BH_PWORK* ep) { return P32(unsigned char *, ep->exp0) && (*(int*)(P32(unsigned char *, ep->exp0) + 0x40) & 0x20000); }
 
 /* the grab was refused (eneset.c's one-holder rule) or froze (the watchdog): the enemy goes back to
    standing (en01 MV00: idle motion, then the chase), released, as at the end of a grab. Its linked
    lower body runs the same modes (en01 copies them at every change): it goes along. */
 static void unhold(BH_PWORK* ep, int dead)
 {
-    if (!ep->exp0 || ep->id != 1) return;
-    *(int*)(ep->exp0 + 0x40) &= ~0xA4080;
+    if (!P32(unsigned char *, ep->exp0) || ep->id != 1) return;
+    *(int*)(P32(unsigned char *, ep->exp0) + 0x40) &= ~0xA4080;
     if (!dead) {
         *(int*)&ep->mode0 = 1;
         ep->flg2 &= ~1;
         ep->flg |= 0x40;   /* the player collides with it again (the grab cleared it, its end sets it) */
     }
-    if (ene_slot(ep->exp1) < 128 && (((BH_PWORK*)ep->exp1)->flg & 0x80)) unhold((BH_PWORK*)ep->exp1, dead);
+    if (ene_slot(P32(unsigned char *, ep->exp1)) < 128 && (((BH_PWORK*)P32(unsigned char *, ep->exp1))->flg & 0x80)) unhold((BH_PWORK*)P32(unsigned char *, ep->exp1), dead);
 }
 /* A dead one only lets go, its death goes on: put back to standing, a crawler killed by the player's
    stomp at the end of its leg grab (en01 NG02 sets hp -1 while the player still plays the stomp) walked
@@ -50,7 +50,7 @@ static void player_let_go(void)
     plp->flg |= 8;
     plp->stflg &= ~0x50000;
     plp->at_flg = 0;
-    plp->mnwP = plp->mnwPb;
+    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
     *(int*)&plp->mode0 = 1;
 }
 
@@ -60,7 +60,7 @@ static int event_driven(const BH_PWORK* ep)
 {
     int i;
     for (i = 0; i < 16; i++)
-        if (bhEtask[i].status && bhEtask[i].work == ep) return 1;
+        if (bhEtask[i].status && P32(struct BH_PWORK *, bhEtask[i].work) == ep) return 1;
     return 0;
 }
 
@@ -82,7 +82,7 @@ static void enemy_trace(BH_PWORK* ep, int i)
     if (dh > lim) return;
     fprintf(stderr, "etr g=%u s=%d id=%d ty=%d dH=%.1f m=%d.%d.%d.%d mtn=%u f=%d hp=%d pH=%d.%d bH=%d x=%x e=%.0f,%.0f h=%.0f,%.0f\n", (unsigned)gs_frame_count(), i, ep->id, ep->type,
             dh, ep->mode0, ep->mode1, ep->mode2, ep->mode3, ep->mtn_no, ep->frm_no >> 16, ep->hp, plp->hp, plp->mode0, ply_busy(plp),
-            ep->id == 1 && ep->exp0 ? *(int*)(ep->exp0 + 0x40) : 0, ep->px, ep->pz, plp->px, plp->pz);
+            ep->id == 1 && P32(unsigned char *, ep->exp0) ? *(int*)(P32(unsigned char *, ep->exp0) + 0x40) : 0, ep->px, ep->pz, plp->px, plp->pz);
 }
 
 void pc_enemy_watch(BH_PWORK* ep, int i)
@@ -98,7 +98,7 @@ void pc_enemy_watch(BH_PWORK* ep, int i)
              ep->flg, ep->flg2, ep->id == 1 && holding(ep));
     if (ep->id != 1 || ep->mode0 != 2 || event_driven(ep)) return;
     if (!pc_enemy_added) return;   /* a retail room: as retail (logged only) */
-    if (plp && holding(ep) && plp->mnwP == ep->mnwP && plp->mnwP != plp->mnwPb && (plp->mode0 == 4 || plp->mode0 == 6)) player_let_go();
+    if (plp && holding(ep) && P32(struct MN_WORK *, plp->mnwP) == P32(struct MN_WORK *, ep->mnwP) && P32(struct MN_WORK *, plp->mnwP) != P32(struct MN_WORK *, plp->mnwPb) && (plp->mode0 == 4 || plp->mode0 == 6)) player_let_go();
     pc_enemy_unhold(ep);
     host_log("watchdog: enemy %d was stuck in its grab: back to standing\n", i);
 }

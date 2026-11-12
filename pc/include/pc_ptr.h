@@ -19,6 +19,13 @@
 
 typedef uint32_t ps2ptr_t;
 
+#ifdef SLOTIFY_PARSE
+/* pc/tools/slotify.py parses with these as functions: libclang gives no usable source range for
+   an expression inside a macro argument */
+static inline uint32_t PS2_ADDR(const void* p) { return (uint32_t)(uintptr_t)p; }
+static inline void* PS2_HOST(uint32_t a) { return (void*)(uintptr_t)a; }
+#else
+
 #if UINTPTR_MAX == 0xFFFFFFFFu
 #define PS2_ADDR(p) ((uint32_t)(uintptr_t)(p))
 #define PS2_HOST(a) ((void*)(uintptr_t)(uint32_t)(a))
@@ -27,16 +34,19 @@ typedef uint32_t ps2ptr_t;
 extern "C"
 #endif
 __attribute__((noreturn)) void ps2_ptr_fail(const void* p, const char* file, int line);
-static inline uint32_t ps2_addr_(const void* p, const char* file, int line)
+/* takes the pointer as an integer so that PS2_ADDR also accepts what already is an address
+   (a slot, an int holding one): both convert to uintptr_t without a diagnostic */
+static inline uint32_t ps2_addr_(uintptr_t v, const char* file, int line)
 {
-    uintptr_t v = (uintptr_t)p;
-    if (__builtin_expect((v >> 32) != 0, 0) && v != UINTPTR_MAX) ps2_ptr_fail(p, file, line);
+    if (__builtin_expect((v >> 32) != 0, 0) && v != UINTPTR_MAX && (v >> 32) != 0xFFFFFFFFu) ps2_ptr_fail((const void*)v, file, line);
     return (uint32_t)v;
 }
 static inline void* ps2_host_(uint32_t a) { return a == 0xFFFFFFFFu ? (void*)UINTPTR_MAX : (void*)(uintptr_t)a; }
-#define PS2_ADDR(p) ps2_addr_((const void*)(p), __FILE__, __LINE__)
+#define PS2_ADDR(p) ps2_addr_((uintptr_t)(p), __FILE__, __LINE__)
 #define PS2_HOST(a) ps2_host_((uint32_t)(a))
 #endif
+
+#endif /* SLOTIFY_PARSE */
 
 #define S32(p)    PS2_ADDR(p)
 #define P32(T, s) ((T)PS2_HOST(s))

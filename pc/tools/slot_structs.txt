@@ -1,12 +1,12 @@
 # Structures that keep the EE's layout: their pointer members are 32-bit slots (pc/tools/slotify.py).
+# Not here: lookup tables that are only ever static data initialised with addresses (function and
+# data tables: ACT_TBL_WORK, EA_WORK, _proc_wrk, PT_WORK, SS_WORK, ...). They keep host pointers.
 # The game's own structures
-ACT_TBL_WORK
 ADMIN
 ADV_WORK
 ADXF_INFO
 ADXT_INFO
 AFS_INFO
-AFS_PATINFO
 ANM_WORK
 AudioDec
 BACKUPINFO
@@ -19,18 +19,12 @@ CNK_LIGHTING
 COM_EVT_WORK
 CUT_WORK
 CscVu1
-DVD_IMAGE_DATA
 D_WORK
 E02_WORK
-EA_WORK
 EB_WORK
 EFF5SNOWGRP
 EFF5SNOWRECT
-EFF5UVTBL
 EFFPRM_WORK
-EN02_SANDEFFECTTBL_WORK
-EN05_WATER_EFFECT_WORK
-ENE18_BLOOD_TBL
 EVT_WORK
 EXPAND_CTRL_BUF
 FM_WORK
@@ -62,7 +56,6 @@ PRM_WRK
 PS2_OT
 PS2_TEX_SAVE
 PS2_TP_CACHE
-PT_WORK
 P_WRK
 R09_WORK
 R0B_WORK
@@ -72,10 +65,8 @@ RMI_WORK
 ROM_WORK
 SAVE_SCREEN
 SCISSOR
-SDCOM_FUNCTBL
 SELECTFILEWINDOW
 SITEM
-SS_WORK
 SYSLOAD_SCREEN
 SYSSAVE_SCREEN
 SYS_WORK
@@ -85,10 +76,6 @@ TXB_WORK
 TYP_WORK
 ViBuf
 VoBuf
-_ATTACK_COL_TBL
-_EFF_INFO
-_LEGLOCK_TAB
-_MTN_RELAY_RELAY
 _cnc_wrk_typ
 _door_wrk
 _e19_dmg_typ
@@ -97,7 +84,6 @@ _eff30b_vtx_buf_typ
 _en29_freework
 _func_wrk_typ
 _map_wrk
-_proc_wrk
 _rap_tex_typ
 _search
 _tag_wrk_typ

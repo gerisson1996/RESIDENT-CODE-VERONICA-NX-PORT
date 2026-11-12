@@ -56,7 +56,7 @@ typedef void (*PcEnemyProc)(BH_PWORK*);
 static inline BH_PWORK* pc_root_in(BH_PWORK* ep, BH_PWORK* ene0, int n)
 {
     int k;
-    for (k = 0; k < 3 && ep->lkwkp && (BH_PWORK*)ep->lkwkp >= ene0 && (BH_PWORK*)ep->lkwkp < ene0 + n; k++) ep = (BH_PWORK*)ep->lkwkp;
+    for (k = 0; k < 3 && P32(unsigned char *, ep->lkwkp) && (BH_PWORK*)P32(unsigned char *, ep->lkwkp) >= ene0 && (BH_PWORK*)P32(unsigned char *, ep->lkwkp) < ene0 + n; k++) ep = (BH_PWORK*)P32(unsigned char *, ep->lkwkp);
     return ep;
 }
 
@@ -65,7 +65,7 @@ static inline BH_PWORK* pc_root_in(BH_PWORK* ep, BH_PWORK* ene0, int n)
 static inline int pc_family_in(BH_PWORK* ep, BH_PWORK* by, BH_PWORK* ene0, int n, const unsigned char* owner)
 {
     BH_PWORK* r = pc_root_in(by, ene0, n);
-    return pc_root_in(ep, ene0, n) == r || (!ep->lkwkp && ep >= ene0 && ep < ene0 + n && ep->id == r->id && owner[ep - ene0] == r->id + 1);
+    return pc_root_in(ep, ene0, n) == r || (!P32(unsigned char *, ep->lkwkp) && ep >= ene0 && ep < ene0 + n && ep->id == r->id && owner[ep - ene0] == r->id + 1);
 }
 
 /* the function a step of enemy id runs in a room with added enemies: a part or child (ids 31..38; o:

@@ -71,7 +71,7 @@ static int rm_flg_used;                 /* the script tests or sets rm_flg bits 
 
 static void scan_script(void)
 {
-    unsigned char* base = (unsigned char*)rom->evtp;
+    unsigned char* base = (unsigned char*)P32(struct EVT_WORK *, rom->evtp);
     unsigned int* tab = (unsigned int*)base;
     unsigned int offs[256], first, o, end;
     int n = 0, i, j;
@@ -127,7 +127,7 @@ static int near_entry(float x, float z, int player)
 {
     int i;
     for (i = 0; i < rom->pos_n; i++) {
-        float dx = x - rom->posp[i].px, dz = z - rom->posp[i].pz;
+        float dx = x - P32(struct POS *, rom->posp)[i].px, dz = z - P32(struct POS *, rom->posp)[i].pz;
         if (dx * dx + dz * dz < 40.0f * 40.0f) return 1;
     }
     if (player) {
@@ -163,7 +163,7 @@ static void place(const EnemyOpts* o)
         if ((ene[k].flg & 0x1) && !(rec_flags[k] & (REC_EVENT | REC_SHOWN)) && roams(ene[k].id)) cand[nc++] = k;
     for (k = 0; k < nc; k++) {
         BH_PWORK* ep = &ene[cand[k]];
-        ETTY_WORK* r = &rom->enep[cand[k]];
+        ETTY_WORK* r = &P32(struct ETTY_WORK *, rom->enep)[cand[k]];
         float x = ep->px, z = ep->pz, nx, nz;
         rnd_seed((unsigned)o->seed, (unsigned)room_file_now() * 131u + (unsigned)cand[k] + 0x5000u);
         if (nc > 1 && (rnd() & 1)) {   /* start from another record's spot on the same floor */
@@ -370,7 +370,7 @@ static void randomize(const EnemyOpts* o)
             continue;
         }
         for (i = 0; i < save.mdl_n; i++)   /* the original's textures are released with the room's (the record now holds the new type) */
-            if ((save.mdl[i].flg & 0x200) && save.mdl[i].texP) spawn_keep_texlist(save.mdl[i].texP);
+            if ((save.mdl[i].flg & 0x200) && P32(NJS_TEXLIST *, save.mdl[i].texP)) spawn_keep_texlist(P32(NJS_TEXLIST *, save.mdl[i].texP));
         rand_src[k] = m;   /* (the room file still says the old type: extra enemies copy from here) */
         rand_var[k] = v ? v->id : 0;
         cost += kcost - slot_cost(save.id);
@@ -434,7 +434,7 @@ static void kill_test(void)
         ep->flg |= 0x4;
         ep->dpx = ep->px; ep->dpy = ep->py + 10.0f; ep->dpz = ep->pz;
         ep->wpnr_no = plp->wpnr_no;
-        ep->djnt_no = ep->mlwP && ep->mlwP->obj_num > 1 ? 1 : 0;
+        ep->djnt_no = P32(struct ML_WORK *, ep->mlwP) && P32(struct ML_WORK *, ep->mlwP)->obj_num > 1 ? 1 : 0;
         ep->dam[ep->djnt_no] += 500;
         ep->comb_flg |= 0x10;
     }
@@ -453,7 +453,7 @@ static void headshot_test(void)
     if (++t < n || t > n + 90) return;
     for (k = 0; k < (int)sys->ewk_n && k < 128; k++) {
         BH_PWORK* ep = &ene[k];
-        if (!(ep->flg & 0x1) || ep->id != 1 || (ep->flg & 0x80) || !ep->exp0) continue;
+        if (!(ep->flg & 0x1) || ep->id != 1 || (ep->flg & 0x80) || !P32(unsigned char *, ep->exp0)) continue;
         if (t == n && !(ep->flg & 0x2) && !(ep->stflg & 0x1000000) && ep->mode0 == 1) {
             ep->flg |= 0x4;
             ep->dpx = ep->px; ep->dpy = ep->py + 16.0f; ep->dpz = ep->pz;
@@ -463,7 +463,7 @@ static void headshot_test(void)
         }
         if ((t - n) % 15 == 0)
             printf("test: headshot room %04d slot %d model %d type %d: head %d hp %d mode %d/%d/%d flg %#x\n", room_file_now(), k, ep->mdlver, ep->type,
-                   *(int*)(ep->exp0 + 0x78), ep->hp, ep->mode0, ep->mode1, ep->mode2, ep->flg);
+                   *(int*)(P32(unsigned char *, ep->exp0) + 0x78), ep->hp, ep->mode0, ep->mode1, ep->mode2, ep->flg);
     }
 }
 
@@ -487,7 +487,7 @@ void enemy_extras_frame(void)
     rnd_seed((unsigned)o->seed, (unsigned)room_file_now() * 7u + 1u);
     for (k = nc - 1; k > 0; k--) { int j = rnd() % (k + 1), t = cand[k]; cand[k] = cand[j]; cand[j] = t; }   /* shuffle */
     for (k = 0; k < nc && made < o->extra; k++) {
-        const ETTY_WORK* r = &rom->enep[cand[k]];
+        const ETTY_WORK* r = &P32(struct ETTY_WORK *, rom->enep)[cand[k]];
         BH_PWORK* src = &ene[cand[k]];
         ActorModel am = { "extra enemy", (unsigned short)room_file_now(), (unsigned char)cand[k], (unsigned char)r->id, r->mdlver, 0, 0 };
         SpawnNote n = { 0 };

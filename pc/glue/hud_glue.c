@@ -53,14 +53,14 @@ static void battery_draw(float x1, float y1)
 
 void hud_draw(void)
 {
-    const unsigned int* iv = swork.pip;
+    const unsigned int* iv = P32(unsigned int *, swork.pip);
     char s[24];
     NJS_POINT2 pos;
     float w = 0, sx = FontScaleX, sy = FontScaleY, scr = FontScaleCR;
     int i, item, max, col = 0, m = ply.mode0;
 
     /* action, damage, grabbed, hit by an enemy (player.c bhCtrPly_mode0): not dying, events */
-    if (!sys || !ply.mnwP || !ply.mlwP || (m != 1 && m != 2 && m != 4 && m != 5) || sys->ssv_an > 0 || !pc_play_screen(1))
+    if (!sys || !P32(struct MN_WORK *, ply.mnwP) || !P32(struct ML_WORK *, ply.mlwP) || (m != 1 && m != 2 && m != 4 && m != 5) || sys->ssv_an > 0 || !pc_play_screen(1))
         return;
     battery_draw(320.0f + 320.0f * pc_hor_scale() - HUD_MARGIN, 480.0f - HUD_MARGIN - 28.0f * HUD_SCALE - 6.0f);
     if (!pc_ammo_hud_on() || !iv || !iv[0])

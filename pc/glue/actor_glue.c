@@ -214,8 +214,8 @@ static int rig_build(Rig* r, const NJS_CNK_OBJECT* o, int n, int bind)
         if (bind && (o[i].ang[0] || o[i].ang[1] || o[i].ang[2])) return 0;
         r->par[i] = cur;
         for (k = 0; k < 3; k++) r->rest[i][k] = o[i].pos[k] + (cur >= 0 ? r->rest[cur][k] : 0);
-        if (o[i].sibling) st[sp++] = cur;
-        cur = o[i].child ? i : sp ? st[--sp] : -1;
+        if (P32(struct cnkobj *, o[i].sibling)) st[sp++] = cur;
+        cur = P32(struct cnkobj *, o[i].child) ? i : sp ? st[--sp] : -1;
         if (sp >= NODES - 1) return 0;
     }
     r->map[0] = 0;
@@ -348,15 +348,15 @@ static void place(ML_WORK* m, const Rig* tr, float (*rot)[9], const float* dm, c
 {
     int i, j;
     for (i = 0; i < tr->n; i++) {
-        float* w = m->owP[i].mtx;
+        float* w = P32(struct O_WORK *, m->owP)[i].mtx;
         int p = tr->par[i];
         for (j = 0; j < 3; j++) { w[j] = rot[i][j]; w[4 + j] = rot[i][3 + j]; w[8 + j] = rot[i][6 + j]; }
         w[3] = w[7] = w[11] = 0;
         w[15] = 1;
         if (i == 0 && root) memcpy(&w[12], root, 12);
         else {
-            const float* pw = p >= 0 ? m->owP[p].mtx : dm;
-            const float* off = m->objP[i].pos;
+            const float* pw = p >= 0 ? P32(struct O_WORK *, m->owP)[p].mtx : dm;
+            const float* off = P32(struct cnkobj *, m->objP)[i].pos;
             for (j = 0; j < 3; j++) w[12 + j] = off[0] * pw[j] + off[1] * pw[4 + j] + off[2] * pw[8 + j] + pw[12 + j];
         }
     }
@@ -366,7 +366,7 @@ static void place(ML_WORK* m, const Rig* tr, float (*rot)[9], const float* dm, c
    hand to t, the elbow kept in the plane it bends in. The rotations of u and f are turned. */
 static void arm_ik(ML_WORK* m, float (*rot)[9], int u, int f, int h, const float* t)
 {
-    const float *S = &m->owP[u].mtx[12], *E = &m->owP[f].mtx[12], *H = &m->owP[h].mtx[12];
+    const float *S = &P32(struct O_WORK *, m->owP)[u].mtx[12], *E = &P32(struct O_WORK *, m->owP)[f].mtx[12], *H = &P32(struct O_WORK *, m->owP)[h].mtx[12];
     float se[3], eh[3], st[3], l1 = 0, l2 = 0, d = 0, k = 0, pole[3], pl = 0, e2[3], h1[3], t2[3], d1[9], d2[9], ca, sa;
     int j;
     for (j = 0; j < 3; j++) { se[j] = E[j] - S[j]; eh[j] = H[j] - E[j]; st[j] = t[j] - S[j]; }
@@ -397,7 +397,7 @@ static void follow(const Disguise* d, float (*rot)[9], int i, int p)
     NJS_MATRIX l;
     float r[9];
     int j;
-    const Sint32* a = d->w.mlwP->objP[i].ang;
+    const Sint32* a = P32(struct cnkobj *, P32(struct ML_WORK *, d->w.mlwP)->objP)[i].ang;
     if (!d->face || !(a[0] | a[1] | a[2])) { memcpy(rot[i], rot[p], sizeof(rot[i])); return; }
     njUnitMatrix(&l);
     njRotateXYZ(&l, a[0], a[1], a[2]);
@@ -408,8 +408,8 @@ static void follow(const Disguise* d, float (*rot)[9], int i, int p)
 /* the display actor's world matrices from the source's posed skeleton */
 static void retarget(Disguise* d, BH_PWORK* src, const Rig* sr)
 {
-    ML_WORK* m = d->w.mlwP;
-    O_WORK* sow = src->mlwP->owP;
+    ML_WORK* m = P32(struct ML_WORK *, d->w.mlwP);
+    O_WORK* sow = P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP);
     const Rig* tr = &d->rig;
     const float* dm = (const float*)d->w.mtxbuf;   /* the actor's own matrix (d->w.mtx points here) */
     const float* root = sr->map[0] >= 0 ? &sow[(int)sr->map[0]].mtx[12] : NULL;   /* the root: feet on the source's floor */
@@ -459,7 +459,7 @@ static void retarget(Disguise* d, BH_PWORK* src, const Rig* sr)
             if (k == 18 || k == 19 || tr->map[k] < 0 || sr->map[k] < 0) continue;
             fs = fminf(fs, sow[(int)sr->map[k]].mtx[13]);
             rs = fminf(rs, sr->rest[(int)sr->map[k]][1] - sr->rest[(int)sr->map[0]][1]);
-            ft = fminf(ft, m->owP[(int)tr->map[k]].mtx[13]);
+            ft = fminf(ft, P32(struct O_WORK *, m->owP)[(int)tr->map[k]].mtx[13]);
             rt = fminf(rt, tr->rest[(int)tr->map[k]][1] - tr->rest[(int)tr->map[0]][1]);
         }
         if (ft < 1e8f && hs > 1.0f && ht > 1.0f) {
@@ -482,7 +482,7 @@ static void retarget(Disguise* d, BH_PWORK* src, const Rig* sr)
             w = (6.0f - sqrtf(ds)) / 3.0f;
             if (w > 0) {
                 if (w > 1) w = 1;
-                for (j = 0; j < 3; j++) t[j] = m->owP[h].mtx[12 + j] + w * (m->owP[r].mtx[12 + j] + sL[j] - sR[j] - m->owP[h].mtx[12 + j]);
+                for (j = 0; j < 3; j++) t[j] = P32(struct O_WORK *, m->owP)[h].mtx[12 + j] + w * (P32(struct O_WORK *, m->owP)[r].mtx[12 + j] + sL[j] - sR[j] - P32(struct O_WORK *, m->owP)[h].mtx[12 + j]);
                 arm_ik(m, rot, u, f, h, t);
                 for (i = 0; i < tr->n; i++) if (from[i] < 0 && tr->par[i] >= 0) follow(d, rot, i, tr->par[i]);
                 place(m, tr, rot, dm, root);
@@ -501,7 +501,7 @@ static void retarget(Disguise* d, BH_PWORK* src, const Rig* sr)
         for (j = 0; j < 9; j++) rp[j] = p >= 0 ? rot[p][j] : dm[(j / 3) * 4 + j % 3];
         for (j = 0; j < 3; j++)
             for (c = 0; c < 3; c++) l[j * 3 + c] = rot[i][j * 3] * rp[c * 3] + rot[i][j * 3 + 1] * rp[c * 3 + 1] + rot[i][j * 3 + 2] * rp[c * 3 + 2];
-        euler_xyz(l, m->objP[i].ang);
+        euler_xyz(l, P32(struct cnkobj *, m->objP)[i].ang);
     }
 }
 
@@ -597,18 +597,18 @@ static int read_file(int part, int file) { return afs_read(part, file, pack, siz
 void player_model_read(BH_PWORK* who, unsigned char* file, unsigned char* mdl, unsigned char* bmt, unsigned char* mth, unsigned char* zmt)
 {
     BH_PWORK* plp_b = plp;
-    unsigned char *memp_b = sys->memp, *mdl_b = sys->plmdlp, *bmt_b = sys->plbmtp, *mth_b = sys->plmthp,
-                  *zmt_b = sys->plzmtp, *free_b = freemem;
+    unsigned char *memp_b = P32(unsigned char *, sys->memp), *mdl_b = P32(unsigned char *, sys->plmdlp), *bmt_b = P32(unsigned char *, sys->plbmtp), *mth_b = P32(unsigned char *, sys->plmthp),
+                  *zmt_b = P32(unsigned char *, sys->plzmtp), *free_b = freemem;
     NJS_POINT3 hd_b = sys->hd_pos;
     unsigned int bmt_size_b = sys->bmt_size;
     plp = who;
-    sys->memp = file;
-    sys->plmdlp = mdl; sys->plbmtp = bmt; sys->plmthp = mth; sys->plzmtp = zmt;
+    sys->memp = S32(file);
+    sys->plmdlp = S32(mdl); sys->plbmtp = S32(bmt); sys->plmthp = S32(mth); sys->plzmtp = S32(zmt);
     freemem = mdl;
     bhReadPlayerData();
     plp = plp_b;
-    sys->memp = memp_b;
-    sys->plmdlp = mdl_b; sys->plbmtp = bmt_b; sys->plmthp = mth_b; sys->plzmtp = zmt_b;
+    sys->memp = S32(memp_b);
+    sys->plmdlp = S32(mdl_b); sys->plbmtp = S32(bmt_b); sys->plmthp = S32(mth_b); sys->plzmtp = S32(zmt_b);
     freemem = free_b;
     sys->hd_pos = hd_b;
     sys->bmt_size = bmt_size_b;
@@ -617,26 +617,26 @@ void player_model_read(BH_PWORK* who, unsigned char* file, unsigned char* mdl, u
 /* object objs[2] linked to head node 5 of `who`, set up as bhSetPlayer does for player 1's sys->obwp[2] */
 void player_hair(O_WRK* objs, BH_PWORK* who, int chr, unsigned char* exp0, unsigned char* exp3)
 {
-    O_WRK* obwp_b = sys->obwp;
+    O_WRK* obwp_b = P32(struct O_WRK *, sys->obwp);
     O_WRK* op = &objs[2];
     int k = chr == 0 ? 0 : 1, v;
     op->flg = 0;
     if ((chr != 0 && chr != 3) || who->mdl_n <= lkmtab[k].mdlver) return;
-    sys->obwp = objs;
+    sys->obwp = S32(objs);
     bhSetObject(&lkmtab[k], 2, (unsigned char*)who);
-    sys->obwp = obwp_b;
+    sys->obwp = S32(obwp_b);
     v = op->mdlver;
     op->lkono = 5;
     op->lox = 0;
     op->loy = chr == 0 ? 1.5869f : 0.85f;
     op->loz = chr == 0 ? 0.7747f : -1.03f;
-    if (chr == 0) op->skp[0] = who->skp[v];
+    if (chr == 0) op->skp[0] = S32(P32(int *, who->skp[v]));
     op->mdl[0] = who->mdl[v];
-    op->mlwP = &op->mdl[0];
+    op->mlwP = S32(&op->mdl[0]);
     if (chr == 0 && exp0) {   /* bhObjClpn would take its work from the room heap (plp's: sys->pletcp) */
         op->flg |= 0x100000;
-        op->exp0 = exp0;
-        op->exp3 = exp3;
+        op->exp0 = S32(exp0);
+        op->exp3 = S32(exp3);
     }
 }
 
@@ -650,17 +650,17 @@ static int realize(Disguise* d, unsigned char* p, unsigned char* own)
         ML_WORK* m = &d->w.mdl[d->w.mdl_n];
         p += 4;
         if (!dt || d->w.mdl_n == 16) continue;
-        if (rd32(p) == MAGIC_MASK) { d->w.mskp = p; continue; }   /* (as room.c bhSetEneMdl; set up only for the double, face_init) */
-        if (rd32(p) == SKIN_MAGIC) { d->w.skp[d->w.mdl_n] = (int*)(p + 4); continue; }
+        if (rd32(p) == MAGIC_MASK) { d->w.mskp = S32(p); continue; }   /* (as room.c bhSetEneMdl; set up only for the double, face_init) */
+        if (rd32(p) == SKIN_MAGIC) { d->w.skp[d->w.mdl_n] = S32((int*)(p + 4)); continue; }
         bhMlbBinRealize(p, m);
-        if (d->w.skp[d->w.mdl_n]) npSkinConvert(m->objP, d->w.skp[d->w.mdl_n]);
-        if (m->texP) { last = m->texP; own[d->w.mdl_n] = 1; texn += m->texP->nbTexture; }
-        else m->texP = last;   /* as sys->et_lp: the last textured sub-model's */
-        d->w.mbp[d->w.mdl_n] = m->objP;
-        d->w.txp[d->w.mdl_n] = m->texP;
+        if (P32(int *, d->w.skp[d->w.mdl_n])) npSkinConvert(P32(struct cnkobj *, m->objP), P32(int *, d->w.skp[d->w.mdl_n]));
+        if (P32(NJS_TEXLIST *, m->texP)) { last = P32(NJS_TEXLIST *, m->texP); own[d->w.mdl_n] = 1; texn += P32(NJS_TEXLIST *, m->texP)->nbTexture; }
+        else m->texP = S32(last);   /* as sys->et_lp: the last textured sub-model's */
+        d->w.mbp[d->w.mdl_n] = S32(P32(struct cnkobj *, m->objP));
+        d->w.txp[d->w.mdl_n] = S32(P32(NJS_TEXLIST *, m->texP));
         if (ow + (int)m->obj_num > OW_MAX) break;
-        m->owP = &d->ow[ow];
-        memset(m->owP, 0, m->obj_num * sizeof(O_WORK));
+        m->owP = S32(&d->ow[ow]);
+        memset(P32(struct O_WORK *, m->owP), 0, m->obj_num * sizeof(O_WORK));
         ow += m->obj_num;
         d->w.mdl_n++;
     }
@@ -716,7 +716,7 @@ int actor_find(const ActorModel* am, ActorData* out)
     snprintf(name, sizeof(name), "RM_%04d.RDX", am->room);
     if (!load_rdx(am->room)) return 0;
     rw = (const ROM_WORK*)(room + hdr->hed00);
-    recs = (const ETTY_WORK*)(room + (unsigned int)PS2_ADDR(rw->enep));
+    recs = (const ETTY_WORK*)(room + (unsigned int)PS2_ADDR(P32(struct ETTY_WORK *, rw->enep)));
     n = rw->ene_n;
     if (am->rec >= n || recs[am->rec].id != am->id || recs[am->rec].mdlver != am->mdlver || !(recs[am->rec].flg & 0x1)) {
         host_log("actor: %s: record %d of %s is not type %d version %d\n", am->name, am->rec, name, am->id, am->mdlver);
@@ -755,7 +755,7 @@ const unsigned char* actor_fx_tex(int rm, int fx)
     int ids[64], m = 0, i, j, k = -1, cnt;
     if (!load_rdx(rm)) return NULL;
     rw = (const ROM_WORK*)(room + hdr->hed00);
-    e = (const EF_WRK*)(room + (unsigned int)PS2_ADDR(rw->effp));
+    e = (const EF_WRK*)(room + (unsigned int)PS2_ADDR(P32(struct EF_WRK *, rw->effp)));
     for (i = 0; i < rw->eff_n && m < 64; i++)
         if ((e[i].id >= 30 && e[i].id < 100) || e[i].id >= 400) {
             for (j = 0; j < m && ids[j] != e[i].id; j++);
@@ -786,13 +786,13 @@ static int load_room_model(Disguise* d, int idx)
     memcpy(d->keep + mofs, a.mdl, a.mlen);
     if (a.mtn) memcpy(d->keep + nofs, a.mtn, a.nlen);
     texn = realize(d, d->keep + mofs, own);
-    if (!d->w.mdl_n || !d->w.mdl[0].objP || !d->w.mdl[0].owP || !tex_room(am->name, texn)) return 0;
+    if (!d->w.mdl_n || !P32(struct cnkobj *, d->w.mdl[0].objP) || !P32(struct O_WORK *, d->w.mdl[0].owP) || !tex_room(am->name, texn)) return 0;
     for (i = 0; i < d->w.mdl_n; i++) {
         if (!own[i]) continue;
         if (++t >= a.ntex || !a.tex[t]) { host_log("actor: %s: no texture entry for sub-model %d\n", am->name, i); continue; }
-        bhSetMemPvpTexture(d->w.mdl[i].texP, (unsigned char*)a.tex[t], 0);
+        bhSetMemPvpTexture(P32(NJS_TEXLIST *, d->w.mdl[i].texP), (unsigned char*)a.tex[t], 0);
         d->w.mdl[i].flg |= 0x200;
-        d->tex[d->tex_n++] = d->w.mdl[i].texP;
+        d->tex[d->tex_n++] = P32(NJS_TEXLIST *, d->w.mdl[i].texP);
     }
     if (a.mtn)   /* the type's motions (bhSetEneMtn) */
         for (i = 0, p = d->keep + nofs; (dt = (int)rd32(p)) != -1 && i < 512; i++, p += dt) {
@@ -813,7 +813,7 @@ static int load_part_model(Disguise* d, int file)
     unload(d);
     memcpy(d->keep, pack + 4, size);
     texn = realize(d, d->keep, own);
-    if (!d->w.mdl_n || !d->w.mdl[0].owP || !tex_room(name, texn)) return 0;
+    if (!d->w.mdl_n || !P32(struct O_WORK *, d->w.mdl[0].owP) || !tex_room(name, texn)) return 0;
     p = pack + 4 + size;
     for (i = 0; i < 2; i++) {   /* motions, z translation */
         if (p + 4 > pack + sizeof(pack) || rd32(p) > (unsigned)(pack + sizeof(pack) - p - 4)) return 1;   /* (no textures) */
@@ -827,9 +827,9 @@ static int load_part_model(Disguise* d, int file)
         p += 4;
         if (n & 0x80000000) { p = pack + ((p - pack + 31) & ~31); n &= ~0x80000000; }
         if (n > (unsigned)(pack + sizeof(pack) - p)) break;
-        bhSetMemPvpTexture(d->w.mdl[i].texP, p, 0);
+        bhSetMemPvpTexture(P32(NJS_TEXLIST *, d->w.mdl[i].texP), p, 0);
         d->w.mdl[i].flg |= 0x200;
-        d->tex[d->tex_n++] = d->w.mdl[i].texP;
+        d->tex[d->tex_n++] = P32(NJS_TEXLIST *, d->w.mdl[i].texP);
         p += n;
     }
     return 1;
@@ -866,12 +866,12 @@ static void load_head(Disguise* d, int chr)
     }
     if (d->tex_n >= (int)(sizeof(d->tex) / sizeof(d->tex[0]))) { host_log("actor: head part of part file %d: no texture slot left\n", 10 + chr); return; }
     memset(&d->hp.w, 0, sizeof(d->hp.w));
-    if (skin) d->hp.w.skp[4] = (int*)((unsigned char*)memcpy(d->hp.keep + ((skin - pack) & 63), skin, slen) + 4);   /* (the data's alignment kept) */
+    if (skin) d->hp.w.skp[4] = S32((int*)((unsigned char*)memcpy(d->hp.keep + ((skin - pack) & 63), skin, slen) + 4));   /* (the data's alignment kept) */
     p = memcpy(d->hp.keep + 2048 + ((c - pack) & 63), c, clen);
     bhMlbBinRealize(p, m);
-    if (!m->objP || m->obj_num > 16 || !m->texP || !tex_room("head part", 1)) { host_log("actor: head part of part file %d not loaded (%d nodes)\n", 10 + chr, m->objP ? (int)m->obj_num : -1); return; }
-    if (d->hp.w.skp[4]) npSkinConvert(m->objP, d->hp.w.skp[4]);
-    m->owP = d->hp.ow;
+    if (!P32(struct cnkobj *, m->objP) || m->obj_num > 16 || !P32(NJS_TEXLIST *, m->texP) || !tex_room("head part", 1)) { host_log("actor: head part of part file %d not loaded (%d nodes)\n", 10 + chr, P32(struct cnkobj *, m->objP) ? (int)m->obj_num : -1); return; }
+    if (P32(int *, d->hp.w.skp[4])) npSkinConvert(P32(struct cnkobj *, m->objP), P32(int *, d->hp.w.skp[4]));
+    m->owP = S32(d->hp.ow);
     memset(d->hp.ow, 0, sizeof(d->hp.ow));
     for (p = end, i = 0; i < 2; i++) {   /* motions, z translation */
         if (p + 4 > pack + sizeof(pack) || rd32(p) > (unsigned)(pack + sizeof(pack) - p - 4)) return;
@@ -885,12 +885,12 @@ static void load_head(Disguise* d, int chr)
         if (n > (unsigned)(pack + sizeof(pack) - p)) return;
         if (i < tex) p += n;
     }
-    bhSetMemPvpTexture(m->texP, p, 0);
+    bhSetMemPvpTexture(P32(NJS_TEXLIST *, m->texP), p, 0);
     m->flg |= 0x200;
-    d->tex[d->tex_n++] = m->texP;
+    d->tex[d->tex_n++] = P32(NJS_TEXLIST *, m->texP);
     d->hp.w.mdl_n = 5;
     player_hair(d->hp.obj, &d->hp.w, chr, d->hp.exp0, d->hp.exp3);
-    op->lkwkp = (unsigned char*)&d->w;
+    op->lkwkp = S32((unsigned char*)&d->w);
     d->hp.on = op->flg & 0x1;
     host_log("actor: head part of part file %d: %d nodes, %d bytes, texture %d bytes\n", 10 + chr, (int)m->obj_num, clen + slen, (int)n);
 }
@@ -900,7 +900,7 @@ static void head_pose(Disguise* d, int step)
 {
     O_WRK* op = &d->hp.obj[2];
     if (!d->hp.on || !d->mapped) return;
-    njCalcPoint(&d->w.mlwP->owP[5].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->px);
+    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, d->w.mlwP)->owP)[5].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->px);
     if (step && op->id == 1211) bhObjClpn(op);
     bhCalcModel((BH_PWORK*)op);
 }
@@ -922,13 +922,13 @@ static int load(Disguise* d, int idx)
     }
     d->w.flg = 0x1;
     d->w.mdflg = 0x20;
-    d->w.mlwP = d->w.mdl;
-    d->w.mtx = (float(*)[16])d->w.mtxbuf;
+    d->w.mlwP = S32(d->w.mdl);
+    d->w.mtx = S32((float(*)[16])d->w.mtxbuf);
     d->w.sx = d->w.sy = d->w.sz = d->w.sxb = d->w.syb = d->w.szb = 1.0f;
-    d->w.mnwP = d->w.mnwPb = d->mth;
+    d->w.mnwP = S32(P32(struct MN_WORK *, d->w.mnwPb = S32(d->mth)));
     d->w.mtn_add = 65536;
     anim = idx >= ACTOR_PART || actor_models[idx].anim;
-    if (anim) rig_build(&d->rig, d->w.mdl[0].objP, d->w.mdl[0].obj_num, 1);
+    if (anim) rig_build(&d->rig, P32(struct cnkobj *, d->w.mdl[0].objP), d->w.mdl[0].obj_num, 1);
     host_log("actor: %s loaded (%d sub-models, %d nodes, %d KB texture heap), %s; map", name, d->w.mdl_n,
              d->w.mdl[0].obj_num, (heap - heap_free()) >> 10, d->rig.ok ? "player animations" : "own idle motion");
     if (d->rig.ok) { int k; for (k = 0; k < 22; k++) host_log(" %d", d->rig.map[k]); }
@@ -941,12 +941,12 @@ static int load(Disguise* d, int idx)
     }
     if (getenv("RECVX_RIG_DUMP")) {   /* test aid: the rest skeleton (node, parent, model-space position, bind angles) */
         Rig r;
-        const NJS_CNK_OBJECT* o = d->w.mdl[0].objP;
+        const NJS_CNK_OBJECT* o = P32(struct cnkobj *, d->w.mdl[0].objP);
         int i;
         rig_build(&r, o, d->w.mdl[0].obj_num, 0);
         for (i = 0; i < r.n; i++)
             host_log("actor:  node %2d par %2d rest %7.2f %7.2f %7.2f ang %6d %6d %6d%s\n", i, r.par[i], r.rest[i][0], r.rest[i][1], r.rest[i][2],
-                     (int)o[i].ang[0], (int)o[i].ang[1], (int)o[i].ang[2], o[i].model ? " mesh" : "");
+                     (int)o[i].ang[0], (int)o[i].ang[1], (int)o[i].ang[2], P32(NJS_CNK_MODEL *, o[i].model) ? " mesh" : "");
     }
     return 1;
 }
@@ -1036,7 +1036,7 @@ void* pc_plp_set;
    it may start another one (a grab, Alexia's burn), whose frm_no is then the one to play */
 static int frame_kept(const BH_PWORK* p)
 {
-    return p == plp && pc_plp_frm >= 0 && p->mtn_no == pc_plp_mtn && (void*)p->mnwP == pc_plp_set;
+    return p == plp && pc_plp_frm >= 0 && p->mtn_no == pc_plp_mtn && (void*)P32(struct MN_WORK *, p->mnwP) == pc_plp_set;
 }
 
 /* the frame p shows: our player's from before its bhSetMotion advanced plp->frm_no (player.c
@@ -1059,48 +1059,48 @@ static int frame_hokan(const BH_PWORK* p)
 /* the copy posed in character s->chr's motion equivalent to src's (character `from`), or NULL */
 static BH_PWORK* shadow_step(Shadow* s, BH_PWORK* src, int from)
 {
-    ML_WORK* sm = src->mlwP;
-    MN_WORK *set = src->mnwP, *own;
+    ML_WORK* sm = P32(struct ML_WORK *, src->mlwP);
+    MN_WORK *set = P32(struct MN_WORK *, src->mnwP), *own;
     int mtn = src->mtn_no, i, k;
     long frm = actor_frame(src);   /* (after its advance a motion's last frame has wrapped to its first) */
-    if (!set || mtn < 0 || mtn >= 512 || !set[mtn].datP || set[mtn].obj_num > 22 || sm->obj_num < 22) return NULL;
+    if (!set || mtn < 0 || mtn >= 512 || !P32(void *, set[mtn].datP) || set[mtn].obj_num > 22 || sm->obj_num < 22) return NULL;
     own = &set[mtn];
-    if (set == src->mnwPb) {   /* base and weapon motions: the same number */
-        if (s->mth[mtn].datP && s->mth[mtn].obj_num <= 22) set = s->mth;
+    if (set == P32(struct MN_WORK *, src->mnwPb)) {   /* base and weapon motions: the same number */
+        if (P32(void *, s->mth[mtn].datP) && s->mth[mtn].obj_num <= 22) set = s->mth;
     } else {   /* grabbed: the player plays the enemy's set */
         for (i = 0; i < (int)sys->ewk_n && i < 128; i++)
-            if ((ene[i].flg & 0x1) && (ene[i].mnwP == set || ene[i].mnwPb == set)) {
+            if ((ene[i].flg & 0x1) && (P32(struct MN_WORK *, ene[i].mnwP) == set || P32(struct MN_WORK *, ene[i].mnwPb) == set)) {
                 k = appear_grab_motion(ene[i].id, mtn, from, s->chr);
-                if (k >= 0 && set[k].datP && set[k].obj_num <= 22) mtn = k;
+                if (k >= 0 && P32(void *, set[k].datP) && set[k].obj_num <= 22) mtn = k;
                 break;
             }
     }
     if (&set[mtn] != own && own->frm_num) frm = frm * set[mtn].frm_num / own->frm_num;   /* the same phase */
     if (frm >= (long)set[mtn].frm_num << 16) frm = ((long)set[mtn].frm_num << 16) - 1;
-    if (s->of != sm->objP) {   /* a new source: its hierarchy, a pose without blending */
-        memcpy(s->obj, sm->objP, sizeof(s->obj));
+    if (s->of != P32(struct cnkobj *, sm->objP)) {   /* a new source: its hierarchy, a pose without blending */
+        memcpy(s->obj, P32(struct cnkobj *, sm->objP), sizeof(s->obj));
         memset(s->ow, 0, sizeof(s->ow));
         memset(&s->w, 0, sizeof(s->w));
-        s->w.mdl[0].objP = s->obj;
-        s->w.mdl[0].owP = s->ow;
+        s->w.mdl[0].objP = S32(s->obj);
+        s->w.mdl[0].owP = S32(s->ow);
         s->w.mdl[0].obj_num = 22;
-        s->w.mlwP = &s->w.mdl[0];
+        s->w.mlwP = S32(&s->w.mdl[0]);
         s->w.mdl_n = 1;
-        s->w.mtx = (float(*)[16])s->w.mtxbuf;
+        s->w.mtx = S32((float(*)[16])s->w.mtxbuf);
         s->w.flg = 0x1000;   /* bhCalcModel: the base matrix as it is (the source's) */
-        s->of = sm->objP;
+        s->of = P32(struct cnkobj *, sm->objP);
     }
-    for (i = 1; i < 22; i++) memcpy(s->obj[i].pos, sm->objP[i].pos, sizeof(s->obj[i].pos));   /* the source's bones */
-    s->w.hokan_count = s->w.mnwP ? frame_hokan(src) : 0;   /* blending as the source's this tick */
+    for (i = 1; i < 22; i++) memcpy(s->obj[i].pos, P32(struct cnkobj *, sm->objP)[i].pos, sizeof(s->obj[i].pos));   /* the source's bones */
+    s->w.hokan_count = P32(struct MN_WORK *, s->w.mnwP) ? frame_hokan(src) : 0;   /* blending as the source's this tick */
     s->w.hokan_rate = src->hokan_rate;
-    s->w.mnwP = set;
+    s->w.mnwP = S32(set);
     s->w.mtn_no = mtn;
     s->w.frm_no = (int)frm;
-    bhSetMotion(&s->w, 0, src->mtn_md, src->mtn_tp);
-    for (i = 4; i <= 5; i++) memcpy(s->obj[i].ang, sm->objP[i].ang, sizeof(s->obj[i].ang));   /* neck and head look as the source's (bhControlPlayerHead) */
-    memcpy(s->w.mtxbuf, src->mtx, sizeof(float) * 16);
+    bhSetMotion(&s->w, 0, src->mtn_md, P32(unsigned char *, src->mtn_tp));
+    for (i = 4; i <= 5; i++) memcpy(s->obj[i].ang, P32(struct cnkobj *, sm->objP)[i].ang, sizeof(s->obj[i].ang));   /* neck and head look as the source's (bhControlPlayerHead) */
+    memcpy(s->w.mtxbuf, P32(float (*)[16], src->mtx), sizeof(float) * 16);
     bhCalcModel(&s->w);
-    if ((sm->owP[7].flg & 0x2) && (sm->owP[9].flg & 0x2)) {   /* the source's arm is held by the lighter's IK (player.c
+    if ((P32(struct O_WORK *, sm->owP)[7].flg & 0x2) && (P32(struct O_WORK *, sm->owP)[9].flg & 0x2)) {   /* the source's arm is held by the lighter's IK (player.c
         bhControlPlayer), which the other set's motions do not have: the same IK on the
         copy, the arm towards a point in front of its chest, as the game does for the character played */
         NJS_POINT3 eff1 = { from == 0 ? 1.8f : 2.4f, -3.0f, from == 0 ? -3.0f : -3.5f }, eff0;
@@ -1146,7 +1146,7 @@ static BH_PWORK* shadow(int who, BH_PWORK* src)
     }
     if (!shadow_step(s, src, s->motion)) return NULL;
     if (d->model < 0) {   /* a part-file mesh on the source: what is linked to its head and hands goes where they are drawn */
-        for (k = 5; k <= 13; k += 4) memcpy(src->mlwP->owP[k].mtx, s->ow[k].mtx, sizeof(s->ow[k].mtx));
+        for (k = 5; k <= 13; k += 4) memcpy(P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)[k].mtx, s->ow[k].mtx, sizeof(s->ow[k].mtx));
         s->body = 1;
         actor_on = 1;
     }
@@ -1159,11 +1159,11 @@ int actor_put_body(int who, BH_PWORK* src)
     static float keep[22][16];
     static Sint32 ang[22][3];
     Shadow* s = &sh[0];
-    O_WORK* ow = src->mlwP ? src->mlwP->owP : NULL;
+    O_WORK* ow = P32(struct ML_WORK *, src->mlwP) ? P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP) : NULL;
     NJS_CNK_OBJECT* o;
     int i;
-    if (!s->body || !ow || s->of != src->mlwP->objP || src->mlwP->obj_num < 22) { bhPutModel(src); return 1; }
-    o = src->mlwP->objP;
+    if (!s->body || !ow || s->of != P32(struct cnkobj *, P32(struct ML_WORK *, src->mlwP)->objP) || P32(struct ML_WORK *, src->mlwP)->obj_num < 22) { bhPutModel(src); return 1; }
+    o = P32(struct cnkobj *, P32(struct ML_WORK *, src->mlwP)->objP);
     for (i = 0; i < 22; i++) {   /* the matrices and the angles (the skin blends joints with them, npCalcSkin) */
         memcpy(keep[i], ow[i].mtx, sizeof(keep[i])); memcpy(ow[i].mtx, s->ow[i].mtx, sizeof(keep[i]));
         memcpy(ang[i], o[i].ang, sizeof(ang[i])); memcpy(o[i].ang, s->obj[i].ang, sizeof(ang[i]));
@@ -1188,10 +1188,10 @@ static int aim_set;        /* aim_rot is set */
 static void hands_save(int who, BH_PWORK* src)
 {
     int i;
-    if (real[who].src == src && real[who].ow == src->mlwP->owP) return;   /* saved this tick */
-    if (src->mlwP->obj_num < 14) return;
+    if (real[who].src == src && real[who].ow == P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)) return;   /* saved this tick */
+    if (P32(struct ML_WORK *, src->mlwP)->obj_num < 14) return;
     real[who].src = src;
-    real[who].ow = src->mlwP->owP;
+    real[who].ow = P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP);
     for (i = 0; i < 3; i++) memcpy(real[who].mtx[i], real[who].ow[5 + 4 * i].mtx, sizeof(real[who].mtx[i]));
 }
 
@@ -1200,7 +1200,7 @@ static void hands_back(int who)
     O_WORK* ow = real[who].ow;
     int i, j;
     if (!real[who].src) return;
-    if (real[who].src->mlwP && ow == real[who].src->mlwP->owP) {
+    if (P32(struct ML_WORK *, real[who].src->mlwP) && ow == P32(struct O_WORK *, P32(struct ML_WORK *, real[who].src->mlwP)->owP)) {
         if (who == 0 && real[0].src == plp) {   /* local = world x R^T, R: the chest's rows */
             float dl[3];
             for (j = 0; j < 3; j++) dl[j] = ow[9].mtx[12 + j] - real[0].mtx[1][12 + j];
@@ -1226,14 +1226,14 @@ void actor_hands_back(void)
 void tps_trace_hands(const float* drawn, const float* real);
 static void trace_hands(int who, BH_PWORK* src)
 {
-    if (who == 0 && !redraw && real[0].src == src && src == plp) tps_trace_hands(src->mlwP->owP[9].mtx, real[0].mtx[1]);
+    if (who == 0 && !redraw && real[0].src == src && src == plp) tps_trace_hands(P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)[9].mtx, real[0].mtx[1]);
 }
 
 /* tps_glue.c (free aim): where p's weapon hand is drawn relative to its own, in world space for p's
    current chest; 0 without a model */
 void actor_aim_offset(const BH_PWORK* p, float* out)
 {
-    const float* r = p->mlwP->owP[3].mtx;
+    const float* r = P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP)[3].mtx;
     int j;
     for (j = 0; j < 3; j++) out[j] = p == plp && actor_on ? aim_ofs[0] * r[j] + aim_ofs[1] * r[4 + j] + aim_ofs[2] * r[8 + j] : 0;
 }
@@ -1242,14 +1242,14 @@ void actor_aim_offset(const BH_PWORK* p, float* out)
    (bent) skeleton: hand[16] a node matrix (rows: axes, origin). 0 when no model is shown. */
 int actor_aim_hand(const BH_PWORK* p, float* hand)
 {
-    const float* r = p->mlwP->owP[3].mtx;
+    const float* r = P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP)[3].mtx;
     int i, j;
     if (!actor_retarget || p != plp || !actor_on || !aim_set) return 0;
     memset(hand, 0, 16 * sizeof(float));
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++) hand[i * 4 + j] = aim_rot[i * 3] * r[j] + aim_rot[i * 3 + 1] * r[4 + j] + aim_rot[i * 3 + 2] * r[8 + j];
     actor_aim_offset(p, &hand[12]);
-    for (j = 0; j < 3; j++) hand[12 + j] += p->mlwP->owP[9].mtx[12 + j];
+    for (j = 0; j < 3; j++) hand[12 + j] += P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP)[9].mtx[12 + j];
     hand[15] = 1;
     return 1;
 }
@@ -1263,11 +1263,11 @@ float actor_cam_scale(void)
     const NJS_CNK_OBJECT* o;
     int k, i;
     float hs = 0, ht, s;
-    if (!actor_retarget || d->model < 0 || !d->rig.ok || !plp || !plp->mlwP || plp->mlwP->obj_num < 6) return 1;
+    if (!actor_retarget || d->model < 0 || !d->rig.ok || !plp || !P32(struct ML_WORK *, plp->mlwP) || P32(struct ML_WORK *, plp->mlwP)->obj_num < 6) return 1;
     k = d->rig.map[5] >= 0 ? d->rig.map[5] : d->rig.map[4];
     if (k < 0) return 1;
     ht = d->rig.rest[k][1] - d->rig.rest[0][1];
-    for (o = plp->mlwP->objP, i = 1; i <= 5; i++) hs += o[i].pos[1];   /* the player's chain 1..5 (pelvis .. head) */
+    for (o = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP), i = 1; i <= 5; i++) hs += o[i].pos[1];   /* the player's chain 1..5 (pelvis .. head) */
     if (hs < 5 || ht < 3) return 1;
     s = ht / hs;
     return s < 0.8f ? 0.8f : s > 1.8f ? 1.8f : s;
@@ -1304,9 +1304,9 @@ int actor_rigged(int who) { return dg[who].model >= 0 && dg[who].rig.ok; }
 void actor_pose(int who, BH_PWORK* src)
 {
     Disguise* d = &dg[who];
-    ML_WORK* m = d->w.mlwP;
+    ML_WORK* m = P32(struct ML_WORK *, d->w.mlwP);
     BH_PWORK* drv;
-    if (!src->mlwP || !src->mlwP->objP || !src->mlwP->owP || !src->mtx) return;
+    if (!P32(struct ML_WORK *, src->mlwP) || !P32(struct cnkobj *, P32(struct ML_WORK *, src->mlwP)->objP) || !P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP) || !P32(float (*)[16], src->mtx)) return;
     if (who == 0) hands_save(who, src);
     if (who == 0 && !redraw) sh[who].drv = shadow(who, src);
     drv = who == 0 && sh[who].drv ? sh[who].drv : src;
@@ -1314,18 +1314,18 @@ void actor_pose(int who, BH_PWORK* src)
     d->w.px = src->px; d->w.py = src->py; d->w.pz = src->pz;
     d->w.ax = src->ax; d->w.ay = src->ay; d->w.az = src->az;
     d->w.draw_tp = src->draw_tp;
-    memcpy(d->w.mtxbuf, src->mtx, sizeof(float) * 16);   /* the source's base matrix (also when linked) */
+    memcpy(d->w.mtxbuf, P32(float (*)[16], src->mtx), sizeof(float) * 16);   /* the source's base matrix (also when linked) */
     d->posed = 1;
     d->mapped = 0;
     if (d->rig.ok) {
         Rig sr;   /* the source's skeleton: from its current node offsets (bind angles are 0); built each pose (a few
                      dozen nodes): a cache keyed by the objects' address kept a stale rig when a room load put another model there */
-        rig_build(&sr, drv->mlwP->objP, drv->mlwP->obj_num, 0);   /* (a cast double's face mask context has 31 nodes, 9 of them face) */
+        rig_build(&sr, P32(struct cnkobj *, P32(struct ML_WORK *, drv->mlwP)->objP), P32(struct ML_WORK *, drv->mlwP)->obj_num, 0);   /* (a cast double's face mask context has 31 nodes, 9 of them face) */
         if (sr.ok) {
             static const void* dumped;
-            if (getenv("RECVX_RIG_DUMP") && dumped != drv->mlwP->objP) {
+            if (getenv("RECVX_RIG_DUMP") && dumped != P32(struct cnkobj *, P32(struct ML_WORK *, drv->mlwP)->objP)) {
                 int i;
-                dumped = drv->mlwP->objP;
+                dumped = P32(struct cnkobj *, P32(struct ML_WORK *, drv->mlwP)->objP);
                 host_log("actor: source skeleton; map");
                 for (i = 0; i < 22; i++) host_log(" %d", sr.map[i]);
                 host_log("\n");
@@ -1337,8 +1337,8 @@ void actor_pose(int who, BH_PWORK* src)
                 int k;
                 for (k = 16; k <= 21; k++) {
                     if (k == 18 || k == 19) continue;
-                    if (sr.map[k] >= 0) fs = fminf(fs, drv->mlwP->owP[(int)sr.map[k]].mtx[13] - (*src->mtx)[13]);
-                    if (d->rig.map[k] >= 0) ft = fminf(ft, m->owP[(int)d->rig.map[k]].mtx[13] - (*src->mtx)[13]);
+                    if (sr.map[k] >= 0) fs = fminf(fs, P32(struct O_WORK *, P32(struct ML_WORK *, drv->mlwP)->owP)[(int)sr.map[k]].mtx[13] - (*P32(float (*)[16], src->mtx))[13]);
+                    if (d->rig.map[k] >= 0) ft = fminf(ft, P32(struct O_WORK *, m->owP)[(int)d->rig.map[k]].mtx[13] - (*P32(float (*)[16], src->mtx))[13]);
                 }
                 host_log("actor: feet motion %d frame %d: source %.2f model %.2f over the floor\n", (int)drv->mtn_no, (int)(drv->frm_no >> 16), fs, ft);
             }
@@ -1347,13 +1347,13 @@ void actor_pose(int who, BH_PWORK* src)
                 int k;
                 for (k = 9; k <= 13; k += 4)
                     if (d->rig.map[k] >= 0 && sr.map[k] >= 0) {
-                        float* h = src->mlwP->owP[(int)sr.map[k]].mtx;
-                        if (drv != src) memcpy(h, drv->mlwP->owP[(int)sr.map[k]].mtx, 12 * sizeof(float));
-                        memcpy(&h[12], &m->owP[(int)d->rig.map[k]].mtx[12], 12);
+                        float* h = P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)[(int)sr.map[k]].mtx;
+                        if (drv != src) memcpy(h, P32(struct O_WORK *, P32(struct ML_WORK *, drv->mlwP)->owP)[(int)sr.map[k]].mtx, 12 * sizeof(float));
+                        memcpy(&h[12], &P32(struct O_WORK *, m->owP)[(int)d->rig.map[k]].mtx[12], 12);
                     } else if (actor_retarget && sr.map[k] >= 0) {   /* a model without that hand (Nosferatu's right, the
                         Bandersnatch's left): what the game links to it (a weapon, a gloved hand) shrunk to a point
                         instead of floating where the source's hand is */
-                        float* h = src->mlwP->owP[(int)sr.map[k]].mtx;
+                        float* h = P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)[(int)sr.map[k]].mtx;
                         int j;
                         for (j = 0; j < 12; j++) h[j] *= 1e-3f;
                     }
@@ -1362,7 +1362,7 @@ void actor_pose(int who, BH_PWORK* src)
                 pieces, props) goes to the model's hands; its own come back with its next bhCalcModel */
                 int k;
                 for (k = 9; k <= 13; k += 4)
-                    if (d->rig.map[k] >= 0 && sr.map[k] >= 0) memcpy(&src->mlwP->owP[(int)sr.map[k]].mtx[12], &m->owP[(int)d->rig.map[k]].mtx[12], 12);
+                    if (d->rig.map[k] >= 0 && sr.map[k] >= 0) memcpy(&P32(struct O_WORK *, P32(struct ML_WORK *, src->mlwP)->owP)[(int)sr.map[k]].mtx[12], &P32(struct O_WORK *, m->owP)[(int)d->rig.map[k]].mtx[12], 12);
             }
             head_pose(d, who == ACTOR_DOUBLE ? dbl_tick == 1 : !redraw);   /* (one head part, one swing per tick) */
             return;
@@ -1371,8 +1371,8 @@ void actor_pose(int who, BH_PWORK* src)
     {   /* own idle motion, looped; a motion with more tracks than the model has nodes would write past it */
         int idle = d->model < ACTOR_MODELS ? actor_models[d->model].idle : 0;
         d->w.mtn_no = idle;
-        if (d->mth[idle].datP && d->mth[idle].obj_num <= m->obj_num) bhSetMotion(&d->w, 65536, 0, NULL);
-        bhCalcTree((NJS_MATRIX*)d->w.mtx, m);
+        if (P32(void *, d->mth[idle].datP) && d->mth[idle].obj_num <= m->obj_num) bhSetMotion(&d->w, 65536, 0, NULL);
+        bhCalcTree((NJS_MATRIX*)P32(float (*)[16], d->w.mtx), m);
     }
 }
 
@@ -1429,50 +1429,50 @@ static NJS_CNK_MODEL* face_src(NJS_CNK_MODEL* m, int vofs)
     NJS_CNK_MODEL* c;
     int n;
     if (!m) return NULL;
-    n = (((unsigned int)m->vlist[1] >> 16) * vofs + 128) * 4;   /* (bhInitMask's copy size) */
+    n = (((unsigned int)P32(int *, m->vlist)[1] >> 16) * vofs + 128) * 4;   /* (bhInitMask's copy size) */
     if (!((uintptr_t)m->vlist & 15)) return m;
     if (!(c = (NJS_CNK_MODEL*)bhGetFreeMemory(sizeof(NJS_CNK_MODEL), 64))) return NULL;   /* face_mem full */
     *c = *m;
-    if (!(c->vlist = (int*)bhGetFreeMemory(n, 64))) return NULL;
-    memcpy(c->vlist, m->vlist, n);
+    if (!(P32(int *, c->vlist = S32((int*)bhGetFreeMemory(n, 64))))) return NULL;
+    memcpy(P32(int *, c->vlist), P32(int *, m->vlist), n);
     return c;
 }
 
 static void face_init(Disguise* d, int idx)
 {
-    ML_WORK* m = d->w.mlwP;
+    ML_WORK* m = P32(struct ML_WORK *, d->w.mlwP);
     MASK_WORK* fm;
-    unsigned char *memp = sys->memp, *arena = freemem;
+    unsigned char *memp = P32(unsigned char *, sys->memp), *arena = freemem;
     int used, ok;
-    if (!d->w.mskp || !d->rig.ok) return;
-    sys->memp = face_mem;   /* bhGetFreeMemory's limit (freemem + 12.25 MB + PC_ARENA_EXTRA) at its end */
+    if (!P32(void *, d->w.mskp) || !d->rig.ok) return;
+    sys->memp = S32(face_mem);   /* bhGetFreeMemory's limit (freemem + 12.25 MB + PC_ARENA_EXTRA) at its end */
     freemem = (unsigned char*)((uintptr_t)face_mem + sizeof(face_mem) - 12845056 - PC_ARENA_EXTRA);
     bhInitMask(&d->w);   /* (copies the face mesh, inserts the jaw/tongue/eye pivots: a new object array) */
-    fm = (MASK_WORK*)d->w.exp1;   /* (bhGetFreeMemory: NULL when face_mem is full) */
-    ok = fm && d->w.exp0 && d->w.exp2 && fm->head;
+    fm = (MASK_WORK*)P32(unsigned char *, d->w.exp1);   /* (bhGetFreeMemory: NULL when face_mem is full) */
+    ok = fm && P32(unsigned char *, d->w.exp0) && P32(unsigned char *, d->w.exp2) && P32(struct HEAD_WORK *, fm->head);
     if (ok) {
-        NJS_CNK_MODEL *src = face_src(fm->src, fm->vofs), *tang = fm->tangsrc ? face_src(fm->tangsrc, fm->vofs) : NULL;   /* the morph reads its rest vertices 16 bytes at a time (lq) */
-        ok = src && (tang || !fm->tangsrc);
-        if (ok) { fm->src = src; fm->tangsrc = tang; }
+        NJS_CNK_MODEL *src = face_src(P32(NJS_CNK_MODEL *, fm->src), fm->vofs), *tang = P32(NJS_CNK_MODEL *, fm->tangsrc) ? face_src(P32(NJS_CNK_MODEL *, fm->tangsrc), fm->vofs) : NULL;   /* the morph reads its rest vertices 16 bytes at a time (lq) */
+        ok = src && (tang || !P32(NJS_CNK_MODEL *, fm->tangsrc));
+        if (ok) { fm->src = S32(src); fm->tangsrc = S32(tang); }
     }
-    used = sys->memp - face_mem;
-    sys->memp = memp;
+    used = P32(unsigned char *, sys->memp) - face_mem;
+    sys->memp = S32(memp);
     freemem = arena;
     /* bhControlMask writes the jaw, tongue and eye angles to nodes 7, 11, 9, 13 of the new array (the
        cast's layout); the pivots it inserted have the same model as these nodes and no child */
-    ok = ok && used <= (int)sizeof(face_mem) && m->obj_num <= NODES && fm->toothsrc && fm->tangorg && fm->eyesrc[0] && fm->eyesrc[1] &&
-         m->objP[7].model == fm->toothsrc->model && m->objP[7].child && m->objP[11].model == fm->tangorg->model && m->objP[11].child &&
-         m->objP[9].model == fm->eyesrc[0]->model && m->objP[9].child && m->objP[13].model == fm->eyesrc[1]->model && m->objP[13].child &&
-         rig_build(&d->rig, m->objP, m->obj_num, 0);
-    host_log("actor: face mask %s (%d nodes, %d faces, %d KB)\n", ok ? "set up" : "does not fit, left out", m->obj_num, fm && fm->head ? (int)fm->head->nFace : 0, used >> 10);
+    ok = ok && used <= (int)sizeof(face_mem) && m->obj_num <= NODES && P32(struct cnkobj *, fm->toothsrc) && P32(struct cnkobj *, fm->tangorg) && P32(NJS_CNK_OBJECT *, fm->eyesrc[0]) && P32(NJS_CNK_OBJECT *, fm->eyesrc[1]) &&
+         P32(NJS_CNK_MODEL *, P32(struct cnkobj *, m->objP)[7].model) == P32(NJS_CNK_MODEL *, P32(struct cnkobj *, fm->toothsrc)->model) && P32(struct cnkobj *, P32(struct cnkobj *, m->objP)[7].child) && P32(NJS_CNK_MODEL *, P32(struct cnkobj *, m->objP)[11].model) == P32(NJS_CNK_MODEL *, P32(struct cnkobj *, fm->tangorg)->model) && P32(struct cnkobj *, P32(struct cnkobj *, m->objP)[11].child) &&
+         P32(NJS_CNK_MODEL *, P32(struct cnkobj *, m->objP)[9].model) == P32(NJS_CNK_MODEL *, P32(NJS_CNK_OBJECT *, fm->eyesrc[0])->model) && P32(struct cnkobj *, P32(struct cnkobj *, m->objP)[9].child) && P32(NJS_CNK_MODEL *, P32(struct cnkobj *, m->objP)[13].model) == P32(NJS_CNK_MODEL *, P32(NJS_CNK_OBJECT *, fm->eyesrc[1])->model) && P32(struct cnkobj *, P32(struct cnkobj *, m->objP)[13].child) &&
+         rig_build(&d->rig, P32(struct cnkobj *, m->objP), m->obj_num, 0);
+    host_log("actor: face mask %s (%d nodes, %d faces, %d KB)\n", ok ? "set up" : "does not fit, left out", m->obj_num, fm && P32(struct HEAD_WORK *, fm->head) ? (int)P32(struct HEAD_WORK *, fm->head)->nFace : 0, used >> 10);
     if (ok) {
-        d->face = (int)fm->head->nFace;
+        d->face = (int)P32(struct HEAD_WORK *, fm->head)->nFace;
         d->w.mdflg |= 0x100;   /* npCalcSkinFM: the skin over the array with the pivots, as the cast's */
         /* The mask's own face table holds the mouth shapes (banks of 6 phonemes, bhLipSet), not key
            frames: played as the face (fmCnkSetCurrentFrame) its last shape was taken, a spike out of
            the head. The face at rest is its first: phoneme 0 of bank 0, the closed mouth. */
         fm->fnum = 1;
-        ((int*)d->w.exp0)[8] = 1;   /* (what bhControlMask resets the face to) */
+        ((int*)P32(unsigned char *, d->w.exp0))[8] = 1;   /* (what bhControlMask resets the face to) */
     }
     else if (load(d, idx)) d->model = idx;   /* (the objects were changed: again without it; load leaves model -1) */
     else d->fail = idx;
@@ -1481,20 +1481,20 @@ static void face_init(Disguise* d, int idx)
 /* the double's lip sync on our face (appear_control, after the enemies' bhControlMask) */
 static void face_step(Disguise* d, const BH_PWORK* ep)
 {
-    int* e = (int*)d->w.exp0;
-    const int* s = (const int*)ep->exp0;
-    if (!ep->mskp || !s || !ep->exp2) return;
+    int* e = (int*)P32(unsigned char *, d->w.exp0);
+    const int* s = (const int*)P32(unsigned char *, ep->exp0);
+    if (!P32(void *, ep->mskp) || !s || !P32(unsigned char *, ep->exp2)) return;
     e[0] = (e[0] & ~0x4) | (s[0] & 0x4);    /* lip sync running */
     e[4] = s[4];                            /* the phoneme bank (bhLipSet): 6 faces each */
     e[268] = s[268];                        /* the lip data (bhSetLip) */
-    *(LIP_WORK*)d->w.exp2 = *(const LIP_WORK*)ep->exp2;
+    *(LIP_WORK*)P32(unsigned char *, d->w.exp2) = *(const LIP_WORK*)P32(unsigned char *, ep->exp2);
     if (e[268] && e[268] != d->lip) {   /* a new line: its highest phoneme (pairs phoneme, time; 0xFF ends) */
         const unsigned char* p = (const unsigned char*)PS2_HOST(e[268]);
         int k;
         d->lip = e[268];
         for (d->lip_max = k = 0; k < 4096 && p[k] != 0xFF; k += 2) if (p[k] > d->lip_max) d->lip_max = p[k];
     }
-    if (e[4] < 0 || e[4] * 6 + d->lip_max >= d->face) { e[0] &= ~0x4; ((LIP_WORK*)d->w.exp2)->flag = 0; }   /* mouth shapes past our face table: none */
+    if (e[4] < 0 || e[4] * 6 + d->lip_max >= d->face) { e[0] &= ~0x4; ((LIP_WORK*)P32(unsigned char *, d->w.exp2))->flag = 0; }   /* mouth shapes past our face table: none */
     bhControlMask(&d->w);
 }
 
@@ -1502,7 +1502,7 @@ static void face_step(Disguise* d, const BH_PWORK* ep)
 static int double_acting(const BH_PWORK* ep, int pid)
 {
     int j;
-    if (!(ep->flg & 0x1) || (ep->stflg & 0x41000000) || !ep->id || !ep->mlwP) return 0;
+    if (!(ep->flg & 0x1) || (ep->stflg & 0x41000000) || !ep->id || !P32(struct ML_WORK *, ep->mlwP)) return 0;
     for (j = 0; j < 3 && doubles[pid][j] != ep->id; j++);
     return j < 3;
 }

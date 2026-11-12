@@ -20,18 +20,18 @@ void pose_trace(BH_PWORK* p)
     float ax[3][3];
     int i, j, k, n;
     if (!init++ && getenv("RECVX_POSE_TRACE")) f = fopen(getenv("RECVX_POSE_TRACE"), "w");
-    if (!f || !p || !p->mlwP || !p->mlwP->owP || !p->mtx || !plp || sys->gfrm_ct == last) return;
+    if (!f || !p || !P32(struct ML_WORK *, p->mlwP) || !P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP) || !P32(float (*)[16], p->mtx) || !plp || sys->gfrm_ct == last) return;
     last = sys->gfrm_ct;
-    b = (const float*)p->mtx;
+    b = (const float*)P32(float (*)[16], p->mtx);
     for (i = 0; i < 3; i++) {
         float l = sqrtf(b[i * 4] * b[i * 4] + b[i * 4 + 1] * b[i * 4 + 1] + b[i * 4 + 2] * b[i * 4 + 2]);
         for (j = 0; j < 3; j++) ax[i][j] = l > 0 ? b[i * 4 + j] / l : 0;
     }
-    n = p->mlwP->obj_num < 64 ? p->mlwP->obj_num : 64;
+    n = P32(struct ML_WORK *, p->mlwP)->obj_num < 64 ? P32(struct ML_WORK *, p->mlwP)->obj_num : 64;
     fprintf(f, "%d %d %d %d %d %d %d %d %x %d %d %.3f %d", sys->gfrm_ct, q->mode0, q->mode1, q->mode2, q->mode3, q->wpnr_no,
             (int)q->mtn_no, q->frm_no >> 16, q->at_flg, (short)q->ay, q->wax, q->py, n);
     for (i = 0; i < n; i++) {
-        const float* w = &p->mlwP->owP[i].mtx[12];
+        const float* w = &P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP)[i].mtx[12];
         for (k = 0; k < 3; k++)
             fprintf(f, " %.3f", (w[0] - b[12]) * ax[k][0] + (w[1] - b[13]) * ax[k][1] + (w[2] - b[14]) * ax[k][2]);
     }

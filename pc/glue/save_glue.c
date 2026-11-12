@@ -59,7 +59,7 @@ void pc_save_list(SELECTFILEWINDOW* win, MEMORYCARDSTATE* mc, int saving)
     }
     if (n > saves_n) rows[saves_n].FileNumber = savestore_highest(dir) + 1;
     if (saving) cur = n - 1;
-    win->pRecordTop = rows;
+    win->pRecordTop = S32(rows);
     win->lRecordMax = n;
     win->slDispRecordNumber = n < 5 ? n : 5;
     top = cur - (win->slDispRecordNumber - 1);   /* the cursor's row at the bottom of the window */
@@ -76,14 +76,14 @@ int pc_save_header(void)
 {
     const char* s = listing_save ? "Save Game" : "Load Game";
     unsigned short mes[16];
-    void* keep = sys->mes_tp;
+    void* keep = P32(void *, sys->mes_tp);
     int i;
     if (!native) return 0;
     for (i = 0; s[i]; i++) mes[i] = s[i] == ' ' ? 0xFF01 : s[i] - 32;
     mes[i] = 0xFFFF;
-    sys->mes_tp = mes;
+    sys->mes_tp = S32(mes);
     bhDispMessage(320.0f - bhMesLen(mes) / 2, 32.0f, 0, 2, 0, 0, 0);
-    sys->mes_tp = keep;
+    sys->mes_tp = S32(keep);
     return 1;
 }
 
@@ -109,7 +109,7 @@ int pc_save_card(MEMORYCARDSTATE* mc)
         unsigned char d[SAVE_DATA_BYTES];
         snprintf(path, sizeof(path), "%s/%s", save_native_dir(), i >= 0 && i < saves_n ? saves[i].file : "");
         if (i >= 0 && i < saves_n && mc->ulFileSize == SAVE_DATA_BYTES && savestore_read(path, d)) {
-            memcpy(mc->vpAddr, d, SAVE_DATA_BYTES);
+            memcpy(P32(void *, mc->vpAddr), d, SAVE_DATA_BYTES);
             mc->ulState = 9;
             host_log("saves: loaded %s\n", saves[i].file);
         } else {
@@ -120,7 +120,7 @@ int pc_save_card(MEMORYCARDSTATE* mc)
     } else if (mc->ulState == 2) {   /* WriteMemoryCard (mcWriteStartSaveFile) */
         int old = i >= 0 && i < saves_n, num = 0;
         if (i >= 0 && i < rows_n && mc->ulFileSize == SAVE_DATA_BYTES)
-            num = savestore_write(save_native_dir(), old ? saves[i].number : 0, mc->vpAddr, old ? saves[i].file : NULL);
+            num = savestore_write(save_native_dir(), old ? saves[i].number : 0, P32(void *, mc->vpAddr), old ? saves[i].file : NULL);
         if (num) {
             mc->ulState = 10;
             rows[i].FileNumber = num;
@@ -214,9 +214,9 @@ static int read_config(CONFIGFILE* c)
 int pc_sysload_native(SYSLOAD_SCREEN* p)
 {
     if (!save_native()) return 0;
-    if (read_config(p->pConfigFile)) {
-        memcpy(sys, p->pConfigFile, offsetof(CONFIGFILE, Check_Sam));
-        SetUseVibrationUnit(p->pConfigFile->vibration);
+    if (read_config(P32(struct CONFIGFILE *, p->pConfigFile))) {
+        memcpy(sys, P32(struct CONFIGFILE *, p->pConfigFile), offsetof(CONFIGFILE, Check_Sam));
+        SetUseVibrationUnit(P32(struct CONFIGFILE *, p->pConfigFile)->vibration);
         p->usExitFlag = 2;
     } else p->usExitFlag = 1;   /* none yet: the defaults, as without a system file on the card */
     SetStateSysLoadScreenTitleExit(p);
@@ -232,7 +232,7 @@ int pc_syssave_native(SYSSAVE_SCREEN* p)
 {
     CONFIGFILE old, merged;
     char path[1200];
-    Blob b = { p->pConfigFile, SAVE_CONFIG_BYTES };
+    Blob b = { P32(struct CONFIGFILE *, p->pConfigFile), SAVE_CONFIG_BYTES };
     if (!save_native()) return 0;
     if (read_config(&old)) {
         if (p->usSaveMode != 0) {
@@ -241,8 +241,8 @@ int pc_syssave_native(SYSSAVE_SCREEN* p)
             SysSaveHikaku(&merged);
         } else memcpy(sys, &old, offsetof(CONFIGFILE, Check_Sam));
     }
-    mcWriteStartConfigFile(p->pMcState, p->pConfigFile);   /* the file from sys, with its checksum */
-    RecoveryMemoryCardError(p->pMcState);                  /* the card write it queued is not run */
+    mcWriteStartConfigFile(P32(struct MEMORYCARDSTATE *, p->pMcState), P32(struct CONFIGFILE *, p->pConfigFile));   /* the file from sys, with its checksum */
+    RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, p->pMcState));                  /* the card write it queued is not run */
     snprintf(path, sizeof(path), "%s/system.dat", save_native_dir());
     p->usExitFlag = pc_save_file(path, "wb", put_blob, &b) == 0 ? 2 : 1;
     if (p->usExitFlag != 2) host_log("saves: cannot write %s\n", path);

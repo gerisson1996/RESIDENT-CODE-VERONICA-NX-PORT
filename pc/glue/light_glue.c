@@ -113,7 +113,7 @@ int pc_flashlight_lit(void) { return flash_on && plp == &ply && pc_in_play(&ply,
 
 static void flash_make(void)
 {
-    const float* m = (const float*)cam.mtx;   /* world -> view, as bhSetLight's lights (row r, column c: m[4 * r + c]) */
+    const float* m = (const float*)P32(float (*)[16], cam.mtx);   /* world -> view, as bhSetLight's lights (row r, column c: m[4 * r + c]) */
     int brightness, range, beam;
     float a, s, c, o[3], d[3], k;
     flash_made = 1;
@@ -199,7 +199,7 @@ void pc_light_relight(const float* in, int stride, int nofs, VU1_STRIP_BUF* out,
         if (relight) {
             const float p[3] = { out->fVx, out->fVy, out->fVz };
             float rgb[3];
-            pc_light_vertex(pNaCnkCrntLighting->pLightTop, nl, p, nv, wrap, smooth, main_k, rgb);
+            pc_light_vertex(P32(struct CNK_LIGHT *, pNaCnkCrntLighting->pLightTop), nl, p, nv, wrap, smooth, main_k, rgb);
             out->fIr = rgb[0]; out->fIg = rgb[1]; out->fIb = rgb[2];
         }
         if (pixel) { float* v = vnorm[first + i]; v[0] = nv[0]; v[1] = nv[1]; v[2] = nv[2]; v[3] = 1.0f; }
@@ -227,7 +227,7 @@ int pc_light_normal(int idx, float n[3])
 uint32_t pc_light_set(int color_mode)
 {
     float s[STREAM_LSET];
-    const CNK_LIGHT* l = pNaCnkCrntLighting->pLightTop;
+    const CNK_LIGHT* l = P32(struct CNK_LIGHT *, pNaCnkCrntLighting->pLightTop);
     int nl = chunk_lights > 6 ? 6 : chunk_lights;
     if (!pc_light_pixel() || color_mode == 1 || color_mode == 2) return 0;
     memset(s, 0, sizeof(s));
@@ -236,7 +236,7 @@ uint32_t pc_light_set(int color_mode)
     s[8] = vu1Diffuse.fR; s[9] = vu1Diffuse.fG; s[10] = vu1Diffuse.fB;
     s[12] = vu1Specula.fR; s[13] = vu1Specula.fG; s[14] = vu1Specula.fB;
     if (pc_wet_active()) {   /* the amount, and the world's up in view space (cam.mtx's second row) */
-        const float* m = (const float*)cam.mtx;
+        const float* m = (const float*)P32(float (*)[16], cam.mtx);
         float k = 1.0f / sqrtf(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]);
         s[2] = pc_light_wet() / 100.0f;
         s[7] = m[4] * k; s[11] = m[5] * k; s[15] = m[6] * k;
@@ -265,7 +265,7 @@ int pc_flash_light(float* out)
    each (view position, far range^2, colour, near range^2), at most max; returns the count */
 int pc_light_points(float* out, int max)
 {
-    const CNK_LIGHT* l = pNaCnkCrntLighting->pLightTop;
+    const CNK_LIGHT* l = P32(struct CNK_LIGHT *, pNaCnkCrntLighting->pLightTop);
     int n = 0;
     for (int k = 0; k < pNaCnkCrntLighting->lLightMax && n < max; k++, l++) {
         if (!l->ulState || l->ulMode == 0 || !(l->fFarRR > 0.0f)) continue;

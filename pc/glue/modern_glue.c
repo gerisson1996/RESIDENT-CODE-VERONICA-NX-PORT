@@ -31,7 +31,7 @@ static int in_play(void) { return pc_in_play(plp, 0); }
 static void trace(float x, float y, int analog, int held_old, unsigned pad)
 {
     static int on = -1;
-    const float* m = (const float*)cam.mtx;
+    const float* m = (const float*)P32(float (*)[16], cam.mtx);
     float px, py, pz;
     if (on < 0) on = getenv("RECVX_MODERN_TRACE") != NULL;
     if (!on) return;
@@ -49,7 +49,7 @@ static void trace(float x, float y, int analog, int held_old, unsigned pad)
    0x20/0x40 aim up/down, 0x400 run) */
 unsigned int modern_pad(unsigned int pad)
 {
-    const float* m = (const float*)cam.mtx;
+    const float* m = (const float*)P32(float (*)[16], cam.mtx);
     float x, y, rx, rz, d;
     int analog, cut;
     steer = 0;

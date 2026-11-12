@@ -113,7 +113,7 @@ static float wrap(float a)
    dropping out there showed our view with the cut's hidden room parts and clip range. */
 static int camera_allowed(void)
 {
-    return sys && plp && plp->mlwP && !(sys->st_flg & 0x800001) &&
+    return sys && plp && P32(struct ML_WORK *, plp->mlwP) && !(sys->st_flg & 0x800001) &&
            !(sys->gm_flg & 0x49) && !(sys->cb_flg & 0x5) && plp->mode0 != 7;
 }
 
@@ -179,7 +179,7 @@ static int fol_move;       /* 1: in a move, 2: easing back after it, 0: on plp->
 
 static void follow(void)
 {
-    const float* r = plp->mlwP->owP->mtx;   /* the root as drawn this tick */
+    const float* r = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx;   /* the root as drawn this tick */
     float* f = &fol.x;
     const float* p = &plp->px;
     int j;
@@ -206,7 +206,7 @@ static void clear_of_walls(const NJS_POINT3* a, NJS_POINT3* b)
 {
     NJS_LINE line;
     NJS_POINT3 apos = sys->apos;
-    ATR_WORK* ahtp = sys->ahtp;
+    ATR_WORK* ahtp = P32(struct ATR_WORK *, sys->ahtp);
     float total, len;
     line.px = a->x; line.py = a->y; line.pz = a->z;
     line.vx = b->x - a->x; line.vy = b->y - a->y; line.vz = b->z - a->z;
@@ -216,7 +216,7 @@ static void clear_of_walls(const NJS_POINT3* a, NJS_POINT3* b)
         if (k < 0) k = 0;
         b->x = a->x + line.vx * k; b->y = a->y + line.vy * k; b->z = a->z + line.vz * k;
     }
-    sys->apos = apos; sys->ahtp = ahtp;
+    sys->apos = apos; sys->ahtp = S32(ahtp);
 }
 
 /* ---- The room model as the camera's obstacle (docs/THIRDPERSON.md "Camera collision") ----
@@ -247,19 +247,19 @@ static void mesh_model(const NJS_CNK_MODEL* md, NJS_MATRIX* m)
     const unsigned char* p;
     float* w;
     int nv = 0, t0 = mesh_nt;
-    if (!md->vlist || !md->plist) return;
-    for (p = (const unsigned char*)md->vlist; *p != 255; p += 4 + 4 * *(const unsigned short*)(p + 2)) {
+    if (!P32(int *, md->vlist) || !P32(short *, md->plist)) return;
+    for (p = (const unsigned char*)P32(int *, md->vlist); *p != 255; p += 4 + 4 * *(const unsigned short*)(p + 2)) {
         int end = *(const unsigned short*)(p + 4) + *(const unsigned short*)(p + 6);
         if (end > nv) nv = end;
     }
     if (!nv || !(w = calloc((size_t)nv, 3 * sizeof(float)))) return;
-    for (p = (const unsigned char*)md->vlist; *p != 255; p += 4 + 4 * *(const unsigned short*)(p + 2)) {
+    for (p = (const unsigned char*)P32(int *, md->vlist); *p != 255; p += 4 + 4 * *(const unsigned short*)(p + 2)) {
         int first = *p == 51 ? 64 : *p == 41 ? 8 : 0, stride = *p == 51 ? 32 : 24;
         int i0 = *(const unsigned short*)(p + 4), n = *(const unsigned short*)(p + 6);
         for (int i = 0; first && i < n; i++)
             njCalcPoint(m, (NJS_POINT3*)(p + first + stride * i), (NJS_POINT3*)&w[3 * (i0 + i)]);
     }
-    for (p = (const unsigned char*)md->plist; *p != 255;) {
+    for (p = (const unsigned char*)P32(short *, md->plist); *p != 255;) {
         int t = *p, size = *(const unsigned short*)(p + 2);
         if (t < 8) { p += 2; continue; }
         if (t < 16) { p += 4; continue; }
@@ -306,7 +306,7 @@ static void mesh_model(const NJS_CNK_MODEL* md, NJS_MATRIX* m)
 /* the room's object tree as njCnkEasyDrawObject draws it (all parts: third person shows the cuts' hidden ones) */
 static void mesh_walk(const NJS_CNK_OBJECT* o, NJS_MATRIX* parent)
 {
-    for (; o; o = o->sibling) {
+    for (; o; o = P32(struct cnkobj *, o->sibling)) {
         NJS_MATRIX m;
         unsigned f = o->evalflags;
         memcpy(&m, parent, sizeof(m));
@@ -316,20 +316,20 @@ static void mesh_walk(const NJS_CNK_OBJECT* o, NJS_MATRIX* parent)
             else { njRotateZ(&m, o->ang[2]); njRotateY(&m, o->ang[1]); njRotateX(&m, o->ang[0]); }
         }
         if (!(f & 4)) njScale(&m, o->scl[0], o->scl[1], o->scl[2]);
-        if (o->model) mesh_model(o->model, &m);
-        if (!(f & 0x10) && (!(f & 0x100) || o->model)) mesh_walk(o->child, &m);
+        if (P32(NJS_CNK_MODEL *, o->model)) mesh_model(P32(NJS_CNK_MODEL *, o->model), &m);
+        if (!(f & 0x10) && (!(f & 0x100) || P32(NJS_CNK_MODEL *, o->model))) mesh_walk(P32(struct cnkobj *, o->child), &m);
     }
 }
 
 static void mesh_room(void)
 {
     NJS_MATRIX m;
-    if (mesh_gen == enemy_room_gen && mesh_obj == rom->mdl.objP) return;
-    mesh_gen = enemy_room_gen; mesh_obj = rom->mdl.objP;
+    if (mesh_gen == enemy_room_gen && mesh_obj == P32(struct cnkobj *, rom->mdl.objP)) return;
+    mesh_gen = enemy_room_gen; mesh_obj = P32(struct cnkobj *, rom->mdl.objP);
     mesh_nt = mesh_np = 0;
-    if (!rom->mdl.objP) return;
+    if (!P32(struct cnkobj *, rom->mdl.objP)) return;
     njUnitMatrix(&m);
-    mesh_walk(rom->mdl.objP, &m);
+    mesh_walk(P32(struct cnkobj *, rom->mdl.objP), &m);
     if (trace) printf("tps: room model for the camera: %d triangles in %d parts\n", mesh_nt, mesh_np);
 }
 
@@ -525,7 +525,7 @@ void tps_camera(void)
         printf("tps: cam %c frame %u yaw %.1f pitch %.1f | ay %.1f at (%.1f %.1f) mode %d/%d/%d keys %x | p %.2f %.2f %.2f root %.2f %.2f %.2f follow %d %.2f %.2f %.2f eye %.2f %.2f %.2f\n",
                pad_cam ? 'P' : g_tps.free_cam ? 'A' : 'B', (unsigned)gs_frame_count(), yaw * (360.0f / 65536.0f), pitch * (360.0f / 65536.0f),
                (short)plp->ay * (360.0f / 65536.0f), plp->px, plp->pz, plp->mode0, plp->mode1, plp->mode2, move_keys, plp->px, plp->py, plp->pz,
-               plp->mlwP->owP->mtx[12], plp->mlwP->owP->mtx[13], plp->mlwP->owP->mtx[14], fol_move, fol.x, fol.y, fol.z, eye.x, eye.y, eye.z);
+               P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14], fol_move, fol.x, fol.y, fol.z, eye.x, eye.y, eye.z);
 
     /* the room's near plane can be far out (up to 22 units); the camera is close */
     clip_near = fNaViwClipNear; clip_far = fNaViwClipFar;
@@ -612,10 +612,10 @@ static void atmos_log(int smooth_on)
 {
     char buf[640];
     int len = 0;
-    CAM_WRK* ci = &rom->cutp[cam.ncut].cam[cam.camver];
+    CAM_WRK* ci = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver];
     View now;
     for (int i = 4; i < rom->lgt_n && i < MAXL && len < 200; i++)
-        if ((rom->lgtp[i].flg & 3) == 3) len += snprintf(buf + len, sizeof buf - len, " %d", i);
+        if ((P32(struct LGT_WORK *, rom->lgtp)[i].flg & 3) == 3) len += snprintf(buf + len, sizeof buf - len, " %d", i);
     len += snprintf(buf + len, sizeof buf - len, " | dir %.2f %.2f %.2f pts", (sys->st_flg & 0x10000) ? sys->lg_r : 0,
                     (sys->st_flg & 0x10000) ? sys->lg_g : 0, (sys->st_flg & 0x10000) ? sys->lg_b : 0);
     for (int i = 0; i < sys->lg_pnt && i < 3; i++)
@@ -676,7 +676,7 @@ static void fog_table(float n, float f, float a)
 
 static void atmos_fog(int cut_changed)
 {
-    CAM_WRK* ci = &rom->cutp[cam.ncut].cam[cam.camver];
+    CAM_WRK* ci = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver];
     int on = (ci->flg & 0x8) && !(sys->gm_flg & 0x200000), snap;
     unsigned col = ((sys->st_flg & 0x100000) ? sys->fog_col : cam.fog_col) & 0xFFFFFF;
     float c[3] = { (float)(col >> 16 & 0xFF), (float)(col >> 8 & 0xFF), (float)(col & 0xFF) }, n, f;
@@ -718,7 +718,7 @@ static void atmos_fog(int cut_changed)
    blending the directional lights by weight let it through during each fade. */
 static void atmos_lights(int cut_changed)
 {
-    LGT_WORK* lp = rom->lgtp;
+    LGT_WORK* lp = P32(struct LGT_WORK *, rom->lgtp);
     LPTB* lptb = sys->lg_ptb;
     int n = rom->lgt_n < MAXL ? rom->lgt_n : MAXL, used = 0, lct = 2, i, dirs = 0, pts = 0;
     float dw = 0, dv[3] = { 0, 0, 0 }, dc[3] = { 0, 0, 0 }, l;
@@ -849,7 +849,7 @@ int tps_filter(O_WRK* op)
     op->tv[1].x = op->tv[3].x = 320.0f + half;
     op->mode0 = 2;
     op->flg &= ~0x1000000;
-    sys->ef_trs2d[sys->ef_trs2dn++] = op;
+    sys->ef_trs2d[sys->ef_trs2dn++] = S32(op);
     return 1;
 }
 
@@ -1088,14 +1088,14 @@ static int head_joint(int id)
 static int volume(const BH_PWORK* e, const CPCL** c, float* a, float* b, float* r)
 {
     const CPCL* v = (*c)++;
-    const float* m = e->mlwP->owP[v->jnt_a].mtx;
+    const float* m = P32(struct O_WORK *, P32(struct ML_WORK *, e->mlwP)->owP)[v->jnt_a].mtx;
     int k;
     *r = 0.1f * v->cap_r;
     if (v->jnt_a == v->jnt_b) {   /* a sphere: the next row is its offset in the joint's frame */
         const CPCL* o = (*c)++;
         for (k = 0; k < 3; k++) a[k] = b[k] = 0.1f * (o->jnt_a * m[k] + o->jnt_b * m[4 + k] + o->cap_r * m[8 + k]) + m[12 + k];
     } else
-        for (k = 0; k < 3; k++) a[k] = m[12 + k], b[k] = e->mlwP->owP[v->jnt_b].mtx[12 + k];
+        for (k = 0; k < 3; k++) a[k] = m[12 + k], b[k] = P32(struct O_WORK *, P32(struct ML_WORK *, e->mlwP)->owP)[v->jnt_b].mtx[12 + k];
     return v->jnt_a;
 }
 
@@ -1104,11 +1104,11 @@ static int volume(const BH_PWORK* e, const CPCL** c, float* a, float* b, float* 
    as the game picks it), *no its entry in the table (-1: the hit capsule) */
 static float body_ray(const BH_PWORK* e, const float* p, const float* d, int cone, int* jnt, int* no)
 {
-    const CPCL* c = e->cpcl;
+    const CPCL* c = P32(struct CPCL *, e->cpcl);
     float best = -1, a[3], b[3], r, t, m;
     int j, n;
     *no = -1;
-    if (!e->mlwP) return -1;
+    if (!P32(struct ML_WORK *, e->mlwP)) return -1;
     for (n = 0; c && c->cap_r; n++) {
         j = volume(e, &c, a, b, &r);
         if (cone) {
@@ -1118,7 +1118,7 @@ static float body_ray(const BH_PWORK* e, const float* p, const float* d, int con
         t = pc_ray_capsule(p, d, a, b, r, &m);
         if (t >= 0 && (best < 0 || t < best)) best = t, *jnt = j, *no = n;
     }
-    if (!e->cpcl) {
+    if (!P32(struct CPCL *, e->cpcl)) {
         const NJS_CAPSULE* w = &e->watr;
         r = w->r;
         if (cone) {
@@ -1128,8 +1128,8 @@ static float body_ray(const BH_PWORK* e, const float* p, const float* d, int con
         if ((best = pc_ray_capsule(p, d, &w->c1.x, &w->c2.x, r, &m)) >= 0) {
             float q = 0, h[3] = { p[0] + d[0] * best, p[1] + d[1] * best, p[2] + d[2] * best };
             *jnt = 0;
-            for (j = 1; j < (int)e->mlwP->obj_num; j++) {
-                const float* o = e->mlwP->owP[j].mtx;
+            for (j = 1; j < (int)P32(struct ML_WORK *, e->mlwP)->obj_num; j++) {
+                const float* o = P32(struct O_WORK *, P32(struct ML_WORK *, e->mlwP)->owP)[j].mtx;
                 float l = (h[0] - o[12]) * (h[0] - o[12]) + (h[1] - o[13]) * (h[1] - o[13]) + (h[2] - o[14]) * (h[2] - o[14]);
                 if (!*jnt || l < q) *jnt = j, q = l;
             }
@@ -1204,9 +1204,9 @@ static int nearest_enemy(float* oy, float* op, int* walled)
     }
     if (best < 0) return 0;
     line.px = sh.x; line.py = sh.y; line.pz = sh.z; line.vx = t[0]; line.vy = t[1]; line.vz = t[2];
-    apos = sys->apos; ahtp = sys->ahtp;
+    apos = sys->apos; ahtp = P32(struct ATR_WORK *, sys->ahtp);
     *walled = bhCheckL2Wall(&line, 0x400, &len) && len < sqrtf(t[0] * t[0] + t[1] * t[1] + t[2] * t[2]);
-    sys->apos = apos; sys->ahtp = ahtp;
+    sys->apos = apos; sys->ahtp = S32(ahtp);
     return 1;
 }
 
@@ -1240,9 +1240,9 @@ static void aim_at_crosshair(void)
     view(&eye, &dir, &sh, 0);
     line.px = sh.x; line.py = sh.y; line.pz = sh.z;
     line.vx = dir.x * dist; line.vy = dir.y * dist; line.vz = dir.z * dist;
-    apos = sys->apos; ahtp = sys->ahtp;
+    apos = sys->apos; ahtp = P32(struct ATR_WORK *, sys->ahtp);
     if (bhCheckL2Wall(&line, 0x400, &len)) dist = len;
-    sys->apos = apos; sys->ahtp = ahtp;
+    sys->apos = apos; sys->ahtp = S32(ahtp);
     wall = dist;
     xr[0] = sh.x; xr[1] = sh.y; xr[2] = sh.z; xr[3] = dir.x; xr[4] = dir.y; xr[5] = dir.z; xr[6] = wall;
     xr_tick = ticks;
@@ -1263,7 +1263,7 @@ static void aim_at_crosshair(void)
     if (dist == wall) {   /* the crosshair is on a wall: bhCheckGunAtari tests walls from the muzzle (the hand's
                              point wp_fps1.z, owP[9]), about 3 units above o, so a ray aimed from o hit them
                              that much above the crosshair. Aimed from the muzzle as it will be after turning. */
-        const float* hm = plp->mlwP->owP[9].mtx;
+        const float* hm = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx;
         float z = WpnTab[plp->wpnr_no].wp_fps1.z, mx = hm[8] * z + hm[12] - plp->px, mz = hm[10] * z + hm[14] - plp->pz;
         float tr = RAD((short)(ay - plp->ay)), c = cosf(tr), s = sinf(tr);
         o.x = plp->px + mx * c + mz * s; o.y = hm[9] * z + hm[13]; o.z = plp->pz - mx * s + mz * c;
@@ -1320,7 +1320,7 @@ static int dual_e = -1;   /* the other arm's enemy this tick, -1: none (also the
 /* the muzzle of the weapon in hand `node` as drawn last tick, turned about the player with its facing since (ay0) */
 static void muzzle(int node, int ay0, float* m)
 {
-    const float* h = plp->mlwP->owP[node].mtx;
+    const float* h = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[node].mtx;
     float z = WpnTab[plp->wpnr_no].wp_fps1.z, x = h[8] * z + h[12] - plp->px, y = h[10] * z + h[14] - plp->pz;
     float tr = RAD((short)(plp->ay - ay0)), c = cosf(tr), s = sinf(tr);
     m[0] = plp->px + x * c + y * s; m[1] = h[9] * z + h[13]; m[2] = plp->pz - x * s + y * c;
@@ -1336,7 +1336,7 @@ static int arm_yaw(const float* m, const float* t)
 /* prev: last tick's dual_e when dual_aim ran then (tps_player), else -1 */
 static void dual_aim(int ay0, int prev)
 {
-    PP_WORK* pp = (PP_WORK*)plp->exp2;
+    PP_WORK* pp = (PP_WORK*)P32(unsigned char *, plp->exp2);
     float r[3], l[3], t[3], best = 0;
     int cls = plp->at_flg & 0xE, left = 0, keep = 0, prec = pc_precise_hits();
     muzzle(9, ay0, r);
@@ -1352,7 +1352,7 @@ static void dual_aim(int ay0, int prev)
         ATR_WORK* ahtp;
         /* what the game's own search takes (playpch.c bhSearchEnemy) */
         if (!aimable(e) || (e->flg2 & 0x10) || (e->stflg & 0x40000000) ||
-            ((e->flg & 0x80) && (((O_WRK*)e->lkwkp)->stflg & 0x1000000)) || h < 1.0f || d > WpnTab[plp->wpnr_no].l || (i != prev && (keep || (best > 0 && d >= best))))
+            ((e->flg & 0x80) && (((O_WRK*)P32(unsigned char *, e->lkwkp))->stflg & 0x1000000)) || h < 1.0f || d > WpnTab[plp->wpnr_no].l || (i != prev && (keep || (best > 0 && d >= best))))
             continue;   /* (the last tick's enemy is kept while it stays in a slightly wider cone: else two at the
                            cone's edge or at the same distance took turns, and the arms swung between them) */
         dy = wrap(atan2f(-x, -z) * (32768.0f / 3.14159265f) - (short)plp->ay);   /* > 0: left of the crosshair */
@@ -1364,9 +1364,9 @@ static void dual_aim(int ay0, int prev)
             cap.c1.x = m[0]; cap.c1.y = m[1]; cap.c1.z = m[2];
             cap.c2.x = plp->px + x; cap.c2.y = plp->py + y; cap.c2.z = plp->pz + z;
             cap.r = 0.1f;
-            apos = sys->apos; ahtp = sys->ahtp;
+            apos = sys->apos; ahtp = P32(struct ATR_WORK *, sys->ahtp);
             k = bhCheckC2WallN(&cap, 0x40000400);
-            sys->apos = apos; sys->ahtp = ahtp;
+            sys->apos = apos; sys->ahtp = S32(ahtp);
             if (k) continue;
         }
         if (prec) {   /* precise hits: only an enemy that arm's own shot, turned to it, hits (CheckGunHit: from the muzzle at
@@ -1384,9 +1384,9 @@ static void dual_aim(int ay0, int prev)
             for (int q = 0; q < sys->ewk_n; q++)
                 if (q != i && aimable(&ene[q]) && (tq = body_ray(&ene[q], o, &dv.x, 0, &j, &n)) >= 0 && (tn < 0 || tq < tn)) tn = tq;
             line.px = o[0]; line.py = o[1]; line.pz = o[2]; line.vx = dv.x * te; line.vy = dv.y * te; line.vz = dv.z * te;
-            apos = sys->apos; ahtp = sys->ahtp;
+            apos = sys->apos; ahtp = P32(struct ATR_WORK *, sys->ahtp);
             if (bhCheckL2Wall(&line, 0x400, &tq)) tw = tq;
-            sys->apos = apos; sys->ahtp = ahtp;
+            sys->apos = apos; sys->ahtp = S32(ahtp);
             if (!pc_dual_take(te, tn, tw)) continue;
             dual_yaw = ya;
         }
@@ -1405,7 +1405,7 @@ static void dual_aim(int ay0, int prev)
 static void trace_dual(void)
 {
     static int last = -1;
-    const PP_WORK* pp = (const PP_WORK*)plp->exp2;
+    const PP_WORK* pp = (const PP_WORK*)P32(unsigned char *, plp->exp2);
     int arm = pp->gun_delay == 1 && last != 1 ? 'R' : pp->gun_delay == -1 && last == 0 ? 'L' : 0;
     char hp[256];
     int n = 0;
@@ -1465,11 +1465,11 @@ static void trace_shot(void)
     int shot = ammo < last && last != 0xFFFFFFFF;
     last = ammo;
     if (!shot) return;
-    if (lock >= 0 && lock < sys->ewk_n && ene[lock].cpcl && ene[lock].mlwP && (ene[lock].flg & 3) == 1) {
+    if (lock >= 0 && lock < sys->ewk_n && P32(struct CPCL *, ene[lock].cpcl) && P32(struct ML_WORK *, ene[lock].mlwP) && (ene[lock].flg & 3) == 1) {
         /* how far the crosshair's ray (the one this shot was aimed by) passed from that enemy's body: its volume nearest
            the ray, the gap between them (< 0: through it) */
         const BH_PWORK* e = &ene[lock];
-        const CPCL* c = e->cpcl;
+        const CPCL* c = P32(struct CPCL *, e->cpcl);
         float a[3], b[3], r, m, best = 1e9f, q[3], ab[3], u, gap;
         int n, k, bn = -1;
         for (n = 0; c->cap_r; n++) {
@@ -1486,13 +1486,13 @@ static void trace_shot(void)
                sqrtf((e->px - plp->px) * (e->px - plp->px) + (e->pz - plp->pz) * (e->pz - plp->pz)), best, bn);
     }
     {
-        const float* h = plp->mlwP->owP[9].mtx;
+        const float* h = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx;
         float z = WpnTab[plp->wpnr_no].wp_fps1.z, l = WpnTab[plp->wpnr_no].l, r = WpnTab[plp->wpnr_no].r, len, g[3], o[3], w[3], miss = 0, de = 0, ang;
         NJS_MATRIX mx;
         NJS_VECTOR v = { 0, 0, -l }, vv;
         NJS_LINE line;
         NJS_POINT3 apos = sys->apos;
-        ATR_WORK* ahtp = sys->ahtp;
+        ATR_WORK* ahtp = P32(struct ATR_WORK *, sys->ahtp);
         int j, hit;
         for (j = 0; j < 3; j++) g[j] = h[8 + j] * z + h[12 + j];
         o[0] = plp->px - sinf(RAD(plp->ay)) * (3.0f + r); o[1] = plp->py + 11.0f; o[2] = plp->pz - cosf(RAD(plp->ay)) * (3.0f + r);
@@ -1507,7 +1507,7 @@ static void trace_shot(void)
             miss += (w[j] - (&aim_t.x)[j]) * (w[j] - (&aim_t.x)[j]);
             de += ((&aim_t.x)[j] - (&cam.wpx)[j]) * ((&aim_t.x)[j] - (&cam.wpx)[j]);
         }
-        sys->apos = apos; sys->ahtp = ahtp;
+        sys->apos = apos; sys->ahtp = S32(ahtp);
         miss = sqrtf(miss);
         ang = atan2f(miss, sqrtf(de)) * (180.0f / 3.14159265f);
         printf("tps: SHOT wpn %d muzzle (%.2f %.2f %.2f) = o + (%.2f %.2f %.2f), dir (%.3f %.3f %.3f); wall hit %d at (%.2f %.2f %.2f), "
@@ -1535,8 +1535,8 @@ static void aim_aid(const float* s, float* p)
     const char* at = getenv("RECVX_TPS_AIM_AT");
     float f = at && *at != 'c' ? (float)atof(at) : 0.5f, a[3], b[3], r, side = 0, up = 0, dx, dz, h;
     for (int k = 0; k < 3; k++) p[k] = (&c->c1.x)[k] + ((&c->c2.x)[k] - (&c->c1.x)[k]) * f;
-    if (at && *at == 'c' && ene[lock].cpcl && ene[lock].mlwP) {
-        const CPCL* v = ene[lock].cpcl;
+    if (at && *at == 'c' && P32(struct CPCL *, ene[lock].cpcl) && P32(struct ML_WORK *, ene[lock].mlwP)) {
+        const CPCL* v = P32(struct CPCL *, ene[lock].cpcl);
         for (int n = atoi(at + 1); v->cap_r && n >= 0; n--) {
             volume(&ene[lock], &v, a, b, &r);
             for (int k = 0; k < 3; k++) p[k] = (a[k] + b[k]) / 2;
@@ -1570,7 +1570,7 @@ static void scope_look(void)
     if (plp->mode3 == 3) plp->ct3 = p;
     else plp->wax = plp->waxp = p;
     if (aim_aid_on()) {   /* test aid: the scope's centre (the shot from the head, playpch2.c) on RECVX_TPS_AIM_AT */
-        const float* m = plp->mlwP->owP[5].mtx;
+        const float* m = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx;
         float o[3], t[3];
         for (int k = 0; k < 3; k++) o[k] = 1.5f * m[4 + k] - m[8 + k] + m[12 + k];
         aim_aid(o, t);
@@ -1628,10 +1628,10 @@ static int aim_walk_ok(void)
 {
     return g_tps.aim_move && pad_cam && tps_cam_active && plp->mode0 == 1 && plp->mode1 == 1 &&
            ((plp->mode2 >= 65 && plp->mode2 <= 67) || plp->mode2 == 69) && !(WpnTab[plp->wpnr_no].flg & 0x40000000) &&
-           plp->mlwP->obj_num > LEG_LAST && plp->exp0;
+           P32(struct ML_WORK *, plp->mlwP)->obj_num > LEG_LAST && P32(unsigned char *, plp->exp0);
 }
-static int aim_dmlvl(void) { return (sys->gm_flg & 0x1000000) ? 0 : ((EXP_WORK*)plp->exp0)->dmlvl; }   /* (as bhCPM2_act_wlk) */
-static int aim_leg_mtn(int back) { return PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][aim_dmlvl()][back ? 4 : 2]; }
+static int aim_dmlvl(void) { return (sys->gm_flg & 0x1000000) ? 0 : ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl; }   /* (as bhCPM2_act_wlk) */
+static int aim_leg_mtn(int back) { return PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][aim_dmlvl()][back ? 4 : 2]; }
 
 static void aim_walk(void)
 {
@@ -1644,7 +1644,7 @@ static void aim_walk(void)
     back = fabsf(d) > (aim_leg_back == 1 ? AIM_FWD : AIM_BACK);   /* (either side of the line: as it was) */
     rate = aim_mag * AIM_WALK;
     if (back != aim_leg_back || aim_leg_w < 0.02f) { aim_leg_frm = (back ? 25 : 5) << 16; aim_leg_back = back; }   /* (where the game's walks start) */
-    n = plp->mnwP[aim_leg_mtn(back)].frm_num;
+    n = P32(struct MN_WORK *, plp->mnwP)[aim_leg_mtn(back)].frm_num;
     if (n < 2) return;
     was = aim_leg_frm >> 16;
     aim_leg_frm += (int)(rate * 65536.0f);
@@ -1660,7 +1660,7 @@ static void aim_walk(void)
     for (k = 0; k < 2; k++) {   /* a foot down: the walk's footstep at its frame (passed this tick, also round the end) */
         int f = PlFootSnd[sys->ply_id & 3][k][back ? 2 : 0], node = k ? 21 : 17;
         if (fr == was || !(was < fr ? f > was && f <= fr : f > was || f <= fr)) continue;
-        CallPlayerFootStepSe(bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[node].mtx[12], plp->mlwP->owP[node].mtx[14]), 0, 1);
+        CallPlayerFootStepSe(bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[node].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[node].mtx[14]), 0, 1);
         plp->stflg |= 0x200;
     }
     if (trace)
@@ -1676,21 +1676,21 @@ static void aim_walk(void)
    its turn of the hips. */
 static void legs_pose(BH_PWORK* p, MN_WORK* set, int mtn, int frm, float w)
 {
-    ML_WORK* ml = p->mlwP;
+    ML_WORK* ml = P32(struct ML_WORK *, p->mlwP);
     NJS_CNK_OBJECT* o;
     O_WORK* ow;
     struct { float pos[3]; int ang[3]; } keep[22];
     float a2[12];
     BH_PWORK t;
     int i, j, n;
-    if (w <= 0 || !set || !ml || ml->obj_num < 22 || !set[mtn].datP || set[mtn].obj_num > 22) return;
-    o = ml->objP; ow = ml->owP;
+    if (w <= 0 || !set || !ml || ml->obj_num < 22 || !P32(void *, set[mtn].datP) || set[mtn].obj_num > 22) return;
+    o = P32(struct cnkobj *, ml->objP); ow = P32(struct O_WORK *, ml->owP);
     n = (int)set[mtn].frm_num;
     if (n <= 0) return;
     memcpy(a2, ow[2].mtx, sizeof(a2));   /* the upper body's axes as its motion has them */
     for (i = 0; i < 22; i++) { memcpy(keep[i].pos, o[i].pos, sizeof(keep[i].pos)); memcpy(keep[i].ang, o[i].ang, sizeof(keep[i].ang)); }
     t = *p;   /* (a work of its own: the frame and blend of p's motion stay) */
-    t.mnwP = set; t.mtn_no = mtn; t.frm_no = frm % (n << 16); t.hokan_count = 0;
+    t.mnwP = S32(set); t.mtn_no = mtn; t.frm_no = frm % (n << 16); t.hokan_count = 0;
     bhSetMotion(&t, 0, 0, NULL);
     for (i = 0; i < 22; i++) {
         if (i >= 2 && i < 14) {   /* the upper body: p's own */
@@ -1718,7 +1718,7 @@ static void aim_legs(void)
 {
     aim_leg_shown = 0;
     if (aim_fix_off) { plp->flg |= 0x40000; aim_fix_off = 0; }   /* (bhFixPosition has run: the game's again) */
-    if (!aim_walk_ok() || plp->mlwP->obj_num > 64) { aim_leg_w = 0; return; }   /* (raising, lowering, a reload: the game's motion alone) */
+    if (!aim_walk_ok() || P32(struct ML_WORK *, plp->mlwP)->obj_num > 64) { aim_leg_w = 0; return; }   /* (raising, lowering, a reload: the game's motion alone) */
     aim_leg_w += (aim_walking - aim_leg_w) * 0.3f;
     if (aim_leg_w < 0.02f || aim_leg_back < 0) return;
     aim_leg_shown = 1;
@@ -1728,7 +1728,7 @@ static void aim_legs(void)
 static void calc(void)
 {
     bhCalcModel(plp);
-    if (aim_leg_shown) legs_pose(plp, plp->mnwP, aim_leg_mtn(aim_leg_back), aim_leg_frm, aim_leg_w);
+    if (aim_leg_shown) legs_pose(plp, P32(struct MN_WORK *, plp->mnwP), aim_leg_mtn(aim_leg_back), aim_leg_frm, aim_leg_w);
 }
 
 /* actor_glue.c, the gender-matched copy of our player ("You appear as" a man while Claire is played, or a woman while a
@@ -1737,12 +1737,12 @@ static void calc(void)
 void tps_aim_legs(BH_PWORK* p)
 {
     int mtn, n0, n1;
-    if (!aim_leg_shown || !p->mnwP || p->mlwP->obj_num <= LEG_LAST) return;
+    if (!aim_leg_shown || !P32(struct MN_WORK *, p->mnwP) || P32(struct ML_WORK *, p->mlwP)->obj_num <= LEG_LAST) return;
     mtn = aim_leg_mtn(aim_leg_back);
-    n0 = plp->mnwP[mtn].frm_num;
-    n1 = p->mnwP[mtn].frm_num;
-    if (!p->mnwP[mtn].datP || n0 < 1 || n1 < 1) return;   /* (none in its set: its aim pose alone) */
-    legs_pose(p, p->mnwP, mtn, (int)((long)aim_leg_frm * n1 / n0), aim_leg_w);
+    n0 = P32(struct MN_WORK *, plp->mnwP)[mtn].frm_num;
+    n1 = P32(struct MN_WORK *, p->mnwP)[mtn].frm_num;
+    if (!P32(void *, P32(struct MN_WORK *, p->mnwP)[mtn].datP) || n0 < 1 || n1 < 1) return;   /* (none in its set: its aim pose alone) */
+    legs_pose(p, P32(struct MN_WORK *, p->mnwP), mtn, (int)((long)aim_leg_frm * n1 / n0), aim_leg_w);
 }
 
 void tps_player(void)
@@ -1759,7 +1759,7 @@ void tps_player(void)
     if (trace) {   /* a zombie's head burst (en01.c: exp0 + 0x78 set to -1) */
         static int head[128];
         for (int i = 0; i < sys->ewk_n && i < 128; i++) {
-            int h = ene[i].id == 1 && (ene[i].flg & 1) && ene[i].exp0 ? *(int*)(ene[i].exp0 + 0x78) : 0;
+            int h = ene[i].id == 1 && (ene[i].flg & 1) && P32(unsigned char *, ene[i].exp0) ? *(int*)(P32(unsigned char *, ene[i].exp0) + 0x78) : 0;
             if (h == -1 && head[i] != -1) printf("tps: HEAD BURST enemy %d (last hit joint %d, weapon %d)\n", i, ene[i].djnt_no, ene[i].wpnr_no);
             head[i] = h;
         }
@@ -1769,7 +1769,7 @@ void tps_player(void)
     if (!tps_cam_active || plp->mode0 != 1 || (plp->mode1 == 0 && plp->mode2 > 13) || reload_at_rest()) { frac = 0; return; }
     if (trace && plp->mode1 == 1)
         printf("tps: weapon mode %d/%d motion %d frame %d/%d at (%.1f %.1f) ay %.1f hand y %.1f\n", plp->mode2, plp->mode3, plp->mtn_no, plp->frm_no >> 16,
-               plp->mnwP ? plp->mnwP[plp->mtn_no].frm_num : -1, plp->px, plp->pz, (short)plp->ay * (360.0f / 65536.0f), plp->mlwP->owP[9].mtx[13] - plp->py);
+               P32(struct MN_WORK *, plp->mnwP) ? P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num : -1, plp->px, plp->pz, (short)plp->ay * (360.0f / 65536.0f), P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[13] - plp->py);
     if (plp->mode1 == 1 && !lock_aim()) {
         float dy = stick_yaw * g_tps.pad_aim_sens / 100.0f;
         stick_pitch *= g_tps.pad_aim_sens / 100.0f;
@@ -1779,7 +1779,7 @@ void tps_player(void)
         look(g_tps.aim_sens / 100.0f, 1.0f);
         /* test aid (RECVX_TPS_TRACE=2): follow the enemy the game locked on to (lock, file scope: trace_shot) */
         if (plp->flg & 0x100000)   /* (dual weapons: the nearest enemy of their lock-on, playpch.c SetLockOnDirection) */
-            lock = (WpnTab[plp->wpnr_no].flg & 0x800) && plp->exp2 ? (int)(((PP_WORK*)plp->exp2)->LckTbl[0] - ene) : plp->src_no;
+            lock = (WpnTab[plp->wpnr_no].flg & 0x800) && P32(unsigned char *, plp->exp2) ? (int)(P32(BH_PWORK *, ((PP_WORK*)P32(unsigned char *, plp->exp2))->LckTbl[0]) - ene) : plp->src_no;
         if (aim_aid_on()) {   /* at RECVX_TPS_AIM_AT */
             NJS_POINT3 eye, dir, sh;
             float dx, dy, dz, p[3];
@@ -1797,7 +1797,7 @@ void tps_player(void)
         {
             int ay0 = plp->ay;
             aim_at_crosshair();
-            if ((WpnTab[plp->wpnr_no].flg & 0x800) && plp->exp2) {   /* dual weapons; lowering them: the game's */
+            if ((WpnTab[plp->wpnr_no].flg & 0x800) && P32(unsigned char *, plp->exp2)) {   /* dual weapons; lowering them: the game's */
                 if (plp->mode2 != 68) dual_aim(ay0, dual_prev);
                 if (trace) trace_dual();
             }
@@ -1857,25 +1857,25 @@ static void turn(float* m, const float* u, const float* c, float a)
 /* nodes 2 and 3 of p turned by a each about p's sideways axis, the tree below recomputed */
 static void bend(BH_PWORK* p, float a)
 {
-    O_WORK* ow = p->mlwP->owP;
+    O_WORK* ow = P32(struct O_WORK *, P32(struct ML_WORK *, p->mlwP)->owP);
     float u[3], l, c[3];
-    l = sqrtf((*p->mtx)[0] * (*p->mtx)[0] + (*p->mtx)[1] * (*p->mtx)[1] + (*p->mtx)[2] * (*p->mtx)[2]);
-    for (int j = 0; j < 3; j++) { u[j] = (*p->mtx)[j] / l; c[j] = ow[2].mtx[12 + j]; }   /* the model's x axis */
+    l = sqrtf((*P32(float (*)[16], p->mtx))[0] * (*P32(float (*)[16], p->mtx))[0] + (*P32(float (*)[16], p->mtx))[1] * (*P32(float (*)[16], p->mtx))[1] + (*P32(float (*)[16], p->mtx))[2] * (*P32(float (*)[16], p->mtx))[2]);
+    for (int j = 0; j < 3; j++) { u[j] = (*P32(float (*)[16], p->mtx))[j] / l; c[j] = ow[2].mtx[12 + j]; }   /* the model's x axis */
     turn(ow[2].mtx, u, c, a);
     turn(ow[3].mtx, u, c, a);
     for (int j = 0; j < 3; j++) c[j] = ow[3].mtx[12 + j];
     turn(ow[3].mtx, u, c, a);
-    for (int k = 0; k < p->mlwP->obj_num && k < 22; k++)   /* the hips and legs as they are (legs_pose: walking) */
+    for (int k = 0; k < P32(struct ML_WORK *, p->mlwP)->obj_num && k < 22; k++)   /* the hips and legs as they are (legs_pose: walking) */
         if (k < 4 || k >= 14) ow[k].flg |= 1;
     bhCalcModel(p);
-    for (int k = 0; k < p->mlwP->obj_num && k < 22; k++)
+    for (int k = 0; k < P32(struct ML_WORK *, p->mlwP)->obj_num && k < 22; k++)
         if (k < 4 || k >= 14) ow[k].flg &= ~1;
 }
 
 void tps_calc_model(void)
 {
     static float w;   /* eased in/out when the weapon is raised/lowered */
-    O_WORK* ow = plp->mlwP->owP;
+    O_WORK* ow = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
     float a, dx, dz, ofs[3];
     int on = tps_cam_active && !lock_aim() && plp->mode0 == 1 && plp->mode1 == 1 && plp->mode2 != 68 && !reload_at_rest();
 
@@ -1883,7 +1883,7 @@ void tps_calc_model(void)
     calc();
     bend_a = 0;
     w += (on - w) * 0.35f;
-    if (w < 0.01f || plp->mlwP->obj_num <= 9) { aim_corr = 0; return; }
+    if (w < 0.01f || P32(struct ML_WORK *, plp->mlwP)->obj_num <= 9) { aim_corr = 0; return; }
     /* pitch from the weapon hand of the straight pose to the target (not wax: the shot starts
        lower, at 11 units, and needs a steeper angle for close targets); with "You appear as" the
        hand where the model holds the weapon (a Tyrant's is higher: its weapon pointed over the
@@ -1956,7 +1956,7 @@ float tps_aim_pitch(void)
    gender-matched pose; its base matrix is the player's) */
 void tps_bend(BH_PWORK* p, float pitch)
 {
-    if (pitch != 0 && p->mlwP->obj_num > 9) bend(p, pitch / 2);
+    if (pitch != 0 && P32(struct ML_WORK *, p->mlwP)->obj_num > 9) bend(p, pitch / 2);
 }
 
 /* RECVX_EFF_TRACE=1 (test aid): the live effects at the frame hand-off - id.type, an
@@ -1966,7 +1966,7 @@ static void eff_trace(void)
     char buf[2048];
     int len = 0, alive = 0;
     if (!sys || !plp) return;
-    O_WRK** lists[] = { sys->ef_pol, sys->ef_mdf, sys->ef_lin, sys->ef_ntx, sys->ef_trs, sys->ef_pnc, sys->ef_opq,
+    ps2ptr_t* lists[] = { sys->ef_pol, sys->ef_mdf, sys->ef_lin, sys->ef_ntx, sys->ef_trs, sys->ef_pnc, sys->ef_opq,
                         sys->ef_thl, sys->ef_ntx2d, sys->ef_trs2d, sys->ef_pnc2d, sys->ef_fnc };
     int* n = &sys->ef_poln;   /* the 12 list counts, in the order of the lists */
     for (int i = 0; i < 512; i++) {
@@ -1975,8 +1975,8 @@ static void eff_trace(void)
         NJS_POINT3 v;
         if (!(op->flg & 1) || op->id == 0) continue;
         for (int l = 0; l < 12 && !drawn; l++)
-            for (int k = 0; k < n[l] && !drawn; k++) drawn = lists[l][k] == op;
-        njCalcPoint(cam.mtx, (NJS_POINT3*)&op->px, &v);
+            for (int k = 0; k < n[l] && !drawn; k++) drawn = P32(O_WRK*, lists[l][k]) == op;
+        njCalcPoint(P32(float (*)[16], cam.mtx), (NJS_POINT3*)&op->px, &v);
         alive++;
         if (len < (int)sizeof(buf) - 40)
             len += snprintf(buf + len, sizeof(buf) - len, " %d.%d@%d%s%s(%.0f)", op->id, op->type, i, drawn ? "*" : "",

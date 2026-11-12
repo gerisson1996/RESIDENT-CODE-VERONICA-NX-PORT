@@ -68,7 +68,7 @@ uint64_t pc_effect_poly(void) { return pc_cur_mesh & 1 ? pc_cur_mesh | (uint64_t
 int pc_is_room_object(const void* obj)
 {
     const NJS_CNK_OBJECT* o = (const NJS_CNK_OBJECT*)obj;
-    return rom->mdl.objP && o >= rom->mdl.objP && o < rom->mdl.objP + rom->mdl.obj_num;
+    return P32(struct cnkobj *, rom->mdl.objP) && o >= P32(struct cnkobj *, rom->mdl.objP) && o < P32(struct cnkobj *, rom->mdl.objP) + rom->mdl.obj_num;
 }
 
 /* hor+ widescreen with a fixed camera (ps2_NinjaCnk.c pc_show_hidden): is a room part the cut
@@ -110,7 +110,7 @@ int pc_margin_children(const void* obj)
 void pc_margin_children_end(int n) { margin_groups = n; }
 static int margin_part(const void* obj)
 {
-    const NJS_CNK_MODEL* m = ((const NJS_CNK_OBJECT*)obj)->model;
+    const NJS_CNK_MODEL* m = P32(NJS_CNK_MODEL *, ((const NJS_CNK_OBJECT*)obj)->model);
     NJS_POINT3 ctr = m->center, c, pw, p;
     float z, r, sx, half, t, pl, dx, dy, dz;
     pc_margin_box[0] = 1; pc_margin_box[3] = 0;   /* none (without the native renderer there are no vertices) */
@@ -120,7 +120,7 @@ static int margin_part(const void* obj)
         if (pc_margin_inside(&c.x, m->r, margin_group[i])) return 0;
     if (pc_native_3d()) {
         pw.x = plp->px; pw.y = plp->py; pw.z = plp->pz;
-        njCalcPoint(cam.mtx, &pw, &p);
+        njCalcPoint(P32(float (*)[16], cam.mtx), &pw, &p);
         pl = p.x * p.x + p.y * p.y + p.z * p.z;
         t = pl > 0 ? (c.x * p.x + c.y * p.y + c.z * p.z) / pl : 0;
         t = t < 0 ? 0 : t > 1 ? 1 : t;
@@ -188,8 +188,8 @@ static void take_cam(void)
     extern float fVu1AspectH, fVu1OffsetY, Ps2_zbuff_a, Ps2_zbuff_b;
     const float* m;
     memset(cam_now, 0, sizeof(cam_now));
-    if (!cam.mtx) return;
-    m = &(*cam.mtx)[0];
+    if (!P32(float (*)[16], cam.mtx)) return;
+    m = &(*P32(float (*)[16], cam.mtx))[0];
     for (int r = 0; r < 4; r++)
         for (int c = 0; c < 3; c++) cam_now[r * 3 + c] = m[r * 4 + c];
     cam_now[12] = fVu1AspectW * fVu1Projection; cam_now[13] = fVu1AspectH * fVu1Projection;
@@ -205,8 +205,8 @@ static void take_view(void)
               (cam.flg & 0x2 ? (uint32_t)(cam.evc_no & 0xFF) << 24 : 0);
     scene_now = (uint64_t)(unsigned char)sys->stg_no << 40 | (uint64_t)(unsigned char)sys->rom_no << 32 | cut;
     memset(view_now, 0, sizeof(view_now));   /* none: not compared (the third-person camera moves fast but never jumps) */
-    if (cam.mtx && !tps_cam_active) {   /* row vectors: view = world * R + T, so the eye is -T * R^T, the view axis R's third column */
-        const float* m = &(*cam.mtx)[0];
+    if (P32(float (*)[16], cam.mtx) && !tps_cam_active) {   /* row vectors: view = world * R + T, so the eye is -T * R^T, the view axis R's third column */
+        const float* m = &(*P32(float (*)[16], cam.mtx))[0];
         for (int r = 0; r < 3; r++) {
             view_now[r] = -(m[12] * m[r * 4] + m[13] * m[r * 4 + 1] + m[14] * m[r * 4 + 2]);
             view_now[3 + r] = m[r * 4 + 2];
@@ -242,7 +242,7 @@ static const struct { signed char stg, rom; short parts, part; } unused_parts[] 
 };
 int pc_part_unused(const void* obj)
 {
-    int i = (int)((const NJS_CNK_OBJECT*)obj - rom->mdl.objP);
+    int i = (int)((const NJS_CNK_OBJECT*)obj - P32(struct cnkobj *, rom->mdl.objP));
     for (unsigned k = 0; k < sizeof(unused_parts) / sizeof(unused_parts[0]); k++)
         if (sys->stg_no == unused_parts[k].stg && sys->rom_no == unused_parts[k].rom &&
             (int)rom->mdl.obj_num == unused_parts[k].parts && i == unused_parts[k].part) return 1;

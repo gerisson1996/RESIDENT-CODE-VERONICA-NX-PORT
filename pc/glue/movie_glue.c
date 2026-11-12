@@ -130,7 +130,7 @@ void readMpeg(void)
         fflush(trace);
     }
     if (total >= 0 && index >= total) { rmi.iMovieState = MOVIE_STAT_PLAYEND; return; }
-    voBuf.data = NULL;
+    voBuf.data = S32(NULL);
     frame_shown = index;
 }
 

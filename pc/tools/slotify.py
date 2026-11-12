@@ -16,6 +16,8 @@ Which structures: the names in STRUCTS (one per line, '#' comments).
 
   slotify.py scan  COMPILE_COMMANDS            list structures with pointer members and where they are declared
   slotify.py apply COMPILE_COMMANDS STRUCTS    rewrite declarations and uses in place; prints what needs hand editing
+  slotify.py ptrptr COMPILE_COMMANDS           pointers the game keeps in raw memory: *(T**)x and ((T**)x)[i] become
+                                               *(ps2ptr_t*)x and ((ps2ptr_t*)x)[i] with P32/S32; lists other T** reads
 
 Run with the python that has clang.cindex (MSYS2: /clang64/bin/python). Idempotent only in the
 sense that a converted member is no longer a pointer: run it once per structure.
@@ -26,6 +28,8 @@ from clang.cindex import CursorKind as K, TypeKind as T
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')).replace(chr(92), '/')
 BS = chr(92)
+
+STMTS = None
 
 def norm(p):
     return os.path.abspath(p).replace(BS, '/')
@@ -45,6 +49,7 @@ def tu_args(entry):
         out.append(a)
     out += ['--target=i686-w64-mingw32', '--sysroot=C:/msys64/mingw32',
             '-resource-dir', 'C:/msys64/clang64/lib/clang/23',
+            '-DSLOTIFY_PARSE',
             '-Wno-error=int-conversion', '-Wno-error=incompatible-pointer-types',
             '-Wno-error=implicit-function-declaration', '-Wno-error=implicit-int', '-Wno-error=return-mismatch',
             '-Wno-error=incompatible-function-pointer-types', '-ferror-limit=0']
@@ -92,12 +97,14 @@ class Files:
         return self.text[p]
 
 def main():
+    global STMTS
+    STMTS = {K.COMPOUND_STMT, K.IF_STMT, K.FOR_STMT, K.WHILE_STMT, K.DO_STMT, K.SWITCH_STMT, K.CASE_STMT, K.DEFAULT_STMT, K.LABEL_STMT}
     mode = sys.argv[1]
     cc = json.load(open(sys.argv[2]))
     wanted = set()
     if mode == 'apply':
         wanted = {l.split('#')[0].strip() for l in open(sys.argv[3])} - {''}
-    only = sys.argv[4:] if mode == 'apply' else sys.argv[3:]
+    only = sys.argv[4:] if mode == 'apply' else sys.argv[3:]   # (scan, ptrptr: files to restrict to)
     files = Files()
     idx = ci.Index.create()
     structs = collections.defaultdict(lambda: [set(), set()])      # scan: name -> [decl files, fields]
@@ -136,10 +143,17 @@ def main():
         # L: the pointer-typed lvalue (subscripts of an array member included)
         i = len(chain) - 1
         ndims = len(slot_type(field.type)[1])
-        while ndims and i > 0 and chain[i - 1].kind == K.ARRAY_SUBSCRIPT_EXPR and chain[i - 1].extent.start.offset == a:
-            i -= 1; ndims -= 1
+        while ndims and i > 0 and chain[i - 1].extent.start.offset == a and chain[i - 1].kind in (K.ARRAY_SUBSCRIPT_EXPR, K.UNEXPOSED_EXPR, K.PAREN_EXPR):
+            i -= 1   # (the array-to-pointer decay between the member and its subscript is an unexposed node)
+            if chain[i].kind == K.ARRAY_SUBSCRIPT_EXPR: ndims -= 1
         if ndims:
             manual.add((where, field.spelling, 'array member used without all subscripts')); return
+        classify(chain, i, fn, ty, field.spelling, where)
+
+    def classify(chain, i, fn, ty, name, where):
+        """chain[i]: an lvalue that is a slot standing for a pointer of type ty; rewrite its use"""
+        class _F: spelling = name
+        field = _F
         L = chain[i]; la, lb = L.extent.start.offset, L.extent.end.offset
         # skip parentheses and implicit nodes that add nothing but '(' ')'
         def bare(c):
@@ -163,7 +177,12 @@ def main():
             if kids[1].extent.start.file is None or norm(kids[1].extent.start.file.name) != fn or ra < xb:
                 manual.add((where, field.spelling, 'assignment with a macro on the right')); return
             if op == '=':
-                add_ins(fn, ra, rb - ra + 0.5, 'S32(', site); add_ins(fn, rb, -1, ')', site); return
+                add_ins(fn, ra, rb - ra + 0.9, 'S32(', site); add_ins(fn, rb, -1, ')', site)   # +0.9: outside a value wrap (+0.75) of the same extent
+                # the assignment's value is used (a = X->f = v, f(X->f = v), ...): it is the pointer, not the slot
+                G = chain[j - 2] if j > 1 else None
+                if G is not None and G.kind not in STMTS and G.extent.start.file is not None and norm(G.extent.start.file.name) == fn:
+                    add_ins(fn, pa, pb - pa + 0.75, 'P32(%s, ' % ty, site + ('value',)); add_ins(fn, pb, -1, ')', site + ('value',))
+                return
             if op in ('+=', '-='):
                 opoff = files.get(fn).index(op.encode(), xb)
                 add_ins(fn, xa, pb - pa, 'P32_ADD(%s, ' % ty, site)
@@ -192,10 +211,60 @@ def main():
         if P.kind == K.CXX_UNARY_EXPR: return   # sizeof
         wrap()
 
+    def is_pp(t):
+        t = t.get_canonical()
+        return t.kind == T.POINTER and t.get_pointee().get_canonical().kind == T.POINTER
+
+    def handle_ptrptr(chain):
+        """chain[-1]: a cast to T**. *(T**)x and ((T**)x)[i] read a pointer out of game memory: a slot"""
+        C = chain[-1]
+        f = C.extent.start.file
+        if f is None or not in_project(f.name): return
+        fn = norm(f.name)
+        ca, cb = C.extent.start.offset, C.extent.end.offset
+        where = '%s:%d' % (fn[len(ROOT) + 1:], C.extent.start.line)
+        data = files.get(fn)
+        if data[ca:ca + 1] != b'(':
+            manual.add((where, 'T**', 'pointer-to-pointer cast from a macro: ' + ' '.join(src(fn, ca, cb).split())[:70])); return
+        d = 0; cp = -1
+        for k in range(ca, cb):
+            ch = data[k:k + 1]
+            if ch == b'(': d += 1
+            elif ch == b')':
+                d -= 1
+                if d == 0: cp = k; break
+        if cp < 0: return
+        def strip(t): return t.replace('(', '').replace(')', '').strip()
+        j = len(chain) - 1
+        while j > 0 and chain[j - 1].kind in (K.PAREN_EXPR, K.UNEXPOSED_EXPR) and chain[j - 1].extent.start.file is not None                 and norm(chain[j - 1].extent.start.file.name) == fn                 and strip(src(fn, chain[j - 1].extent.start.offset, chain[j - 1].extent.end.offset)) == strip(src(fn, ca, cb)):
+            j -= 1
+        Q = chain[j - 1] if j > 0 else None
+        ok = False
+        if Q is not None and Q.extent.start.file is not None and norm(Q.extent.start.file.name) == fn:
+            qa = Q.extent.start.offset
+            if Q.kind == K.UNARY_OPERATOR and src(fn, qa, chain[j].extent.start.offset).strip() == '*': ok = True
+            if Q.kind == K.ARRAY_SUBSCRIPT_EXPR and qa == chain[j].extent.start.offset: ok = True
+        if not ok or Q.type.get_canonical().kind != T.POINTER or is_pp(Q.type):
+            manual.add((where, 'T**', 'pointer-to-pointer cast, not read here: ' + ' '.join(src(fn, ca, min(cb, ca + 70)).split()))); return
+        ty = Q.type.spelling
+        if 'unnamed' in ty: manual.add((where, 'T**', 'unnamed pointee')); return
+        repl[fn][(ca + 1, cp)] = 'ps2ptr_t*'
+        classify(chain, j - 1, fn, ty, 'T**', where)
+
     def walk(c, chain):
         for ch in c.get_children():
             chain.append(ch)
-            if ch.kind == K.MEMBER_REF_EXPR:
+            if mode == 'ptrptr':
+                if ch.kind == K.CSTYLE_CAST_EXPR and is_pp(ch.type): handle_ptrptr(chain)
+                elif ch.kind in (K.UNARY_OPERATOR, K.ARRAY_SUBSCRIPT_EXPR) and ch.extent.start.file is not None and in_project(ch.extent.start.file.name):
+                    kids = list(ch.get_children())
+                    if kids and is_pp(kids[0].type) and kids[0].type.kind != T.CONSTANTARRAY:
+                        k0 = kids[0]
+                        while k0.kind in (K.UNEXPOSED_EXPR, K.PAREN_EXPR) and list(k0.get_children()): k0 = list(k0.get_children())[0]
+                        if k0.kind != K.CSTYLE_CAST_EXPR and (ch.kind == K.ARRAY_SUBSCRIPT_EXPR or files.get(norm(ch.extent.start.file.name))[ch.extent.start.offset:ch.extent.start.offset + 1] == b'*'):
+                            fn2 = norm(ch.extent.start.file.name)
+                            manual.add(('%s:%d' % (fn2[len(ROOT) + 1:], ch.extent.start.line), k0.spelling or k0.kind.name, 'T** read: ' + ' '.join(src(fn2, ch.extent.start.offset, min(ch.extent.end.offset, ch.extent.start.offset + 60)).split())))
+            elif ch.kind == K.MEMBER_REF_EXPR:
                 r = ch.referenced
                 if r is not None and r.kind == K.FIELD_DECL and slot_type(r.type) and selected(r):
                     handle_ref(chain)
@@ -231,7 +300,7 @@ def main():
             f = top.location.file
             if f is None or not in_project(f.name): continue
             if top.kind in (K.STRUCT_DECL, K.UNION_DECL, K.TYPEDEF_DECL): collect_fields(top)
-            if mode == 'apply' and top.kind in (K.FUNCTION_DECL, K.VAR_DECL):
+            if mode in ('apply', 'ptrptr') and top.kind in (K.FUNCTION_DECL, K.VAR_DECL):
                 chain = [top]; walk(top, chain)
         sys.stderr.write('.'); sys.stderr.flush()
     sys.stderr.write('\n')

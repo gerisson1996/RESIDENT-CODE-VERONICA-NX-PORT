@@ -69,7 +69,7 @@ static void equip(int dir)
     /* the sniper rifle's scope state (ev_flg 74) goes through the command list's sprite (WeaponSet reads
        parts_06b[17].anim, ItemCommand sets it from the flag): kept as it is */
     if (id == 10) parts_06b[17].anim = bhCkFlg(sys->ev_flg, 74) ? 12 : 11;
-    swork.pip = iv;
+    swork.pip = S32(iv);
     WeaponSet(at, at);   /* as the inventory: weapon number, equipped slot, weapon file load, motion reset */
     pc_weapon_load_started();
 }

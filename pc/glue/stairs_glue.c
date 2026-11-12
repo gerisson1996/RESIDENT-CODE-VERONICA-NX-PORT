@@ -23,7 +23,7 @@ static int blocked(const ATR_WORK* e)
 
 int pc_auto_stairs(void)
 {
-    const EXP_WORK* x = (const EXP_WORK*)plp->exp0;
+    const EXP_WORK* x = (const EXP_WORK*)P32(unsigned char *, plp->exp0);
     float s, c, px[5], pz[5];
     int i, n, dir;
     /* walking or running (also while turning), the weapon down, where the press would examine */
@@ -43,7 +43,7 @@ int pc_auto_stairs(void)
     pz[4] = plp->pz - (2.0f * c);
     n = rom->etc_n + sys->metc_n;
     for (i = 0; i < n; i++) {
-        const ATR_WORK* e = i < rom->etc_n ? &rom->etcp[i] : &sys->metcp[i - rom->etc_n];
+        const ATR_WORK* e = i < rom->etc_n ? &P32(struct ATR_WORK *, rom->etcp)[i] : &sys->metcp[i - rom->etc_n];
         if (!(e->flg & 0x1) || e->type > 4) continue;
         if (!(e->px <= px[e->type] && e->px + e->w >= px[e->type] && e->pz <= pz[e->type] && e->pz + e->d >= pz[e->type] && e->flr_no == plp->flr_no))
             continue;

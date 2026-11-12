@@ -71,7 +71,7 @@ static int grid_cell(float slot1_x)
 static void grid_select(S_WORK* st, int n)
 {
     int sakai = 2, rows, i;
-    while (sakai < 12 && (itemdata[(st->pip[sakai] >> 16) & 0xFF].type & 0x100)) sakai++;
+    while (sakai < 12 && (itemdata[(P32(unsigned int *, st->pip)[sakai] >> 16) & 0xFF].type & 0x100)) sakai++;
     rows = sakai - 2;
     i = n == 1 ? 1 : n / 2 - 1 < rows ? n / 2 + 1 : n - rows;
     if (i != (int)st->listcsr_0) CallSystemSe(0, 2);

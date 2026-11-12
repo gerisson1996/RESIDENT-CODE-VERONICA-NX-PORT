@@ -30,7 +30,7 @@ static int rest;   /* a reload started with the weapon lowered, the aim not held
    or attract demo running. Also quick knife (knife_glue.c) and modern controls (modern_glue.c), with scope 0. */
 int pc_in_play(const BH_PWORK* p, int scope)
 {
-    return p == &ply && p->mnwP && p->mlwP && pc_play_screen(scope) && p->mode0 == 1;
+    return p == &ply && P32(struct MN_WORK *, p->mnwP) && P32(struct ML_WORK *, p->mlwP) && pc_play_screen(scope) && p->mode0 == 1;
 }
 
 /* pc_in_play's screen half, whatever the player's mode (the ammo counter, hud_glue.c) */
@@ -52,7 +52,7 @@ void reload_player(void)
 {
     static int was;
     int now = pad_reload(), raised, lowered, bn, max;
-    unsigned int* iv = swork.pip;   /* the inventory bhCheckBullet / bhSearchBullet read */
+    unsigned int* iv = P32(unsigned int *, swork.pip);   /* the inventory bhCheckBullet / bhSearchBullet read */
     const WPN_TAB* w = &WpnTab[plp->wpnr_no];
 
     {   /* RECVX_PAD_TRACE=1: the game's virtual pad (pad.c bhSetPad bits: aim 0x10, fire 0x100, map 0x2000) when it changes */
@@ -85,8 +85,8 @@ void reload_player(void)
         plp->at_flg = 2;
         plp->wax = plp->waxp = 0;
         plp->mode1 = 1;
-        *(int*)plp->exp1 &= ~0x4;
-        *(int*)plp->exp1 |= 0x1E0;
+        *(int*)P32(unsigned char *, plp->exp1) &= ~0x4;
+        *(int*)P32(unsigned char *, plp->exp1) |= 0x1E0;
         rest = !(sys->pad_on & 0x10);
     }
     sys->gm_flg &= ~0x40000;   /* as the game's switch: "empty, reload on the next pull" done */

@@ -53,7 +53,7 @@ static BH_PWORK* pre_pl;
 static BH_PWORK* root(BH_PWORK* ep)
 {
     int k;
-    for (k = 0; k < 3 && ep->lkwkp && (BH_PWORK*)ep->lkwkp >= ene && (BH_PWORK*)ep->lkwkp < ene + 128; k++) ep = (BH_PWORK*)ep->lkwkp;
+    for (k = 0; k < 3 && P32(unsigned char *, ep->lkwkp) && (BH_PWORK*)P32(unsigned char *, ep->lkwkp) >= ene && (BH_PWORK*)P32(unsigned char *, ep->lkwkp) < ene + 128; k++) ep = (BH_PWORK*)P32(unsigned char *, ep->lkwkp);
     return ep;
 }
 
@@ -130,15 +130,15 @@ static int donor_load(int type, int ver)
     memset(dmth, 0, sizeof(dmth));
     for (p = dbuf + mofs; (dt = *(int*)p) != -1; p += 4 + (dt > 0 ? dt : 0))   /* its first model (not a face mask, not skin) */
         if (dt > 0 && *(int*)(p + 4) != 0x4B53414D && *(int*)(p + 4) != SKIN_MAGIC) { bhMlbBinRealize(p + 4, &dw.mdl[0]); break; }
-    if (!dw.mdl[0].objP || dw.mdl[0].obj_num > 64) return 0;
-    dw.mdl[0].owP = dow;
-    dw.mlwP = &dw.mdl[0];
+    if (!P32(struct cnkobj *, dw.mdl[0].objP) || dw.mdl[0].obj_num > 64) return 0;
+    dw.mdl[0].owP = S32(dow);
+    dw.mlwP = S32(&dw.mdl[0]);
     dw.mdl_n = 1;
-    dw.mtx = (float(*)[16])dw.mtxbuf;
+    dw.mtx = S32((float(*)[16])dw.mtxbuf);
     dw.flg = 0x1 | 0x1000;   /* bhCalcModel: the base matrix as set (the enemy's) */
     for (i = 0, mtn = dbuf + nofs; (dt = *(int*)mtn) != -1 && i < 512; i++, mtn += 4 + dt)
         if (dt) bhMnbBinRealize(mtn + 4, &dmth[i]);
-    dw.mnwP = dw.mnwPb = dmth;
+    dw.mnwP = S32(P32(struct MN_WORK *, dw.mnwPb = S32(dmth)));
     donor_key = key;
     host_log("variant: donor %s (type %d model %d) loaded: %d nodes, %d KB of motions\n", am->name, type, ver, (int)dw.mdl[0].obj_num, a.nlen >> 10);
     return 1;
@@ -148,7 +148,7 @@ static int donor_load(int type, int ver)
 static BH_PWORK* donor_pose(const BH_PWORK* r, int m, int frm)
 {
     int last;
-    if (m < 0 || m >= 512 || !dmth[m].datP || dmth[m].obj_num > dw.mdl[0].obj_num) return NULL;
+    if (m < 0 || m >= 512 || !P32(void *, dmth[m].datP) || dmth[m].obj_num > dw.mdl[0].obj_num) return NULL;
     last = ((int)dmth[m].frm_num - 1) << 16;
     dw.mtn_no = (unsigned int)m;
     dw.frm_no = frm < 0 ? 0 : frm > last ? last : frm;
@@ -158,7 +158,7 @@ static BH_PWORK* donor_pose(const BH_PWORK* r, int m, int frm)
     dw.px = r->px; dw.py = r->py; dw.pz = r->pz;
     dw.ax = r->ax; dw.ay = r->ay; dw.az = r->az;
     dw.draw_tp = r->draw_tp;
-    memcpy(dw.mtxbuf, r->mtx, sizeof(float) * 16);
+    memcpy(dw.mtxbuf, P32(float (*)[16], r->mtx), sizeof(float) * 16);
     bhCalcModel(&dw);
     return &dw;
 }
@@ -172,15 +172,15 @@ static BH_PWORK* donor_now(const EnemyVariant* v, BH_PWORK* r)
     if (v->death_n && (r->flg & 0x2)) {
         int t = death_t[s] < 0 ? 0 : death_t[s];
         for (i = 0; i < v->death_n; i++) {
-            int m = v->death[i], len = m >= 0 && m < 512 && dmth[m].datP ? (int)dmth[m].frm_num - 1 : 0;
+            int m = v->death[i], len = m >= 0 && m < 512 && P32(void *, dmth[m].datP) ? (int)dmth[m].frm_num - 1 : 0;
             if (t < len || i == v->death_n - 1) return donor_pose(r, m, t << 16);
             t -= len;
         }
     }
-    if (r->mnwP == r->mnwPb && r->mnwP)
+    if (P32(struct MN_WORK *, r->mnwP) == P32(struct MN_WORK *, r->mnwPb) && P32(struct MN_WORK *, r->mnwP))
         for (i = 0; i < v->dmotion_n; i++)
             if (r->mtn_no == (unsigned int)v->dmotion[i][0]) {
-                int m = v->dmotion[i][1], own = (int)r->mnwP[r->mtn_no].frm_num;
+                int m = v->dmotion[i][1], own = (int)P32(struct MN_WORK *, r->mnwP)[r->mtn_no].frm_num;
                 long f = own > 0 && m < 512 ? (long)r->frm_no * dmth[m].frm_num / own : r->frm_no;   /* (long: 64 bits, pc_prelude.h) */
                 return donor_pose(r, m, (int)f);
             }
@@ -230,15 +230,15 @@ void variant_spawned(int slot, int id)
         else { actor_set(ACTOR_VARIANT + k, -1); look = "its model could not be loaded or mapped: its base's"; }
         if (v->model < 0 && k < VSLOTS && vmodel[k] == dm) look = "its own (posed from the donor for the donor's motions)";
     }
-    if (v->motion_n && ep->mnwPb) {   /* its own copy of the set, motions swapped */
+    if (v->motion_n && P32(struct MN_WORK *, ep->mnwPb)) {   /* its own copy of the set, motions swapped */
         for (k = 0; k < VSETS && mset[k].id && mset[k].id != id; k++);
         if (k < VSETS) {
             if (!mset[k].id) {
-                memcpy(mset[k].set, ep->mnwPb, sizeof(mset[k].set));
-                for (i = 0; i < v->motion_n; i++) mset[k].set[v->motion[i][0]] = ep->mnwPb[v->motion[i][1]];
+                memcpy(mset[k].set, P32(struct MN_WORK *, ep->mnwPb), sizeof(mset[k].set));
+                for (i = 0; i < v->motion_n; i++) mset[k].set[v->motion[i][0]] = P32(struct MN_WORK *, ep->mnwPb)[v->motion[i][1]];
                 mset[k].id = (unsigned short)id;
             }
-            ep->mnwP = ep->mnwPb = mset[k].set;
+            ep->mnwP = S32(P32(struct MN_WORK *, ep->mnwPb = S32(mset[k].set)));
         } else host_log("variant: %s: no motion set left, the base's motions\n", v->name);
     }
     if ((v->sound_n || v->hurt) && v->sound_room) {
@@ -259,9 +259,9 @@ int pc_variant_pre(BH_PWORK* ep, int slot)
     int runs = 1, i;
     pre_pl = NULL;
     if (!v) return 1;
-    if ((ep->flg & 0x4) && (v->armour != 1.0f || v->hp != 1.0f) && ep->mlwP) {   /* the hit it is about to take */
+    if ((ep->flg & 0x4) && (v->armour != 1.0f || v->hp != 1.0f) && P32(struct ML_WORK *, ep->mlwP)) {   /* the hit it is about to take */
         float f = v->armour / v->hp;
-        for (i = 1; i < (int)ep->mlwP->obj_num && i < 64; i++)
+        for (i = 1; i < (int)P32(struct ML_WORK *, ep->mlwP)->obj_num && i < 64; i++)
             if (ep->dam[i] > 0) {
                 float x = ep->dam[i] * f + dam_left[slot];
                 int d = (int)x;
@@ -309,8 +309,8 @@ int pc_variant_is(BH_PWORK* ep) { return of(ep) != NULL; }
 static void scale_nodes(ML_WORK* m, float s, float x, float y, float z)
 {
     int i, j;
-    for (i = 0; m && m->owP && i < (int)m->obj_num; i++) {
-        float* w = m->owP[i].mtx;
+    for (i = 0; m && P32(struct O_WORK *, m->owP) && i < (int)m->obj_num; i++) {
+        float* w = P32(struct O_WORK *, m->owP)[i].mtx;
         for (j = 0; j < 12; j++) if ((j & 3) != 3) w[j] *= s;
         w[12] = x + (w[12] - x) * s; w[13] = y + (w[13] - y) * s; w[14] = z + (w[14] - z) * s;
     }
@@ -320,16 +320,16 @@ static void scale_nodes(ML_WORK* m, float s, float x, float y, float z)
 static void attach_draw(BH_PWORK* w, int sub, int node)
 {
     static BH_PWORK a;
-    ML_WORK* m = w->mlwP;
-    if (sub >= w->mdl_n || !w->mdl[sub].objP || !w->mdl[sub].owP || node >= (int)m->obj_num) return;
+    ML_WORK* m = P32(struct ML_WORK *, w->mlwP);
+    if (sub >= w->mdl_n || !P32(struct cnkobj *, w->mdl[sub].objP) || !P32(struct O_WORK *, w->mdl[sub].owP) || node >= (int)m->obj_num) return;
     memset(&a, 0, sizeof(a));
     a.flg = 0x1;
     a.mdl[0] = w->mdl[sub];
-    a.mlwP = &a.mdl[0];
-    a.mtx = (float(*)[16])a.mtxbuf;
+    a.mlwP = S32(&a.mdl[0]);
+    a.mtx = S32((float(*)[16])a.mtxbuf);
     a.draw_tp = w->draw_tp;
-    memcpy(a.mtxbuf, m->owP[node].mtx, sizeof(float) * 16);
-    bhCalcTree((NJS_MATRIX*)a.mtx, a.mlwP);
+    memcpy(a.mtxbuf, P32(struct O_WORK *, m->owP)[node].mtx, sizeof(float) * 16);
+    bhCalcTree((NJS_MATRIX*)P32(float (*)[16], a.mtx), P32(struct ML_WORK *, a.mlwP));
     bhPutModel(&a);
 }
 
@@ -350,19 +350,19 @@ static int head_n;
 
 static void head_hide_node(ML_WORK* m, NJS_CNK_OBJECT* o, int top)
 {
-    int k = (int)(o - m->objP), j;
+    int k = (int)(o - P32(struct cnkobj *, m->objP)), j;
     if (k < 0 || k >= (int)m->obj_num || head_n >= HEAD_NODES) return;
-    head_mtx[head_n] = m->owP[k].mtx;
-    for (j = 0; j < 9; j++) { head_rot[head_n][j] = m->owP[k].mtx[j + j / 3]; m->owP[k].mtx[j + j / 3] = 0.0f; }
+    head_mtx[head_n] = P32(struct O_WORK *, m->owP)[k].mtx;
+    for (j = 0; j < 9; j++) { head_rot[head_n][j] = P32(struct O_WORK *, m->owP)[k].mtx[j + j / 3]; P32(struct O_WORK *, m->owP)[k].mtx[j + j / 3] = 0.0f; }
     head_n++;
-    if (o->child) head_hide_node(m, o->child, 0);
-    if (!top && o->sibling) head_hide_node(m, o->sibling, 0);
+    if (P32(struct cnkobj *, o->child)) head_hide_node(m, P32(struct cnkobj *, o->child), 0);
+    if (!top && P32(struct cnkobj *, o->sibling)) head_hide_node(m, P32(struct cnkobj *, o->sibling), 0);
 }
 
 static void head_hide(ML_WORK* m, int node)
 {
     head_n = 0;
-    if (m && m->objP && m->owP && node >= 0 && node < (int)m->obj_num) head_hide_node(m, &m->objP[node], 1);
+    if (m && P32(struct cnkobj *, m->objP) && P32(struct O_WORK *, m->owP) && node >= 0 && node < (int)m->obj_num) head_hide_node(m, &P32(struct cnkobj *, m->objP)[node], 1);
 }
 
 static void head_show(void)
@@ -377,8 +377,8 @@ static void head_show(void)
 static int headless(BH_PWORK* r)
 {
     BH_PWORK* part;
-    if (!pc_head_blowoff_on() || r < ene || r >= ene + 128 || r->id != 1 || (r->flg & 0x80) || !r->exp0 || *(int*)(r->exp0 + 0x78) != -1) return 0;
-    part = *(BH_PWORK**)(r->exp0 + 0x10);
+    if (!pc_head_blowoff_on() || r < ene || r >= ene + 128 || r->id != 1 || (r->flg & 0x80) || !P32(unsigned char *, r->exp0) || *(int*)(P32(unsigned char *, r->exp0) + 0x78) != -1) return 0;
+    part = *(BH_PWORK**)(P32(unsigned char *, r->exp0) + 0x10);
     return !(part >= ene && part < ene + 128 && part->mode0 == 3);
 }
 
@@ -387,10 +387,10 @@ static int headless(BH_PWORK* r)
 int pc_zombie_head(BH_PWORK* ep, int hide)
 {
     if (!hide) { head_show(); return 0; }
-    if (ep < ene || ep >= ene + 128 || ep->id != 1 || !headless((ep->flg & 0x80) ? (BH_PWORK*)ep->lkwkp : ep) ||
-        !ep->mlwP || ep->mlwP->obj_num <= 11)
+    if (ep < ene || ep >= ene + 128 || ep->id != 1 || !headless((ep->flg & 0x80) ? (BH_PWORK*)P32(unsigned char *, ep->lkwkp) : ep) ||
+        !P32(struct ML_WORK *, ep->mlwP) || P32(struct ML_WORK *, ep->mlwP)->obj_num <= 11)
         return 0;
-    head_hide(ep->mlwP, 11);
+    head_hide(P32(struct ML_WORK *, ep->mlwP), 11);
     return head_n > 0;
 }
 
@@ -410,17 +410,17 @@ int pc_variant_draw(BH_PWORK* ep)
         actor_pose(ACTOR_VARIANT + k, src);
         if (!(w = actor_work(ACTOR_VARIANT + k))) return 0;
         w->draw_tp = ep->draw_tp;
-        if (v->scale != 1.0f) scale_nodes(w->mlwP, v->scale, ep->px, ep->py, ep->pz);
-        if (headless(r)) head_hide(w->mlwP, actor_head_node(ACTOR_VARIANT + k));   /* a zombie base's blown-off head: the model's head */
+        if (v->scale != 1.0f) scale_nodes(P32(struct ML_WORK *, w->mlwP), v->scale, ep->px, ep->py, ep->pz);
+        if (headless(r)) head_hide(P32(struct ML_WORK *, w->mlwP), actor_head_node(ACTOR_VARIANT + k));   /* a zombie base's blown-off head: the model's head */
         bhPutModel(w);
         head_show();
         for (i = 0; i < v->attach_n; i++) attach_draw(w, v->attach[i][0], v->attach[i][1]);
         return 1;
     }
     if (v->scale == 1.0f) return 0;
-    scale_nodes(ep->mlwP, v->scale, r->px, r->py, r->pz);
+    scale_nodes(P32(struct ML_WORK *, ep->mlwP), v->scale, r->px, r->py, r->pz);
     bhPutModel(ep);
-    scale_nodes(ep->mlwP, 1.0f / v->scale, r->px, r->py, r->pz);
+    scale_nodes(P32(struct ML_WORK *, ep->mlwP), 1.0f / v->scale, r->px, r->py, r->pz);
     return 1;
 }
 
