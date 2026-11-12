@@ -13,10 +13,10 @@ void bhInitCamera() {
     cam.ocut = -1;
     cam.ocflg = 0;
     cam.attr = 0;
-    cam.mtx = cmmat;
-    cam.mtxb = (cmmat + 0x1);
-    njUnitMatrix(cam.mtx);
-    njUnitMatrix(cam.mtxb);
+    cam.mtx = S32(cmmat);
+    cam.mtxb = S32((cmmat + 0x1));
+    njUnitMatrix(P32(float (*)[16], cam.mtx));
+    njUnitMatrix(P32(float (*)[16], cam.mtxb));
 }
 
 // 100% matching
@@ -34,7 +34,7 @@ void bhControlCamera() {
     njRotateY(0, cam.ay);
     
     njTranslate(0, -(cam.px + cam.ofx),-(cam.py + cam.ofy), -(cam.pz + cam.ofz));
-    njGetMatrix(cam.mtx);
+    njGetMatrix(P32(float (*)[16], cam.mtx));
     njUnitMatrix(0);
     
     njRotateY(0, cam.ay);

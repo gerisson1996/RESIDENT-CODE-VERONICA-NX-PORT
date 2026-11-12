@@ -28,7 +28,7 @@ void bhEne17LArm(BH_PWORK* epw)
 	BH_PWORK* epp;
     NJS_CNK_OBJECT* obj;
 
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     bhEne17LArm_Mode0[epw->mode0](epw);
     bhCalcModel(epw);
@@ -45,7 +45,7 @@ void bhEne17LArm(BH_PWORK* epw)
         bhEne17_AxsCheck(epw);
     }
     
-    obj = &epw->mlwP->objP[1];
+    obj = &P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[1];
     
     if (epp->type == 1) 
     {
@@ -64,14 +64,14 @@ void bhEne17LArm_Init(BH_PWORK* epw)
     float *ax_p1, *ax_p2;
     int i;
 
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     epw->stflg = 0;
     epw->flg |= 0x8000;
     epw->mdflg |= 0x20;
 
-    ax_p1 = (float *)epp->exp1;
-    ax_p2 = (float *)(epp->exp1 + 0x138);
+    ax_p1 = (float *)P32(unsigned char *, epp->exp1);
+    ax_p2 = (float *)(P32(unsigned char *, epp->exp1) + 0x138);
 
     for (i = 0; i < 0xF; i++, ax_p1++, ax_p2++)
     {
@@ -79,8 +79,8 @@ void bhEne17LArm_Init(BH_PWORK* epw)
         *ax_p2 = 0;
     }
 
-    ax_p1 = (float *)(epp->exp1 + 0x48);
-    ax_p2 = (float *)(epp->exp1 + 0x180);
+    ax_p1 = (float *)(P32(unsigned char *, epp->exp1) + 0x48);
+    ax_p2 = (float *)(P32(unsigned char *, epp->exp1) + 0x180);
 
     for (i = 0; i < 0x3C; i++, ax_p1++, ax_p2++)
     {
@@ -138,9 +138,9 @@ void bhEne17_AxsCheck(BH_PWORK* epw)
     int iparam;
     float fparam;
 
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
-    owk = &epw->mlwP->owP[1];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[1];
     
     ps.x = 0;
     ps.y = 0;
@@ -150,57 +150,57 @@ void bhEne17_AxsCheck(BH_PWORK* epw)
     
     for (i = 5; i > 0; i--)
     {
-        ((NJS_POINT3*)epp->exp1)[i].x = ((NJS_POINT3*)epp->exp1)[i - 1].x;
-        ((NJS_POINT3*)epp->exp1)[i].y = ((NJS_POINT3*)epp->exp1)[i - 1].y;
-        ((NJS_POINT3*)epp->exp1)[i].z = ((NJS_POINT3*)epp->exp1)[i - 1].z;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].x = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i - 1].x;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].y = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i - 1].y;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].z = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i - 1].z;
 
-        ((NJS_POINT3*)epp->exp1)[i + 26].x = ((NJS_POINT3*)epp->exp1)[i + 25].x;
-        ((NJS_POINT3*)epp->exp1)[i + 26].y = ((NJS_POINT3*)epp->exp1)[i + 25].y;
-        ((NJS_POINT3*)epp->exp1)[i + 26].z = ((NJS_POINT3*)epp->exp1)[i + 25].z;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].x = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 25].x;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].y = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 25].y;
+        ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].z = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 25].z;
     }
     
-    ((NJS_POINT3*)epp->exp1)[i].x = pd.x;
-    ((NJS_POINT3*)epp->exp1)[i].y = pd.y;
-    ((NJS_POINT3*)epp->exp1)[i].z = pd.z;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].x = pd.x;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].y = pd.y;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].z = pd.z;
     
-    ((NJS_POINT3*)epp->exp1)[i + 26].x = owk->mtx[0xC];
-    ((NJS_POINT3*)epp->exp1)[i + 26].y = owk->mtx[0xD];
-    ((NJS_POINT3*)epp->exp1)[i + 26].z = owk->mtx[0xE];
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].x = owk->mtx[0xC];
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].y = owk->mtx[0xD];
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].z = owk->mtx[0xE];
     
     attr.keys = 0;
-    attr.iparam = &iparam;
-    attr.fparam = &fparam;
-    *attr.iparam = 6;
+    attr.iparam = S32(&iparam);
+    attr.fparam = S32(&fparam);
+    *P32(int *, attr.iparam) = 6;
     
     for (i = 0; i < 6; i++)
     {
-        idata[i][0] = ((NJS_POINT3*)epp->exp1)[i].x;
-        idata[i][1] = ((NJS_POINT3*)epp->exp1)[i].y;
-        idata[i][2] = ((NJS_POINT3*)epp->exp1)[i].z;
+        idata[i][0] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].x;
+        idata[i][1] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].y;
+        idata[i][2] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i].z;
     }
     
-    ((NJS_POINT3*)epp->exp1)[6].x = ((NJS_POINT3*)epp->exp1)[0].x;
-    ((NJS_POINT3*)epp->exp1)[6].y = ((NJS_POINT3*)epp->exp1)[0].y;
-    ((NJS_POINT3*)epp->exp1)[6].z = ((NJS_POINT3*)epp->exp1)[0].z;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[6].x = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[0].x;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[6].y = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[0].y;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[6].z = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[0].z;
     
     for (i = 1; i < 20; i++)
     {
-        njBezierSpline((float*)idata, (float*)(epp->exp1 + i * 12 + 72), &attr, 0.05f * i);
+        njBezierSpline((float*)idata, (float*)(P32(unsigned char *, epp->exp1) + i * 12 + 72), &attr, 0.05f * i);
     }
     
     for (i = 0; i < 6; i++)
     {
-        idata[i][0] = ((NJS_POINT3*)epp->exp1)[i + 26].x;
-        idata[i][1] = ((NJS_POINT3*)epp->exp1)[i + 26].y;
-        idata[i][2] = ((NJS_POINT3*)epp->exp1)[i + 26].z;
+        idata[i][0] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].x;
+        idata[i][1] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].y;
+        idata[i][2] = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[i + 26].z;
     }
     
-    ((NJS_POINT3*)epp->exp1)[32].x = ((NJS_POINT3*)epp->exp1)[26].x;
-    ((NJS_POINT3*)epp->exp1)[32].y = ((NJS_POINT3*)epp->exp1)[26].y;
-    ((NJS_POINT3*)epp->exp1)[32].z = ((NJS_POINT3*)epp->exp1)[26].z;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[32].x = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[26].x;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[32].y = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[26].y;
+    ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[32].z = ((NJS_POINT3*)P32(unsigned char *, epp->exp1))[26].z;
     
     for (i = 1; i < 20; i++)
     {
-        njBezierSpline((float*)idata, (float*)(epp->exp1 + i * 12 + 384), &attr, 0.05f * i);
+        njBezierSpline((float*)idata, (float*)(P32(unsigned char *, epp->exp1) + i * 12 + 384), &attr, 0.05f * i);
     }
 }

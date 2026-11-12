@@ -74,7 +74,7 @@ void pl_smove00()
         
         EXP1_I(0) |= 0x4;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][6];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][6];
         
         plp->hokan_rate = 49152;
         plp->hokan_count = 8;
@@ -83,13 +83,13 @@ void pl_smove00()
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->mode3++;
     case 1:
-        if (((unsigned int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 1))
+        if (((unsigned int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
         {
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][6] + 1;
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][6] + 1;
             
             plp->hokan_rate = 49152;
             plp->hokan_count = 4;
@@ -116,7 +116,7 @@ void pl_smove01()
         switch (plp->mode3)
         {
         case 0:
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate = 32768;
             plp->hokan_count = 8;
@@ -127,10 +127,10 @@ void pl_smove01()
             
             plp->ct3 = 0;
             
-            ((EXP_WORK*)plp->exp0)->arp = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
             
-            ((EXP_WORK*)plp->exp0)->spxn = 0.3f * (((EXP_WORK*)plp->exp0)->spx - plp->px);
-            ((EXP_WORK*)plp->exp0)->spzn = 0.3f * (((EXP_WORK*)plp->exp0)->spz - plp->pz);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spxn = 0.3f * (((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx - plp->px);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spzn = 0.3f * (((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz - plp->pz);
             
             plp->mode3++;
         case 1:
@@ -140,8 +140,8 @@ void pl_smove01()
             }
             else if (plp->hokan_count > 2) 
             {
-                plp->px += ((EXP_WORK*)plp->exp0)->spxn;
-                plp->pz += ((EXP_WORK*)plp->exp0)->spzn;
+                plp->px += ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spxn;
+                plp->pz += ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spzn;
             }
         }
         
@@ -152,7 +152,7 @@ void pl_smove01()
         case 0:
             plp->flg &= ~0xC0000;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
             
             plp->hokan_rate = 32768;
             plp->hokan_count = 8;
@@ -161,18 +161,18 @@ void pl_smove01()
             
             plp->frm_no = 0;
             
-            ((EXP_WORK*)plp->exp0)->arp = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
             
             plp->mode3++;
         case 1:
             break;
         }
         
-        plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         plp->mtn_add = -65536;
         
-        if (((plp->frm_no / 65536) == 1) || ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num / 2))) 
+        if (((plp->frm_no / 65536) == 1) || ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num / 2))) 
         {
             CallPlayerFootStepSe(plp->flr_snd, 0, 1);
         }
@@ -184,7 +184,7 @@ void pl_smove01()
         case 0:
             plp->flg &= ~0xC0000;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
             
             plp->hokan_rate = 32768;
             plp->hokan_count = 8;
@@ -193,7 +193,7 @@ void pl_smove01()
             
             plp->frm_no = 0;
             
-            ((EXP_WORK*)plp->exp0)->arp = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
             
             plp->mode3++;
             break;
@@ -201,11 +201,11 @@ void pl_smove01()
             break;
         }
         
-        plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         plp->mtn_add = 65536;
         
-        if (((plp->frm_no / 65536) == 1) || ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num / 2)))
+        if (((plp->frm_no / 65536) == 1) || ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num / 2)))
         {
             CallPlayerFootStepSe(plp->flr_snd, 0, 1);
         }
@@ -234,21 +234,21 @@ void pl_smove02()
         }
         else 
         {
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][2]].frm_num, plp->frm_no);
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][2]].frm_num, plp->frm_no);
         }
         
         plp->flg &= ~0x800000;
         
         EXP1_I(0) |= 0x4;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][2];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][2];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 8;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         if ((plp->stflg & 0x100000))
         {
@@ -257,7 +257,7 @@ void pl_smove02()
         
         plp->mode3++;
     case 1:
-        plp->spd = 0.18f + fabsf(0.15f * (float)njCos((int)(plp->frm_no / 65536) * (int)(65536 / plp->mnwP[plp->mtn_no].frm_num)));
+        plp->spd = 0.18f + fabsf(0.15f * (float)njCos((int)(plp->frm_no / 65536) * (int)(65536 / P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num)));
         
         if ((plp->stflg & 0x100000))
         {
@@ -267,16 +267,16 @@ void pl_smove02()
         switch (plp->mode1)
         {
         case 1:
-            plp->ay -= (int)(182.04445f * (float)(4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (float)(4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         case 2:
-            plp->ay += (int)(182.04445f * (float)(4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (float)(4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         }
         
         if ((int)(plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][0])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -291,7 +291,7 @@ void pl_smove02()
         
         if ((int)(plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][0])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -320,26 +320,26 @@ void pl_smove03()
 
         EXP1_I(0) |= 0x4;
         
-        plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3]].frm_num, plp->frm_no);
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3];
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3]].frm_num, plp->frm_no);
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 3.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 3.0f;
         
         plp->mode3++;
     case 1:
-        plp->spd = 0.9f + fabsf(0.1f * njSin(((int)plp->frm_no / 65536) * (65536 / plp->mnwP[plp->mtn_no].frm_num)));
+        plp->spd = 0.9f + fabsf(0.1f * njSin(((int)plp->frm_no / 65536) * (65536 / P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num)));
         
         if ((plp->stflg & 0x100000))
         {
             plp->spd *= 0.8f;
         }
 
-        if (((EXP_WORK*)plp->exp0)->dmlvl == 2) 
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl == 2) 
         {
             plp->spd *= 0.8f;
         }
@@ -347,16 +347,16 @@ void pl_smove03()
         switch (plp->mode1)
         {
         case 1:
-            plp->ay -= (int)(182.04445f * (4.5f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (4.5f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         case 2:
-            plp->ay += (int)(182.04445f * (4.5f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (4.5f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         }
         
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][1])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 1, 1);
             
@@ -371,7 +371,7 @@ void pl_smove03()
         
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][1])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
            
             CallPlayerFootStepSe(fsnd, 1, 1);
             
@@ -406,12 +406,12 @@ void pl_smove04()
         }
         else
         {
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][4]].frm_num, plp->frm_no);
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][4]].frm_num, plp->frm_no);
         }
 
         plp->flg &= ~0x800000;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][4];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][4];
         
         plp->hokan_rate  = 49152;
         plp->hokan_count = 8;
@@ -420,7 +420,7 @@ void pl_smove04()
         
         plp->ct0 = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = -1.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = -1.0f;
         
         if ((plp->stflg & 0x100000)) 
         {
@@ -429,7 +429,7 @@ void pl_smove04()
         
         plp->mode3++;
     case 1:
-        plp->spd = 0.14f + fabsf(0.15f * njCos((plp->frm_no / 65536) * (65536 / plp->mnwP[plp->mtn_no].frm_num)));
+        plp->spd = 0.14f + fabsf(0.15f * njCos((plp->frm_no / 65536) * (65536 / P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num)));
         
         if ((plp->stflg & 0x100000))
         {
@@ -439,16 +439,16 @@ void pl_smove04()
         switch (plp->mode1)
         {
         case 1:
-            plp->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         case 2:
-            plp->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             break;
         }
         
         if ((int)(plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][2])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -463,7 +463,7 @@ void pl_smove04()
         
         if ((int)(plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][2])
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -509,7 +509,7 @@ void pl_smove05()
         plp->mtn_no = basic_motion_pl[plp->mode1][1];
         break;
     case 1:
-        if ((plp->mnwP[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
+        if ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
         {
             plp->hokan_rate = 49152;
             plp->hokan_count = 4;
@@ -555,11 +555,11 @@ void pl_smove06()
         
         plp->flg &= ~0xC0000;
         
-        plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[plp->wpnr_no][((EXP_WORK*)plp->exp0)->dmlvl][2]].frm_num, plp->frm_no);
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[plp->wpnr_no][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][2]].frm_num, plp->frm_no);
         
         plp->flg &= ~0x800000;
         
-        plp->mtn_no = PlMtnAct[plp->wpnr_no][((EXP_WORK*)plp->exp0)->dmlvl][2];
+        plp->mtn_no = PlMtnAct[plp->wpnr_no][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][2];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 8;
@@ -570,7 +570,7 @@ void pl_smove06()
         
         plp->flg |= 0x200000;
     case 1:
-        plp->spd = 0.18f + fabsf(0.15f * njCos((plp->frm_no / 65536) * (65536 / plp->mnwP[plp->mtn_no].frm_num)));
+        plp->spd = 0.18f + fabsf(0.15f * njCos((plp->frm_no / 65536) * (65536 / P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num)));
 
         ct0 = plp->ct0;
         
@@ -578,14 +578,14 @@ void pl_smove06()
         
         if ((plp->frm_no / 65536) == 17) 
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
         }
         
         if ((plp->frm_no / 65536) == 35) 
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
         }
@@ -607,8 +607,8 @@ void pl_smove07()
     case 0:
         plp->flg &= ~0xC0000;
         
-        plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[plp->wpnr_no][((EXP_WORK*)plp->exp0)->dmlvl][3]].frm_num, plp->frm_no);
-        plp->mtn_no = PlMtnAct[plp->wpnr_no][((EXP_WORK*)plp->exp0)->dmlvl][3];
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[plp->wpnr_no][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3]].frm_num, plp->frm_no);
+        plp->mtn_no = PlMtnAct[plp->wpnr_no][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 4;
@@ -617,7 +617,7 @@ void pl_smove07()
         
         plp->mode3++;
     case 1:
-        plp->spd = 0.9f + fabsf(0.10f * njSin((plp->frm_no / 65536) * (65536 / plp->mnwP[plp->mtn_no].frm_num)));
+        plp->spd = 0.9f + fabsf(0.10f * njSin((plp->frm_no / 65536) * (65536 / P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num)));
 
         ct0 = plp->ct0;
         
@@ -625,14 +625,14 @@ void pl_smove07()
         
         if ((plp->frm_no / 65536) == 10) 
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 1, 1);
         }
         
         if ((plp->frm_no / 65536) == 0) 
         {
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 1, 1);
         }
@@ -672,12 +672,12 @@ void pl_smove08()
         
         if (plp->mode1 == 42) 
         {
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
         }
         
         break;
     case 1:
-        if ((plp->mnwP[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
+        if ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
         {
             plp->hokan_rate = 49152;
             plp->hokan_count = 4;

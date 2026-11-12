@@ -15,19 +15,19 @@ void npPlusInit()
     int i;
     int j;
     
-    np.buff = njpmemp; 
-    np.buff2 = njpmemp + 131072;
+    np.buff = S32(njpmemp); 
+    np.buff2 = S32(njpmemp + 131072);
     
-    np.bp = np.buff; 
-    np.bp2 = np.buff2; 
+    np.bp = S32(P32(unsigned char *, np.buff)); 
+    np.bp2 = S32(P32(unsigned char *, np.buff2)); 
     
     for (i = 0; i < 128; i++) 
     { 
         for (j = 0; j < 2; j++) 
         { 
-            np.mxp[i][j] = (NJS_MATRIX*)np.bp; 
+            np.mxp[i][j] = S32((NJS_MATRIX*)P32(unsigned char *, np.bp)); 
             
-            np.bp += sizeof(NJS_MATRIX);  
+            P32_ADD(unsigned char *, np.bp ,  sizeof(NJS_MATRIX));  
         } 
     } 
 } 
@@ -644,18 +644,18 @@ void npDrawPlane(NJS_POINT3* ps0, NJS_POINT3* ps1, NJS_POINT3* ps2, NJS_POINT3* 
         argb = 0x80808080; 
     }
     
-    p3c.p = p3;
+    p3c.p = S32(p3);
     
-    p3c.col = col;
+    p3c.col = S32(col);
     
-    p3c.tex = NULL;
+    p3c.tex = S32(NULL);
     
     p3c.num = 1;
     
-    ((int*)&p3c.col->color)[0] = argb;
-    ((int*)&p3c.col->color)[1] = argb;
-    ((int*)&p3c.col->color)[2] = argb; 
-    ((int*)&p3c.col->color)[3] = argb;
+    ((int*)&P32(NJS_COLOR *, p3c.col)->color)[0] = argb;
+    ((int*)&P32(NJS_COLOR *, p3c.col)->color)[1] = argb;
+    ((int*)&P32(NJS_COLOR *, p3c.col)->color)[2] = argb; 
+    ((int*)&P32(NJS_COLOR *, p3c.col)->color)[3] = argb;
     
     p3[0].x = ps0->x;
     p3[0].y = ps0->y;
@@ -685,25 +685,25 @@ void npCalcMorphing(NJS_CNK_OBJECT* obj_a, NJS_CNK_OBJECT* obj_b, float no, int 
     
     njPushMatrix(NULL);
     
-    np.mxp[128][2] = np.mxp[128][1];
+    np.mxp[128][2] = S32(P32(NJS_MATRIX *, np.mxp[128][1]));
 
     for (i = 0; i < obj_n; i++, obj_a++, obj_b++) 
     {
-        if ((obj_a->model != NULL) && (!(obj_a->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, obj_a->model) != NULL) && (!(obj_a->evalflags & 0x8))) 
         {
             obj_a->pos[0] = (no * (0.001f * (obj_b->pos[0] - obj_a->pos[0]))) + obj_a->pos[0];
             obj_a->pos[1] = (no * (0.001f * (obj_b->pos[1] - obj_a->pos[1]))) + obj_a->pos[1];
             obj_a->pos[2] = (no * (0.001f * (obj_b->pos[2] - obj_a->pos[2]))) + obj_a->pos[2];
 
-            nb = ((unsigned short*)obj_a->model->vlist)[3];
+            nb = ((unsigned short*)P32(int *, P32(NJS_CNK_MODEL *, obj_a->model)->vlist))[3];
 
-            np.vlp2[i] = (int*)np.mxp[128][2]; 
+            np.vlp2[i] = S32((int*)P32(NJS_MATRIX *, np.mxp[128][2])); 
             
             ulSize = (nb * 32) + 76;
             
             ulSize += 64 - (ulSize & 0x3F);
             
-            np.mxp[128][2] = (NJS_MATRIX*)PS2_HOST(((int)PS2_ADDR(np.mxp[128][2]) + ulSize));
+            np.mxp[128][2] = S32((NJS_MATRIX*)PS2_HOST(((int)PS2_ADDR(P32(NJS_MATRIX *, np.mxp[128][2])) + ulSize)));
             
             npTransform(obj_a, obj_b, no, i);
         }
@@ -722,8 +722,8 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
     HDR_PS* pSrc;
     HDR_PS* pDst; 
 
-    pSrc = (HDR_PS*)srcobj->model->vlist; 
-    fp = (NJS_POINT4*)dstobj->model->vlist; 
+    pSrc = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, srcobj->model)->vlist); 
+    fp = (NJS_POINT4*)P32(int *, P32(NJS_CNK_MODEL *, dstobj->model)->vlist); 
 
     s_nb = pSrc->usIndexMax; 
 
@@ -734,7 +734,7 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
 
     sp = (NJS_POINT4*)(pSrc + 1); 
     dp = (NJS_POINT4*)((HDR_PS*)fp + 1); 
-    fp = (NJS_POINT4*)np.vlp2[ono]; 
+    fp = (NJS_POINT4*)P32(int *, np.vlp2[ono]); 
 
     fp = (NJS_POINT4*)PS2_HOST(((int)PS2_ADDR(fp) | 0x30000000)); 
 
@@ -850,7 +850,7 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
 
     ((HDR_PS*)fp)->ucType = 0xFF; 
 
-    srcobj->model->vlist = np.vlp2[ono]; 
+    P32(NJS_CNK_MODEL *, srcobj->model)->vlist = S32(P32(int *, np.vlp2[ono])); 
 } 
 
 // 100% matching!
@@ -860,9 +860,9 @@ void npPushMdlstr(NJS_CNK_OBJECT* objp, int obj_n)
     
     for (i = 0; i < obj_n; i++, objp++) 
     {
-        if (objp->model != NULL) 
+        if (P32(NJS_CNK_MODEL *, objp->model) != NULL) 
         {
-            np.vlist[i] = objp->model->vlist;
+            np.vlist[i] = S32(P32(int *, P32(NJS_CNK_MODEL *, objp->model)->vlist));
         } 
     } 
 }
@@ -874,9 +874,9 @@ void npPopMdlstr(NJS_CNK_OBJECT* objp, int obj_n)
     
     for (i = 0; i < obj_n; i++, objp++) 
     {
-        if (objp->model != NULL) 
+        if (P32(NJS_CNK_MODEL *, objp->model) != NULL) 
         {
-            objp->model->vlist = np.vlist[i];
+            P32(NJS_CNK_MODEL *, objp->model)->vlist = S32(P32(int *, np.vlist[i]));
         } 
     } 
 }
@@ -888,14 +888,14 @@ void npPushMdlstr2(NJS_CNK_OBJECT* objp, int obj_n)
     
     for (i = 0; i < obj_n; i++, objp++) 
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
             np.mdlstr2[i].pos[0] = objp->pos[0];
             np.mdlstr2[i].pos[1] = objp->pos[1];
             np.mdlstr2[i].pos[2] = objp->pos[2];
             
-            np.mdlstr2[i].vlist = objp->model->vlist;
-            np.mdlstr2[i].plist = objp->model->plist;
+            np.mdlstr2[i].vlist = S32(P32(int *, P32(NJS_CNK_MODEL *, objp->model)->vlist));
+            np.mdlstr2[i].plist = S32(P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist));
         } 
     } 
 }
@@ -907,14 +907,14 @@ void npPopMdlstr2(NJS_CNK_OBJECT* objp, int obj_n)
     
     for (i = 0; i < obj_n; i++, objp++) 
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
             objp->pos[0] = np.mdlstr2[i].pos[0];
             objp->pos[1] = np.mdlstr2[i].pos[1];
             objp->pos[2] = np.mdlstr2[i].pos[2];
             
-            objp->model->vlist = np.mdlstr2[i].vlist;
-            objp->model->plist = np.mdlstr2[i].plist;
+            P32(NJS_CNK_MODEL *, objp->model)->vlist = S32(P32(int *, np.mdlstr2[i].vlist));
+            P32(NJS_CNK_MODEL *, objp->model)->plist = S32(P32(short *, np.mdlstr2[i].plist));
         } 
     } 
 }
@@ -926,9 +926,9 @@ void npCnkFlatOff(NJS_CNK_OBJECT* objp)
     short* plP;
     short head; 
 
-    if (objp->model != NULL) 
+    if (P32(NJS_CNK_MODEL *, objp->model) != NULL) 
     {
-        plP = objp->model->plist;
+        plP = P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist);
         
         while (TRUE)
         {
@@ -962,14 +962,14 @@ void npCnkFlatOff(NJS_CNK_OBJECT* objp)
         }
     }
     
-    if (objp->child != NULL) 
+    if (P32(struct cnkobj *, objp->child) != NULL) 
     {
-        npCnkFlatOff(objp->child);
+        npCnkFlatOff(P32(struct cnkobj *, objp->child));
     }
     
-    if (objp->sibling != NULL) 
+    if (P32(struct cnkobj *, objp->sibling) != NULL) 
     {
-        npCnkFlatOff(objp->sibling);
+        npCnkFlatOff(P32(struct cnkobj *, objp->sibling));
     }
 }
 
@@ -1027,9 +1027,9 @@ void npGetWHDSizeSub(NJS_CNK_OBJECT* objp, NJS_POINT3* whd)
     
     njRotateXYZ(NULL, objp->ang[0], objp->ang[1], objp->ang[2]);
     
-    if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+    if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
     { 
-        pHdrPs = (HDR_PS*)objp->model->vlist;
+        pHdrPs = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, objp->model)->vlist);
         
         if (pHdrPs->ucType == 51)
         {
@@ -1085,16 +1085,16 @@ void npGetWHDSizeSub(NJS_CNK_OBJECT* objp, NJS_POINT3* whd)
         }
     }
     
-    if (objp->child != NULL) 
+    if (P32(struct cnkobj *, objp->child) != NULL) 
     {
-        npGetWHDSizeSub(objp->child, whd);
+        npGetWHDSizeSub(P32(struct cnkobj *, objp->child), whd);
     }
     
     njPopMatrix(1);
     
-    if (objp->sibling != NULL) 
+    if (P32(struct cnkobj *, objp->sibling) != NULL) 
     {
-        npGetWHDSizeSub(objp->sibling, whd);
+        npGetWHDSizeSub(P32(struct cnkobj *, objp->sibling), whd);
     }
 }
 
@@ -1120,25 +1120,25 @@ void npSkinConvPreparation(NJS_CNK_OBJECT* objp)
     
     if (!(objp->evalflags & 0x20000000)) 
     {
-        flg = *np.sknp++;
+        flg = *P32_POSTINC(int *, np.sknp);
         
         if (flg != 0) 
         {
             if ((flg & 0x2)) 
             {
-                mno = *np.sknp++;
+                mno = *P32_POSTINC(int *, np.sknp);
                 
-                nb = *np.sknp++;
+                nb = *P32_POSTINC(int *, np.sknp);
 
-                np.cobj[mno] = objp;
+                np.cobj[mno] = S32(objp);
                 
-                np.sktp[mno] = np.sknp;
+                np.sktp[mno] = S32(P32(int *, np.sknp));
                 
-                np.sknp += nb;
+                P32_ADD(int *, np.sknp ,  nb);
             } 
             else 
             {
-                mno = *np.sknp++;
+                mno = *P32_POSTINC(int *, np.sknp);
             }
         }
         
@@ -1150,16 +1150,16 @@ void npSkinConvPreparation(NJS_CNK_OBJECT* objp)
         }
     }
     
-    if (objp->child != NULL)
+    if (P32(struct cnkobj *, objp->child) != NULL)
     {
-        npSkinConvPreparation(objp->child);
+        npSkinConvPreparation(P32(struct cnkobj *, objp->child));
     }
     
     njPopMatrix(1);
     
-    if (objp->sibling != NULL) 
+    if (P32(struct cnkobj *, objp->sibling) != NULL) 
     {
-        npSkinConvPreparation(objp->sibling);
+        npSkinConvPreparation(P32(struct cnkobj *, objp->sibling));
     }
 }
 
@@ -1179,7 +1179,7 @@ void npSkinConvSub(NJS_CNK_OBJECT* objp)
     unsigned short max; // not from the debugging symbols
     float x, y, z; // not from the debugging symbols
 
-    flg = *np.sknp++;
+    flg = *P32_POSTINC(int *, np.sknp);
     
     if (flg != 0) 
     {
@@ -1187,18 +1187,18 @@ void npSkinConvSub(NJS_CNK_OBJECT* objp)
         {
             objp->evalflags |= 0x80000000;
             
-            mno = *np.sknp++;
+            mno = *P32_POSTINC(int *, np.sknp);
             
-            nb = *np.sknp++;
+            nb = *P32_POSTINC(int *, np.sknp);
             
-            np.sknp = &np.sknp[nb];
+            np.sknp = S32(&P32(int *, np.sknp)[nb]);
         } 
         else 
         {
-            mno = *np.sknp++;
+            mno = *P32_POSTINC(int *, np.sknp);
         }
         
-        skp = np.sktp[mno];
+        skp = P32(int *, np.sktp[mno]);
     }
     
     njTranslate(NULL, objp->pos[0], objp->pos[1], objp->pos[2]);
@@ -1212,7 +1212,7 @@ void npSkinConvSub(NJS_CNK_OBJECT* objp)
     
     if ((flg & 0x1))
     {
-        pHdr = (HDR_PS*)np.cobj[mno]->model->vlist;
+        pHdr = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, P32(NJS_CNK_OBJECT *, np.cobj[mno])->model)->vlist);
         
         max = pHdr->usIndexMax;
         
@@ -1255,29 +1255,29 @@ void npSkinConvMain(NJS_CNK_OBJECT* objp)
         np.obj_now++;
     }
     
-    if (objp->child != NULL) 
+    if (P32(struct cnkobj *, objp->child) != NULL) 
     {
-        npSkinConvMain(objp->child);
+        npSkinConvMain(P32(struct cnkobj *, objp->child));
     }
     
     njPopMatrix(1);
     
-    if (objp->sibling != NULL) 
+    if (P32(struct cnkobj *, objp->sibling) != NULL) 
     {
-        npSkinConvMain(objp->sibling);
+        npSkinConvMain(P32(struct cnkobj *, objp->sibling));
     }
 }
 
 // 100% matching!
 void npSkinConvert(NJS_CNK_OBJECT* objp, int* sknp)
 {
-    np.sknp = sknp;
+    np.sknp = S32(sknp);
     
     njUnitMatrix(NULL);
     
     npSkinConvPreparation(objp);
     
-    np.sknp = sknp;
+    np.sknp = S32(sknp);
     
     np.obj_now = 0;
     
@@ -1305,24 +1305,24 @@ void npRetSkinConvMain(NJS_CNK_OBJECT* objp)
     
     if (!(objp->evalflags & 0x20000000)) 
     {
-        flg = *np.sknp++;
+        flg = *P32_POSTINC(int *, np.sknp);
         
         if (flg != 0) 
         {
             if ((flg & 0x2)) 
             {
-                mno = *np.sknp++;
+                mno = *P32_POSTINC(int *, np.sknp);
                 
-                nb = *np.sknp++;
+                nb = *P32_POSTINC(int *, np.sknp);
                 
-                np.sknp = &np.sknp[nb];
+                np.sknp = S32(&P32(int *, np.sknp)[nb]);
             }
             else 
             {
-                mno = *np.sknp++;
+                mno = *P32_POSTINC(int *, np.sknp);
             }
             
-            skp = np.sktp[mno];
+            skp = P32(int *, np.sktp[mno]);
         }
         
         njTranslate(NULL, objp->pos[0], objp->pos[1], objp->pos[2]);
@@ -1336,7 +1336,7 @@ void npRetSkinConvMain(NJS_CNK_OBJECT* objp)
         
         if ((flg & 0x1)) 
         {
-            pHdr = (HDR_PS*)np.cobj[mno]->model->vlist;
+            pHdr = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, P32(NJS_CNK_OBJECT *, np.cobj[mno])->model)->vlist);
             
             max = pHdr->usIndexMax;
             
@@ -1365,29 +1365,29 @@ void npRetSkinConvMain(NJS_CNK_OBJECT* objp)
         np.obj_now++;
     }
     
-    if (objp->child != NULL) 
+    if (P32(struct cnkobj *, objp->child) != NULL) 
     {
-        npRetSkinConvMain(objp->child);
+        npRetSkinConvMain(P32(struct cnkobj *, objp->child));
     }
     
     njPopMatrix(1);
     
-    if (objp->sibling != NULL) 
+    if (P32(struct cnkobj *, objp->sibling) != NULL) 
     {
-        npRetSkinConvMain(objp->sibling);
+        npRetSkinConvMain(P32(struct cnkobj *, objp->sibling));
     }
 }
 
 // 100% matching!
 void npRetSkinConvert(NJS_CNK_OBJECT* objp, int* sknp) 
 {
-    np.sknp = sknp;
+    np.sknp = S32(sknp);
     
     njUnitMatrix(NULL);
     
     npSkinConvPreparation(objp);
     
-    np.sknp = sknp;
+    np.sknp = S32(sknp);
     
     np.obj_now = 0;
     
@@ -1404,9 +1404,9 @@ unsigned int npGetMatColor(NJS_CNK_OBJECT* objp, int obj_n)
 
     for (i = 0; i < obj_n; i++, objp++) 
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
-            pnt = (unsigned int*)objp->model->plist;
+            pnt = (unsigned int*)P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist);
         
             return *++pnt;
         }
@@ -1435,9 +1435,9 @@ void npSetAllMatColor(NJS_CNK_OBJECT* objp, int obj_n, unsigned int argb)
     
     for (i = 0; i < obj_n; i++, objp++)
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
-            plp = objp->model->plist;
+            plp = P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist);
             
             while (TRUE) 
             {
@@ -1520,9 +1520,9 @@ void npChangeMatAlphaColor(NJS_CNK_OBJECT* objp, int obj_n, unsigned char alpha)
     
     for (i = 0; i < obj_n; i++, objp++)
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
-            pnt = (unsigned char*)objp->model->plist;
+            pnt = (unsigned char*)P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist);
 
             pnt += 7;
             
@@ -1546,9 +1546,9 @@ void npSetAllMatAlphaColor(NJS_CNK_OBJECT* objp, int obj_n, unsigned char alpha)
     
     for (i = 0; i < obj_n; i++, objp++)
     {
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8))) 
         {
-            plp = objp->model->plist;
+            plp = P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist);
             
             while (TRUE) 
             {
@@ -1613,7 +1613,7 @@ void npSetOffsetUV(NJS_CNK_MODEL* mdlp, short offu, short offv)
     short head; 
     short* plp;  
 
-    plp = mdlp->plist; 
+    plp = P32(short *, mdlp->plist); 
     
     while (TRUE) 
     {
@@ -1743,7 +1743,7 @@ void npSetOffsetUV2(NJS_CNK_MODEL* mdlp, short offu, short offv)
     short head; 
     short* plp;  
 
-    plp = mdlp->plist; 
+    plp = P32(short *, mdlp->plist); 
     
     while (TRUE) 
     {
@@ -1887,41 +1887,41 @@ void npInitCalcSkin(void* pwp, int obj_n, int* sknp)
     unsigned int ulSize;    
 	unsigned char matb[64]; 
 
-    owp = ((BH_PWORK*)pwp)->mlwP->owP; 
+    owp = P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)pwp)->mlwP)->owP); 
     
-    np.bp = np.buff + (obj_n * 128); 
+    np.bp = S32(P32(unsigned char *, np.buff) + (obj_n * 128)); 
     
     njUnitMatrix(NULL);
     
-    np.sknp = sknp; 
+    np.sknp = S32(sknp); 
     
-    op = ((BH_PWORK*)pwp)->mlwP->objP; 
+    op = P32(struct cnkobj *, P32(struct ML_WORK *, ((BH_PWORK*)pwp)->mlwP)->objP); 
     
     for (i = 0; i < obj_n; i++, op++, owp++)
     { 
-        flg = *np.sknp++;
+        flg = *P32_POSTINC(int *, np.sknp);
         
         if (flg != 0) 
         { 
             if ((flg & 0x2)) 
             { 
-                mno = *np.sknp++;
+                mno = *P32_POSTINC(int *, np.sknp);
                 
-                nb = *np.sknp++; 
+                nb = *P32_POSTINC(int *, np.sknp); 
                 
-                np.sknp += nb; 
+                P32_ADD(int *, np.sknp ,  nb); 
                 
-                np.vlp[mno] = (int*)np.bp;
+                np.vlp[mno] = S32((int*)P32(unsigned char *, np.bp));
                 
                 ulSize = (nb * 32) + 32;
                 
                 ulSize += 64 - (ulSize & 0x3F); 
                 
-                np.bp += ulSize; 
+                P32_ADD(unsigned char *, np.bp ,  ulSize); 
             } 
             else 
             { 
-                np.sknp++; 
+                P32_POSTINC(int *, np.sknp); 
             }
             
 #ifndef TARGET_PC
@@ -1987,7 +1987,7 @@ void npInitCalcSkin(void* pwp, int obj_n, int* sknp)
             }
 #endif
                 
-            njRotXYZ(np.mxp[i][0], -op->ang[0], -op->ang[1], -op->ang[2]); 
+            njRotXYZ(P32(NJS_MATRIX *, np.mxp[i][0]), -op->ang[0], -op->ang[1], -op->ang[2]); 
         }
     } 
 } 
@@ -2014,27 +2014,27 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
 
         npInitCalcSkin(pwp, obj_n, sknp); 
         
-        np.sknp = sknp; 
+        np.sknp = S32(sknp); 
         
-        op = (NJS_CNK_OBJECT*)((O_WRK*)pwp)->mlwP->objP; 
+        op = (NJS_CNK_OBJECT*)P32(struct cnkobj *, P32(struct ML_WORK *, ((O_WRK*)pwp)->mlwP)->objP); 
         
         for (i = 0; i < obj_n; i++, op++) 
         { 
-            flg = *np.sknp++; 
+            flg = *P32_POSTINC(int *, np.sknp); 
             
             if (flg != 0) 
             { 
                 if ((flg & 0x2)) 
                 { 
-                    pHdr0 = (HDR_PS*)op->model->vlist;
+                    pHdr0 = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, op->model)->vlist);
                     
-                    rg0 = *np.sknp++; 
+                    rg0 = *P32_POSTINC(int *, np.sknp); 
                     
-                    op->model->vlist = np.vlp[rg0]; 
+                    P32(NJS_CNK_MODEL *, op->model)->vlist = S32(P32(int *, np.vlp[rg0])); 
                     
-                    pHdr1 = (HDR_PS*)np.vlp[rg0]; 
+                    pHdr1 = (HDR_PS*)P32(int *, np.vlp[rg0]); 
                     
-                    nb = *np.sknp++;
+                    nb = *P32_POSTINC(int *, np.sknp);
     
                     pHdr1 = (HDR_PS*)PS2_HOST(((int)PS2_ADDR(pHdr1) | 0x30000000)); 
     
@@ -2051,7 +2051,7 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
     
                     for (j = 0; j < nb; j++) 
                     { 
-                        rg0 = *np.sknp++; 
+                        rg0 = *P32_POSTINC(int *, np.sknp); 
                         
                         lv = level[(rg0 >> 16) & 0xFF]; 
                         
@@ -2292,7 +2292,7 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                 } 
                 else 
                 { 
-                    np.sknp++;
+                    P32_POSTINC(int *, np.sknp);
                 } 
             }
         } 
@@ -2314,43 +2314,43 @@ void npInitCalcSkinFM(void* pwp, int obj_n, int* sknp)
     unsigned int ulSize;    
 	unsigned char matb[64]; 
 
-    owp = ((BH_PWORK*)pwp)->mlwP->owP; 
+    owp = P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)pwp)->mlwP)->owP); 
     
-    np.bp = np.buff + (obj_n * 128); 
+    np.bp = S32(P32(unsigned char *, np.buff) + (obj_n * 128)); 
     
     njUnitMatrix(NULL);
     
-    np.sknp = sknp; 
+    np.sknp = S32(sknp); 
     
-    op = ((BH_PWORK*)pwp)->mlwP->objP; 
+    op = P32(struct cnkobj *, P32(struct ML_WORK *, ((BH_PWORK*)pwp)->mlwP)->objP); 
     
     for (i = 0; i < obj_n; i++, op++, owp++)
     { 
         if ((i < 11) || (i > 14))
         {
-            flg = *np.sknp++;
+            flg = *P32_POSTINC(int *, np.sknp);
         
             if (flg != 0) 
             { 
                 if ((flg & 0x2)) 
                 { 
-                    mno = *np.sknp++;
+                    mno = *P32_POSTINC(int *, np.sknp);
                     
-                    nb = *np.sknp++; 
+                    nb = *P32_POSTINC(int *, np.sknp); 
                     
-                    np.sknp += nb; 
+                    P32_ADD(int *, np.sknp ,  nb); 
                     
-                    np.vlp[mno] = (int*)np.bp;
+                    np.vlp[mno] = S32((int*)P32(unsigned char *, np.bp));
                     
                     ulSize = (nb * 32) + 96;
                     
                     ulSize += 64 - (ulSize & 0x3F); 
                     
-                    np.bp += ulSize; 
+                    P32_ADD(unsigned char *, np.bp ,  ulSize); 
                 } 
                 else 
                 { 
-                    np.sknp++; 
+                    P32_POSTINC(int *, np.sknp); 
                 }
                 
 #ifndef TARGET_PC
@@ -2416,7 +2416,7 @@ void npInitCalcSkinFM(void* pwp, int obj_n, int* sknp)
                 }
 #endif
                     
-                njRotXYZ(np.mxp[i][0], -op->ang[0], -op->ang[1], -op->ang[2]); 
+                njRotXYZ(P32(NJS_MATRIX *, np.mxp[i][0]), -op->ang[0], -op->ang[1], -op->ang[2]); 
             }
         }
     } 
@@ -2444,29 +2444,29 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
 
         npInitCalcSkinFM(pwp, obj_n, sknp); 
         
-        np.sknp = sknp; 
+        np.sknp = S32(sknp); 
         
-        op = (NJS_CNK_OBJECT*)((O_WRK*)pwp)->mlwP->objP; 
+        op = (NJS_CNK_OBJECT*)P32(struct cnkobj *, P32(struct ML_WORK *, ((O_WRK*)pwp)->mlwP)->objP); 
         
         for (i = 0; i < obj_n; i++, op++) 
         { 
             if ((i < 11) || (i > 14))
             {
-                flg = *np.sknp++; 
+                flg = *P32_POSTINC(int *, np.sknp); 
                 
                 if (flg != 0) 
                 { 
                     if ((flg & 0x2)) 
                     { 
-                        pHdr0 = (HDR_PS*)op->model->vlist;
+                        pHdr0 = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, op->model)->vlist);
                         
-                        rg0 = *np.sknp++; 
+                        rg0 = *P32_POSTINC(int *, np.sknp); 
                         
-                        op->model->vlist = np.vlp[rg0]; 
+                        P32(NJS_CNK_MODEL *, op->model)->vlist = S32(P32(int *, np.vlp[rg0])); 
                         
-                        pHdr1 = (HDR_PS*)np.vlp[rg0]; 
+                        pHdr1 = (HDR_PS*)P32(int *, np.vlp[rg0]); 
                         
-                        nb = *np.sknp++;
+                        nb = *P32_POSTINC(int *, np.sknp);
         
                         pHdr1 = (HDR_PS*)PS2_HOST(((int)PS2_ADDR(pHdr1) | 0x30000000)); 
         
@@ -2483,7 +2483,7 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
         
                         for (j = 0; j < nb; j++) 
                         { 
-                            rg0 = *np.sknp++; 
+                            rg0 = *P32_POSTINC(int *, np.sknp); 
                             
                             lv = level[(rg0 >> 16) & 0xFF]; 
                             
@@ -2729,7 +2729,7 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
                     } 
                     else 
                     { 
-                        np.sknp++;
+                        P32_POSTINC(int *, np.sknp);
                     } 
                 }
             }

@@ -48,11 +48,11 @@ typedef struct TYP_WORK
     short cur_cnt[4];           // offset 0x2AA, size 0x8
     short cur_flg[4];           // offset 0x2B2, size 0x8
     short vmsretry;             // offset 0x2BA, size 0x2
-    unsigned char* savemem;     // offset 0x2BC, size 0x4
+    ps2ptr_t savemem; /* unsigned char* savemem */     // offset 0x2BC, size 0x4
     char mestype;               // offset 0x2C0, size 0x1
     unsigned char dirbuf[4][2]; // offset 0x2C1, size 0x8
-    unsigned char* mountbuf;    // offset 0x2CC, size 0x4
-    unsigned char* mountbak;    // offset 0x2D0, size 0x4
+    ps2ptr_t mountbuf; /* unsigned char* mountbuf */    // offset 0x2CC, size 0x4
+    ps2ptr_t mountbak; /* unsigned char* mountbak */    // offset 0x2D0, size 0x4
     unsigned int version;       // offset 0x2D4, size 0x4
     int save_ct;                // offset 0x2D8, size 0x4
     char ply_id;                // offset 0x2DC, size 0x1

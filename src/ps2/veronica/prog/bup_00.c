@@ -57,7 +57,7 @@ void ControlTypewriter()
 // 100% matching! 
 void TypewriterKeepMemory()
 {
-    sys->typ_exp = bhGetFreeMemory(800, 32);
+    sys->typ_exp = S32(bhGetFreeMemory(800, 32));
 }
 
 // 100% matching! 
@@ -71,11 +71,11 @@ void CountDisplay(int disppoint, NJS_POINT2* pos, unsigned int col, int param) /
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(0);
     
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col_;
+    p2c.col = S32(col_);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
     
@@ -188,12 +188,12 @@ void TypeWriterTextureInit()
     unsigned char* datp; 
     unsigned int dt;     
     
-    tw = sys->typ_exp;
+    tw = P32(void *, sys->typ_exp);
     
     switch (tw->mode_00)
     {
     case 0:
-        sys->sbs_sp = sys->memp;
+        sys->sbs_sp = S32(P32(unsigned char *, sys->memp));
         
         if ((sys->ss_flg & 0x200))
         {
@@ -203,15 +203,15 @@ void TypeWriterTextureInit()
             
             if (sz != 0)
             {
-                sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
+                sys->memp = S32((unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((P32(unsigned char *, sys->memp) + 63)) & ~0x3F)));
                 
-                RequestReadIsoFile("sysmes.ald", sys->memp);
+                RequestReadIsoFile("sysmes.ald", P32(unsigned char *, sys->memp));
                 
-                sys->mes_ip = (unsigned int*)sys->memp;
+                sys->mes_ip = S32((unsigned int*)P32(unsigned char *, sys->memp));
                 
-                sys->memp += sz;
+                P32_ADD(unsigned char *, sys->memp ,  sz);
                 
-                sys->doordp = bhGetFreeMemory(172032, 32);
+                sys->doordp = S32(bhGetFreeMemory(172032, 32));
                 
                 tw->mode_00 = 1;
             }
@@ -225,17 +225,17 @@ void TypeWriterTextureInit()
     case 1:
         if (GetReadFileStatus() == 0)
         {
-            datp = (unsigned char*)sys->mes_ip;
+            datp = (unsigned char*)P32(unsigned int *, sys->mes_ip);
             
-            dt = *sys->mes_ip; 
+            dt = *P32(unsigned int *, sys->mes_ip); 
             
             datp += 4; 
             
-            sys->mes_ip = (unsigned int*)datp; 
+            sys->mes_ip = S32((unsigned int*)datp); 
             
             datp += dt; 
             
-            sys->mes_sp = (unsigned int*)(datp + 4);
+            sys->mes_sp = S32((unsigned int*)(datp + 4));
             
             tw->mode_00 = 2;
         }
@@ -244,9 +244,9 @@ void TypeWriterTextureInit()
     case 2:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0))
         {
-            sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((P32(unsigned char *, sys->memp) + 63)) & ~0x3F)));
             
-            RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
+            RequestReadInsideFile(sys->sys_partid, 1, P32(unsigned char *, sys->memp));
             
             tw->mode_00 = 3;
         }
@@ -255,7 +255,7 @@ void TypeWriterTextureInit()
     case 3:
         if (GetReadFileStatus() == 0)
         {
-            bhSetFontTexture(sys->memp);
+            bhSetFontTexture(P32(unsigned char *, sys->memp));
             
             tw->mode_00 = 4;
         }
@@ -266,11 +266,11 @@ void TypeWriterTextureInit()
         {
             if (GetReadFileStatus() != 1)
             {
-                sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
+                sys->memp = S32((unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((P32(unsigned char *, sys->memp) + 63)) & ~0x3F)));
                 
-                if (rom->mdl.texP != NULL)
+                if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)
                 {
-                    sys->memp = (unsigned char*)bhCopyTexmem2MainmemSub(rom->mdl.texP, (char*)sys->memp);
+                    sys->memp = S32((unsigned char*)bhCopyTexmem2MainmemSub(P32(NJS_TEXLIST *, rom->mdl.texP), (char*)P32(unsigned char *, sys->memp)));
                 }
                 
                 tw->mode_00 = 5;
@@ -285,11 +285,11 @@ void TypeWriterTextureInit()
     case 5:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->itm_partid, 144) != 0))
         {
-            sys->memp = (unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((sys->memp + 63)) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST(((unsigned int)PS2_ADDR((P32(unsigned char *, sys->memp) + 63)) & ~0x3F)));
             
-            RequestReadInsideFile(sys->itm_partid, 144, sys->memp);
+            RequestReadInsideFile(sys->itm_partid, 144, P32(unsigned char *, sys->memp));
             
-            sys->subtxp = sys->memp;
+            sys->subtxp = S32(P32(unsigned char *, sys->memp));
             
             tw->mode_00 = 6;
         }
@@ -305,9 +305,9 @@ void TypeWriterTextureInit()
         
         if ((GetReadFileStatus() == 0) && (!(sys->cb_flg & 0x2)))
         {
-            if ((!(sys->ss_flg & 0x200)) && (rom->mdl.texP != NULL))
+            if ((!(sys->ss_flg & 0x200)) && (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL))
             {
-                njReleaseTexture(rom->mdl.texP);
+                njReleaseTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
                 
                 bhGarbageTexture(NULL, 0);
             }
@@ -321,11 +321,11 @@ void TypeWriterTextureInit()
     case 7:
         njSetPaletteMode(6);
         
-        tw->twtx_list.textures = (void*)tw;
+        tw->twtx_list.textures = S32((void*)tw);
         
         tw->twtx_list.nbTexture = 3;
         
-        bhSetMemPvpTexture(&tw->twtx_list, sys->subtxp, 0);
+        bhSetMemPvpTexture(&tw->twtx_list, P32(unsigned char *, sys->subtxp), 0);
         
         tw->mode_00 = 8;
         break;
@@ -420,7 +420,7 @@ void TypewriterExit()
 {
     TYP_WORK* tw;
 
-    tw = sys->typ_exp;
+    tw = P32(void *, sys->typ_exp);
     
     if ((sys->ss_flg & 0x200)) 
     {
@@ -445,7 +445,7 @@ void TypewriterExit()
         sys->ss_flg &= ~0x20000;
         sys->ss_flg &= ~0x10000;
         
-        sys->memp = sys->sbs_sp;
+        sys->memp = S32(P32(unsigned char *, sys->sbs_sp));
         
         tw->mode_00 = 0;
     }
@@ -480,9 +480,9 @@ void TypewriterExit()
             
             break;
         case 1:
-            if (rom->mdl.texP != NULL) 
+            if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
             {
-                bhCopyMainmem2Texmem(rom->mdl.texP);
+                bhCopyMainmem2Texmem(P32(NJS_TEXLIST *, rom->mdl.texP));
             }
             
             njSetPaletteMode(2);
@@ -491,7 +491,7 @@ void TypewriterExit()
             
             sys->gm_flg |= 0x4;
             
-            sys->memp = sys->sbs_sp;
+            sys->memp = S32(P32(unsigned char *, sys->sbs_sp));
             
             sys->sp_flg = -1;
             

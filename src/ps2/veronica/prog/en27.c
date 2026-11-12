@@ -44,7 +44,7 @@ void bhEne27(BH_PWORK* epw)
     
     if (epw->mode2 > 1) 
     {
-        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         
         bhEne27_CallSE(epw); 
     }
@@ -58,12 +58,12 @@ void bhEne27_Init(BH_PWORK* epw)
     int flr_n;         
     NJS_MKEY_F_MOD* mkfP; 
     
-    epw->mnwP = (MN_WORK*)sys->plmthp;
-    epw->mlwP = &plp->mdl[6];
+    epw->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
+    epw->mlwP = S32(&plp->mdl[6]);
     
     epw->mdl_no = 0;
     
-    epw->skp[8] = plp->skp[7];
+    epw->skp[8] = S32(P32(int *, plp->skp[7]));
     
     epw->flg &= ~0x6;
     
@@ -81,7 +81,7 @@ void bhEne27_Init(BH_PWORK* epw)
     
     epw->flg |= 0x80;
     
-    epw->lkwkp = (unsigned char*)plp;
+    epw->lkwkp = S32((unsigned char*)plp);
     epw->lkono = 3;
     
     if (epw->mode2 == 0) 
@@ -92,7 +92,7 @@ void bhEne27_Init(BH_PWORK* epw)
         {
             if (i < rom->flr_n)
             {
-                fp = &rom->flrp[i];
+                fp = &P32(struct ATR_WORK *, rom->flrp)[i];
             } 
             else
             {
@@ -120,7 +120,7 @@ void bhEne27_Init(BH_PWORK* epw)
     
     epw->frm_no = 0;
     
-    mkfP = epw->mnwP[epw->mtn_no].md2P->p[0];
+    mkfP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]);
     
     epw->lox = mkfP->key[0];
     epw->loy = mkfP->key[1];
@@ -199,7 +199,7 @@ void bhEne27_MV01(BH_PWORK* epw)
     switch (epw->mode3) 
     {
     case 0:
-        epw->mlwP = &plp->mdl[7];
+        epw->mlwP = S32(&plp->mdl[7]);
             
         epw->mdl_no = 8;
             
@@ -248,7 +248,7 @@ void bhEne27_MV02(BH_PWORK* epw)
         epw->mtn_no = epw->type + 93;
         epw->frm_no = 0;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
         epw->ct1 = 0;
         
         epw->mode3++;
@@ -281,7 +281,7 @@ void bhEne27_MV02(BH_PWORK* epw)
                 epw->mtn_no = 96;
                 epw->frm_no = 0;
                 
-                epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+                epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
                 
                 epw->mode3 = 2;
                 
@@ -341,7 +341,7 @@ void bhEne27_MV02(BH_PWORK* epw)
             plp->dvy = -1.0f;
             plp->dvz = njCos(plp->ay);
             
-            bhEne_SetBloodEffectBurst(plp, 6, 4, (NJS_POINT3*)&epw->mlwP->owP->mtx[12], 1);
+            bhEne_SetBloodEffectBurst(plp, 6, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12], 1);
             
             StartVibrationEx(1, 9);
         }
@@ -423,7 +423,7 @@ void bhEne27_MV02(BH_PWORK* epw)
                 NJS_POINT3 p2; 
                 O_WORK* owk;  
                 
-                owk = epw->mlwP->owP;
+                owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
                 
                 p1.x = owk->mtx[12];
                 p1.y = owk->mtx[13];
@@ -511,7 +511,7 @@ void bhEne27_IncubateEffect(BH_PWORK* epw)
     
     sys->ef.ay = 0;
     
-    bhSetEffectTb(&sys->ef, (NJS_POINT3*)&epw->lox, epw->lkwkp, epw->lkono); 
+    bhSetEffectTb(&sys->ef, (NJS_POINT3*)&epw->lox, P32(unsigned char *, epw->lkwkp), epw->lkono); 
 }
 
 // 100% matching!

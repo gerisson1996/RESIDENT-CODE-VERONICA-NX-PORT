@@ -360,7 +360,7 @@ void Ps2AddPrim(unsigned long prim, void* dp, unsigned int num, unsigned int cli
             prim &= ~0x20000000000000; 
         }
         
-        if ((!(prim & 0x20000000000000)) && (((TIM2_PICTUREHEADER_EX*)(Ps2_now_tex->texinfo.texsurface.pSurface))->TpFlag != 0)) 
+        if ((!(prim & 0x20000000000000)) && (((TIM2_PICTUREHEADER_EX*)(P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface)))->TpFlag != 0)) 
         { 
             Ps2_tex_load_tp_cancel = 1; 
             
@@ -569,7 +569,7 @@ void Ps2AddPrim3D(unsigned long prim, void* dp, unsigned int num)
         
         if (!(prim & 0x20000000000000)) 
         {
-            timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+            timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
             
             if (timp->TpFlag != 0) 
             {
@@ -817,7 +817,7 @@ void Ps2AddPrim3DEx(unsigned long prim, void* dp, unsigned int num)
         
         if (!(prim & 0x20000000000000)) 
         {
-            timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+            timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
             
             if (timp->TpFlag != 0) 
             {
@@ -1088,7 +1088,7 @@ void Ps2AddPrim3DExNative(unsigned long prim, void* dp, unsigned int num, int mo
         }
         if (!(prim & 0x20000000000000)) 
         {
-            timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+            timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
             if (timp->TpFlag != 0) 
             {
                 Ps2_tex_load_tp_cancel = 1;
@@ -1170,7 +1170,7 @@ void Ps2AddPrim3DEx1P(unsigned long prim, void* dp, unsigned int num)
         
         if (!(prim & 0x20000000000000)) 
         {
-            timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+            timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
             
             if (timp->TpFlag != 0) 
             {
@@ -1607,7 +1607,7 @@ void Ps2ClearOT()
 {
     int i;
 
-    Ps2_ot_list->tp = NULL;
+    Ps2_ot_list->tp = S32(NULL);
     
     Ps2_ot_list_no = 0;
     
@@ -1701,30 +1701,30 @@ void Ps2AddOT(void* p, unsigned int num, float z, unsigned long prim)
         
     if (Ps2_OT[otz][0] != NULL) 
     { 
-        Ps2_OT[otz][1]->op = (void*)&Ps2_ot_list[Ps2_ot_list_no]; 
+        Ps2_OT[otz][1]->op = S32((void*)&Ps2_ot_list[Ps2_ot_list_no]); 
         
         Ps2_OT[otz][1] = &Ps2_ot_list[Ps2_ot_list_no]; 
         
-        Ps2_OT[otz][1]->op = NULL; 
+        Ps2_OT[otz][1]->op = S32(NULL); 
     } 
     else 
     { 
         Ps2_OT[otz][0] = Ps2_OT[otz][1] = &Ps2_ot_list[Ps2_ot_list_no]; 
         
-        Ps2_OT[otz][1]->op = NULL; 
+        Ps2_OT[otz][1]->op = S32(NULL); 
     }
         
     if ((prim & 0x8000000000000)) 
     { 
-        Ps2_ot_list[Ps2_ot_list_no].tp = Ps2_now_tex; 
+        Ps2_ot_list[Ps2_ot_list_no].tp = S32(Ps2_now_tex); 
         Ps2_ot_list[Ps2_ot_list_no].bank = Ps2_now_bank; 
     }
     else 
     { 
-        Ps2_ot_list[Ps2_ot_list_no].tp = (void*)-1; 
+        Ps2_ot_list[Ps2_ot_list_no].tp = S32((void*)-1); 
     }
         
-    Ps2_ot_list[Ps2_ot_list_no].p = Ps2_PP; 
+    Ps2_ot_list[Ps2_ot_list_no].p = S32(Ps2_PP); 
     
     Ps2_ot_list[Ps2_ot_list_no].TEX0 = Ps2_gs_save.TEX0 & 0xE0F8001FFFFFC000; 
     Ps2_ot_list[Ps2_ot_list_no].TEX0_NEXT = Ps2_gs_save.TEX0_NEXT & 0xE0F8001FFFFFC000; 
@@ -1832,22 +1832,22 @@ int Ps2DrawOTagSub(int start_no)
         { 
             if (old_p != NULL) 
             { 
-                ((long*)old_p->p)[2] |= ((unsigned long)p->p & 0xFFFFFFF) << 32; 
+                ((long*)P32(void *, old_p->p))[2] |= ((unsigned long)p->p & 0xFFFFFFF) << 32; 
             }
             else
             { 
-                start_addr = p->p; 
+                start_addr = P32(void *, p->p); 
             }
             
             p_flag = 0; 
             t_flag = 0; 
             
-            if (p->tp == NULL)
+            if (P32(NJS_TEXMEMLIST *, p->tp) == NULL)
             {
                 return 4096;
             }
             
-            if ((int)PS2_ADDR(p->tp) != -1) 
+            if ((int)PS2_ADDR(P32(NJS_TEXMEMLIST *, p->tp)) != -1) 
             { 
                 if (tex_cache_num >= 64) 
                 { 
@@ -1865,13 +1865,13 @@ int Ps2DrawOTagSub(int start_no)
 #endif
                 }
 
-                timp = (TIM2_PICTUREHEADER_EX*)p->tp->texinfo.texsurface.pSurface; 
+                timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, P32(NJS_TEXMEMLIST *, p->tp)->texinfo.texsurface.pSurface); 
                 
                 if (timp != NULL) 
                 { 
                     for (j = 0; j < tex_cache_num; j++) 
                     { 
-                        if (ps2_tp_cache[j].tp == p->tp->texinfo.texsurface.pSurface) 
+                        if (P32(void *, ps2_tp_cache[j].tp) == P32(unsigned int *, P32(NJS_TEXMEMLIST *, p->tp)->texinfo.texsurface.pSurface)) 
                         { 
                             t_flag = 1; 
                             
@@ -1895,8 +1895,8 @@ int Ps2DrawOTagSub(int start_no)
                         } 
                         else 
                         { 
-                            ((long*)p->p)[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
-                            ((long*)p->p)[1] = 0; 
+                            ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
+                            ((long*)P32(void *, p->p))[1] = 0; 
                             
                             goto loop_end; 
                         }
@@ -1922,7 +1922,7 @@ int Ps2DrawOTagSub(int start_no)
                         clt_addr += 8; 
                     }
                     
-                    ps2_tp_cache[tex_cache_num].tp = timp; 
+                    ps2_tp_cache[tex_cache_num].tp = S32(timp); 
                     ps2_tp_cache[tex_cache_num].bank = p->bank; 
                     
                     Ps2_tp_tag[tex_cache_num].GIF_TAG[0] = SCE_GIF_SET_TAG(3, SCE_GS_FALSE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1); 
@@ -1946,29 +1946,29 @@ int Ps2DrawOTagSub(int start_no)
                     Ps2_tp_tag[tex_cache_num].CLAMP = SCE_GS_SET_CLAMP_1(SCE_GS_CLAMP, SCE_GS_CLAMP, 255, 0, 255, 0); 
                     Ps2_tp_tag[tex_cache_num].CLAMP_TAG = SCE_GS_CLAMP_1; 
                     
-                    ((long*)p->p)[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[tex_cache_num] << 32); 
-                    ((long*)p->p)[1] = 0; 
+                    ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[tex_cache_num] << 32); 
+                    ((long*)P32(void *, p->p))[1] = 0; 
                     
                     tex_cache_num++; 
                 }
             } 
             else 
             { 
-                ((long*)p->p)[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
-                ((long*)p->p)[1] = 0; 
+                ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
+                ((long*)P32(void *, p->p))[1] = 0; 
             }
             
         loop_end:
             old_p = p; 
-            p = (PS2_OT*)p->op; 
+            p = (PS2_OT*)P32(struct PS2_OT_LIST *, p->op); 
         } 
     } 
 
     if (old_p != NULL) 
     { 
     block:
-        ((long*)old_p->p)[2] = (((long*)(temp = old_p)->p)[2] & 0xFFFFFFF) | 0x70000000; 
-        ((long*)old_p->p)[8] = ((long*)old_p->p)[8] | 0x8000; 
+        ((long*)P32(void *, old_p->p))[2] = (((long*)P32(void *, (temp = old_p)->p))[2] & 0xFFFFFFF) | 0x70000000; 
+        ((long*)P32(void *, old_p->p))[8] = ((long*)P32(void *, old_p->p))[8] | 0x8000; 
         
 #ifndef TARGET_PC   /* a debug line per drawn ordering table */
         printf("TEX %05d:%05d]", 0x3F80 - tex_addr, 0x3FCC - clt_addr); 
@@ -2078,14 +2078,14 @@ int Ps2TexLoad(NJS_TEXMEMLIST* addr)
 
     cache_flag = 1;
 
-    if ((addr == NULL) || (addr->texinfo.texsurface.pSurface == NULL)) 
+    if ((addr == NULL) || (P32(unsigned int *, addr->texinfo.texsurface.pSurface) == NULL)) 
     {
         return printf("Ps2CurrentTexLoad ERROR!!!!\n"); 
     }
 
     Ps2_now_tex = addr;
 
-    timp = (TIM2_PICTUREHEADER_EX*)addr->texinfo.texsurface.pSurface;
+    timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, addr->texinfo.texsurface.pSurface);
 
     if (Ps2_current_texbreak != 0) 
     {
@@ -2112,7 +2112,7 @@ int Ps2TexLoad(NJS_TEXMEMLIST* addr)
     else 
     {
 label:
-        Ps2_tex_cache_buff[0] = addr->texinfo.texsurface.pSurface;
+        Ps2_tex_cache_buff[0] = P32(unsigned int *, addr->texinfo.texsurface.pSurface);
         
         if ((PS2_Render_tex_sub_flag == 0) || ((timp->PictFormat >= 5) && (timp->PictFormat <= 8)) || ((timp->ImageType == 4) || (timp->ImageType == 5)))
         {
@@ -2873,7 +2873,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
         
         if (!(prim & 0x20000000000000)) 
         {
-            timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+            timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
             
             if (timp->TpFlag != 0) 
             {

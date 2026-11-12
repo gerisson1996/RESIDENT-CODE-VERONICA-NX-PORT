@@ -455,7 +455,7 @@ void mcGetPortSelectDirInfo(SAVEFILE* pSaveFile, SELECTFILEWINDOW* pWin, unsigne
     SELECTFILEINFO* pFileInfo; 
     int lCount; 
     
-    pFileInfo = pWin->pRecordTop;
+    pFileInfo = P32(struct SELECTFILEINFO *, pWin->pRecordTop);
     
     for (lCount = 0; lCount < ulCheckCounter; lCount++, pFileInfo++);
     
@@ -474,7 +474,7 @@ int mcSelectSaveFileCheck(SELECTFILEWINDOW* pWin, unsigned short ulSaveCount)
     SELECTFILEINFO* pFileInfo; 
     unsigned short sCnt; 
     
-    pFileInfo = pWin->pRecordTop;
+    pFileInfo = P32(struct SELECTFILEINFO *, pWin->pRecordTop);
 
     for (sCnt = 0; sCnt < ulSaveCount; sCnt++, pFileInfo++);
     
@@ -489,7 +489,7 @@ int mcSelectSaveFileCheck(SELECTFILEWINDOW* pWin, unsigned short ulSaveCount)
 // 100% matching!
 SELECTFILEWINDOW* mcCreateFileSelectWindow(SELECTFILEWINDOW* pWin, SELECTFILEINFO* pFileInfo, unsigned int ulRecord) 
 {
-    pWin->pRecordTop = pFileInfo;
+    pWin->pRecordTop = S32(pFileInfo);
     
     pWin->lRecordMax = ulRecord;
     
@@ -571,7 +571,7 @@ void mcDisplayFileSelectWindow(SELECTFILEWINDOW* pWin, float fX, float fY, unsig
     mcDispWindowCurSol(pWin, 32.0f, 103.0f); 
     mcDispWindowFoundtion(16.0f, 96.0f, 616.0f, 310.0f, pWin->ulfoundationColor);
 
-    pFileInfo = pWin->pRecordTop;
+    pFileInfo = P32(struct SELECTFILEINFO *, pWin->pRecordTop);
 
     for (ulDispCount = 0; ulDispCount < pWin->slDispRecordNumber; ulDispCount++) 
     {
@@ -920,7 +920,7 @@ void DispCursolTexture(float pos_x, float pos_y, unsigned int color)
 {
     QUAD twt[18]; 
 
-    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)sys->typ_exp)->com_tlist);
+    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)P32(void *, sys->typ_exp))->com_tlist);
     
     njQuadTextureStart(1);
     
@@ -950,11 +950,11 @@ void DispUpDownCursol(float fx, float fy, unsigned int mode)
     NJS_POINT2 p[4]; 
     NJS_COLOR col[4]; 
     
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = NULL;
+    p2c.tex = S32(NULL);
     
     p2c.num = 4;
     
@@ -1027,7 +1027,7 @@ void DispBackGroundTexture()
 {
     QUAD twt[18]; 
 
-    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)sys->typ_exp)->com_tlist);
+    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)P32(void *, sys->typ_exp))->com_tlist);
     
     njQuadTextureStart(0);
     
@@ -1071,7 +1071,7 @@ void DispMemoryCardTexture(float fx, float fy, unsigned int type, unsigned int m
 {
     QUAD twt[18]; 
 
-    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)sys->typ_exp)->com_tlist);
+    njSetTexture((NJS_TEXLIST*)&((COM_EVT_WORK*)P32(void *, sys->typ_exp))->com_tlist);
     
     if (mode == 2)
     {

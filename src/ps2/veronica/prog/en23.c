@@ -370,7 +370,7 @@ void bhEne23(BH_PWORK* epw)
 
     bhEne23_Mode0[epw->mode0](epw);
     
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 
     bhEne23_CallSE(epw);
     
@@ -409,13 +409,13 @@ void bhEne23(BH_PWORK* epw)
         bhEne23_CollisionWalls(epw);
     }
     
-    njUnitMatrix(epw->mtx);
+    njUnitMatrix(P32(float (*)[16], epw->mtx));
     
-    njTranslate(epw->mtx, epw->px, epw->py, epw->pz);
+    njTranslate(P32(float (*)[16], epw->mtx), epw->px, epw->py, epw->pz);
     
-    njMultiMatrix(epw->mtx, (NJS_MATRIX*)epw->exp0);
+    njMultiMatrix(P32(float (*)[16], epw->mtx), (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
-    if (epw->mnwP != epw->mnwPb) 
+    if (P32(struct MN_WORK *, epw->mnwP) != P32(struct MN_WORK *, epw->mnwPb)) 
     {
         flg = epw->flg;
         
@@ -475,7 +475,7 @@ void bhEne23_Init(BH_PWORK* epw)
 
     epw->frm_no = 0;
 
-    epw->mtn_tp = (unsigned char*)flip_tree;
+    epw->mtn_tp = S32((unsigned char*)flip_tree);
 
     bhCalcModel(epw);
 
@@ -484,9 +484,9 @@ void bhEne23_Init(BH_PWORK* epw)
     epw->mode2 = 1;     
     epw->mode3 = 0;
 
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(304, 8);  
+        epw->exp0 = S32(bhEne_CallocWork(304, 8));  
 
         epw2 = (BH_PWORK**)&EXP0_C(248);      
 
@@ -496,7 +496,7 @@ void bhEne23_Init(BH_PWORK* epw)
 
             (*epw2)->type = 1;                 
 
-            (*epw2)->lkwkp = (unsigned char*)epw;
+            (*epw2)->lkwkp = S32((unsigned char*)epw);
             (*epw2)->lkono = i;                 
 
             (*epw2)->lox = 0;
@@ -505,13 +505,13 @@ void bhEne23_Init(BH_PWORK* epw)
 
             (*epw2)->mdflg |= 0x1;
 
-            ((unsigned char*)epw->exp0)[i + 256] = BrokenParts[i][(int)(2.0f * (-rand() / -2147483648.0f))];
+            ((unsigned char*)P32(unsigned char *, epw->exp0))[i + 256] = BrokenParts[i][(int)(2.0f * (-rand() / -2147483648.0f))];
 
-            owk = &epw->mlwP->owP[((unsigned char*)epw->exp0)[i + 256]];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[((unsigned char*)P32(unsigned char *, epw->exp0))[i + 256]];
 
-            (*epw2)->mtx = &owk->mtx;
+            (*epw2)->mtx = S32(&owk->mtx);
 
-            (*epw2++)->exp1 = (unsigned char*)owk;
+            (*epw2++)->exp1 = S32((unsigned char*)owk);
         }
 
         bhEne_SetCallFunc(bhEne03s, 31);
@@ -539,29 +539,29 @@ void bhEne23_Init(BH_PWORK* epw)
     {
         if (((ep->flg & 0x1)) && (ep->id == 24))
         {
-            ((BH_PWORK**)epw->exp0)[32 + EXP0_I(268)] = ep;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[32 + EXP0_I(268)] = ep;
             
             EXP0_I(268)++;
 
-            ep->lkwkp = (unsigned char*)epw;
+            ep->lkwkp = S32((unsigned char*)epw);
             ep->lkono = 0;
 
             ep->lox = 0;
             ep->loy = 0;
             ep->loz = 0;
 
-            ep->mlwP = &epw->mdl[2];
+            ep->mlwP = S32(&epw->mdl[2]);
         }
     }
 
     for (i = 0; i < 8; i++)
     {
-        ((char*)epw->exp0)[258 + i] = 0;  
+        ((char*)P32(unsigned char *, epw->exp0))[258 + i] = 0;  
     }
 
-    njUnitMatrix((NJS_MATRIX*)epw->exp0);
+    njUnitMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
-    njRotateY((NJS_MATRIX*)epw->exp0, epw->ay);
+    njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ay);
 
     epw->flg &= ~0x4000000; 
 
@@ -638,11 +638,11 @@ void bhEne23_Init(BH_PWORK* epw)
 
     if ((epw->type & 0x1))
     {
-        epw->cpcl = CapColTabB;
+        epw->cpcl = S32(CapColTabB);
     }
     else
     {
-        epw->cpcl = CapColTabA;
+        epw->cpcl = S32(CapColTabA);
     }
 
     bhEne03_HideParts(epw, 1, 0);
@@ -658,10 +658,10 @@ void bhEne23_Init(BH_PWORK* epw)
 
     if (!(epw->type & 0x1))
     {
-        epw->mlwP = epw->mdl;
+        epw->mlwP = S32(epw->mdl);
 
-        epw->obj_a = epw->mdl[0].objP;
-        epw->obj_b = epw->mdl[1].objP;
+        epw->obj_a = S32(P32(struct cnkobj *, epw->mdl[0].objP));
+        epw->obj_b = S32(P32(struct cnkobj *, epw->mdl[1].objP));
 
         epw->mdflg |= 0x2;
 
@@ -1040,7 +1040,7 @@ void bhEne23_MV01(BH_PWORK* epw)
             }
         }
         
-        njRotateY((NJS_MATRIX*)epw->exp0, epw->way);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->way);
         
         if (epw->ct0 != 0) 
         {
@@ -1125,7 +1125,7 @@ void bhEne23_MV02(BH_PWORK* epw)
         {
             if (i < rom->flr_n)
             {
-                fp = &rom->flrp[i];
+                fp = &P32(struct ATR_WORK *, rom->flrp)[i];
             }
             else
             {
@@ -1181,7 +1181,7 @@ void bhEne23_MV02(BH_PWORK* epw)
 
         epw->way = bhEne03_DirTarget(epw, (NJS_POINT3*)&epw->xn, 455);
 
-        njRotateY((NJS_MATRIX*)epw->exp0, epw->way);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->way);
 
         if (epw->ct0 == 0)
         {
@@ -1255,7 +1255,7 @@ void bhEne23_MV03(BH_PWORK* epw)
         {
             if (i < rom->flr_n)
             {
-                fp = &rom->flrp[i];
+                fp = &P32(struct ATR_WORK *, rom->flrp)[i];
             }
             else
             {
@@ -1300,7 +1300,7 @@ void bhEne23_MV03(BH_PWORK* epw)
 
         epw->way = bhEne03_DirTarget(epw, (NJS_POINT3*)&epw->xn, 455);
 
-        njRotateY((NJS_MATRIX*)epw->exp0, epw->way);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->way);
 
         if (bhEne23_CheckDiving(epw) != 0)
         {
@@ -1372,7 +1372,7 @@ void bhEne23_MV05(BH_PWORK* epw)
 
         epw->flg  |= 0x1800000;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
 
         epw->mode3++;
         break;
@@ -1381,7 +1381,7 @@ void bhEne23_MV05(BH_PWORK* epw)
         {
             bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
-            njSetMatrix((NJS_MATRIX*)epw->exp0, &epw->mlwP->owP->mtx);
+            njSetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx);
 
             EXP0_C(105) = 1;
 
@@ -1467,7 +1467,7 @@ void bhEne23_MV06(BH_PWORK* epw)
         {
             epw->ay = bhArcTan2(-EXP0_F(8), EXP0_F(0));
 
-            njRotateY((NJS_MATRIX*)epw->exp0, (short)(epw->ayp - epw->ay) / epw->ct0);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (short)(epw->ayp - epw->ay) / epw->ct0);
 
             epw->px += (epw->xn - epw->px) / epw->ct0;
             epw->pz += (epw->zn - epw->pz) / epw->ct0;
@@ -1515,7 +1515,7 @@ void bhEne23_MV09(BH_PWORK* epw)
         
         epw->flg |= 0x10000000;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
@@ -1563,7 +1563,7 @@ void bhEne23_MV10(BH_PWORK* epw)
         
         epw->flg &= ~0x10000000;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
@@ -1601,7 +1601,7 @@ void bhEne23_MV10(BH_PWORK* epw)
                 pos.y = 0;
                 pos.z = 0;
                 
-                njCalcPoint(&epw->mlwP->owP[6].mtx, &pos, &pos);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[6].mtx, &pos, &pos);
                 epw->ct1 = bhEne_AttackHitCheck(plp, &pos, 5.0f);
 
                 bhEne03_GetPartsPos(epw, joint_tree[1], &pos);
@@ -1611,7 +1611,7 @@ void bhEne23_MV10(BH_PWORK* epw)
                 pos.y = 0;
                 pos.z = 0;
                 
-                njCalcPoint(&epw->mlwP->owP[27].mtx, &pos, &pos);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[27].mtx, &pos, &pos);
                 epw->ct1 |= bhEne_AttackHitCheck(plp, &pos, 5.0f);
 
                 bhEne03_GetPartsPos(epw, joint_tree[3], &pos);
@@ -1712,14 +1712,14 @@ void bhEne23_MV11(BH_PWORK* epw)
             epw->mtn_no = mtn[epw->type][1];
             epw->frm_no = 0;
 
-            njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+            njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
             njSubVector((NJS_VECTOR*)&epw->px, &trans);
 
             EXP0_C(105) = 0;
 
             if (!(epw->type & 0x1))
             {
-                njRotateY((NJS_MATRIX*)epw->exp0, 32768);
+                njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
             }
 
             bhEne03_MakeMatrix(epw);
@@ -1758,7 +1758,7 @@ void bhEne23_MV12(BH_PWORK* epw)
 
     epw->flg |= 0x4000000;
 
-    njUnitMatrix((NJS_MATRIX*)epw->exp0);
+    njUnitMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
 
     bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
@@ -1771,14 +1771,14 @@ void bhEne23_MV12(BH_PWORK* epw)
 
     epw->mtn_md &= ~0x20;
 
-    njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+    njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
     njSubVector((NJS_VECTOR*)&epw->px, &trans);
 
     epw->pxb = epw->px;
     epw->pyb = epw->py;
     epw->pzb = epw->pz;
 
-    if (epw->mlwP->owP->mtx[5] > 0)
+    if (P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5] > 0)
     {
         EXP0_C(105) = 0;
     }
@@ -1814,11 +1814,11 @@ void bhEne23_MV12(BH_PWORK* epw)
 
     if ((epw->type & 0x1))
     {
-        epw->cpcl = CapColTabB;
+        epw->cpcl = S32(CapColTabB);
     }
     else
     {
-        epw->cpcl = CapColTabA;
+        epw->cpcl = S32(CapColTabA);
     }
 
     bhEne03_HideParts(epw, 1, 0);
@@ -1926,7 +1926,7 @@ void bhEne23_DG01(BH_PWORK* epw)
 
         epw->flg |= 0x10000000;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -1977,7 +1977,7 @@ void bhEne23_DG03(BH_PWORK* epw)
 
         epw->flg |= 0x10000000;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -2024,7 +2024,7 @@ void bhEne23_DG04(BH_PWORK* epw)
 
         epw->flg |= 0x10000000;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         epw->ct1 = 0;
 
         epw->mode3++;
@@ -2033,11 +2033,11 @@ void bhEne23_DG04(BH_PWORK* epw)
         
         bhEne_EraseArrow(epw, 8);
 
-        epw->cpcl = CapColTabB;
+        epw->cpcl = S32(CapColTabB);
         
         epw->type = 1;
 
-        owk = &epw->mlwP->owP[8];
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[8];
 
         pos.x = 0;
         pos.y = 6.0f;
@@ -2053,7 +2053,7 @@ void bhEne23_DG04(BH_PWORK* epw)
 
         for (i = 0; i < 6; i++)
         {
-            owk = &epw->mlwP->owP[8];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[8];
             
             pos.x =         (8.0f * (-rand() / -2147483648.0f))  - 4.0f;
             pos.y = (8.0f + (8.0f  * (-rand() / -2147483648.0f))) - 4.0f;
@@ -2073,7 +2073,7 @@ void bhEne23_DG04(BH_PWORK* epw)
     case 1:
         if (epw->ct1 == 0)
         {
-            owk = &epw->mlwP->owP[8];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[8];
             
             pos.x =          (8.0f * (-rand() / -2147483648.0f))  - 4.0f;
             pos.y = (8.0f + (8.0f  * (-rand() / -2147483648.0f))) - 4.0f;
@@ -2143,13 +2143,13 @@ void bhEne23_DG06(BH_PWORK* epw)
 
         bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
 
         if ((epw->mtn_md & 0x2))
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, -*mkaP->key++, -*mkaP->key++);
 #endif
@@ -2157,7 +2157,7 @@ void bhEne23_DG06(BH_PWORK* epw)
         else
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, *mkaP->key++, *mkaP->key++);
 #endif
@@ -2176,7 +2176,7 @@ void bhEne23_DG06(BH_PWORK* epw)
             EXP0_F(92) = 0;
         }
 
-        njRotateX((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
         epw->mtn_md |= 0x100;
 
@@ -2193,12 +2193,12 @@ void bhEne23_DG06(BH_PWORK* epw)
         {
         NJS_MKEY_A_MOD* mkaP; 
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
 
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 #else
         epw->mlwP->objP->ang[0] = *mkaP->key++;
         epw->mlwP->objP->ang[1] = *mkaP->key++;
@@ -2209,7 +2209,7 @@ void bhEne23_DG06(BH_PWORK* epw)
         {
         NJS_POINT3 trans; 
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
         }
 
@@ -2262,9 +2262,9 @@ void bhEne23_DG06(BH_PWORK* epw)
                 }
 
                 njRotate(NULL, &ov, ang / epw->ct0);
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             else
             {
@@ -2272,9 +2272,9 @@ void bhEne23_DG06(BH_PWORK* epw)
 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
 
             epw->ct0--;
@@ -2292,7 +2292,7 @@ void bhEne23_DG06(BH_PWORK* epw)
 
             epw->mtn_md &= ~0x100;   
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->flg2 &= ~0x1;
 
@@ -2315,7 +2315,7 @@ void bhEne23_DG06(BH_PWORK* epw)
             epw->mtn_no = mtn[epw->type][1];
             epw->frm_no = 0;
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->mode3++;
 
@@ -2323,14 +2323,14 @@ void bhEne23_DG06(BH_PWORK* epw)
             {
                 NJS_MKEY_A_MOD* mkaP; 
 
-                njRotateY((NJS_MATRIX*)epw->exp0, 32768);
+                njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
-                mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+                mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
 
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-                epw->mlwP->objP->ang[0] = mkaP->key[0];
-                epw->mlwP->objP->ang[1] = mkaP->key[1];
-                epw->mlwP->objP->ang[2] = mkaP->key[2];
+                P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+                P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+                P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 #else
                 epw->mlwP->objP->ang[0] = *mkaP->key++;
                 epw->mlwP->objP->ang[1] = *mkaP->key++;
@@ -2381,13 +2381,13 @@ void bhEne23_DG07(BH_PWORK* epw)
 
         bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
 
         if ((epw->mtn_md & 0x2))
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, -*mkaP->key++, -*mkaP->key++);
 #endif
@@ -2395,7 +2395,7 @@ void bhEne23_DG07(BH_PWORK* epw)
         else
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, *mkaP->key++, *mkaP->key++);
 #endif
@@ -2420,12 +2420,12 @@ void bhEne23_DG07(BH_PWORK* epw)
         {
         NJS_MKEY_A_MOD* mkaP; 
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
 
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 #else
         epw->mlwP->objP->ang[0] = *mkaP->key++;
         epw->mlwP->objP->ang[1] = *mkaP->key++;
@@ -2436,7 +2436,7 @@ void bhEne23_DG07(BH_PWORK* epw)
         {
         NJS_POINT3 trans; 
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
         }
 
@@ -2479,9 +2479,9 @@ void bhEne23_DG07(BH_PWORK* epw)
                 ang = (int)(10430.381f * asinf(out)) / epw->ct0;
 
                 njRotate(NULL, &ov, ang);
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             else
             {
@@ -2489,9 +2489,9 @@ void bhEne23_DG07(BH_PWORK* epw)
 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
 
             epw->ct0--;
@@ -2509,7 +2509,7 @@ void bhEne23_DG07(BH_PWORK* epw)
 
             epw->mtn_md &= ~0x100;   
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->flg2 &= ~0x1;
 
@@ -2578,7 +2578,7 @@ void bhEne23_DD00(BH_PWORK* epw)
 
         epw->flg |= 0x10000000;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -2617,13 +2617,13 @@ void bhEne23_DD01(BH_PWORK* epw)
         
         bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
 
         if ((epw->mtn_md & 0x2))
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, -*mkaP->key++, -*mkaP->key++);
 #endif
@@ -2631,7 +2631,7 @@ void bhEne23_DD01(BH_PWORK* epw)
         else
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, *mkaP->key++, *mkaP->key++);
 #endif
@@ -2650,7 +2650,7 @@ void bhEne23_DD01(BH_PWORK* epw)
             EXP0_F(92) = 0;
         }
 
-        njRotateX((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
         epw->mtn_md |= 0x100;
 
@@ -2668,19 +2668,19 @@ void bhEne23_DD01(BH_PWORK* epw)
         NJS_MKEY_A_MOD* mkaP; 
         NJS_POINT3 trans;     
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
 
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 #else
         epw->mlwP->objP->ang[0] = *mkaP->key++;
         epw->mlwP->objP->ang[1] = *mkaP->key++;
         epw->mlwP->objP->ang[2] = *mkaP->key++;
 #endif
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
 
         epw->flg &= ~0x4000000;
@@ -2729,9 +2729,9 @@ void bhEne23_DD01(BH_PWORK* epw)
 
                 njRotate(NULL, &ov, ang);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             else
             {
@@ -2739,9 +2739,9 @@ void bhEne23_DD01(BH_PWORK* epw)
 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
 
             epw->ct0--;
@@ -2759,7 +2759,7 @@ void bhEne23_DD01(BH_PWORK* epw)
 
             epw->mtn_md &= ~0x100;
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->mode3++;
         }
@@ -2780,7 +2780,7 @@ void bhEne23_DD01(BH_PWORK* epw)
             epw->mtn_no = mtn[epw->type][1];
             epw->frm_no = 0;
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->mode3++;
         }
@@ -2789,7 +2789,7 @@ void bhEne23_DD01(BH_PWORK* epw)
     case 3:
         if (epw->ct0-- == 0)
         {
-            epw->frm_no = 65536.0f * (epw->mnwP[epw->mtn_no].frm_num - 1);
+            epw->frm_no = 65536.0f * (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1);
 
             epw->hokan_count = 0;
             
@@ -2836,13 +2836,13 @@ void bhEne23_DD03(BH_PWORK* epw)
         
         bhEne03_GetPartsPos(epw, joint_tree[0], (NJS_POINT3*)&epw->px);
 
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
 
         if ((epw->mtn_md & 0x2))
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, -*mkaP->key++, -*mkaP->key++);
 #endif
@@ -2850,7 +2850,7 @@ void bhEne23_DD03(BH_PWORK* epw)
         else
         {
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
 #else
             njRotateXYZ((NJS_MATRIX*)epw->exp0, *mkaP->key++, *mkaP->key++, *mkaP->key++);
 #endif
@@ -2876,19 +2876,19 @@ void bhEne23_DD03(BH_PWORK* epw)
         NJS_MKEY_A_MOD* mkaP; 
         NJS_POINT3 trans;     
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
 
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 #else
         epw->mlwP->objP->ang[0] = *mkaP->key++;
         epw->mlwP->objP->ang[1] = *mkaP->key++;
         epw->mlwP->objP->ang[2] = *mkaP->key++;
 #endif
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
 
         epw->flg &= ~0x4000000;
@@ -2932,9 +2932,9 @@ void bhEne23_DD03(BH_PWORK* epw)
 
                 njRotate(NULL, &ov, ang);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             else
             {
@@ -2942,9 +2942,9 @@ void bhEne23_DD03(BH_PWORK* epw)
 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
 
             epw->ct0--;
@@ -2962,7 +2962,7 @@ void bhEne23_DD03(BH_PWORK* epw)
 
             epw->mtn_md &= ~0x100;
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
             epw->mode3++;
         }
@@ -2987,7 +2987,7 @@ void bhEne23_DD03(BH_PWORK* epw)
 
             epw->mtn_add = 65536;
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
             epw->mode3++;
         }
@@ -2996,7 +2996,7 @@ void bhEne23_DD03(BH_PWORK* epw)
     case 3:
         if (epw->ct0-- == 0)
         {
-            epw->frm_no = 65536.0f * (epw->mnwP[epw->mtn_no].frm_num - 1);
+            epw->frm_no = 65536.0f * (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1);
 
             epw->hokan_count = 0;
             
@@ -3041,11 +3041,11 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
     body.y = epw->ar;
     body.z = 0;
 
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
 
     if ((epw->flg & 0x100000)) 
     {
-        mkaP  = (NJS_MKEY_A_MOD*)epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = (NJS_MKEY_A_MOD*)P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
         
 #ifdef TARGET_PC   /* the PS2 original reads *key++ three times unsequenced in one expression */
@@ -3059,7 +3059,7 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
 
     if ((epw->flg & 0x10000000)) 
     {
-        objP = epw->mlwP->objP;
+        objP = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
         
         trans.x = objP->pos[0];
         trans.y = objP->pos[1];
@@ -3070,7 +3070,7 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
             trans.y = 0;
         }
     
-        njCalcVector((NJS_MATRIX*)epw->exp0, &trans, &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &trans, &trans);
     
         epw->px += trans.x;
         epw->py += trans.y;
@@ -3085,7 +3085,7 @@ void bhEne23_CollisionWalls(BH_PWORK* epw)
 
     if (((epw->flg & 0x4000000)) && (EXP0_C(105) == 0)) 
     {
-        mtxP = (NJS_MATRIX*)epw->exp0;
+        mtxP = (NJS_MATRIX*)P32(unsigned char *, epw->exp0);
     
         dx = mtxP[0][8]  * -((float*)mtxP)[70];
         dz = mtxP[0][10] * -((float*)mtxP)[70];
@@ -3251,8 +3251,8 @@ int bhEne23_CheckClimbWall(BH_PWORK* epw, int flg)
     
         for (i = 0; i < 2; i++)
         {
-            mkfP  = epw->mnwP[root + mtn[epw->type]].md2P->p[0];
-            mkfP += epw->mnwP[root + mtn[epw->type]].frm_num - 1;
+            mkfP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[root + mtn[epw->type]].md2P)->p[0]);
+            mkfP += P32(struct MN_WORK *, epw->mnwP)[root + mtn[epw->type]].frm_num - 1;
             
             njUnitMatrix(NULL);
             
@@ -3306,10 +3306,10 @@ int bhEne23_CheckDiving(BH_PWORK* epw)
         return 0;
     }
 
-    mkfP  = (NJS_MKEY*)epw->mnwP[37].md2P->p[0];
-    mkfP += epw->mnwP[37].frm_num - 1;
+    mkfP  = (NJS_MKEY*)P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[37].md2P)->p[0]);
+    mkfP += P32(struct MN_WORK *, epw->mnwP)[37].frm_num - 1;
 
-    njCalcVector((NJS_MATRIX*)epw->exp0, (NJS_POINT3*)mkfP, &pos);
+    njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (NJS_POINT3*)mkfP, &pos);
 
     pos.x += epw->px;
     pos.z += epw->pz;
@@ -3407,7 +3407,7 @@ void bhEne23_DamageInit(BH_PWORK* epw)
 
             if ((epw->flg & 0x400000))
             {
-                if (epw->mlwP->owP->mtx[5] < 0)
+                if (P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5] < 0)
                 {
                     epw->mode2 = 1;
                 }
@@ -3484,7 +3484,7 @@ void bhEne23_DamageInit(BH_PWORK* epw)
 
         if ((epw->flg & 0x400000))
         {
-            if (epw->mlwP->owP->mtx[5] < 0)
+            if (P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5] < 0)
             {
                 epw->mode2 = 6;
             }
@@ -3508,23 +3508,23 @@ void bhEne23_LegBreak(BH_PWORK* epw)
 
     i = (int)(2.0f * (-rand() / -2147483648.0f));  
 
-    if (((unsigned char*)epw->exp0)[i + 258] == 0)   
+    if (((unsigned char*)P32(unsigned char *, epw->exp0))[i + 258] == 0)   
     {
-        ((unsigned char*)epw->exp0)[i + 258] = 1;
+        ((unsigned char*)P32(unsigned char *, epw->exp0))[i + 258] = 1;
 
-        owk = &epw->mlwP->owP[((unsigned char*)epw->exp0)[i + 256]];
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[((unsigned char*)P32(unsigned char *, epw->exp0))[i + 256]];
 
         owk[0].flg |= 0x3;
         owk[1].flg |= 0x2;
         owk[2].flg |= 0x2;
 
-        ((BH_PWORK**)epw->exp0)[62 + i]->mode0 = 1;
-        ((BH_PWORK**)epw->exp0)[62 + i]->mode2 = 0;
-        ((BH_PWORK**)epw->exp0)[62 + i]->mode3 = 0;
+        ((BH_PWORK**)P32(unsigned char *, epw->exp0))[62 + i]->mode0 = 1;
+        ((BH_PWORK**)P32(unsigned char *, epw->exp0))[62 + i]->mode2 = 0;
+        ((BH_PWORK**)P32(unsigned char *, epw->exp0))[62 + i]->mode3 = 0;
 
         epw->mdflg |= 0x20;
 
-        bhEne_SetBloodstain(epw, 0, ((unsigned char*)epw->exp0)[i + 256], NULL);
+        bhEne_SetBloodstain(epw, 0, ((unsigned char*)P32(unsigned char *, epw->exp0))[i + 256], NULL);
 
         bhEne_SetMinceEffect(epw, 2, 3);
         bhEne_SetMinceEffect(epw, 3, 2);
@@ -3545,7 +3545,7 @@ void bhEne23_InitChild(BH_PWORK* epw)
 
     for (i = 0; i < EXP0_I(268); i++, epw2++)
     {
-        if (((((BH_PWORK**)epw->exp0)[32 + i]->flg & 0x1)) && (((BH_PWORK**)epw->exp0)[32 + i]->id == 24))
+        if (((((BH_PWORK**)P32(unsigned char *, epw->exp0))[32 + i]->flg & 0x1)) && (((BH_PWORK**)P32(unsigned char *, epw->exp0))[32 + i]->id == 24))
         {
             (*epw2)->mode0 = 1;
             (*epw2)->mode1 = 1;
@@ -3568,7 +3568,7 @@ void bhEne23_InitChild(BH_PWORK* epw)
             v.y = 5.0f + (10.0f * (-rand() / -2147483648.0f));
             v.z = 10.0f;
 
-            njCalcVector((NJS_MATRIX*)epw->exp0, &v, &v);
+            njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &v, &v);
 
             px = epw->px + v.x;
             py = epw->py + v.y;
@@ -3611,7 +3611,7 @@ void bhEne23_PlayerControl(BH_PWORK* epw)
                 plp->flg  &= ~0x40000;
                 plp->flg2 |=  0x1;
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 if (plp->mode2 == 0)
                 {
@@ -3685,7 +3685,7 @@ void bhEne23_PlayerControl(BH_PWORK* epw)
                 
                 if (plp->frm_no == 0) 
                 {
-                    plp->mnwP = plp->mnwPb;
+                    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
                     
                     plp->flg  &= ~0x10004;
                     plp->flg2 &= ~0x1;
@@ -3719,7 +3719,7 @@ void bhEne23_PlayerControl(BH_PWORK* epw)
                 plp->flg  &= ~0x40000;
                 plp->flg2 |=  0x1;
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 if (plp->mode2 == 2) 
                 {
@@ -3764,7 +3764,7 @@ void bhEne23_PlayerControl(BH_PWORK* epw)
                         plp->mtn_no = mtn[sys->ply_id][5];
                     }
                     
-                    plp->ct0 = plp->mnwP[plp->mtn_no].frm_num - 2;
+                    plp->ct0 = P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 2;
                     
                     plp->mode3++;
                 }
@@ -3806,7 +3806,7 @@ void bhEne23_Acid(BH_PWORK* epw)
     float dt;    
     NJS_POINT3 pos1, pos2; // not from DWARF
 
-    owk = epw->mlwP->owP; 
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP); 
     
     pos1.x = owk[7].mtx[12];
     pos1.y = owk[7].mtx[13];
@@ -3852,7 +3852,7 @@ void bhEne23_Acid(BH_PWORK* epw)
         {
             eff[eno].stflg |= 0x20; 
             
-            eff[eno].txp[0] = epw->mdl[6].texP; 
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, epw->mdl[6].texP)); 
             eff[eno].tex_id = 1; 
 
             eff[eno].xn = pos2.x; 
@@ -3884,7 +3884,7 @@ unsigned int bhEne23_SearchPlayer(BH_PWORK* epw, int ang)
     dist.y = epw->py - plp->py;
     dist.z = epw->pz - plp->pz;
     
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
     njInvertMatrix(NULL);
     
@@ -3923,7 +3923,7 @@ void bhEne23_CallSE(BH_PWORK* epw)
 {
     int fno;
 
-    if (epw->mnwP == epw->mnwPb) 
+    if (P32(struct MN_WORK *, epw->mnwP) == P32(struct MN_WORK *, epw->mnwPb)) 
     {
         fno = epw->frm_no / 65536;
         
@@ -4092,6 +4092,6 @@ void bhEne23_HitMark(BH_PWORK* epw)
     
     if ((DmgReact[epw->wpnr_no].exef & 0x4)) 
     {
-        npSetAllMatColor(epw->mlwP->objP, epw->mlwP->obj_num, 0xFF201010);
+        npSetAllMatColor(P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP), P32(struct ML_WORK *, epw->mlwP)->obj_num, 0xFF201010);
     }
 }

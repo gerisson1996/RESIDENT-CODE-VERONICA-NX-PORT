@@ -26,14 +26,14 @@ void	njDrawSprite2D( NJS_SPRITE *sp, Int n, Float pri, Uint32 attr )
 
     bp = buff;
 
-    ap = &sp->tanim[n];
+    ap = &P32(NJS_TEXANIM *, sp->tanim)[n];
     
     if (pri > -1.0f) 
     {
         pri = -1.0f;
     }
     
-    tmp = (NJS_TEXMEMLIST*)PS2_HOST(sp->tlist->textures[ap->texid].texaddr);
+    tmp = (NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, P32(NJS_TEXLIST *, sp->tlist)->textures)[ap->texid].texaddr);
     
     Ps2TexLoad(tmp);
     

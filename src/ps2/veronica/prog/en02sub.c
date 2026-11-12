@@ -88,7 +88,7 @@ void bhEne02sub_MV01(BH_PWORK* epw)
         
         epw->ct0 = 0;
         
-        ep = (BH_PWORK*)epw->lkwkp;
+        ep = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
         
         epw->px = ep->px;
         epw->py = ep->py;
@@ -151,7 +151,7 @@ void bhEne02sub_MV03(BH_PWORK* epw)
 	BH_PWORK* ep;
     NJS_POINT3 pos;   
 
-    ep = (BH_PWORK*)epw->lkwkp;
+    ep = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     switch (epw->mode3)
     {   
@@ -228,7 +228,7 @@ void bhEne02sub_MV04(BH_PWORK* epw)
 {
 	BH_PWORK* ep;
 
-    ep = (BH_PWORK*)epw->lkwkp;
+    ep = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     switch (epw->mode3)
     {                         

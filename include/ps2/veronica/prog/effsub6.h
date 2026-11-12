@@ -11,7 +11,7 @@ typedef struct P_WRK
     float sx;           // offset 0x8, size 0x4
     float sy;           // offset 0xC, size 0x4
     int num;            // offset 0x10, size 0x4
-    NJS_TEXLIST* txp;   // offset 0x14, size 0x4
+    ps2ptr_t txp; /* NJS_TEXLIST* txp */   // offset 0x14, size 0x4
     int tex_id;         // offset 0x18, size 0x4
     NJS_POINT3 pos[48]; // offset 0x1C, size 0x240
     NJS_POINT3 vec[48]; // offset 0x25C, size 0x240

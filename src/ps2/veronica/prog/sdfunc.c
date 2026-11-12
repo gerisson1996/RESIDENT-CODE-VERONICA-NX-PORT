@@ -161,7 +161,7 @@ char VibFlag[5] = { 0x01, 0x08, 0x80, 0x09, 0x81 };
 // 100% matching!
 void bhReleaseFreeMemory(void* mp)
 { 
-    sys->memp = mp; 
+    sys->memp = S32(mp); 
 }
 
 // 100% matching!
@@ -929,7 +929,7 @@ int Get3DSoundParameter(NJS_POINT3* pP1, NJS_POINT3* pP2, char* pPan, char* pVol
 
     *pDist = njDistanceP2P(pP1, pP2);
     
-    njCalcPoint(cam.mtx, pP2, &pd);
+    njCalcPoint(P32(float (*)[16], cam.mtx), pP2, &pd);
     
     ReturnCode = njCalcScreen(&pd, &ScreenPos.x, &ScreenPos.y);
     
@@ -3331,7 +3331,7 @@ int PlayStartMovieEx(int MovieNo, int MovieType, int PauseFlag)
     
     CprmSfd.wksize = mwPlyCalcWorkSofdec(CprmSfd.ftype, CprmSfd.max_bps, CprmSfd.max_width, CprmSfd.max_height, CprmSfd.nfrm_pool_wk);
 
-    if ((MovieInfo.mmp = bhGetFreeMemory(CprmSfd.wksize, sizeof(MWS_PLY_CPRM_SFD))) == NULL)
+    if ((P32(unsigned char *, MovieInfo.mmp = S32(bhGetFreeMemory(CprmSfd.wksize, sizeof(MWS_PLY_CPRM_SFD))))) == NULL)
     {
         MovieInfo.MovieSystemLastError = 1;
         
@@ -3345,7 +3345,7 @@ int PlayStartMovieEx(int MovieNo, int MovieType, int PauseFlag)
     
     sprintf(FileName, "MV_%03u.PSS", MovieNo);
     
-    PlayMw2(FileName, 0, MovieInfo.mmp, &CprmSfd, PauseFlag);
+    PlayMw2(FileName, 0, P32(unsigned char *, MovieInfo.mmp), &CprmSfd, PauseFlag);
 
     if (MovieDef[Type].dSizeX != 0)
     {
@@ -3402,7 +3402,7 @@ void PlayStopMovieEx(int Mode)
         {
             StopMw();
             
-            bhReleaseFreeMemory(MovieInfo.mmp);
+            bhReleaseFreeMemory(P32(unsigned char *, MovieInfo.mmp));
             
             WakeupAdxStream(AdxDef);
         }

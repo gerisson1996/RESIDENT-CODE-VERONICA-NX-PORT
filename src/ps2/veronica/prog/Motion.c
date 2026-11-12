@@ -32,7 +32,7 @@ static unsigned char pc_keybuf[3][0x10000];
 static void pc_patch_key(PcKeyPatch* pp, MN_WORK* mnwP, void** slot, int size, int frm)
 {
     unsigned char* keys = *slot;
-    unsigned char* tbl = (unsigned char*)mnwP->md2P;
+    unsigned char* tbl = (unsigned char*)P32(struct NJS_MDATA2_MOD *, mnwP->md2P);
 
     if (keys == NULL || keys + (frm + 1) * size <= tbl || keys + frm * size >= tbl + mnwP->obj_num * sizeof(NJS_MDATA2_MOD))
         return;
@@ -51,11 +51,11 @@ static void pc_patch_oob_keys(MN_WORK* mnwP, int frm_no, PcKeyPatch* pp)
     unsigned int i;
 
     pp->n = 0;
-    if (frm < (int)mnwP->frm_num || mnwP->md2P == NULL) return;
+    if (frm < (int)mnwP->frm_num || P32(struct NJS_MDATA2_MOD *, mnwP->md2P) == NULL) return;
     for (i = 0; i < mnwP->obj_num; i++)
     {
-        pc_patch_key(pp, mnwP, &mnwP->md2P[i].p[0], 12, frm);
-        pc_patch_key(pp, mnwP, &mnwP->md2P[i].p[1], 6, frm);
+        pc_patch_key(pp, mnwP, &P32(struct NJS_MDATA2_MOD *, mnwP->md2P)[i].p[0], 12, frm);
+        pc_patch_key(pp, mnwP, &P32(struct NJS_MDATA2_MOD *, mnwP->md2P)[i].p[1], 6, frm);
     }
     pc_patch_key(pp, mnwP, (void**)&mnwP->atrP, 2, frm);
 }
@@ -74,14 +74,14 @@ int bhSetMotion(BH_PWORK* ewP, int add, int mode, void* datP)
     unsigned short* atrP; 
     int frm_num;          
 
-    flgP = &ewP->mnwP[ewP->mtn_no].flg;
+    flgP = &P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].flg;
     
-    if (ewP->mnwP[ewP->mtn_no].datP != NULL)
+    if (P32(void *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].datP) != NULL)
     {
 #ifdef TARGET_PC
         PcKeyPatch pc_patch;
 
-        pc_patch_oob_keys(&ewP->mnwP[ewP->mtn_no], ewP->frm_no, &pc_patch);
+        pc_patch_oob_keys(&P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no], ewP->frm_no, &pc_patch);
 #endif
         if ((mode & 0x20)) 
         {
@@ -123,7 +123,7 @@ int bhSetMotion(BH_PWORK* ewP, int add, int mode, void* datP)
             SetMtnFastHokan(ewP, datP, mode, rate);
         }
         
-        atrP = ewP->mnwP[ewP->mtn_no].atrP;
+        atrP = P32(unsigned short *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].atrP);
         
         if (atrP != NULL) 
         {
@@ -133,7 +133,7 @@ int bhSetMotion(BH_PWORK* ewP, int add, int mode, void* datP)
         pc_unpatch_oob_keys(&pc_patch);
 #endif
         
-        frm_num = ewP->mnwP[ewP->mtn_no].frm_num << 16;
+        frm_num = P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].frm_num << 16;
         
         if (((mode & 0x1)) && (ewP->frm_mode != 0)) 
         {
@@ -190,8 +190,8 @@ static void SetMtnNormal(BH_PWORK* ewP, char* datP, int mode)
         datP = NormalTbl;
     }
    
-    obj_no = ewP->mnwP[ewP->mtn_no].obj_num;
-    md2P   = ewP->mnwP[ewP->mtn_no].md2P; 
+    obj_no = P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].obj_num;
+    md2P   = P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P); 
     
     if ((mode & 0x2))
     {
@@ -206,15 +206,15 @@ static void SetMtnNormal(BH_PWORK* ewP, char* datP, int mode)
     
     for ( ; obj_no > 0; datP++) 
     {
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         {
-            if (md2P->p[0] != NULL)
+            if (P32(void *, md2P->p[0]) != NULL)
             {
-                posP = ewP->mlwP->objP[*datP].pos;
+                posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;
                 
-                mkfP = md2P->p[0];
+                mkfP = P32(void *, md2P->p[0]);
                 mkfP += ewP->frm_no / 65536;
                 
                 posP[0] = mkfP->key[0] * flp_f;
@@ -224,11 +224,11 @@ static void SetMtnNormal(BH_PWORK* ewP, char* datP, int mode)
             
             if (!(owP->flg & 0x2))
             {
-                dstP = ewP->mlwP->objP[*datP].ang;
+                dstP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
                 
-                if (md2P->p[1] != NULL) 
+                if (P32(void *, md2P->p[1]) != NULL) 
                 {
-                    mkaP = md2P->p[1];
+                    mkaP = P32(void *, md2P->p[1]);
                     mkaP += ewP->frm_no / 65536;
                     
                     dstP[0] = mkaP->key[0];
@@ -270,8 +270,8 @@ static void SetMtnNormalHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
         datP = NormalTbl;
     }
     
-    obj_no = ewP->mnwP[ewP->mtn_no].obj_num;
-    md2P   = ewP->mnwP[ewP->mtn_no].md2P;
+    obj_no = P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].obj_num;
+    md2P   = P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P);
     
     if ((mode & 0x2))
     {
@@ -286,15 +286,15 @@ static void SetMtnNormalHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     
     for ( ; obj_no > 0; obj_no--, md2P++, datP++)
     {
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         {
-            mkfP = md2P->p[0];
+            mkfP = P32(void *, md2P->p[0]);
             
             if (mkfP != NULL) 
             {
-                posP = ewP->mlwP->objP[*datP].pos;
+                posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;
                 
                 mkfP += ewP->frm_no / 65536;
                 
@@ -314,8 +314,8 @@ static void SetMtnNormalHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
             
             if (!(owP->flg & 0x2)) 
             {
-                mkaP = md2P->p[1];
-                angP = ewP->mlwP->objP[*datP].ang;
+                mkaP = P32(void *, md2P->p[1]);
+                angP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
                 
                 if (mkaP != NULL)
                 {
@@ -418,15 +418,15 @@ static void SetMtnFast(BH_PWORK* ewP, char* datP, int mode)
         datP = NormalTbl;
     }
     
-    keyP = &((float*)ewP->mnwP[ewP->mtn_no].md2P->p[0])[(ewP->frm_no / 65536) * 3];
-    posP = ewP->mlwP->objP[*datP].pos;
+    keyP = &((float*)P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P)->p[0]))[(ewP->frm_no / 65536) * 3];
+    posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;
     
     posP[0] = keyP[0] * (((mode & 0x2)) ? -1.0f : 1.0f);
     posP[1] = keyP[1]; 
     posP[2] = keyP[2];
     
-    obj_no = ewP->mnwP[ewP->mtn_no].obj_num;
-    md2P   = ewP->mnwP[ewP->mtn_no].md2P;
+    obj_no = P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].obj_num;
+    md2P   = P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P);
     
     if ((mode & 0x2)) 
     {
@@ -439,17 +439,17 @@ static void SetMtnFast(BH_PWORK* ewP, char* datP, int mode)
     
     while (obj_no > 0)
     {
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         { 
             if (!(owP->flg & 0x2)) 
             {
-                dstP = ewP->mlwP->objP[*datP].ang;
+                dstP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
                 
-                if (md2P->p[1] != NULL) 
+                if (P32(void *, md2P->p[1]) != NULL) 
                 {
-                    mkaP =  md2P->p[1];
+                    mkaP =  P32(void *, md2P->p[1]);
                     mkaP += ewP->frm_no / 65536;
                     
                     dstP[0] = mkaP->key[0];
@@ -483,8 +483,8 @@ static void SetMtnFastHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
         datP = NormalTbl;
     }
     
-    keyP = &((float*)ewP->mnwP[ewP->mtn_no].md2P->p[0])[(ewP->frm_no / 65536) * 3];
-    posP = ewP->mlwP->objP[*datP].pos;  
+    keyP = &((float*)P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P)->p[0]))[(ewP->frm_no / 65536) * 3];
+    posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;  
     
     if ((mode & 0x2))
     {
@@ -513,8 +513,8 @@ static void SetMtnFastHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     int obj_no;           
     NJS_MDATA2_MOD* md2P; 
 
-    obj_no = ewP->mnwP[ewP->mtn_no].obj_num;
-    md2P   = ewP->mnwP[ewP->mtn_no].md2P;
+    obj_no = P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].obj_num;
+    md2P   = P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P);
         
     if ((mode & 0x2)) 
     {
@@ -529,7 +529,7 @@ static void SetMtnFastHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     { 
         O_WORK* owP;        
         
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         {
@@ -542,8 +542,8 @@ static void SetMtnFastHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
                 short dlt;           
                 static int tmpS[3], tmpD[3];  
                 
-                angP = ewP->mlwP->objP[*datP].ang;
-                mkaP = md2P->p[1];
+                angP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
+                mkaP = P32(void *, md2P->p[1]);
                 
                 if (mkaP != NULL) 
                 {
@@ -669,7 +669,7 @@ static void SetMtnSlow(BH_PWORK* ewP, char* datP, int mode)
     
     src_no = ewP->frm_no / 65536;
     
-    mnwP = &ewP->mnwP[ewP->mtn_no];
+    mnwP = &P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no];
     
     dst_no = src_no + 1;
     
@@ -684,7 +684,7 @@ static void SetMtnSlow(BH_PWORK* ewP, char* datP, int mode)
     }
     
     obj_no = mnwP->obj_num;
-    md2P   = mnwP->md2P;
+    md2P   = P32(struct NJS_MDATA2_MOD *, mnwP->md2P);
     
     if ((mode & 0x2))
     {
@@ -699,11 +699,11 @@ static void SetMtnSlow(BH_PWORK* ewP, char* datP, int mode)
     
     for ( ; obj_no > 0; datP++) 
     {
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         {
-            mkfP = md2P->p[0];
+            mkfP = P32(void *, md2P->p[0]);
             
             if (mkfP != NULL)
             {
@@ -712,7 +712,7 @@ static void SetMtnSlow(BH_PWORK* ewP, char* datP, int mode)
                 srcP = mkfP[src_no].key; 
                 dstP = mkfP[dst_no].key;
 
-                posP = ewP->mlwP->objP[*datP].pos;
+                posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;
                 
                 posP[0] = flp_f * (srcP[0] + (frac * (dstP[0] - srcP[0])));
                 posP[1] = srcP[1]          + (frac * (dstP[1] - srcP[1]));
@@ -721,9 +721,9 @@ static void SetMtnSlow(BH_PWORK* ewP, char* datP, int mode)
             
             if (!(owP->flg & 0x2)) 
             {
-                mkaP = md2P->p[1];
+                mkaP = P32(void *, md2P->p[1]);
                 
-                angP = ewP->mlwP->objP[*datP].ang;
+                angP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
                 
                 if (mkaP != NULL) 
                 {
@@ -772,7 +772,7 @@ static void SetMtnSlowHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     
     src_no = ewP->frm_no / 65536;
     
-    mnwP = &ewP->mnwP[ewP->mtn_no];
+    mnwP = &P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no];
     
     dst_no = src_no + 1;
     
@@ -787,7 +787,7 @@ static void SetMtnSlowHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     }
     
     obj_no = mnwP->obj_num;
-    md2P   = mnwP->md2P;
+    md2P   = P32(struct NJS_MDATA2_MOD *, mnwP->md2P);
     
     if ((mode & 0x2)) 
     {
@@ -802,11 +802,11 @@ static void SetMtnSlowHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
     
     for ( ; obj_no > 0; datP++)
     { 
-        owP = &ewP->mlwP->owP[*datP];
+        owP = &P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[*datP];
         
         if (!(owP->flg & 0x4)) 
         {
-            mkfP = md2P->p[0];
+            mkfP = P32(void *, md2P->p[0]);
             
             if (mkfP != NULL) 
             {
@@ -815,7 +815,7 @@ static void SetMtnSlowHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
                 srcP = mkfP[src_no].key;
                 dstP = mkfP[dst_no].key;
                 
-                posP = ewP->mlwP->objP[*datP].pos;
+                posP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].pos;
                 
                 if ((mode & 0x100)) 
                 {
@@ -833,10 +833,10 @@ static void SetMtnSlowHokan(BH_PWORK* ewP, char* datP, int mode, float rate)
             
             if (!(owP->flg & 0x2)) 
             {
-                angP = ewP->mlwP->objP[*datP].ang;
+                angP = P32(struct cnkobj *, P32(struct ML_WORK *, ewP->mlwP)->objP)[*datP].ang;
                 bufP = mka_ang;
                 
-                mkaP = md2P->p[1];
+                mkaP = P32(void *, md2P->p[1]);
                 
                 if (mkaP != NULL) 
                 {
@@ -951,7 +951,7 @@ void bhCalcFixOffset(BH_PWORK* ewP, char* datP, NJS_POINT3* offP, NJS_POINT3* rt
     NJS_POINT3 dst;          
     static const NJS_POINT3 off = { 0 }; 
     
-    mlwP = ewP->mlwP;
+    mlwP = P32(struct ML_WORK *, ewP->mlwP);
     
     if (offP == NULL) 
     {
@@ -962,7 +962,7 @@ void bhCalcFixOffset(BH_PWORK* ewP, char* datP, NJS_POINT3* offP, NJS_POINT3* rt
     
     if ((ewP->flg & 0x80))
     {
-        njSetMatrix(NULL, &((BH_PWORK*)ewP->lkwkp)->mlwP->owP[ewP->lkono].mtx);
+        njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)P32(unsigned char *, ewP->lkwkp))->mlwP)->owP)[ewP->lkono].mtx);
         
         njTranslate(NULL, ewP->lox, ewP->loy, ewP->loz);
         njRotateXYZ(NULL, ewP->ax, ewP->ay, ewP->az);
@@ -977,14 +977,14 @@ void bhCalcFixOffset(BH_PWORK* ewP, char* datP, NJS_POINT3* offP, NJS_POINT3* rt
     
     while (*datP != -1)
     {
-        objP = &mlwP->objP[*datP++];
+        objP = &P32(struct cnkobj *, mlwP->objP)[*datP++];
         
         njTranslate(NULL, objP->pos[0], objP->pos[1], objP->pos[2]);
         njRotateXYZ(NULL, objP->ang[0], objP->ang[1], objP->ang[2]);
     }
     
     njCalcPoint(NULL, offP, &dst);
-    njCalcPoint(&mlwP->owP[datP[-1]].mtx, offP, &src);
+    njCalcPoint(&P32(struct O_WORK *, mlwP->owP)[datP[-1]].mtx, offP, &src);
     
     njSubVector(&dst, &src);
     
@@ -1008,7 +1008,7 @@ void bhGetObjMotion(BH_PWORK* ewP, int obj_no, float* pos, int* ang)
         f_flp = -1.0f;
         s_flp = -1;
         
-        rutP = (char*)&ewP->mtn_tp[obj_no];
+        rutP = (char*)&P32(unsigned char *, ewP->mtn_tp)[obj_no];
     }
     else 
     {
@@ -1018,15 +1018,15 @@ void bhGetObjMotion(BH_PWORK* ewP, int obj_no, float* pos, int* ang)
         rutP = (char*)&NormalTbl[obj_no];
     }
 
-    md2P = &ewP->mnwP[ewP->mtn_no].md2P[*rutP];
+    md2P = &P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P)[*rutP];
     
 #ifdef TARGET_PC
     {   /* the key copies stay valid after the pointers are put back */
         PcKeyPatch pc_patch;
 
-        pc_patch_oob_keys(&ewP->mnwP[ewP->mtn_no], ewP->frm_no, &pc_patch);
-        mkfP = (NJS_MKEY_F_MOD*)md2P->p[0];
-        mkaP = (NJS_MKEY_A_MOD*)md2P->p[1];
+        pc_patch_oob_keys(&P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no], ewP->frm_no, &pc_patch);
+        mkfP = (NJS_MKEY_F_MOD*)P32(void *, md2P->p[0]);
+        mkaP = (NJS_MKEY_A_MOD*)P32(void *, md2P->p[1]);
         pc_unpatch_oob_keys(&pc_patch);
     }
 #else

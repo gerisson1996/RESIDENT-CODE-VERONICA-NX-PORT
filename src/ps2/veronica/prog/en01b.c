@@ -220,7 +220,7 @@ void bhEne01_MV13B(BH_PWORK* epw)
         epw->mode3++;
 
     case 1:
-        ikou(epw, (NJS_POINT3*) (epw->exp0 + 0x58), epw->way);
+        ikou(epw, (NJS_POINT3*) (P32(unsigned char *, epw->exp0) + 0x58), epw->way);
         break;
     }
 }
@@ -250,7 +250,7 @@ void bhEne01_NG03B(BH_PWORK* epw)
     BH_PWORK* sepw; 
 	int frm;        
 
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     pl  = plp;
 
     switch (epw->mode3)
@@ -319,19 +319,19 @@ void bhEne01_NG03B(BH_PWORK* epw)
             {
                 bhEne01_CutHead(epp, 0);
                 
-                sepw = *(BH_PWORK**)&epp->exp0[16];
+                sepw = *(BH_PWORK**)&P32(unsigned char *, epp->exp0)[16];
             
                 if (sepw != NULL)
                 {
-                    *(unsigned int**)&sepw->exp0[0] = &epp->mlwP->objP[11].evalflags;
-                    *(unsigned int**)&sepw->exp0[4] = &epp->mlwP->owP[11].flg;
+                    *(unsigned int**)&P32(unsigned char *, sepw->exp0)[0] = &P32(struct cnkobj *, P32(struct ML_WORK *, epp->mlwP)->objP)[11].evalflags;
+                    *(unsigned int**)&P32(unsigned char *, sepw->exp0)[4] = &P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[11].flg;
             
                     sepw->ay = (epw->ay + 32768) & 0xFFFF;
                     
                     sepw->mode0 = 3;
                 }
                 
-                bhEne01_SePlay(epp, (NJS_POINT3*)&epp->mlwP->owP[11].mtx[12], 4877);
+                bhEne01_SePlay(epp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[11].mtx[12], 4877);
             }
         } 
         else if (epw->mtn_no == 5) 
@@ -348,7 +348,7 @@ void bhEne01_NG03B(BH_PWORK* epw)
             {
                 bhEne01_CutHead(epp, 1);
                 
-                bhEne01_SePlay(epp, (NJS_POINT3*)&epp->mlwP->owP[11].mtx[12], 4869);
+                bhEne01_SePlay(epp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[11].mtx[12], 4869);
             }
             else if (frm == 35) 
             {
@@ -356,7 +356,7 @@ void bhEne01_NG03B(BH_PWORK* epw)
             }
         }
         
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1)) 
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1)) 
         {
             epw->mtn_add = 0;
             
@@ -406,7 +406,7 @@ void bhEne01_DG05B(BH_PWORK* epw)
     NJS_POINT3 ps; 
     int frm;       
     
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
 
     switch (epw->mode3) 
     {
@@ -444,7 +444,7 @@ void bhEne01_DG05B(BH_PWORK* epw)
         
         if ((frm == 55) || (frm == 58)) 
         {
-            bhEne01_SePlay(epp, (NJS_POINT3*)&epp->mlwP->owP[9].mtx[12], 8963);
+            bhEne01_SePlay(epp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[9].mtx[12], 8963);
         }
         
         if (((frm <= 36) == 0) && ((frm % 2) == 0)) 
@@ -460,9 +460,9 @@ void bhEne01_DG05B(BH_PWORK* epw)
             bhEne_SetBlood2(epp, 1, &ps, 0);
         }
         
-        if (frm == (epw->mnwP[epw->mtn_no].frm_num - 1)) 
+        if (frm == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1)) 
         {
-            owk = epw->mlwP->owP;
+            owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
             
             epw->px = owk[8].mtx[12];
             epw->pz = owk[8].mtx[14];
@@ -514,7 +514,7 @@ void bhEne01_DG09B(BH_PWORK* epw)
     NJS_POINT3 ps; 
 	int frm;       
 
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
 
     switch (epw->mode3) 
     {
@@ -594,9 +594,9 @@ void bhEne01_DG09B(BH_PWORK* epw)
             bhEne_SetBlood2(epp, 0, &ps, 0);
         }
         
-        if (frm == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if (frm == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
-            owk = &epw->mlwP->owP[8];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[8];
             
             epw->px = owk->mtx[12];  
             epw->pz = owk->mtx[14];  
@@ -657,7 +657,7 @@ void bhEne01_DG12B(BH_PWORK* epw)
 {
     BH_PWORK* epp;
     
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     switch (epw->mode3)
     {                            
@@ -689,7 +689,7 @@ void bhEne01_DG12B(BH_PWORK* epw)
         
         break;
     case 2:
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1)) 
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1)) 
         {
             epw->mode0 = 4;
             epw->mode1 = 0;
@@ -708,7 +708,7 @@ void bhEne01_DG13B(BH_PWORK* epw)
 {    
     BH_PWORK* epp;
     
-    epp = (BH_PWORK*)epw->lkwkp;
+    epp = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
     
     switch (epw->mode3) 
     {                            
@@ -721,7 +721,7 @@ void bhEne01_DG13B(BH_PWORK* epw)
         
         epw->mode3++;
     case 1:
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1)) 
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1)) 
         {
             epw->mode0 = 4;
             epw->mode1 = 0;
@@ -750,7 +750,7 @@ void bhEne01_DD02B(BH_PWORK* epw)
         
         if (!(epw->stflg & 0x100000)) 
         {
-            owk = &epw->mlwP->owP[10];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10];
             
             ps.x = 0;
             ps.y = 0;
@@ -859,11 +859,11 @@ void bhEne01_RotNeck(BH_PWORK* epw, int neck_no, BH_PWORK* ply, int ply_neck_no)
     } 
     else
     {
-        rot = *(int *)(epw->lkwkp + 0x20);
+        rot = *(int *)(P32(unsigned char *, epw->lkwkp) + 0x20);
     }
     
-    trg_owk = &ply->mlwP->owP[ply_neck_no];
-    obj = &epw->mlwP->objP[neck_no];
+    trg_owk = &P32(struct O_WORK *, P32(struct ML_WORK *, ply->mlwP)->owP)[ply_neck_no];
+    obj = &P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[neck_no];
     pos.x = trg_owk->mtx[12];
     pos.y = trg_owk->mtx[13];
     pos.z = trg_owk->mtx[14];
@@ -879,7 +879,7 @@ int bhEne01_SideRotNeck(BH_PWORK* epw, int neck_no, NJS_VECTOR* trg, int neck_ry
     // not present in DWARF
     int ret;
 
-    owk = &epw->mlwP->owP[neck_no];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[neck_no];
     rot = (NitenDir_ck(owk->mtx[12], owk->mtx[14], trg->x, trg->z) - ang) & 0xFFFF;
 
     if ((unsigned short)((rot - neck_ry) + 910) < 1820)

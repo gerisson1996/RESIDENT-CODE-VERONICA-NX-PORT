@@ -50,7 +50,16 @@ OPTION OptionDef[9] = { { 0, 1, 0, 0, 0,  0,  0, 0, 0 },
                         { 0, 0, 0, 0, 0,  4,  0, 0, 1 },     /* ENHANCED SETTINGS: level 4 (pc/glue/options_glue.c) */
                         { 0, 0, 0, 0, 0,  0,  0, 0, 0 } };   /* RETURN TO TITLE (in a game): asks first (pc/glue/options_glue.c) */
 #endif
+#ifndef TARGET_PC
 NJS_TEXLIST AdvTexList[2] = { {AdvTexName[0], 8}, {AdvTexName[1], 8} };
+#else
+NJS_TEXLIST AdvTexList[2] = { {0, 8}, {0, 8} };   /* slots: filled at start */
+static __attribute__((constructor)) void pc_init_AdvTexList(void)
+{
+    AdvTexList[0].textures = S32(AdvTexName[0]);
+    AdvTexList[1].textures = S32(AdvTexName[1]);
+}
+#endif
 
 // 100% matching! 
 void CallPlayerDeadVoice(int PlayerNo)
@@ -112,7 +121,7 @@ void ResetAdvSystem()
     
     for (i = 0; i < 8; i++) 
     { 
-        ap->ptr[i] = NULL; 
+        ap->ptr[i] = S32(NULL); 
     } 
     
     for (i = 0; i < 2; i++) 
@@ -227,13 +236,13 @@ void AdvPushRoomTexture(int param) // parameter is not present on the debugging 
     
     ap->TexFlag = 0; 
     
-    if (rom->mdl.texP != NULL)
+    if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)
     { 
-        ap->SysMemPtr = sys->memp; 
+        ap->SysMemPtr = S32(P32(unsigned char *, sys->memp)); 
         
-        sys->memp = (unsigned char*)bhCopyTexmem2MainmemSub(rom->mdl.texP, (char*)sys->memp); 
+        sys->memp = S32((unsigned char*)bhCopyTexmem2MainmemSub(P32(NJS_TEXLIST *, rom->mdl.texP), (char*)P32(unsigned char *, sys->memp))); 
         
-        njReleaseTexture(rom->mdl.texP); 
+        njReleaseTexture(P32(NJS_TEXLIST *, rom->mdl.texP)); 
         
         bhGarbageTexture(tbuf, 256); 
         
@@ -248,11 +257,11 @@ void AdvPopRoomTexture()
 
     ap = (ADV_WORK*)&AdvWork; 
 
-    if ((ap->TexFlag != 0) && (rom->mdl.texP != NULL)) 
+    if ((ap->TexFlag != 0) && (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)) 
     { 
-        bhCopyMainmem2Texmem(rom->mdl.texP); 
+        bhCopyMainmem2Texmem(P32(NJS_TEXLIST *, rom->mdl.texP)); 
         
-        sys->memp = ap->SysMemPtr; 
+        sys->memp = S32(P32(unsigned char *, ap->SysMemPtr)); 
     }
     
     ap->TexFlag = 0; 
@@ -298,9 +307,9 @@ void RequestAdvInsideFileEx(int InsideFileId, int MemoryBlockNo)
 
     ap = (ADV_WORK*)&AdvWork; 
 
-    ap->ptr[MemoryBlockNo] = bhGetFreeMemory(GetInsideFileSize(ap->PatId, InsideFileId), 32); 
+    ap->ptr[MemoryBlockNo] = S32(bhGetFreeMemory(GetInsideFileSize(ap->PatId, InsideFileId), 32)); 
     
-    RequestReadInsideFile(ap->PatId, InsideFileId, ap->ptr[MemoryBlockNo]); 
+    RequestReadInsideFile(ap->PatId, InsideFileId, P32(unsigned char *, ap->ptr[MemoryBlockNo])); 
 } 
 
 // 100% matching! 
@@ -316,11 +325,11 @@ void FreeAdvMemoryEx(int MemoryBlockNo)
 
     temp = (ADV_WORK*)&AdvWork; 
 
-    if (temp->ptr[MemoryBlockNo] != NULL) 
+    if (P32(unsigned char *, temp->ptr[MemoryBlockNo]) != NULL) 
     { 
-        bhReleaseFreeMemory(temp->ptr[MemoryBlockNo]); 
+        bhReleaseFreeMemory(P32(unsigned char *, temp->ptr[MemoryBlockNo])); 
         
-        temp->ptr[MemoryBlockNo] = NULL; 
+        temp->ptr[MemoryBlockNo] = S32(NULL); 
     } 
 } 
 
@@ -710,7 +719,7 @@ void AdvEasyDrawTexture(int TexNo, unsigned int BaseColor, QUAD* qp, float PosZ,
 { 
     if (TransFlag != 0) 
     { 
-        ((TIM2_PICTUREHEADER_EX*)Ps2_current_texmemlist->texinfo.texsurface.pSurface)->ClutChange |= 0x8000; 
+        ((TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_current_texmemlist->texinfo.texsurface.pSurface))->ClutChange |= 0x8000; 
     }
     
     njQuadTextureStart(TransFlag); 
@@ -759,7 +768,7 @@ void SetQuadUv2Ex(float u, float v, float SizeX, float SizeY, unsigned int ListN
     float TexY;
     NJS_TEXMEMLIST* temp; // not from the debugging symbols
 
-    temp = (NJS_TEXMEMLIST*)PS2_HOST(AdvTexList[ListNo].textures[TexNo].texaddr); 
+    temp = (NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, AdvTexList[ListNo].textures)[TexNo].texaddr); 
     
     TexX = (temp->texinfo.texsurface.nWidth >= 0) ? temp->texinfo.texsurface.nWidth : temp->texinfo.texsurface.nWidth / 3; 
     TexY = (temp->texinfo.texsurface.nHeight >= 0) ? temp->texinfo.texsurface.nHeight : temp->texinfo.texsurface.nHeight / 3; 
@@ -834,7 +843,7 @@ void AdvEasySetupTextureEx(int ListNo)
 
     ap = (ADV_WORK*)&AdvWork;
     
-    AdvEasySetupTextureBasic(ap->ptr[ap->Count], ListNo, ap->Count); 
+    AdvEasySetupTextureBasic(P32(unsigned char *, ap->ptr[ap->Count]), ListNo, ap->Count); 
     
     ap->Count++; 
 } 
@@ -1002,7 +1011,7 @@ float AdvEasyDispMessage(float PosX, float PosY, unsigned int MessageNo)
 
     temp2 = (ADV_WORK*)&AdvWork; 
 
-    smp = (unsigned char*)PS2_HOST(((int)PS2_ADDR(temp2->MsgPtr) + ((int*)temp2->MsgPtr)[MessageNo + 1])); 
+    smp = (unsigned char*)PS2_HOST(((int)PS2_ADDR(P32(unsigned char *, temp2->MsgPtr)) + ((int*)P32(unsigned char *, temp2->MsgPtr))[MessageNo + 1])); 
     
     dmp = syMalloc(1024); 
     
@@ -1049,7 +1058,7 @@ float AdvEasyDispMessage(float PosX, float PosY, unsigned int MessageNo)
             sx = 320.0f - (SizeX / 2.0f); 
         } 
         
-        sys->mes_tp = nmp; 
+        sys->mes_tp = S32(nmp); 
         
         bhDispMessage(sx, sy, -1.0f, 2, 0, 0, 0);    
         
@@ -1135,7 +1144,7 @@ float AutoSaveLoadEasyDispMessage(float PosX, float PosY, unsigned char* ucpMsbT
             sx = 320.0f - (SizeX / 2.0f); 
         } 
         
-        sys->mes_tp = nmp; 
+        sys->mes_tp = S32(nmp); 
         
         bhDispMessage(sx, sy, -1.0f, 2, 0, 0, 0);    
         
@@ -1256,9 +1265,9 @@ int Adv_FirstWarningMessage()
         ap->Mode = 1; 
         break; 
     case 1:
-        ap->ptr[0] = bhGetFreeMemory(GetInsideFileSize(sys->sys_partid, 1), 32);
+        ap->ptr[0] = S32(bhGetFreeMemory(GetInsideFileSize(sys->sys_partid, 1), 32));
         
-        RequestReadInsideFile(sys->sys_partid, 1, ap->ptr[0]); 
+        RequestReadInsideFile(sys->sys_partid, 1, P32(unsigned char *, ap->ptr[0])); 
         
         ap->Mode = 2; 
         break; 
@@ -1266,7 +1275,7 @@ int Adv_FirstWarningMessage()
         CheckReadEndAdvInsideFile2(3); 
         break; 
     case 3:
-        bhSetFontTexture(ap->ptr[0]); 
+        bhSetFontTexture(P32(unsigned char *, ap->ptr[0])); 
         
         AllFreeAdvMemory(); 
         
@@ -1280,12 +1289,12 @@ int Adv_FirstWarningMessage()
         CheckReadEndAdvInsideFile2(6); 
         break; 
     case 6:
-        ap->MsgPtr = AdvGetResourcePtr(ap->ptr[0], 0); 
+        ap->MsgPtr = S32(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 0)); 
         
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 2), 0, 0); 
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 3), 0, 1); 
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 2), 0, 0); 
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 3), 0, 1); 
         
-        ap->PalNo = TransPvpData(AdvGetResourcePtr(ap->ptr[0], 1), ap->PalFlag); 
+        ap->PalNo = TransPvpData(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 1), ap->PalFlag); 
         
         AdvEasyTransTextureBasic(0, 2, 1); 
         
@@ -2303,8 +2312,8 @@ int Adv_BioCvTitle()
     case 3:
         RequestAllStopSoundEx(0, 1, 0); 
 
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 0), 0, 0); 
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 2), 0, 1); 
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 0), 0, 0); 
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 2), 0, 1); 
         
         AdvEasyTransTextureBasic(0, 2, 0); 
         
@@ -3683,9 +3692,9 @@ int Adv_GameOptionScreen()
         ap->Mode2 = (ap->AppMode == 0) ? 3 : 6;
         break;
     case 3:
-        ap->ptr[0] = bhGetFreeMemory(GetInsideFileSize(sys->sys_partid, 1), 32);
+        ap->ptr[0] = S32(bhGetFreeMemory(GetInsideFileSize(sys->sys_partid, 1), 32));
         
-        RequestReadInsideFile(sys->sys_partid, 1, ap->ptr[0]);
+        RequestReadInsideFile(sys->sys_partid, 1, P32(unsigned char *, ap->ptr[0]));
         
         ap->Mode2 = 4;
         break;
@@ -3693,7 +3702,7 @@ int Adv_GameOptionScreen()
         CheckReadEndAdvInsideFile2Ex(5, 1);
         break;
     case 5:
-        bhSetFontTexture(ap->ptr[0]);
+        bhSetFontTexture(P32(unsigned char *, ap->ptr[0]));
         
         AllFreeAdvMemory();
         
@@ -3718,13 +3727,13 @@ int Adv_GameOptionScreen()
         ap->Mode2 = 8;
         break;
     case 8:
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 2), 0, 0);
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 3), 0, 1);
-        AdvEasySetupTextureBasic(AdvGetResourcePtr(ap->ptr[0], 4), 0, 2);
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 2), 0, 0);
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 3), 0, 1);
+        AdvEasySetupTextureBasic(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 4), 0, 2);
         
-        ap->PalNo = TransPvpData(AdvGetResourcePtr(ap->ptr[0], 1), ap->PalFlag);
+        ap->PalNo = TransPvpData(AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 1), ap->PalFlag);
         
-        ap->MsgPtr = (unsigned char*)AdvGetResourcePtr(ap->ptr[0], 0);
+        ap->MsgPtr = S32((unsigned char*)AdvGetResourcePtr(P32(unsigned char *, ap->ptr[0]), 0));
         
         AdvEasyTransTextureBasic(0, 3, 1);
         

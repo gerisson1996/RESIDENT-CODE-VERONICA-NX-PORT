@@ -53,7 +53,7 @@ void bhInitDoor()
     
     npSetMemory((unsigned char*)dwP, sizeof(_door_wrk), 0);
     
-    dwP->dmo_bufP = sys->doordp;
+    dwP->dmo_bufP = S32(P32(unsigned char *, sys->doordp));
     
     AnalyzeDoor(dwP, sys->door.dor_tp, sys->door.flg);
     
@@ -84,7 +84,7 @@ int bhReadDoorData()
     case 0:                                  
         dwP->prti_no = sys->dor_partid;
         
-        if (RequestReadInsideFile(dwP->prti_no, dwP->dmo_typ + 71, dwP->dmo_bufP) != 0)
+        if (RequestReadInsideFile(dwP->prti_no, dwP->dmo_typ + 71, P32(void *, dwP->dmo_bufP)) != 0)
         {
             code = -1; 
             break;
@@ -92,7 +92,7 @@ int bhReadDoorData()
         
         dwP->dmo_mode++;
     case 1:                                  
-        pacP = dwP->dmo_bufP;
+        pacP = P32(void *, dwP->dmo_bufP);
         
         status = GetReadFileStatus();
         
@@ -123,7 +123,7 @@ int bhReadDoorData()
                     
                     if (next != -1) 
                     {
-                        dwP->tex_pacP = pacP;
+                        dwP->tex_pacP = S32(pacP);
                         
                         pacP = (int*)PS2_HOST(((int)PS2_ADDR(pacP) + next));
                         
@@ -139,7 +139,7 @@ int bhReadDoorData()
                             
                             if (next != -1) 
                             {
-                                dwP->dmo_prmP = pacP;
+                                dwP->dmo_prmP = S32(pacP);
                                 dwP->dmo_mode = 2; 
                                 
                                 code = 2; 
@@ -220,8 +220,8 @@ void bhSetDoor()
     
     dwP = &DoorWrk;
 
-    phP = (PH_WORK*)dwP->dmo_prmP;
-    ptP = (void*)PS2_HOST(((int)PS2_ADDR(dwP->dmo_prmP) + 4));
+    phP = (PH_WORK*)P32(void *, dwP->dmo_prmP);
+    ptP = (void*)PS2_HOST(((int)PS2_ADDR(P32(void *, dwP->dmo_prmP)) + 4));
     
     if (dwP->cse_no < phP->prm_num) 
     {
@@ -246,13 +246,13 @@ void bhSetDoor()
     njSetAspect(1.174f, 1.0f);
     njSetBackColor(0x00000000, 0x00000000, 0x00000000);  
     
-    dwP->objP = dwP->dor_mdl.objP;
+    dwP->objP = S32(P32(struct cnkobj *, dwP->dor_mdl.objP));
     
-    npCnkFlatOff(dwP->objP);
+    npCnkFlatOff(P32(struct cnkobj *, dwP->objP));
     
-    if (dwP->dor_mdl.texP != NULL) 
+    if (P32(NJS_TEXLIST *, dwP->dor_mdl.texP) != NULL) 
     {
-        bhSetMemPvpTexture(dwP->dor_mdl.texP, dwP->tex_pacP, 0);
+        bhSetMemPvpTexture(P32(NJS_TEXLIST *, dwP->dor_mdl.texP), P32(void *, dwP->tex_pacP), 0);
     }
     
     njCnkSetEasyMultiLight(4);
@@ -262,7 +262,7 @@ void bhSetDoor()
     PH_WORK* phP; 
     PT_WORK* ptP; 
         
-    phP = (PH_WORK*)dwP->dmo_prmP;
+    phP = (PH_WORK*)P32(void *, dwP->dmo_prmP);
     ptP = (PT_WORK*)PS2_HOST(((int)PS2_ADDR(phP) + 4));
         
     if (dwP->cse_no < phP->prm_num) 
@@ -270,20 +270,20 @@ void bhSetDoor()
         ptP += dwP->cse_no;
     }
         
-    dwP->fde_prcP = FadeProcTbl[ptP->fde_no].procP;
-    dwP->fpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->fde_off));
+    dwP->fde_prcP = S32(FadeProcTbl[ptP->fde_no].procP);
+    dwP->fpP = S32((void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->fde_off)));
         
-    dwP->vew_prcP = ViewProcTbl[ptP->vew_no].procP;
-    dwP->vpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->vew_off));
+    dwP->vew_prcP = S32(ViewProcTbl[ptP->vew_no].procP);
+    dwP->vpP = S32((void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->vew_off)));
         
-    dwP->dor_prcP = DoorProcTbl[ptP->dor_no].procP;
-    dwP->dpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->dor_off));
+    dwP->dor_prcP = S32(DoorProcTbl[ptP->dor_no].procP);
+    dwP->dpP = S32((void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->dor_off)));
         
-    dwP->lgt_prcP = LightProcTbl[ptP->lgt_no].procP;
-    dwP->lpP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->lgt_off));
+    dwP->lgt_prcP = S32(LightProcTbl[ptP->lgt_no].procP);
+    dwP->lpP = S32((void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->lgt_off)));
         
-    dwP->pru_prcP = PuruProcTbl[ptP->pru_no].procP;
-    dwP->ppP = (void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->pru_off));
+    dwP->pru_prcP = S32(PuruProcTbl[ptP->pru_no].procP);
+    dwP->ppP = S32((void*)PS2_HOST(((int)PS2_ADDR(phP) + ptP->pru_off)));
     }
     
     if ((dwP->dmo_atr & 0x1)) 
@@ -344,8 +344,8 @@ void bhSetDoor()
     {
         dwP->status |= 0x10000000;
         
-        dwP->pru_prcP = PuruProcTbl[1].procP;
-        dwP->ppP = &DkiPru;
+        dwP->pru_prcP = S32(PuruProcTbl[1].procP);
+        dwP->ppP = S32(&DkiPru);
     }
 }
 
@@ -360,9 +360,9 @@ void bhExitDoor()
 
     njSetAspect(BHD_ASPECT_X, BHD_ASPECT_Y);
 
-    if (dwP->dor_mdl.texP != NULL) 
+    if (P32(NJS_TEXLIST *, dwP->dor_mdl.texP) != NULL) 
 	{
-        njReleaseTexture(dwP->dor_mdl.texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, dwP->dor_mdl.texP));
 		
         bhGarbageTexture(NULL, 0);
 
@@ -407,29 +407,29 @@ int bhControlDoor()
                     DokiProcLgt(dwP);
                 }
                 
-                if (((dwP->status & 0x1)) && (dwP->fde_prcP != NULL)) 
+                if (((dwP->status & 0x1)) && (P32(void (*)(void *), dwP->fde_prcP) != NULL)) 
                 {
-                    dwP->fde_prcP(dwP);
+                    P32(void (*)(void *), dwP->fde_prcP)(dwP);
                 }
                 
-                if (((dwP->status & 0x2)) && (dwP->vew_prcP != NULL)) 
+                if (((dwP->status & 0x2)) && (P32(void (*)(void *), dwP->vew_prcP) != NULL)) 
                 {
-                    dwP->vew_prcP(dwP);
+                    P32(void (*)(void *), dwP->vew_prcP)(dwP);
                 }
                 
-                if (((dwP->status & 0x4)) && (dwP->dor_prcP != NULL)) 
+                if (((dwP->status & 0x4)) && (P32(void (*)(void *), dwP->dor_prcP) != NULL)) 
                 {
-                    dwP->dor_prcP(dwP);
+                    P32(void (*)(void *), dwP->dor_prcP)(dwP);
                 }
                 
-                if (((dwP->status & 0x8)) && (dwP->lgt_prcP != NULL)) 
+                if (((dwP->status & 0x8)) && (P32(void (*)(void *), dwP->lgt_prcP) != NULL)) 
                 {
-                    dwP->lgt_prcP(dwP);
+                    P32(void (*)(void *), dwP->lgt_prcP)(dwP);
                 }
                 
-                if (((dwP->status & 0x10000000)) && (dwP->pru_prcP != NULL))
+                if (((dwP->status & 0x10000000)) && (P32(void (*)(void *), dwP->pru_prcP) != NULL))
                 {
-                    dwP->pru_prcP(dwP);
+                    P32(void (*)(void *), dwP->pru_prcP)(dwP);
                 }
                 
                 dwP->time++;
@@ -475,9 +475,9 @@ int bhControlDoor()
                 njRotateY(NULL, 32768);
             }
             
-            if (dwP->dor_mdl.texP != NULL) 
+            if (P32(NJS_TEXLIST *, dwP->dor_mdl.texP) != NULL) 
             {
-                njSetTexture(dwP->dor_mdl.texP);
+                njSetTexture(P32(NJS_TEXLIST *, dwP->dor_mdl.texP));
             }
             
             njSetPerspective(12743);
@@ -486,11 +486,11 @@ int bhControlDoor()
             {
                 ryExcuteFade(-0.8f, dwP->fde_col, dwP->fde_rate);
                 
-                njCnkEasyMultiDrawObject(dwP->dor_mdl.objP);
+                njCnkEasyMultiDrawObject(P32(struct cnkobj *, dwP->dor_mdl.objP));
             } 
             else 
             {
-                njCnkEasyMultiDrawObject(dwP->dor_mdl.objP);
+                njCnkEasyMultiDrawObject(P32(struct cnkobj *, dwP->dor_mdl.objP));
             }
             
             njPopMatrix(1);
@@ -574,7 +574,7 @@ static void FadeProc1(_door_wrk* dwP)
 {
     FADEPROC_WORK* fpP; 
     
-    fpP = dwP->fpP;
+    fpP = P32(void *, dwP->fpP);
     
     switch (dwP->fde_mode) 
     {
@@ -661,7 +661,7 @@ static void ViewProc1(_door_wrk* dwP)
 
     dwP->status = dwP->status;
     
-    vpP = dwP->vpP;
+    vpP = P32(void *, dwP->vpP);
     
     if ((dwP->status & 0x8000)) 
     {
@@ -743,7 +743,7 @@ static void ViewProc2(_door_wrk* dwP)
     NJS_VECTOR vct;     
     float y; // not from DWARF
     
-    vpP = prmP = dwP->vpP;
+    vpP = prmP = P32(void *, dwP->vpP);
     
     if ((dwP->status & 0x4000)) 
     {
@@ -797,7 +797,7 @@ static void ViewProc3(_door_wrk* dwP)
 {
     VIEWPROC3_WORK* vpP, *prmP;  
 
-    prmP = dwP->vpP;
+    prmP = P32(void *, dwP->vpP);
     vpP = prmP;
     
     if ((dwP->status & 0x4000)) 
@@ -882,7 +882,7 @@ static void ViewProc4(_door_wrk* dwP)
 {
     VIEWPROC4_WORK* vpP, *prmP;
     
-    vpP = prmP = dwP->vpP;
+    vpP = prmP = P32(void *, dwP->vpP);
     
     if ((dwP->status & 0x4000))
     {
@@ -906,8 +906,8 @@ static void ViewProc4(_door_wrk* dwP)
         {
             dwP->vew_mode = 0;
             
-            dwP->vew_prcP = ViewProcTbl[prmP->chg_vew].procP;
-            dwP->vpP = &prmP[1];
+            dwP->vew_prcP = S32(ViewProcTbl[prmP->chg_vew].procP);
+            dwP->vpP = S32(&prmP[1]);
         }
         
         break;
@@ -919,7 +919,7 @@ static void ViewProc5(_door_wrk* dwP)
 {
     VIEWPROC5_WORK* vpP, *prmP;
     
-    vpP = prmP = dwP->vpP;
+    vpP = prmP = P32(void *, dwP->vpP);
     
     if ((dwP->status & 0x4000)) 
     {
@@ -983,8 +983,8 @@ static void ViewProc5(_door_wrk* dwP)
             
             dwP->vew_mode = 0;
             
-            dwP->vew_prcP = ViewProcTbl[prmP->chg_vew].procP;
-            dwP->vpP = &prmP[1];
+            dwP->vew_prcP = S32(ViewProcTbl[prmP->chg_vew].procP);
+            dwP->vpP = S32(&prmP[1]);
         }
         
         break;
@@ -997,7 +997,7 @@ static void ViewProc6(_door_wrk* dwP)
     VIEWPROC6_WORK* vpP, *prmP;  
     float adj_pos, adj_ang;        
     
-    prmP = dwP->vpP;
+    prmP = P32(void *, dwP->vpP);
     vpP = prmP;
     
     if ((dwP->status & 0x4000))
@@ -1070,9 +1070,9 @@ static void ViewProc6(_door_wrk* dwP)
         if (prmP->total_time-- <= 0) 
         {
             dwP->vew_mode = 0;
-            dwP->vew_prcP = ViewProcTbl[prmP->chg_vew].procP;
+            dwP->vew_prcP = S32(ViewProcTbl[prmP->chg_vew].procP);
             
-            dwP->vpP = &prmP[1];
+            dwP->vpP = S32(&prmP[1]);
         }
         
         break;
@@ -1085,7 +1085,7 @@ static void ViewProc7(_door_wrk* dwP)
     int flp;
     VIEWPROC7_WORK* vpP;
     
-    vpP = dwP->vpP;
+    vpP = P32(void *, dwP->vpP);
     
     if (!(dwP->status & 0x8000)) 
     {
@@ -1134,8 +1134,8 @@ static void DoorProc1(_door_wrk* dwP)
     NJS_CNK_OBJECT* oaP, *obP, *objP;  
     DOORPROC1_WORK* dpP; 
     
-    objP = dwP->objP;
-    dpP = dwP->dpP;
+    objP = P32(struct cnkobj *, dwP->objP);
+    dpP = P32(void *, dwP->dpP);
     
     if ((dwP->status & 0x800)) 
     {
@@ -1296,8 +1296,8 @@ static void DoorProc2(_door_wrk* dwP)
     int ang_z;           
     float pos_x;           
 
-    dpP = dwP->dpP;
-    basP = &dwP->objP[2];
+    dpP = P32(void *, dwP->dpP);
+    basP = &P32(struct cnkobj *, dwP->objP)[2];
     
     switch (dwP->dor_mode)
     {     
@@ -1317,13 +1317,13 @@ static void DoorProc2(_door_wrk* dwP)
         {
         NJS_CNK_OBJECT* basP, *objP; 
             
-        basP = objP = &dwP->objP[3];
+        basP = objP = &P32(struct cnkobj *, dwP->objP)[3];
             
         for (i = 0; i < 7; i++, objP++) 
         {
             for (j = 0; j < 6; j++, objP++) 
             {
-                objP->model = basP->model;
+                objP->model = S32(P32(NJS_CNK_MODEL *, basP->model));
             }
         }
         }
@@ -1409,8 +1409,8 @@ static void DoorProc3(_door_wrk* dwP)
     NJS_CNK_OBJECT* oaP, *obP, *objP;  
     DOORPROC3_WORK* dpP; 
    
-    objP = dwP->objP;
-    dpP = dwP->dpP;
+    objP = P32(struct cnkobj *, dwP->objP);
+    dpP = P32(void *, dwP->dpP);
     
     if ((dwP->status & 0x2000))
     {
@@ -1533,9 +1533,9 @@ static void DoorProc4(_door_wrk* dwP)
     NJS_CNK_OBJECT* objP; 
     DOORPROC4_WORK* dpP, *prmP;  
     
-    dpP = prmP = dwP->dpP;
+    dpP = prmP = P32(void *, dwP->dpP);
 
-    objP = dwP->objP;
+    objP = P32(struct cnkobj *, dwP->objP);
     
     if ((dwP->status & 0x4000)) 
     {
@@ -1606,8 +1606,8 @@ static void DoorProc5(_door_wrk* dwP)
     NJS_CNK_OBJECT* objP; 
     DOORPROC5_WORK* dpP; 
 
-    objP = dwP->objP;
-    dpP = dwP->dpP;
+    objP = P32(struct cnkobj *, dwP->objP);
+    dpP = P32(void *, dwP->dpP);
     
     switch (dwP->dor_mode) 
     {
@@ -1692,7 +1692,7 @@ static void DoorProc6(_door_wrk* dwP)
 {
     NJS_CNK_OBJECT* objP;
 
-    objP = dwP->objP;
+    objP = P32(struct cnkobj *, dwP->objP);
     
     switch (dwP->dor_mode) 
     {                             
@@ -1720,8 +1720,8 @@ static void DoorProc7(_door_wrk* dwP)
     NJS_CNK_OBJECT* oaP, *obP, *objP; 
     DOORPROC7_WORK* dpP;  
     
-    objP = dwP->objP;
-    dpP = dwP->dpP;
+    objP = P32(struct cnkobj *, dwP->objP);
+    dpP = P32(void *, dwP->dpP);
     
     if (!(dwP->status & 0x800))
     {
@@ -1882,7 +1882,7 @@ static void LightProc1(_door_wrk* dwP)
     LIGHTPROC_WORK* lpP; 
     int lgt_no;        
     
-    lpP = dwP->lpP;
+    lpP = P32(void *, dwP->lpP);
     
     switch (dwP->lgt_mode) 
     {                            
@@ -1906,7 +1906,7 @@ static void LightProc2(_door_wrk* dwP)
 	LIGHTPROC_WORK* lpP; 
     int lgt_no;        
     
-    lpP = dwP->lpP;
+    lpP = P32(void *, dwP->lpP);
 
 	if ((dwP->status & 0x4000)) 
 	{
@@ -2087,11 +2087,19 @@ static void ryExcuteFade(float pri, int col, float rate)
         0, 0, 640.0f, 0, 640.0f, 480.0f, 0, 480.0f
     };
     static NJS_COLOR col_buf[4]; 
+#ifndef TARGET_PC
     static NJS_POINT2COL p2c = 
     {
         pnt_dat, col_buf, NULL, 4
     };    
+#else
+    static NJS_POINT2COL p2c = { 0, 0, 0, 4 };   /* slots: set below */
+#endif
     
+#ifdef TARGET_PC
+    p2c.p = S32(pnt_dat);
+    p2c.col = S32(col_buf);
+#endif
     tmp = (int)(256.0f * rate);
     tmp = ((col & 0xFF00FF) * tmp) >> 8;
     
@@ -2124,7 +2132,7 @@ static void PuruProc1(_door_wrk* dwP)
 {
     PURUPROC_WORK* ppP; 
     
-    ppP = dwP->ppP;
+    ppP = P32(void *, dwP->ppP);
     
     switch (dwP->pru_mode) 
     {                           

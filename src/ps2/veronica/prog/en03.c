@@ -502,7 +502,7 @@ void bhEne03(BH_PWORK* epw)
         
         bhEne03_CallSE(epw);
         
-        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         
         px = epw->px;
         py = epw->py;
@@ -589,13 +589,13 @@ void bhEne03(BH_PWORK* epw)
             bhEne03_CollisionLine2(epw);
         }
         
-        njUnitMatrix(epw->mtx);
+        njUnitMatrix(P32(float (*)[16], epw->mtx));
         
-        njTranslate(epw->mtx, epw->px, epw->py, epw->pz);
+        njTranslate(P32(float (*)[16], epw->mtx), epw->px, epw->py, epw->pz);
         
-        njMultiMatrix(epw->mtx, (NJS_MATRIX*)epw->exp0);
+        njMultiMatrix(P32(float (*)[16], epw->mtx), (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         
-        if (epw->mnwP != epw->mnwPb) 
+        if (P32(struct MN_WORK *, epw->mnwP) != P32(struct MN_WORK *, epw->mnwPb)) 
         {
             flg = epw->flg;
             
@@ -657,7 +657,7 @@ void bhEne03_Init(BH_PWORK* epw)
     
     epw->frm_no = 0;
     
-    epw->mtn_tp = (unsigned char*)flip_tree;
+    epw->mtn_tp = S32((unsigned char*)flip_tree);
     epw->mtn_md &= ~0x2;
     
     bhCalcModel(epw);
@@ -667,9 +667,9 @@ void bhEne03_Init(BH_PWORK* epw)
     epw->mode2 = 0;
     epw->mode3 = 0;
 
-    if (epw->exp0 == NULL) 
+    if (P32(unsigned char *, epw->exp0) == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(240, 8);
+        epw->exp0 = S32(bhEne_CallocWork(240, 8));
         
         ep = ene;
         
@@ -677,31 +677,31 @@ void bhEne03_Init(BH_PWORK* epw)
         {
             if (((ep->flg & 0x1)) && (ep->id == 3)) 
             {
-                if (ep->exp1 != NULL)
+                if (P32(unsigned char *, ep->exp1) != NULL)
                 {
-                    epw->exp1 = ep->exp1;
+                    epw->exp1 = S32(P32(unsigned char *, ep->exp1));
                 } 
                 else 
                 {
-                    epw->exp1 = bhEne_CallocWork(12, 8);
+                    epw->exp1 = S32(bhEne_CallocWork(12, 8));
                 }
                 
-                if (ep->exp2 != NULL) 
+                if (P32(unsigned char *, ep->exp2) != NULL) 
                 {
-                    epw->exp2 = ep->exp2;
+                    epw->exp2 = S32(P32(unsigned char *, ep->exp2));
                 } 
                 else 
                 {
                     ep_leader = bhSetEnemy(&ene03_leader, rom->ene_n);
                     
-                    epw->exp2 = (unsigned char*)ep_leader;
+                    epw->exp2 = S32((unsigned char*)ep_leader);
                     
                     ep_leader->mdflg |= 0x1;
                     ep_leader->mdflg |= 0x20;
                     
-                    ep_leader->exp1 = epw->exp1;
+                    ep_leader->exp1 = S32(P32(unsigned char *, epw->exp1));
                     
-                    ep_leader->mnwP = epw->mnwP;
+                    ep_leader->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 }
                 
                 break;
@@ -716,7 +716,7 @@ void bhEne03_Init(BH_PWORK* epw)
             
             (*epw2)->type = 0;
             
-            (*epw2)->lkwkp = (unsigned char*)epw;
+            (*epw2)->lkwkp = S32((unsigned char*)epw);
             (*epw2)->lkono = i >= 4;
             
             (*epw2)->lox = 0;
@@ -726,11 +726,11 @@ void bhEne03_Init(BH_PWORK* epw)
             (*epw2)->mdflg |= 0x1;
             (*epw2)->mdflg |= 0x20;
             
-            owk = &epw->mlwP->owP[BrokenParts[i]];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[BrokenParts[i]];
             
-            (*epw2)->mtx = &owk->mtx;
+            (*epw2)->mtx = S32(&owk->mtx);
             
-            (*epw2++)->exp1 = (unsigned char*)owk;
+            (*epw2++)->exp1 = S32((unsigned char*)owk);
         }
 
         bhEne_SetCallFunc(bhEne03s, 31);
@@ -741,14 +741,14 @@ void bhEne03_Init(BH_PWORK* epw)
         {
             *epw2 = bhSetEnemy(&ene24, rom->ene_n);
             
-            (*epw2)->lkwkp = (unsigned char*)epw;
+            (*epw2)->lkwkp = S32((unsigned char*)epw);
             (*epw2)->lkono = 0;
             
             (*epw2)->lox = 0;
             (*epw2)->loy = 0;
             (*epw2)->loz = 0;
             
-            (*epw2++)->mlwP = &epw->mdl[1];
+            (*epw2++)->mlwP = S32(&epw->mdl[1]);
         }
     }
 
@@ -780,7 +780,7 @@ void bhEne03_Init(BH_PWORK* epw)
 
     for (i = 0; i < 8; i++) 
     {
-        ((char*)epw->exp0)[i + 160] = 0;
+        ((char*)P32(unsigned char *, epw->exp0))[i + 160] = 0;
     }
     
     {
@@ -798,9 +798,9 @@ void bhEne03_Init(BH_PWORK* epw)
     EPW_EXP1_I(0) = 0;
     EPW_EXP1_I(8) = (rand() % 30) + 60;
         
-    njUnitMatrix((NJS_MATRIX*)epw->exp0);
+    njUnitMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         
-    njRotateY((NJS_MATRIX*)epw->exp0, epw->ay);
+    njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ay);
 
     *(ATR_WORK**)&EXP0_I(96) = NULL;
         
@@ -857,11 +857,11 @@ void bhEne03_Init(BH_PWORK* epw)
 
     if ((epw->type & 0x1))
     {
-        epw->cpcl = CapColTabB;
+        epw->cpcl = S32(CapColTabB);
     } 
     else 
     {
-        epw->cpcl = CapColTabA;
+        epw->cpcl = S32(CapColTabA);
     }
         
     bhEne03_HideParts(epw, 1, 0);
@@ -1299,7 +1299,7 @@ void bhEne03_MV01(BH_PWORK* epw)
         {
             epw->ayp = bhEne03_DirTarget(epw, (NJS_POINT3*)&EXP0_F(72), 819);
             
-            njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
         }
 
         if (epw->ct0-- == 0) 
@@ -1338,7 +1338,7 @@ void bhEne03_MV02(BH_PWORK* epw)
 
         epw->mode3++;
     case 1:
-        njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
 
         if (epw->ct0-- == 0)
         {
@@ -1426,7 +1426,7 @@ void bhEne03_MV03(BH_PWORK* epw)
             
             epw->ayp = bhEne03_DirTarget(epw, (NJS_POINT3*)&EXP0_F(72), 819);
             
-            njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
         } 
         else 
         {
@@ -1437,7 +1437,7 @@ void bhEne03_MV03(BH_PWORK* epw)
             {
                 epw->ayp = bhEne03_DirTarget(epw, (NJS_POINT3*)&EXP0_F(72), 819);
                 
-                njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+                njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
             }
         }
 
@@ -1474,7 +1474,7 @@ void bhEne03_MV04(BH_PWORK* epw)
     case 1:
         epw->ayp = bhEne03_DirTarget(epw, (NJS_POINT3*)&plp->px, 819);
 
-        njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
 
         if ((epw->ct0-- == 0) || (abs(epw->ayp) < 273))
         {
@@ -1516,7 +1516,7 @@ void bhEne03_MV05(BH_PWORK* epw)
         epw->flg  |= 0x300000;
         epw->flg2 |= 0x1;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
         
         epw->mode3++;
     case 1:
@@ -1524,7 +1524,7 @@ void bhEne03_MV05(BH_PWORK* epw)
         {
             bhEne03_GetPartsPos(epw, spider_tree[0], (NJS_POINT3*)&epw->px);
             
-            njRotateX((NJS_MATRIX*)epw->exp0, 16384);
+            njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 16384);
 
             switch (EXP0_C(106))
             {     
@@ -1657,7 +1657,7 @@ void bhEne03_MV06(BH_PWORK* epw)
                 epw->ayp = -(int)(10430.381f * asinf(out)) / epw->ct0;
             }
             
-            njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
 
             epw->px += (EXP0_F(72) - epw->px) / epw->ct0;
             epw->py += (EXP0_F(76) - epw->py) / epw->ct0;
@@ -1711,7 +1711,7 @@ void bhEne03_MV07(BH_PWORK* epw)
         epw->flg  |= 0x300000;
         epw->flg2 |= 0x1;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
         
         epw->mode3++;
     case 1:
@@ -1719,7 +1719,7 @@ void bhEne03_MV07(BH_PWORK* epw)
         {
             bhEne03_GetPartsPos(epw, spider_tree[0], (NJS_POINT3*)&epw->px);
             
-            njRotateX((NJS_MATRIX*)epw->exp0, -16384);
+            njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), -16384);
 
             switch (EXP0_C(106)) 
             {
@@ -1860,7 +1860,7 @@ void bhEne03_MV08(BH_PWORK* epw)
                 epw->ayp = -(int)(10430.381f * asinf(out)) / epw->ct0;
             }
             
-            njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
 
             epw->px += (EXP0_F(72) - epw->px) / epw->ct0;
             epw->py += (EXP0_F(76) - epw->py) / epw->ct0;
@@ -1899,7 +1899,7 @@ void bhEne03_MV09(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
@@ -1949,7 +1949,7 @@ void bhEne03_MV10(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -1986,7 +1986,7 @@ void bhEne03_MV11(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         EXP0_F(84) = 0;
         EXP0_F(88) = -5.0f;
@@ -2019,7 +2019,7 @@ void bhEne03_MV11(BH_PWORK* epw)
 
             EXP0_C(105) = 0;
             
-            njRotateY((NJS_MATRIX*)epw->exp0, 32768);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
             
             bhEne03_MakeMatrix(epw);
             
@@ -2042,7 +2042,7 @@ void bhEne03_MV11(BH_PWORK* epw)
             
             epw->mode3++;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
             hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
             
@@ -2114,7 +2114,7 @@ void bhEne03_MV14(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
         
         epw->mode3++;
     case 1:
@@ -2122,7 +2122,7 @@ void bhEne03_MV14(BH_PWORK* epw)
         
         if ((epw->frm_no / 65536) == 12) 
         {
-            njCalcVector((NJS_MATRIX*)epw->exp0, &v, (NJS_VECTOR*)&EXP0_F(84));
+            njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &v, (NJS_VECTOR*)&EXP0_F(84));
             
             *(ATR_WORK**)&EXP0_I(96) = NULL;
             
@@ -2183,7 +2183,7 @@ void bhEne03_MV14(BH_PWORK* epw)
                 epw->py = hp->py + h;
             }
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3 = 5;
             break;
@@ -2224,13 +2224,13 @@ void bhEne03_MV15(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
         if ((epw->frm_no / 65536) == 12)
         {
-            njCalcVector((NJS_MATRIX*)epw->exp0, &vwork, (NJS_VECTOR*)&EXP0_F(84));
+            njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &vwork, (NJS_VECTOR*)&EXP0_F(84));
             
             *(ATR_WORK**)&EXP0_I(96) = NULL;
             
@@ -2263,9 +2263,9 @@ void bhEne03_MV15(BH_PWORK* epw)
             
             njRotate(NULL, &ov, (int)(10430.381f * asinf(out)) / 8);
             
-            njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+            njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             
-            njGetMatrix((NJS_MATRIX*)epw->exp0);
+            njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         }
 
         if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
@@ -2300,7 +2300,7 @@ void bhEne03_MV15(BH_PWORK* epw)
                 epw->py = hp->py + h;
             }
 
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3 = 4;
             break;
@@ -2342,7 +2342,7 @@ void bhEne03_MV16(BH_PWORK* epw)
         EXP0_F(88) = -1.0f;
         EXP0_F(92) = 0;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         epw->ct1 = 8;
 
         *(ATR_WORK**)&EXP0_I(96) = NULL;
@@ -2353,14 +2353,14 @@ void bhEne03_MV16(BH_PWORK* epw)
         {
             epw->mtn_add = 0;
             
-            epw->frm_no = 65536.0f * (epw->mnwP[epw->mtn_no].frm_num - 1);
+            epw->frm_no = 65536.0f * (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1);
         }
 
         if (epw->ct1 > 0) 
         {
             epw->ct1--;
             
-            njRotateX((NJS_MATRIX*)epw->exp0, 4004);
+            njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 4004);
         }
 
         if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
@@ -2448,7 +2448,7 @@ void bhEne03_MV17(BH_PWORK* epw)
         {
             epw->ayp = bhEne03_DirTarget(epw, (NJS_POINT3*)&EXP0_F(72), 1547);
             
-            njRotateY((NJS_MATRIX*)epw->exp0, epw->ayp);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), epw->ayp);
         }
 
         if (epw->ct0-- == 0)
@@ -2488,7 +2488,7 @@ void bhEne03_MV18(BH_PWORK* epw)
             v.y = 3.0f;  
             v.z = -0.9f;  
 
-            njCalcVector((NJS_MATRIX*)epw->exp0, &v, (NJS_VECTOR*)&EXP0_F(84));
+            njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &v, (NJS_VECTOR*)&EXP0_F(84));
 
             epw->flg &= ~0x10;
             
@@ -2522,9 +2522,9 @@ void bhEne03_MV18(BH_PWORK* epw)
             
             njRotate(NULL, &ov, (int)(10430.381f * asinf(out)) / 8);
             
-            njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+            njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             
-            njGetMatrix((NJS_MATRIX*)epw->exp0);
+            njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         }
 
         if (epw->ct0-- == 0) 
@@ -2543,7 +2543,7 @@ void bhEne03_MV18(BH_PWORK* epw)
             
             epw->mtn_add = 65536;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3 = 4;
             break;
@@ -2770,7 +2770,7 @@ void bhEne03_NG00(BH_PWORK* epw)
         
         epw->flg2 |= 0x1;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
         epw->ct1 = 0;
         epw->ct2 = 6;
         
@@ -2840,7 +2840,7 @@ void bhEne03_NG00(BH_PWORK* epw)
                 
                 epw->hokan_count = 0;
                 
-                epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+                epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
                 
                 epw->mode3++;
                 return;
@@ -2860,7 +2860,7 @@ void bhEne03_NG00(BH_PWORK* epw)
             plp->dvy = -1.0f;
             plp->dvz = -njCos(epw->ay);
             
-            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&epw->mlwP->owP[35].mtx[12], 1);
+            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[35].mtx[12], 1);
             
             StartVibrationEx(1, 9);
         }
@@ -2920,7 +2920,7 @@ void bhEne03_NG00(BH_PWORK* epw)
             plp->dvy = -2.0f;
             plp->dvz = njCos(epw->ay);
             
-            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&epw->mlwP->owP[35].mtx[12], 1);
+            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[35].mtx[12], 1);
             
             StartVibrationEx(1, 9);
         }
@@ -2956,7 +2956,7 @@ void bhEne03_NG00(BH_PWORK* epw)
             
             epw->ay = bhArcTan2(-EXP0_F(8), EXP0_F(0));
             
-            njRotateY((NJS_MATRIX*)epw->exp0, (short)(epw->ayp - epw->ay) / epw->ct2);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (short)(epw->ayp - epw->ay) / epw->ct2);
             
             epw->ct2--;
         }
@@ -3030,7 +3030,7 @@ void bhEne03_NG01(BH_PWORK* epw)
         
         epw->flg2 |= 0x1;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
         epw->ct1 = 0;
         epw->ct2 = 6;
 
@@ -3073,7 +3073,7 @@ void bhEne03_NG01(BH_PWORK* epw)
                 
                 epw->hokan_count = 0;
                 
-                epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+                epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
                 
                 epw->mode3++;
             }
@@ -3097,7 +3097,7 @@ void bhEne03_NG01(BH_PWORK* epw)
             
             epw->ay = bhArcTan2(-EXP0_F(8), EXP0_F(0));
             
-            njRotateY((NJS_MATRIX*)epw->exp0, (short)(epw->ayp - epw->ay) / epw->ct2);
+            njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (short)(epw->ayp - epw->ay) / epw->ct2);
             
             epw->ct2--;
         } 
@@ -3117,13 +3117,13 @@ void bhEne03_NG01(BH_PWORK* epw)
             {
                 plp->hp -= 5;
                 
-                bhEne_SetBloodEffectBurst(plp, 5, 4, (NJS_POINT3*)&epw->mlwP->owP[35].mtx[12], 1);
+                bhEne_SetBloodEffectBurst(plp, 5, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[35].mtx[12], 1);
             }
             else 
             {
                 plp->hp -= 12;
                 
-                bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&epw->mlwP->owP[35].mtx[12], 1);
+                bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[35].mtx[12], 1);
             }
 
             if (plp->hp < 0) 
@@ -3194,7 +3194,7 @@ void bhEne03_NG01(BH_PWORK* epw)
             plp->dvy = -2.0f;
             plp->dvz = njCos(epw->ay);
             
-            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&epw->mlwP->owP[35].mtx[12], 1);
+            bhEne_SetBloodEffectBurst(plp, 4, 4, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[35].mtx[12], 1);
             
             StartVibrationEx(1, 9);
         }
@@ -3288,7 +3288,7 @@ void bhEne03_DG01(BH_PWORK* epw)
 
         epw->mtn_add = 65536;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -3332,15 +3332,15 @@ void bhEne03_DG02(BH_PWORK* epw)
         
         bhEne03_MakeMatrix(epw);
 
-        njRotateY((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
-        mkfP = epw->mnwP[epw->mtn_no].md2P->p[0];
+        mkfP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]);
         
         trans.x = mkfP->key[0];
         trans.y = mkfP->key[1];
         trans.z = mkfP->key[2];
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, &trans, &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &trans, &trans);
 
         epw->px -= trans.x;
         epw->py -= trans.y;
@@ -3348,11 +3348,11 @@ void bhEne03_DG02(BH_PWORK* epw)
 
         epw->mtn_md |= 0x100;
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
         *(ATR_WORK**)&EXP0_I(96) = NULL;
         
@@ -3370,7 +3370,7 @@ void bhEne03_DG02(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
             
             epw->flg2 &= ~0x1;
             
@@ -3393,7 +3393,7 @@ void bhEne03_DG02(BH_PWORK* epw)
             epw->hokan_count = 0;
             epw->hokan_rate  = 0;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3++;
         }
@@ -3432,7 +3432,7 @@ void bhEne03_DG03(BH_PWORK* epw)
 
         epw->mtn_add = 65536;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -3466,12 +3466,12 @@ void bhEne03_DG04(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         epw->ct1 = 0;
         
         epw->mode3++;
 
-        owk = &epw->mlwP->owP[2];
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[2];
         
         pos.x = 0;
         pos.y = 3.0f;
@@ -3485,7 +3485,7 @@ void bhEne03_DG04(BH_PWORK* epw)
 
         for (i = 0; i < 6; i++) 
         {
-            owk = &epw->mlwP->owP[2];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[2];
             
             pos.x =         (4.0f * (-rand() / -2147483648.0f))  - 2.0f;
             pos.y = (3.0f + (4.0f * (-rand() / -2147483648.0f))) - 2.0f;
@@ -3499,7 +3499,7 @@ void bhEne03_DG04(BH_PWORK* epw)
 
         epw->type = 1;
         
-        epw->cpcl = CapColTabB;
+        epw->cpcl = S32(CapColTabB);
         
         bhEne03_HideParts(epw, 2, 1);
         
@@ -3507,7 +3507,7 @@ void bhEne03_DG04(BH_PWORK* epw)
     case 1:
         if (epw->ct1 < 4) 
         {
-            owk = &epw->mlwP->owP[2];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[2];
             
             pos.x =         (6.0f * (-rand() / -2147483648.0f))  - 3.0f;
             pos.y = (3.0f + (4.0f * (-rand() / -2147483648.0f))) - 2.0f;
@@ -3554,7 +3554,7 @@ void bhEne03_DG06(BH_PWORK* epw)
 
         epw->mtn_add = 65536;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -3621,9 +3621,9 @@ void bhEne03_DG07(BH_PWORK* epw)
                 break;
             }
             
-            njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+            njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             
-            njGetMatrix((NJS_MATRIX*)epw->exp0);
+            njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         }
         
         if ((ATR_WORK*)PS2_HOST(EXP0_I(96)) != NULL) 
@@ -3640,7 +3640,7 @@ void bhEne03_DG07(BH_PWORK* epw)
             
             epw->mtn_add = 65536;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->flg2 &= ~0x1;
             
@@ -3683,7 +3683,7 @@ void bhEne03_DG08(BH_PWORK* epw)
 
         epw->mtn_add = 65536;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -3720,7 +3720,7 @@ void bhEne03_DG09(BH_PWORK* epw)
 
         epw->mtn_add = 65536;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
 
         epw->mode3++;
     case 1:
@@ -3763,7 +3763,7 @@ void bhEne03_DG10(BH_PWORK* epw)
         epw->hokan_count = 10;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
         
         if ((epw->flg & 0x80000)) 
         {
@@ -3818,9 +3818,9 @@ void bhEne03_DG10(BH_PWORK* epw)
                 
                 njRotate(NULL, &ov, ang);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             
             epw->ct1--;
@@ -3892,10 +3892,10 @@ void bhEne03_DG11(BH_PWORK* epw)
     case 0:
         bhEne03_GetPartsPos(epw, spider_tree[0], (NJS_VECTOR*)&epw->px);
         
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
         
-        njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+        njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
         
         epw->mtn_md |= 0x100;
         
@@ -3912,11 +3912,11 @@ void bhEne03_DG11(BH_PWORK* epw)
         {
         NJS_MKEY_A_MOD* mkaP; 
             
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
             
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
         }
         
         if ((EXP0_C(105) == 0) || (EXP0_C(105) == 1)) 
@@ -3971,9 +3971,9 @@ void bhEne03_DG11(BH_PWORK* epw)
                 
                 njRotate(NULL, &ov, ang / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             } 
             else
             {
@@ -3981,9 +3981,9 @@ void bhEne03_DG11(BH_PWORK* epw)
                 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             
             epw->ct0--;
@@ -4023,7 +4023,7 @@ void bhEne03_DG11(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->flg2 &= ~0x1;
             
@@ -4069,16 +4069,16 @@ void bhEne03_DG12(BH_PWORK* epw)
     case 0:
         bhEne03_GetPartsPos(epw, spider_tree[0], (NJS_VECTOR* ) &epw->px);
         
-        mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
         
         if ((epw->mtn_md & 0x2)) 
         {
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], -mkaP->key[1], -mkaP->key[2]);
         } 
         else 
         {
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
         }
         
         if ((epw->flg & 0x80000)) 
@@ -4094,7 +4094,7 @@ void bhEne03_DG12(BH_PWORK* epw)
             EXP0_F(92) = 0;
         }
         
-        njRotateX((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
         
         epw->mtn_md |= 0x100;
         
@@ -4112,13 +4112,13 @@ void bhEne03_DG12(BH_PWORK* epw)
         NJS_MKEY_A_MOD* mkaP; 
         NJS_POINT3 trans;      
             
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
             
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
         
-        njCalcVector((NJS_MATRIX*)epw->exp0, (NJS_VECTOR*)epw->mnwP[epw->mtn_no].md2P->p[0], &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (NJS_VECTOR*)P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]), &trans);
         njSubVector((NJS_VECTOR*)&epw->px, &trans);
         }
         
@@ -4153,9 +4153,9 @@ void bhEne03_DG12(BH_PWORK* epw)
                 
                 njRotate(NULL, &ov, (int)(10430.381f * asinf(out)) / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             else
             {
@@ -4163,9 +4163,9 @@ void bhEne03_DG12(BH_PWORK* epw)
                 
                 njRotateX(NULL, 32768 / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             
             epw->ct0--;
@@ -4183,7 +4183,7 @@ void bhEne03_DG12(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->flg2 &= ~0x1;
             
@@ -4203,7 +4203,7 @@ void bhEne03_DG12(BH_PWORK* epw)
             epw->mtn_no = 16;
             epw->frm_no = 0;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3++;
         }
@@ -4246,7 +4246,7 @@ void bhEne03_DD00(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 32768;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
@@ -4259,7 +4259,7 @@ void bhEne03_DD00(BH_PWORK* epw)
             
             epw->hokan_count = 0;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
             
             epw->mode3++;
         }
@@ -4268,7 +4268,7 @@ void bhEne03_DD00(BH_PWORK* epw)
     case 2:
         if (epw->ct0-- == 0)
         {
-            epw->frm_no = 65536.0f * (epw->mnwP[epw->mtn_no].frm_num - 1);
+            epw->frm_no = 65536.0f * (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1);
             
             epw->mtn_add = 0;
             
@@ -4305,10 +4305,10 @@ void bhEne03_DD01(BH_PWORK* epw)
             
             bhEne03_GetPartsPos(epw, spider_tree[0], (NJS_POINT3*)&epw->px);
             
-            mkaP  = epw->mnwP[epw->mtn_no].md2P->p[1];
+            mkaP  = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
             mkaP += epw->frm_no / 65536;
             
-            njRotateXYZ((NJS_MATRIX*)epw->exp0, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
+            njRotateXYZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), mkaP->key[0], mkaP->key[1], mkaP->key[2]);
         }
         
         epw->mtn_no = 17;
@@ -4324,25 +4324,25 @@ void bhEne03_DD01(BH_PWORK* epw)
         NJS_MKEY* mkfP;       
         NJS_POINT3 trans;       
             
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
             
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
         EXP0_F(84) = EXP0_F(16) / 2.0f;
         EXP0_F(88) = EXP0_F(20) / 2.0f;
         EXP0_F(92) = EXP0_F(24) / 2.0f;
 
-        njRotateX((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
-        mkfP = epw->mnwP[epw->mtn_no].md2P->p[0];
+        mkfP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]);
             
         trans.x = mkfP->key[0];
         trans.y = mkfP->key[1];
         trans.z = mkfP->key[2];
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, &trans, &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &trans, &trans);
 
         epw->px -= trans.x;
         epw->py -= trans.y;
@@ -4396,9 +4396,9 @@ void bhEne03_DD01(BH_PWORK* epw)
                 
                 njRotate(NULL, &ov, ang / epw->ct0);
                 
-                njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+                njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
                 
-                njGetMatrix((NJS_MATRIX*)epw->exp0);
+                njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             }
             
             epw->ct0--;
@@ -4420,7 +4420,7 @@ void bhEne03_DD01(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3++;
         } 
@@ -4475,15 +4475,15 @@ void bhEne03_DD02(BH_PWORK* epw)
         EXP0_F(92) = 0;
         EXP0_F(88) = -1.0f;
 
-        njRotateX((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
 
-        mkfP = epw->mnwP[epw->mtn_no].md2P->p[0];
+        mkfP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[0]);
         
         trans.x = mkfP->key[0];
         trans.y = mkfP->key[1];
         trans.z = mkfP->key[2];
 
-        njCalcVector((NJS_MATRIX*)epw->exp0, &trans, &trans);
+        njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &trans, &trans);
 
         epw->px -= trans.x;
         epw->py -= trans.y;
@@ -4491,11 +4491,11 @@ void bhEne03_DD02(BH_PWORK* epw)
 
         epw->mtn_md |= 0x100;
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
         *(ATR_WORK**)&EXP0_I(96) = NULL;
         
@@ -4521,7 +4521,7 @@ void bhEne03_DD02(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
             
             epw->mode3++;
         } 
@@ -4536,7 +4536,7 @@ void bhEne03_DD02(BH_PWORK* epw)
     case 2:
         if (epw->ct0-- == 0) 
         {
-            epw->frm_no = (epw->mnwP[epw->mtn_no].frm_num - 1) * 65536.0f;
+            epw->frm_no = (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1) * 65536.0f;
             
             epw->hokan_count = 0;
             
@@ -4580,9 +4580,9 @@ void bhEne03_DD03(BH_PWORK* epw)
     
         for (i = 0; i < 8; i++) 
         {
-            if (((unsigned char*)epw->exp0)[160 + i] == 0) 
+            if (((unsigned char*)P32(unsigned char *, epw->exp0))[160 + i] == 0) 
             {
-                owk = epw->mlwP->owP;
+                owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
     					
                 owk[BrokenParts[i]].flg     |= 0x3;
                 owk[BrokenParts[i] + 1].flg |= 0x2;
@@ -4599,7 +4599,7 @@ void bhEne03_DD03(BH_PWORK* epw)
         epw->mdflg |= 0x20;
         epw->stflg |= 0x8;
     
-        p = epw->mlwP->objP;
+        p = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
 
         p[1].evalflags  |= 0x8;
         p[2].evalflags  |= 0x8;
@@ -4669,11 +4669,11 @@ void bhEne03_DD04(BH_PWORK* epw)
             EXP0_F(92) = EXP0_F(24);
         }
 
-        mkaP = epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP = P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         
-        epw->mlwP->objP->ang[0] = mkaP->key[0];
-        epw->mlwP->objP->ang[1] = mkaP->key[1];
-        epw->mlwP->objP->ang[2] = mkaP->key[2];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = mkaP->key[0];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = mkaP->key[1];
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[2] = mkaP->key[2];
 
         *(ATR_WORK**)&EXP0_I(96) = NULL;
         
@@ -4714,9 +4714,9 @@ void bhEne03_DD04(BH_PWORK* epw)
                 break;
             }
             
-            njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+            njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
             
-            njGetMatrix((NJS_MATRIX*)epw->exp0);
+            njGetMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
         }
 
         hp = (ATR_WORK*)PS2_HOST(EXP0_I(96));
@@ -4755,7 +4755,7 @@ void bhEne03_DD04(BH_PWORK* epw)
             
             epw->mtn_md &= ~0x100;
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
             
             epw->mode3++;
         } 
@@ -4801,7 +4801,7 @@ void bhEne03_DD05(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 32768;
 
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 2;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 2;
 
         epw->mode3++;
         break;
@@ -4851,7 +4851,7 @@ void bhEne03_SearchPlayer(BH_PWORK* epw, int ang)
     dist.y = epw->py - plp->py;
     dist.z = epw->pz - plp->pz;
     
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
     njInvertMatrix(NULL);
     
@@ -4897,7 +4897,7 @@ int bhEne03_DirTarget(BH_PWORK* epw, NJS_POINT3* pos, int w)
     vec.y = epw->py - pos->y;
     vec.z = epw->pz - pos->z;
     
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
     njInvertMatrix(NULL);
     
@@ -4927,7 +4927,7 @@ void bhEne03_GetPartsPos(BH_PWORK* epw, char* parts, NJS_POINT3* p)
 	ML_WORK* mlwP;
 	NJS_CNK_OBJECT* objP;
 
-    mlwP = epw->mlwP;
+    mlwP = P32(struct ML_WORK *, epw->mlwP);
 
     njPushMatrixEx();
 
@@ -4935,11 +4935,11 @@ void bhEne03_GetPartsPos(BH_PWORK* epw, char* parts, NJS_POINT3* p)
 
     njTranslateEx((NJS_VECTOR*)&epw->px);
 
-    njMultiMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njMultiMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
 
     while (*parts != -1)
     {
-        objP = &mlwP->objP[*parts++];
+        objP = &P32(struct cnkobj *, mlwP->objP)[*parts++];
 
         njTranslateEx((NJS_VECTOR*)objP->pos);
         njRotateEx(objP->ang, 0);
@@ -4960,46 +4960,46 @@ void bhEne03_MakeMatrix(BH_PWORK* epw)
     py = -EXP0_F(36);
     pz = -EXP0_F(40);
     
-    njUnitMatrix((NJS_MATRIX*)epw->exp0);
+    njUnitMatrix((NJS_MATRIX*)P32(unsigned char *, epw->exp0));
     
     switch (EXP0_C(105)) 
     {
     case 0:
         ang = bhArcTan2(-px, -pz);
         
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
         break;
     case 1:
         ang = bhArcTan2(-px, -pz);
         
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
-        njRotateZ((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
+        njRotateZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
         break;
     case 3:
         ang = bhArcTan2(-px, py);
         
-        njRotateX((NJS_MATRIX*)epw->exp0, 16384);
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
-        njRotateZ((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 16384);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
+        njRotateZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
         break;
     case 5:
         ang = bhArcTan2(-px, py);
         
-        njRotateX((NJS_MATRIX*)epw->exp0, 16384);
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
+        njRotateX((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 16384);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
         break;
     case 2:
         ang = bhArcTan2(py, -pz);
         
-        njRotateZ((NJS_MATRIX*)epw->exp0, -16384);
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
+        njRotateZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), -16384);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
         break;
     case 4:
         ang = bhArcTan2(py, -pz);
         
-        njRotateZ((NJS_MATRIX*)epw->exp0, -16384);
-        njRotateY((NJS_MATRIX*)epw->exp0, ang);
-        njRotateZ((NJS_MATRIX*)epw->exp0, 32768);
+        njRotateZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), -16384);
+        njRotateY((NJS_MATRIX*)P32(unsigned char *, epw->exp0), ang);
+        njRotateZ((NJS_MATRIX*)P32(unsigned char *, epw->exp0), 32768);
         break;
     }
 }
@@ -5009,14 +5009,14 @@ void bhEne03_HidePartsSub0(NJS_CNK_OBJECT* p)
 {
     p->evalflags |= 0x8;
 
-    if (p->child != NULL)
+    if (P32(struct cnkobj *, p->child) != NULL)
     {
-        bhEne03_HidePartsSub0(p->child);
+        bhEne03_HidePartsSub0(P32(struct cnkobj *, p->child));
     }
 
-    if (p->sibling != NULL)
+    if (P32(struct cnkobj *, p->sibling) != NULL)
     {
-        bhEne03_HidePartsSub0(p->sibling);
+        bhEne03_HidePartsSub0(P32(struct cnkobj *, p->sibling));
     }
 }
 
@@ -5025,14 +5025,14 @@ void bhEne03_HidePartsSub1(NJS_CNK_OBJECT* p)
 {
 	p->evalflags &= ~0x8;
 
-    if (p->child != NULL)
+    if (P32(struct cnkobj *, p->child) != NULL)
     {
-        bhEne03_HidePartsSub1(p->child);
+        bhEne03_HidePartsSub1(P32(struct cnkobj *, p->child));
     }
 
-    if (p->sibling != NULL)
+    if (P32(struct cnkobj *, p->sibling) != NULL)
     {
-        bhEne03_HidePartsSub1(p->sibling);
+        bhEne03_HidePartsSub1(P32(struct cnkobj *, p->sibling));
     }
 }
 
@@ -5041,24 +5041,24 @@ void bhEne03_HideParts(BH_PWORK* epw, unsigned short PartsNo, unsigned short flg
 {
 	NJS_CNK_OBJECT* p;
 
-    p = &epw->mlwP->objP[PartsNo];
+    p = &P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[PartsNo];
 
     if (flg)
     {
         p->evalflags |= 0x8;
 
-        if (p->child != NULL)
+        if (P32(struct cnkobj *, p->child) != NULL)
         {
-            bhEne03_HidePartsSub0(p->child);
+            bhEne03_HidePartsSub0(P32(struct cnkobj *, p->child));
         }
     }
     else
     {
         p->evalflags &= ~0x8;
 
-        if (p->child != NULL)
+        if (P32(struct cnkobj *, p->child) != NULL)
         {
-            bhEne03_HidePartsSub1(p->child);
+            bhEne03_HidePartsSub1(P32(struct cnkobj *, p->child));
         }
     }
 }
@@ -5082,11 +5082,11 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
 
     ret = 0; 
 
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->exp0);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(unsigned char *, epw->exp0));
 
     if ((epw->flg & 0x1000000)) 
     {
-        mkaP =  epw->mnwP[epw->mtn_no].md2P->p[1];
+        mkaP =  P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].md2P)->p[1]);
         mkaP += epw->frm_no / 65536;
         
         njRotateXYZ(NULL, mkaP->key[0], mkaP->key[1], mkaP->key[2]);
@@ -5094,7 +5094,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
 
     njCalcVector(NULL, &body, &body);
 
-    objP = epw->mlwP->objP;
+    objP = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
     
     trans.x = objP->pos[0];
     trans.y = objP->pos[1];
@@ -5105,7 +5105,7 @@ int bhEne03_CollisionWalls(BH_PWORK* epw)
         trans.y = 0;
     }
 
-    njCalcVector((NJS_MATRIX*)epw->exp0, &trans, &trans);
+    njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &trans, &trans);
 
     epw->px += trans.x;
     epw->py += trans.y;
@@ -5234,7 +5234,7 @@ ATR_WORK* bhEne03_Collision(BH_PWORK* epw)
 	{
 		if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else
         {
@@ -5324,7 +5324,7 @@ ATR_WORK* bhEne03_Collision2(BH_PWORK* epw, ATR_WORK* gnd)
 	{
 		if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else
         {
@@ -6187,10 +6187,10 @@ int bhEne03_CollisionBoxEdge2(BH_PWORK* epw)
 
 		if (bhCollisionCheckLine(&p[i], &p2[i]) == 0)
         {
-            *(ATR_WORK **)(epw->exp0 + 0x60) = bhEne03_GetWall(epw);
-    		if (*(ATR_WORK **)(epw->exp0 + 0x60) != NULL)
+            *(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60) = bhEne03_GetWall(epw);
+    		if (*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60) != NULL)
             {
-                bhEne03_CollisionBoxEdge(*(ATR_WORK **)(epw->exp0 + 0x60), (NJS_POINT3*)&epw->px, epw->ar);
+                bhEne03_CollisionBoxEdge(*(ATR_WORK **)(P32(unsigned char *, epw->exp0) + 0x60), (NJS_POINT3*)&epw->px, epw->ar);
                 break;
             }    			
         }         
@@ -6208,9 +6208,9 @@ void bhEne03_CollisionLine(BH_PWORK* epw)
     if (hp != NULL)
     {        
         bhGetHitCollisionNormal(&n);
-        if (((*(ATR_WORK **)((char *)epw->exp0 + (0x60))) == NULL) && (n.y > 0.0f))
+        if (((*(ATR_WORK **)((char *)P32(unsigned char *, epw->exp0) + (0x60))) == NULL) && (n.y > 0.0f))
         {
-            (*(ATR_WORK **)((char *)epw->exp0 + (0x60))) = hp;
+            (*(ATR_WORK **)((char *)P32(unsigned char *, epw->exp0) + (0x60))) = hp;
         }
     }
 }
@@ -6239,9 +6239,9 @@ void bhEne03_SetModelFlg(BH_PWORK* epw, unsigned int and_flg, unsigned int or_fl
 	O_WORK* owk;
 	unsigned int i;
 
-    owk = epw->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
 
-    for (i = 0; i < epw->mnwP->obj_num; i++, owk++)
+    for (i = 0; i < P32(struct MN_WORK *, epw->mnwP)->obj_num; i++, owk++)
     {
         owk->flg &= and_flg;
         owk->flg |=  or_flg;
@@ -6253,7 +6253,7 @@ void bhEne03_AddNullTrans(BH_PWORK* epw, NJS_VECTOR* mtn)
 {
 	NJS_VECTOR v;
 
-    njCalcVector((NJS_MATRIX*)epw->exp0, &mtn[epw->frm_no / 65536], &v);
+    njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), &mtn[epw->frm_no / 65536], &v);
 
     epw->px += v.x;
     epw->pz += v.z;
@@ -6291,10 +6291,10 @@ int bhEne03_DiveSpace(BH_PWORK* epw)
         return 0;
     }
 
-    mkfP =  epw->mnwP[13].md2P->p[0];
-    mkfP += epw->mnwP[13].frm_num - 1;
+    mkfP =  P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, epw->mnwP)[13].md2P)->p[0]);
+    mkfP += P32(struct MN_WORK *, epw->mnwP)[13].frm_num - 1;
     
-    njCalcVector((NJS_MATRIX*)epw->exp0, (NJS_VECTOR*)&mkfP->key[0], &pos); 
+    njCalcVector((NJS_MATRIX*)P32(unsigned char *, epw->exp0), (NJS_VECTOR*)&mkfP->key[0], &pos); 
 
     pos.x += epw->px;
     pos.y += epw->py;
@@ -6443,22 +6443,22 @@ void bhEne03_DamageInit(BH_PWORK* epw)
                 {
                     for (i = 0; i < 4; i++) 
                     {
-                        num += ((unsigned char*)epw->exp0)[i + 160];
+                        num += ((unsigned char*)P32(unsigned char *, epw->exp0))[i + 160];
                     }
                 } 
                 else 
                 {
                     for (i = 4; i < 8; i++) 
                     {
-                        num += ((unsigned char*)epw->exp0)[i + 160];
+                        num += ((unsigned char*)P32(unsigned char *, epw->exp0))[i + 160];
                     }
                 }
         
-                if ((num == 0) && (((unsigned char*)epw->exp0)[160 + pno] == 0) && (((pno != 0) && (pno != 4)) || ((pno == 0) && (EXP0_UC(164) == 0)) || ((pno == 4) && (EXP0_UC(160) == 0)))) 
+                if ((num == 0) && (((unsigned char*)P32(unsigned char *, epw->exp0))[160 + pno] == 0) && (((pno != 0) && (pno != 4)) || ((pno == 0) && (EXP0_UC(164) == 0)) || ((pno == 4) && (EXP0_UC(160) == 0)))) 
                 {
-					((unsigned char*)epw->exp0)[160 + pno] = 1;
+					((unsigned char*)P32(unsigned char *, epw->exp0))[160 + pno] = 1;
 					
-					owk = epw->mlwP->owP;
+					owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
 					
 					owk[BrokenParts[pno]].flg     |= 0x3;
 					owk[BrokenParts[pno] + 1].flg |= 0x2;
@@ -6585,7 +6585,7 @@ void bhEne03_DamageInit(BH_PWORK* epw)
             
             if ((epw->flg & 0x80000)) 
             {
-                *(int*)epw->exp1 &= 0x2;
+                *(int*)P32(unsigned char *, epw->exp1) &= 0x2;
             }
             
             bhEne03_DeadMode2[epw->mode2](epw);
@@ -6648,7 +6648,7 @@ void bhEne03_DamageInit(BH_PWORK* epw)
             
             if ((epw->flg & 0x80000)) 
             {
-                if (epw->mlwP->owP->mtx[5] > 0) 
+                if (P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5] > 0) 
                 {
                     epw->mode2 = 11; 
                 } 
@@ -6710,7 +6710,7 @@ void bhEne03_DamageInit(BH_PWORK* epw)
         
         if ((epw->flg & 0x80000)) 
         {
-            *(int*)epw->exp1 &= 0x2;
+            *(int*)P32(unsigned char *, epw->exp1) &= 0x2;
         }
         
         bhEne03_DamageMode2[epw->mode2](epw);
@@ -6828,7 +6828,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                     plp->mtn_no = (sys->ply_id * 14) + 65;
                 }
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 plp->frm_no = 0;
                 
@@ -6837,7 +6837,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                 
                 plp->mtn_add = 65536;
                 
-                plp->ct0 = plp->mnwP[plp->mtn_no].frm_num;
+                plp->ct0 = P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num;
                 
                 bhEne_CallPlayerVoice(2);
                 
@@ -6898,7 +6898,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                     plp->mtn_no = (sys->ply_id * 14) + 59;
                 }
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 plp->frm_no = 0;
                 
@@ -6942,7 +6942,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
             case 2:                                 
                 if (plp->frm_no == 0) 
                 {
-                    plp->mnwP = plp->mnwPb;
+                    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
                     
                     plp->flg  &= ~0x10004;
                     plp->flg2 &= ~0x1;
@@ -6977,7 +6977,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                     plp->mtn_no = (sys->ply_id * 14) + 67;
                 }
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 plp->frm_no = 0;
                 
@@ -6986,7 +6986,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
             case 1:                              
                 if (plp->frm_no == 0) 
                 {
-                    plp->mnwP = plp->mnwPb;
+                    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
                     
                     plp->flg  &= ~0x10004;
                     plp->flg2 &= ~0x1;
@@ -7008,8 +7008,8 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
             break;
         }
         
-        px = plp->mlwP->owP[5].mtx[12] - plp->px;
-        pz = plp->mlwP->owP[5].mtx[14] - plp->pz;
+        px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12] - plp->px;
+        pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14] - plp->pz;
         
         plp->px += px;
         plp->pz += pz;
@@ -7042,7 +7042,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                     plp->mtn_no = (sys->ply_id * 14) + 70;
                 }
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 plp->frm_no = 0;
                 
@@ -7051,7 +7051,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                 
                 plp->mtn_add = 65536;
                 
-                plp->ct0 = plp->mnwP[plp->mtn_no].frm_num - 1;
+                plp->ct0 = P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1;
                 
                 bhEne_CallPlayerVoice(1);
                 
@@ -7087,7 +7087,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                     plp->mtn_no = (sys->ply_id * 14) + 69;
                 }
                 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                 
                 plp->frm_no = 0;
                 
@@ -7096,7 +7096,7 @@ void bhEne03_PlayerControl(BH_PWORK* epw)
                 
                 plp->mtn_add = 65536;
                 
-                plp->ct0 = plp->mnwP[plp->mtn_no].frm_num - 1;
+                plp->ct0 = P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1;
                 
                 bhEne_CallPlayerVoice(1);
                 
@@ -7124,7 +7124,7 @@ void bhEne03_CallSE(BH_PWORK* epw)
 {
     int fno;
 
-    if (epw->mnwP == epw->mnwPb) 
+    if (P32(struct MN_WORK *, epw->mnwP) == P32(struct MN_WORK *, epw->mnwPb)) 
     {
         fno = epw->frm_no / 65536;
         
@@ -7286,7 +7286,7 @@ void bhEne03_Acid(BH_PWORK* epw, int type)
     float dt;    
     NJS_POINT3 pos1, pos2; // not from DWARF
 
-    owk = epw->mlwP->owP; 
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP); 
     
     pos1.x = owk[36].mtx[12];
     pos1.y = owk[36].mtx[13];
@@ -7332,7 +7332,7 @@ void bhEne03_Acid(BH_PWORK* epw, int type)
         {
             eff[eno].stflg |= 0x20; 
             
-            eff[eno].txp[0] = epw->mdl[1].texP; 
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, epw->mdl[1].texP)); 
             eff[eno].tex_id = 1; 
 
             eff[eno].xn = pos2.x; 
@@ -7431,7 +7431,7 @@ void bhEne03_HitMark(BH_PWORK* epw)
     
     if ((DmgReact[epw->wpnr_no].exef & 0x4)) 
     {
-        npSetAllMatColor(epw->mlwP->objP, epw->mlwP->obj_num, 0xFF201010);
+        npSetAllMatColor(P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP), P32(struct ML_WORK *, epw->mlwP)->obj_num, 0xFF201010);
         
         epw->mdflg |= 0x400;
     }

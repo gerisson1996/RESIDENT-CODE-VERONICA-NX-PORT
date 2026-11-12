@@ -621,7 +621,7 @@ static void ScissorIntersect(NODE* inter, const NODE* in, const NODE* out, float
 void ScissorTriangle(SCISSOR* scissor, SCISSOR_PLANE* plane_set)
 {
     SCISSOR_NODE* inarray = &scissor->triangle;
-    SCISSOR_NODE* outarray = scissor->out;
+    SCISSOR_NODE* outarray = P32(struct SCISSOR_NODE *, scissor->out);
     unsigned int i, j;
 
     for (i = 0; i < plane_set->planeNum; i++) {
@@ -651,11 +651,11 @@ void ScissorTriangle(SCISSOR* scissor, SCISSOR_PLANE* plane_set)
         {
             unsigned int old = scissor->flipflag;
             scissor->flipflag = (old + 1) & 1;
-            scissor->out = &scissor->narray[old];
-            scissor->in = &scissor->narray[scissor->flipflag];
-            scissor->out->nodeNum = 0;
-            inarray = scissor->in;
-            outarray = scissor->out;
+            scissor->out = S32(&scissor->narray[old]);
+            scissor->in = S32(&scissor->narray[scissor->flipflag]);
+            P32(struct SCISSOR_NODE *, scissor->out)->nodeNum = 0;
+            inarray = P32(struct SCISSOR_NODE *, scissor->in);
+            outarray = P32(struct SCISSOR_NODE *, scissor->out);
         }
     }
 }
@@ -1080,7 +1080,7 @@ void DrawScissorPolygonOpaque(SCISSOR* scissor, unsigned long ulType)
     SCISSOR_NODE* in; 
     VU1_PRIM_BUF* pP; // not from the debugging symbols
 
-    in = scissor->in;
+    in = P32(struct SCISSOR_NODE *, scissor->in);
     
 #ifndef TARGET_PC
     asm volatile
@@ -2975,7 +2975,7 @@ void vu1DrawTriangleStripTransDoubleI(unsigned long ulType, VU1_STRIP_BUF* pS, u
             
             ScissorTriangle(&scissorflip, &planeset); 
             
-            if (scissorflip.in->nodeNum != 0) 
+            if (P32(struct SCISSOR_NODE *, scissorflip.in)->nodeNum != 0) 
             { 
                 DrawScissorPolygonOpaque(&scissorflip, ulType); 
        
@@ -2996,7 +2996,7 @@ void DrawScissorPolygonTrans1P(SCISSOR* scissor, unsigned long ulType)
     SCISSOR_NODE* in; 
     VU1_PRIM_BUF* pP; // not from the debugging symbols
 
-    in = scissor->in;
+    in = P32(struct SCISSOR_NODE *, scissor->in);
     
 #ifndef TARGET_PC
     asm volatile
@@ -3161,7 +3161,7 @@ void vu1DrawTriangleStripTransDouble1P(unsigned long ulType, VU1_STRIP_BUF* pS, 
             
             ScissorTriangle(&scissorflip, &planeset); 
             
-            if (scissorflip.in->nodeNum != 0) 
+            if (P32(struct SCISSOR_NODE *, scissorflip.in)->nodeNum != 0) 
             { 
                 DrawScissorPolygonTrans1P(&scissorflip, ulType); 
        

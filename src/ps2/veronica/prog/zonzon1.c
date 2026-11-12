@@ -82,7 +82,7 @@ void bhEne_SetMinceEffect(BH_PWORK* epw, int type, int num)
         {   
             eff[eno].stflg |= 0x20;
             
-            eff[eno].txp[0] = epw->mdl[BloodType[epw->id].mdlno].texP;
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, epw->mdl[BloodType[epw->id].mdlno].texP));
             eff[eno].tex_id = BloodType[epw->id].tex_id;
         }
     }
@@ -123,7 +123,7 @@ void bhEne_SetMinceEffect2(BH_PWORK* epw, int type, float size, int num)
         {
             eff[eno].stflg |= 0x20;
             
-            eff[eno].txp[0] = epw->mdl[BloodType[epw->id].mdlno].texP;
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, epw->mdl[BloodType[epw->id].mdlno].texP));
             eff[eno].tex_id = BloodType[epw->id].tex_id;
         }
     }
@@ -203,11 +203,11 @@ void bhEne_SetBloodEffect5(BH_PWORK* epw, int type1, int type2)
     NJS_POINT3 ofp; 
     NJS_POINT3 vec; 
 
-    ofp.x = epw->dpx - epw->mlwP->owP[epw->djnt_no].mtx[12];
-    ofp.y = epw->dpy - epw->mlwP->owP[epw->djnt_no].mtx[13];
-    ofp.z = epw->dpz - epw->mlwP->owP[epw->djnt_no].mtx[14];
+    ofp.x = epw->dpx - P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no].mtx[12];
+    ofp.y = epw->dpy - P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no].mtx[13];
+    ofp.z = epw->dpz - P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no].mtx[14];
     
-    njSetMatrix(NULL, (NJS_MATRIX*)epw->mlwP->owP[epw->djnt_no].mtx);
+    njSetMatrix(NULL, (NJS_MATRIX*)P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no].mtx);
     njInvertMatrix(NULL);
     
     njCalcVector(NULL, &ofp, &ofp);
@@ -259,9 +259,9 @@ void bhEne_SetBloodEffectBurst(BH_PWORK* epw, int type, int jno, NJS_POINT3* pos
     
     if (flg != 0) 
     {   
-        njSubVector(&ofp, (NJS_VECTOR*)&epw->mlwP->owP[jno].mtx[12]);
+        njSubVector(&ofp, (NJS_VECTOR*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[jno].mtx[12]);
         
-        njSetMatrix(NULL, (NJS_MATRIX*)epw->mlwP->owP[jno].mtx);
+        njSetMatrix(NULL, (NJS_MATRIX*)P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[jno].mtx);
         njInvertMatrix(NULL);
         
         njCalcVector(NULL, &ofp, &ofp);
@@ -316,13 +316,13 @@ void bhEne_SetBloodstain(BH_PWORK* epw, int type, int jno, NJS_POINT3* ofp)
     }
     else if (ofp != NULL)
     {
-        njSetMatrix(NULL, (NJS_MATRIX*)epw->mlwP->owP[jno].mtx);
+        njSetMatrix(NULL, (NJS_MATRIX*)P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[jno].mtx);
 
         njCalcPoint(NULL, ofp, &pos);
     } 
     else 
     {
-        *(NJS_POINT3*)&pos = *(NJS_POINT3*)&epw->mlwP->owP[jno].mtx[12];
+        *(NJS_POINT3*)&pos = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[jno].mtx[12];
     }
     
     sys->ef.id = 301;
@@ -467,7 +467,7 @@ void bhEne_GetPartsPos(BH_PWORK* epw, char* parts, NJS_POINT3* p)
     ML_WORK* mlwP;
     NJS_CNK_OBJECT* objP; 
 
-    mlwP = epw->mlwP;
+    mlwP = P32(struct ML_WORK *, epw->mlwP);
     
     njPushMatrixEx();
     
@@ -478,7 +478,7 @@ void bhEne_GetPartsPos(BH_PWORK* epw, char* parts, NJS_POINT3* p)
     
     while (*parts != -1) 
     {
-        objP = &mlwP->objP[*parts++];
+        objP = &P32(struct cnkobj *, mlwP->objP)[*parts++];
         
         njTranslateEx((NJS_VECTOR*)objP->pos);
         njRotateEx(objP->ang, 0);
@@ -592,13 +592,13 @@ void bhEne_SetWeponAtr(BH_PWORK* epw, char j1, char j2, float r)
 {
     O_WORK* owk;
 
-    owk = &epw->mlwP->owP[j1];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[j1];
     
     epw->watr.c1.x = owk->mtx[12];
     epw->watr.c1.y = owk->mtx[13];
     epw->watr.c1.z = owk->mtx[14];
     
-    owk = &epw->mlwP->owP[j2];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[j2];
     
     epw->watr.c2.x = owk->mtx[12];
     epw->watr.c2.y = owk->mtx[13];
@@ -629,11 +629,11 @@ unsigned char bhEne_AttackHitCheck(BH_PWORK* pl, NJS_POINT3* pos, float ar)
     {
         ll = ar * ar;
         
-        for (i = 0; i < (int)pl->mlwP->obj_num; i++)
+        for (i = 0; i < (int)P32(struct ML_WORK *, pl->mlwP)->obj_num; i++)
         {
-            vec.x = pos->x - pl->mlwP->owP[i].mtx[12];
-            vec.y = pos->y - pl->mlwP->owP[i].mtx[13];
-            vec.z = pos->z - pl->mlwP->owP[i].mtx[14];
+            vec.x = pos->x - P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[i].mtx[12];
+            vec.y = pos->y - P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[i].mtx[13];
+            vec.z = pos->z - P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[i].mtx[14];
             
             knr = njScalor2(&vec);
             
@@ -737,7 +737,7 @@ void bhEne_CalcDamage(BH_PWORK* epw, COMBWEP_WORK* CombWepTbl, COMBJOINT_WORK* C
     
     epw->total_dam = 0;
     
-    for (i = 0; i < epw->mlwP->obj_num; i++, cjp++)
+    for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++, cjp++)
     {
         if ((i != 0) && (epw->dam[i] != 0))
         {
@@ -807,9 +807,9 @@ void bhEne_InitDamage(BH_PWORK* epw)
 {
     int i;
 
-    if (epw->mlwP != NULL) 
+    if (P32(struct ML_WORK *, epw->mlwP) != NULL) 
     {
-        for (i = 0; i < epw->mlwP->obj_num; i++)
+        for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++)
         {
             epw->dam[i] = 0;
         }
@@ -896,7 +896,7 @@ ATR_WORK* bhEne_CheckEventAtr(int flr_no, float px, float pz, int id, int min, i
     {
         if (i < rom->flr_n)
         {
-            fp = &rom->flrp[i];
+            fp = &P32(struct ATR_WORK *, rom->flrp)[i];
         }
         else 
         {
@@ -922,7 +922,7 @@ void bhEne_EraseArrow(BH_PWORK* epw, int obj_no)
     
     for (i = 0; i < 512; i++, op++)
     {
-        if ((((op->flg & 0x1)) && (!(op->flg & 0x2))) && (op->id == 13) && ((op->lkwkp == (unsigned char*)epw) && (op->lkono == obj_no))) 
+        if ((((op->flg & 0x1)) && (!(op->flg & 0x2))) && (op->id == 13) && ((P32(unsigned char *, op->lkwkp) == (unsigned char*)epw) && (op->lkono == obj_no))) 
         {
             op->flg = 0;
         }

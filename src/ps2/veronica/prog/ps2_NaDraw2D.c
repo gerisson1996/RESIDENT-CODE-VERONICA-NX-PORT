@@ -65,8 +65,8 @@ void	njDrawLine2D(NJS_POINT2COL *p, Int n, Float pri, Uint32 attr)
     {
         if ((attr & 0x80000000)) 
         {
-            *(int*)&bp[0][0] = p->tex[i].tex.u * 16;
-            *(int*)&bp[0][1] = p->tex[i].tex.v * 16;
+            *(int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u * 16;
+            *(int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v * 16;
             *(int*)&bp[0][2] = 4096;
             *(int*)&bp[0][3] = 0;
             
@@ -80,17 +80,17 @@ void	njDrawLine2D(NJS_POINT2COL *p, Int n, Float pri, Uint32 attr)
             bp[0][3] = 0;
         }
         
-        *(int*)&bp[1][0] = p->col[i].argb.r;
-        *(int*)&bp[1][1] = p->col[i].argb.g;
-        *(int*)&bp[1][2] = p->col[i].argb.b;
-        *(int*)&bp[1][3] = (p->col[i].argb.a + 1) >> 1;
+        *(int*)&bp[1][0] = P32(NJS_COLOR *, p->col)[i].argb.r;
+        *(int*)&bp[1][1] = P32(NJS_COLOR *, p->col)[i].argb.g;
+        *(int*)&bp[1][2] = P32(NJS_COLOR *, p->col)[i].argb.b;
+        *(int*)&bp[1][3] = (P32(NJS_COLOR *, p->col)[i].argb.a + 1) >> 1;
         
         #ifndef TARGET_PC
         bp[2][0] = 1728.0f + p->p[i].x;
 #else
-        bp[2][0] = 1728.0f + pc_overlay_x(p->p[i].x);   /* full-screen overlays: optional stretch */
+        bp[2][0] = 1728.0f + pc_overlay_x(P32(NJS_POINT2 *, p->p)[i].x);   /* full-screen overlays: optional stretch */
 #endif
-        bp[2][1] = 1808.0f + p->p[i].y;
+        bp[2][1] = 1808.0f + P32(NJS_POINT2 *, p->p)[i].y;
         bp[2][2] = pri;
         bp[2][3] = 0;
     }
@@ -127,8 +127,8 @@ void	njDrawPolygon2D(NJS_POINT2COL *p, Int n, Float pri, Uint32 attr)
     {
         if ((attr & 0x80000000)) 
         {
-            *(int*)&bp[0][0] = (p->tex[i].tex.u * 16) + 8;
-            *(int*)&bp[0][1] = (p->tex[i].tex.v * 16) + 8;
+            *(int*)&bp[0][0] = (P32(NJS_COLOR *, p->tex)[i].tex.u * 16) + 8;
+            *(int*)&bp[0][1] = (P32(NJS_COLOR *, p->tex)[i].tex.v * 16) + 8;
             *(int*)&bp[0][2] = 4096;
             *(int*)&bp[0][3] = 0;
             
@@ -144,25 +144,25 @@ void	njDrawPolygon2D(NJS_POINT2COL *p, Int n, Float pri, Uint32 attr)
         
         if ((attr & 0x80000000)) 
         {
-            *(int*)&bp[1][0] = p->col[i].argb.r >> 1;
-            *(int*)&bp[1][1] = p->col[i].argb.g >> 1;
-            *(int*)&bp[1][2] = p->col[i].argb.b >> 1;
-            *(int*)&bp[1][3] = (p->col[i].argb.a + 1) >> 1;
+            *(int*)&bp[1][0] = P32(NJS_COLOR *, p->col)[i].argb.r >> 1;
+            *(int*)&bp[1][1] = P32(NJS_COLOR *, p->col)[i].argb.g >> 1;
+            *(int*)&bp[1][2] = P32(NJS_COLOR *, p->col)[i].argb.b >> 1;
+            *(int*)&bp[1][3] = (P32(NJS_COLOR *, p->col)[i].argb.a + 1) >> 1;
         } 
         else 
         {
-            *(int*)&bp[1][0] = p->col[i].argb.r;
-            *(int*)&bp[1][1] = p->col[i].argb.g;
-            *(int*)&bp[1][2] = p->col[i].argb.b;
-            *(int*)&bp[1][3] = (p->col[i].argb.a + 1) >> 1;
+            *(int*)&bp[1][0] = P32(NJS_COLOR *, p->col)[i].argb.r;
+            *(int*)&bp[1][1] = P32(NJS_COLOR *, p->col)[i].argb.g;
+            *(int*)&bp[1][2] = P32(NJS_COLOR *, p->col)[i].argb.b;
+            *(int*)&bp[1][3] = (P32(NJS_COLOR *, p->col)[i].argb.a + 1) >> 1;
         }
         
         #ifndef TARGET_PC
         bp[2][0] = 1728.0f + p->p[i].x;
 #else
-        bp[2][0] = 1728.0f + pc_overlay_x(p->p[i].x);   /* full-screen overlays: optional stretch */
+        bp[2][0] = 1728.0f + pc_overlay_x(P32(NJS_POINT2 *, p->p)[i].x);   /* full-screen overlays: optional stretch */
 #endif
-        bp[2][1] = 1808.0f + p->p[i].y;
+        bp[2][1] = 1808.0f + P32(NJS_POINT2 *, p->p)[i].y;
         bp[2][2] = pri;
         bp[2][3] = 0;
     }
@@ -211,20 +211,20 @@ void njDrawPolygon2DM(NJS_POINT2COL* p, int n, float pri, unsigned int attr)
 #ifdef TARGET_PC   /* texel centres pulled half a texel inwards on every edge (corners 1-3 sat on the
                       far texel's edge and sampled the neighbouring glyph: seams around font letters) */
             case 0: // Top-Left (Near U, Near V)
-                *(int*)&bp[0][0] = (p->tex[i].tex.u * 16) + 8;
-                *(int*)&bp[0][1] = (p->tex[i].tex.v * 16) + 8;
+                *(int*)&bp[0][0] = (P32(NJS_COLOR *, p->tex)[i].tex.u * 16) + 8;
+                *(int*)&bp[0][1] = (P32(NJS_COLOR *, p->tex)[i].tex.v * 16) + 8;
                 break;
             case 1: // Top-Right (Far U, Near V)
-                *(int*)&bp[0][0] = (p->tex[i].tex.u * 16) - 8;
-                *(int*)&bp[0][1] = (p->tex[i].tex.v * 16) + 8;
+                *(int*)&bp[0][0] = (P32(NJS_COLOR *, p->tex)[i].tex.u * 16) - 8;
+                *(int*)&bp[0][1] = (P32(NJS_COLOR *, p->tex)[i].tex.v * 16) + 8;
                 break;
             case 2: // Bottom-Right (Far U, Far V)
-                *(int*)&bp[0][0] = (p->tex[i].tex.u * 16) - 8;
-                *(int*)&bp[0][1] = (p->tex[i].tex.v * 16) - 8;
+                *(int*)&bp[0][0] = (P32(NJS_COLOR *, p->tex)[i].tex.u * 16) - 8;
+                *(int*)&bp[0][1] = (P32(NJS_COLOR *, p->tex)[i].tex.v * 16) - 8;
                 break;
             case 3: // Bottom-Left (Near U, Far V)
-                *(int*)&bp[0][0] = (p->tex[i].tex.u * 16) + 8;
-                *(int*)&bp[0][1] = (p->tex[i].tex.v * 16) - 8;
+                *(int*)&bp[0][0] = (P32(NJS_COLOR *, p->tex)[i].tex.u * 16) + 8;
+                *(int*)&bp[0][1] = (P32(NJS_COLOR *, p->tex)[i].tex.v * 16) - 8;
                 break;
 #else
             case 0:
@@ -261,25 +261,25 @@ void njDrawPolygon2DM(NJS_POINT2COL* p, int n, float pri, unsigned int attr)
         
         if ((attr & 0x80000000)) 
         {
-            *(int*)&bp[1][0] = p->col[i].argb.r >> 1;
-            *(int*)&bp[1][1] = p->col[i].argb.g >> 1;
-            *(int*)&bp[1][2] = p->col[i].argb.b >> 1;
-            *(int*)&bp[1][3] = (p->col[i].argb.a + 1) >> 1;
+            *(int*)&bp[1][0] = P32(NJS_COLOR *, p->col)[i].argb.r >> 1;
+            *(int*)&bp[1][1] = P32(NJS_COLOR *, p->col)[i].argb.g >> 1;
+            *(int*)&bp[1][2] = P32(NJS_COLOR *, p->col)[i].argb.b >> 1;
+            *(int*)&bp[1][3] = (P32(NJS_COLOR *, p->col)[i].argb.a + 1) >> 1;
         } 
         else 
         {
-            *(int*)&bp[1][0] = p->col[i].argb.r;
-            *(int*)&bp[1][1] = p->col[i].argb.g;
-            *(int*)&bp[1][2] = p->col[i].argb.b;
-            *(int*)&bp[1][3] = (p->col[i].argb.a + 1) >> 1;
+            *(int*)&bp[1][0] = P32(NJS_COLOR *, p->col)[i].argb.r;
+            *(int*)&bp[1][1] = P32(NJS_COLOR *, p->col)[i].argb.g;
+            *(int*)&bp[1][2] = P32(NJS_COLOR *, p->col)[i].argb.b;
+            *(int*)&bp[1][3] = (P32(NJS_COLOR *, p->col)[i].argb.a + 1) >> 1;
         }
         
         #ifndef TARGET_PC
         bp[2][0] = 1728.0f + p->p[i].x;
 #else
-        bp[2][0] = 1728.0f + pc_overlay_x(p->p[i].x);   /* full-screen overlays: optional stretch */
+        bp[2][0] = 1728.0f + pc_overlay_x(P32(NJS_POINT2 *, p->p)[i].x);   /* full-screen overlays: optional stretch */
 #endif
-        bp[2][1] = 1808.0f + p->p[i].y;
+        bp[2][1] = 1808.0f + P32(NJS_POINT2 *, p->p)[i].y;
         bp[2][2] = pri;
         bp[2][3] = 0;
     }

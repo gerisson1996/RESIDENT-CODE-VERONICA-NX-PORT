@@ -17,13 +17,13 @@ typedef struct SYSSAVE_SCREEN
     unsigned short usSaveMode;           // offset 0x1A, size 0x2
     unsigned short usLoopCount;          // offset 0x1C, size 0x2
     char cMesFlag;                       // offset 0x1E, size 0x1
-    CONFIGFILE* pConfigFile;             // offset 0x20, size 0x4
-    SAVEFILE* pSaveFile;                 // offset 0x24, size 0x4
-    ICONINFORMATION* pIconInfo;          // offset 0x28, size 0x4
-    MEMORYCARDSTATE* pMcState;           // offset 0x2C, size 0x4
-    SELECTFILEINFO* pSelectFileInfo;     // offset 0x30, size 0x4
-    SELECTFILEWINDOW* pSelectFileWindow; // offset 0x34, size 0x4
-    void* vpReadBuffer;                  // offset 0x38, size 0x4
+    ps2ptr_t pConfigFile; /* CONFIGFILE* pConfigFile */             // offset 0x20, size 0x4
+    ps2ptr_t pSaveFile; /* SAVEFILE* pSaveFile */                 // offset 0x24, size 0x4
+    ps2ptr_t pIconInfo; /* ICONINFORMATION* pIconInfo */          // offset 0x28, size 0x4
+    ps2ptr_t pMcState; /* MEMORYCARDSTATE* pMcState */           // offset 0x2C, size 0x4
+    ps2ptr_t pSelectFileInfo; /* SELECTFILEINFO* pSelectFileInfo */     // offset 0x30, size 0x4
+    ps2ptr_t pSelectFileWindow; /* SELECTFILEWINDOW* pSelectFileWindow */ // offset 0x34, size 0x4
+    ps2ptr_t vpReadBuffer; /* void* vpReadBuffer */                  // offset 0x38, size 0x4
 } SYSSAVE_SCREEN;
 
 SYSSAVE_SCREEN* CreateSysSaveScreen(SYSSAVE_SCREEN* pSysSave, void* vpWorkPtrSys, unsigned short usSaveMesMode, unsigned short usSaveWriteMode);

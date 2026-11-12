@@ -40,7 +40,7 @@ void bhEne25(BH_PWORK* epw)
 {
     bhEne25_Mode0[epw->mode0](epw);
 
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     bhCalcModel(epw);
 
     if (EXP0_UC(0x8) == 1)
@@ -52,23 +52,23 @@ void bhEne25(BH_PWORK* epw)
 // 100% matching!
 void bhEne25_Init(BH_PWORK* epw)
 {
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(0xC, 0x8);
-        EXP0_ATR(0) = &sys->mwalp[sys->mwal_n++];
-        EXP0_ATR(0)->flg |= 0x81;
-        EXP0_ATR(0)->type = 0;
-        EXP0_ATR(0)->flr_no = 0;
-        EXP0_ATR(0)->attr = 2;
-        EXP0_ATR(0)->prm0 = EXP0_ATR(0)->prm1 = EXP0_ATR(0)->prm2 = EXP0_ATR(0)->prm3 = 0;
+        epw->exp0 = S32(bhEne_CallocWork(0xC, 0x8));
+        EXP0_ATR(0) = S32(&sys->mwalp[sys->mwal_n++]);
+        P32(ATR_WORK*, EXP0_ATR(0))->flg |= 0x81;
+        P32(ATR_WORK*, EXP0_ATR(0))->type = 0;
+        P32(ATR_WORK*, EXP0_ATR(0))->flr_no = 0;
+        P32(ATR_WORK*, EXP0_ATR(0))->attr = 2;
+        P32(ATR_WORK*, EXP0_ATR(0))->prm0 = P32(ATR_WORK*, EXP0_ATR(0))->prm1 = P32(ATR_WORK*, EXP0_ATR(0))->prm2 = P32(ATR_WORK*, EXP0_ATR(0))->prm3 = 0;
     }
 
-    EXP0_ATR(0)->h = 4.0f;
-    EXP0_ATR(0)->py = epw->py - -30.0f;
-    EXP0_ATR(0)->w = 14.0f;
-    EXP0_ATR(0)->d = 14.0f;
-    EXP0_ATR(0)->px = epw->px - 7.0f;
-    EXP0_ATR(0)->pz = epw->pz - 7.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->h = 4.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->py = epw->py - -30.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->w = 14.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->d = 14.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->px = epw->px - 7.0f;
+    P32(ATR_WORK*, EXP0_ATR(0))->pz = epw->pz - 7.0f;
     epw->flg |= 0x1;
     epw->flg |= 0x8000;
     epw->flg &= ~0x6;
@@ -185,7 +185,7 @@ void bhEne25_MV01(BH_PWORK* epw)
         break;
 
     case 2:
-        EXP0_ATR(0)->py = epw->mlwP->owP->mtx[13];
+        P32(ATR_WORK*, EXP0_ATR(0))->py = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
 
         if ((EXP0_UC(0x1) == 1) && ((epw->frm_no >> 0x10) == 6) && (EXP0_UC(0x8) == 0))
         {
@@ -219,7 +219,7 @@ void bhEne25_MV01(BH_PWORK* epw)
             CallSystemSe(0, 0x80000202);
         }
 
-        if ((epw->frm_no >> 0x10) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no >> 0x10) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
             StartVibrationEx(1, 0xB);
             epw->mtn_no = 1;
@@ -229,7 +229,7 @@ void bhEne25_MV01(BH_PWORK* epw)
         break;
 
     case 3:
-        if ((epw->frm_no >> 0x10) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no >> 0x10) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
             epw->mtn_add = 0;
             epw->ct0 = 15;
@@ -262,11 +262,11 @@ void bhEne25_MV02(BH_PWORK* epw)
         epw->mode3++;
         // Fallthrough
     case 1:
-        EXP0_ATR(0)->py = epw->mlwP->owP->mtx[13];
+        P32(ATR_WORK*, EXP0_ATR(0))->py = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
 
-        if ((epw->frm_no >> 0x10) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no >> 0x10) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
-            EXP0_ATR(0)->py = epw->py - -30.0f;
+            P32(ATR_WORK*, EXP0_ATR(0))->py = epw->py - -30.0f;
             epw->mtn_add = 0;
             epw->mode2 = 3;
             epw->mode3 = 0;

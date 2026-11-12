@@ -7,8 +7,8 @@
 typedef struct RMI_WORK
 {
     // total size: 0x54
-    unsigned char* put_ptr;      // offset 0x0, size 0x4
-    unsigned char* get_ptr;      // offset 0x4, size 0x4
+    ps2ptr_t put_ptr; /* unsigned char* put_ptr */      // offset 0x0, size 0x4
+    ps2ptr_t get_ptr; /* unsigned char* get_ptr */      // offset 0x4, size 0x4
     int putsize;                 // offset 0x8, size 0x4
     int getsize;                 // offset 0xC, size 0x4
     int readrest;                // offset 0x10, size 0x4

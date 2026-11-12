@@ -44,7 +44,7 @@ void bhEne16(BH_PWORK* epw)
     bhEne16_Mode0[epw->mode0](epw);
     if (epw->type == 0)
     {
-        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         if (EXP0_I(0) != 0)
         {
             ((char*)PS2_HOST(EXP0_I(0)))[0xC] = 2;
@@ -73,9 +73,9 @@ void bhEne16_Init(BH_PWORK* epw)
         epw->mode3 = 0;
     }
 
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(104, 8);
+        epw->exp0 = S32(bhEne_CallocWork(104, 8));
         sys->ef.id = 270;
         sys->ef.flg = 1;
         sys->ef.type = 0;
@@ -180,7 +180,7 @@ void bhEne16_MV02(BH_PWORK* epw)
         epw->ct0 = 30;
         epw->ct1 = 7;
         epw->flg |= 0x80000;
-        owp = plp->mlwP->owP;
+        owp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
         epw->xn = owp[3].mtx[12] + 20.0f * owp[3].mtx[8];
         epw->yn = owp[3].mtx[13] + 20.0f * owp[3].mtx[9];
         epw->zn = owp[3].mtx[14] + 20.0f * owp[3].mtx[10];
@@ -260,18 +260,18 @@ void bhEne16_MV02(BH_PWORK* epw)
                     v.y = epw->py - epw->yn;
                     v.z = epw->pz - epw->zn;
   
-                    pos.x = (*(BH_PWORK**)epw->exp0)->lox;
-                    pos.y = (*(BH_PWORK**)epw->exp0)->loy;
-                    pos.z = (*(BH_PWORK**)epw->exp0)->loz;
+                    pos.x = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->lox;
+                    pos.y = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->loy;
+                    pos.z = (*(BH_PWORK**)P32(unsigned char *, epw->exp0))->loz;
                     bhSetEffGunSpark(&pos, &v, 0xFFF8F8A0, 0x4CE04010, WpnTab[13].hiteff - 4);
                     gap.wpn_no = 0xD;
                     gap.ay = bhArcTan2(v.x, v.z);
                     bhSetGunSplash(&gap, &pos, hp->prm0);
                 }
             }
-            epw->aox += 1.5f * epw->mlwP->owP->mtx[4];
-            epw->aoy += 1.5f * epw->mlwP->owP->mtx[5];
-            epw->aoz += 1.5f * epw->mlwP->owP->mtx[6];
+            epw->aox += 1.5f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[4];
+            epw->aoy += 1.5f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5];
+            epw->aoz += 1.5f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[6];
             epw->dpx = epw->xn;
             epw->dpy = epw->yn;
             epw->dpz = epw->zn;
@@ -290,9 +290,9 @@ void bhEne16_MV02(BH_PWORK* epw)
         } 
         else if (epw->ct0 == 3)
         {
-            epw->xn += 15.0f * epw->mlwP->owP->mtx[4];
-            epw->yn += 15.0f * epw->mlwP->owP->mtx[5];
-            epw->zn += 15.0f * epw->mlwP->owP->mtx[6];
+            epw->xn += 15.0f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[4];
+            epw->yn += 15.0f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[5];
+            epw->zn += 15.0f * P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[6];
         } 
         else if (epw->ct0 < 30)
         {
@@ -333,7 +333,7 @@ void bhEne16_MV02(BH_PWORK* epw)
     }
     if (epw->flg & 0x80000)
     {
-        owp = plp->mlwP->owP;
+        owp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
         epw->aox += (owp[3].mtx[12] - epw->xn) / 32.0f;
         epw->aoy += ((1.5f + owp[3].mtx[13]) - epw->yn) / 32.0f;
         epw->aoz += (owp[3].mtx[14] - epw->zn) / 32.0f;
@@ -383,8 +383,8 @@ void bhEne16_MV02(BH_PWORK* epw)
     
     ay = bhArcTan2(-dx, -dz);
     ax = bhArcTan2(dy, njSqrt(dx * dx + dz * dz));
-    epw->mlwP->objP->ang[1] = ay;
-    epw->mlwP->objP->ang[0] = ax;
+    P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[1] = ay;
+    P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)->ang[0] = ax;
 }
 
 // 100% matching!

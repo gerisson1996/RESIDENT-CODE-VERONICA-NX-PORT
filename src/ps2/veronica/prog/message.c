@@ -22,10 +22,10 @@ void bhSetMessage(int mes_typ, int mes_idx)
     switch (mes_typ) 
     {
     case 0:
-        sys->mes_dp = rom->mesp;
+        sys->mes_dp = S32(P32(unsigned int *, rom->mesp));
         break;
     case 1:
-        sys->mes_dp = sys->mes_sp;
+        sys->mes_dp = S32(P32(unsigned int *, sys->mes_sp));
         break;
     default:
         return;
@@ -33,7 +33,7 @@ void bhSetMessage(int mes_typ, int mes_idx)
     
     sys->mes_idx = mes_idx + 1;
     
-    sys->mes_dp = (unsigned int*)((unsigned char*)sys->mes_dp + sys->mes_dp[sys->mes_idx]);
+    sys->mes_dp = S32((unsigned int*)((unsigned char*)P32(unsigned int *, sys->mes_dp) + P32(unsigned int *, sys->mes_dp)[sys->mes_idx]));
     
     sys->mes_ct = 0;
     
@@ -58,7 +58,7 @@ void bhControlMessage(int mode)
     int mct, col, end;
     int itn;
     
-    dt = (unsigned short*)sys->mes_dp;
+    dt = (unsigned short*)P32(unsigned int *, sys->mes_dp);
     
     sys->mes_seln = 0;
     
@@ -183,7 +183,7 @@ void bhControlMessage(int mode)
         case 65032:
             if (sys->mes_tim == 0) 
             {
-                sys->mes_dp = (unsigned int*)dt;
+                sys->mes_dp = S32((unsigned int*)dt);
                 
                 sys->st_flg &= ~0x800;
                 
@@ -329,7 +329,7 @@ void bhControlMessage(int mode)
         {
             if ((sys->pad_ps & 0x800))
             {
-                sys->mes_dp = (unsigned int*)dt;
+                sys->mes_dp = S32((unsigned int*)dt);
                 
                 sys->mes_ct = 0;
                 sys->mes_tim = 0;
@@ -381,11 +381,11 @@ void bhDispFont(NJS_POINT2* pos, int code, int color, float pri)
     
     njSetTextureNum(code / 324);
     
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
     
@@ -469,11 +469,11 @@ void bhDispFontEx(NJS_POINT2* pos, int code, unsigned int argb, float pri)
     
     njSetTextureNum(code / 324);
     
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
     
@@ -521,7 +521,7 @@ int bhDispItemName(NJS_POINT2* pos, int id, int color, int count, float pri)
 
     num = 0;
     
-    dp = (unsigned short*)((char*)sys->mes_ip + sys->mes_ip[id + 1]);
+    dp = (unsigned short*)((char*)P32(unsigned int *, sys->mes_ip) + P32(unsigned int *, sys->mes_ip)[id + 1]);
     
     if (count != 0) 
     { 
@@ -578,17 +578,17 @@ int bhDispMessage(float px, float py, float pri, int mes_typ, int mes_idx, int c
     switch (mes_typ) 
     {                           
     case 0:
-        mes_dp = rom->mesp;
+        mes_dp = P32(unsigned int *, rom->mesp);
         
-        dp = (unsigned short*)((char*)mes_dp + rom->mesp[mes_idx + 1]);
+        dp = (unsigned short*)((char*)mes_dp + P32(unsigned int *, rom->mesp)[mes_idx + 1]);
         break;
     case 1:
-        mes_dp = sys->mes_sp;
+        mes_dp = P32(unsigned int *, sys->mes_sp);
         
-        dp = (unsigned short*)((char*)mes_dp + sys->mes_sp[mes_idx + 1]);
+        dp = (unsigned short*)((char*)mes_dp + P32(unsigned int *, sys->mes_sp)[mes_idx + 1]);
         break;
     default:
-        dp = sys->mes_tp;
+        dp = P32(void *, sys->mes_tp);
         break;
     }
     
@@ -682,17 +682,17 @@ int bhDispMessageEx(float px, float py, float pri, int mes_typ, int mes_idx, uns
     switch (mes_typ) 
     {                           
     case 0:
-        mes_dp = rom->mesp;
+        mes_dp = P32(unsigned int *, rom->mesp);
         
-        dp = (unsigned short*)((char*)mes_dp + rom->mesp[mes_idx + 1]);
+        dp = (unsigned short*)((char*)mes_dp + P32(unsigned int *, rom->mesp)[mes_idx + 1]);
         break;
     case 1:
-        mes_dp = sys->mes_sp;
+        mes_dp = P32(unsigned int *, sys->mes_sp);
         
-        dp = (unsigned short*)((char*)mes_dp + sys->mes_sp[mes_idx + 1]);
+        dp = (unsigned short*)((char*)mes_dp + P32(unsigned int *, sys->mes_sp)[mes_idx + 1]);
         break;
     default:
-        dp = sys->mes_tp;
+        dp = P32(void *, sys->mes_tp);
         break;
     }
     

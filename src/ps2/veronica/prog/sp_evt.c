@@ -358,7 +358,7 @@ void bhKeepSpEvtComputer()
     {
         sys->com_flg |= 0x1;
         
-        sys->com_exp = bhGetFreeMemory(sizeof(COM_EVT_WORK), 32);
+        sys->com_exp = S32(bhGetFreeMemory(sizeof(COM_EVT_WORK), 32));
     }
 }
 
@@ -370,21 +370,21 @@ void bhInitSpEvtComputer()
     
     sys->com_flg &= 0x1;
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     npSetMemory((unsigned char*)ce, sizeof(COM_EVT_WORK), 0);
     
     sys->com_md0 = 1;
     sys->com_md1 = 0;
     
-    ce->scp = comevt_script_tab[sys->com_num];
+    ce->scp = S32(comevt_script_tab[sys->com_num]);
     
     bhInitComEvtScript();
     
     njMemCopy4(&palbuf[3072], palbuf, 1024);
     
-    ce->com_tlist.textures  = ce->com_tex;
-    ce->com_tlist.nbTexture = bhSetMemPvpTexture(&ce->com_tlist, sys->subtxp, 0);
+    ce->com_tlist.textures  = S32(ce->com_tex);
+    ce->com_tlist.nbTexture = bhSetMemPvpTexture(&ce->com_tlist, P32(unsigned char *, sys->subtxp), 0);
     
     ce->fcol = 0xFF000000;
     ce->fsrc = 1.0f;
@@ -420,7 +420,7 @@ void bhMainSpEvtComputer()
     COM_EVT_WORK* ce; 
     NJS_LINE line;    
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     switch (sys->com_md1)
     {                              
@@ -741,7 +741,7 @@ void bhExitSpEvtComputer()
 {
     COM_EVT_WORK* ce;
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
 
     if ((sys->com_flg & 0x100))
     {
@@ -752,9 +752,9 @@ void bhExitSpEvtComputer()
     
     bhGarbageTexture(NULL, 0);
 
-    if (rom->mdl.texP != NULL)
+    if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)
     {
-        bhCopyMainmem2Texmem(rom->mdl.texP);
+        bhCopyMainmem2Texmem(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
     
     njMemCopy4(palbuf, &palbuf[3072], 1024);
@@ -776,7 +776,7 @@ void bhExitSpEvtComputer()
     sys->ts_flg |=  0x20000;
     sys->ts_flg &= ~0x80;
     
-    sys->memp = sys->sbs_sp;
+    sys->memp = S32(P32(unsigned char *, sys->sbs_sp));
     
     bhStandPlayerMotion();
 }
@@ -794,7 +794,7 @@ void bhEntrySpEvtComputer()
     float cy;             
     float on;            
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     ce->qt[0].x1 = 0;
     ce->qt[0].y1 = 0;
@@ -1163,7 +1163,7 @@ void bhDrawSpEvtComputer()
     int i, j;               
     float pri;            
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     njSetTexture(&ce->com_tlist);
     
@@ -1402,7 +1402,7 @@ void bhDrawSpEvtComBar(int barno, int col0, int col1)
     QUAD qt;         
     COM_EVT_WORK* ce;
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     njQuadTextureStart(1);
     
@@ -1449,7 +1449,7 @@ void bhDrawSpEvtComCharacter()
     BH_PWORK* pp;    
     float near;       
  
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     near = fNaViwClipNear;
     
@@ -1465,7 +1465,7 @@ void bhDrawSpEvtComCharacter()
     
     njSetScreen(&scrn);
     
-    pp = &ene[rom->enep[ce->chr_no].wrk_no];
+    pp = &ene[P32(struct ETTY_WORK *, rom->enep)[ce->chr_no].wrk_no];
     
     pp->mtn_no = ce->mtn_no;
     pp->frm_no = ce->frm_no;
@@ -1473,14 +1473,14 @@ void bhDrawSpEvtComCharacter()
     pp->ax = pp->ay = pp->az = 0;
     pp->px = pp->py = pp->pz = 0;
     
-    if (pp->skp[pp->mdl_no] != NULL) 
+    if (P32(int *, pp->skp[pp->mdl_no]) != NULL) 
     {
-        npRetSkinConvert(pp->mlwP->objP, pp->skp[pp->mdl_no]);
+        npRetSkinConvert(P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP), P32(int *, pp->skp[pp->mdl_no]));
     }
     
-    pp->mlwP->objP[1].ang[0] = 0;
-    pp->mlwP->objP[1].ang[1] = 0;
-    pp->mlwP->objP[1].ang[2] = 0;
+    P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[0] = 0;
+    P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[1] = 0;
+    P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[2] = 0;
     
     njSetMatrix(NULL, cmat);
     
@@ -1493,20 +1493,20 @@ void bhDrawSpEvtComCharacter()
     
     njScale(NULL, 0.05f, 0.05f, 0.05f);
     
-    if (pp->mlwP->texP != NULL) 
+    if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, pp->mlwP)->texP) != NULL) 
     {
-        njSetTexture(pp->mlwP->texP);
+        njSetTexture(P32(NJS_TEXLIST *, P32(struct ML_WORK *, pp->mlwP)->texP));
     }
     
-    njCnkEasyDrawObject(pp->mlwP->objP);
+    njCnkEasyDrawObject(P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP));
     
     ce->cax += ce->caxn;
     ce->cay += ce->cayn;
     ce->caz += ce->cazn;
     
-    if (pp->skp[pp->mdl_no] != NULL) 
+    if (P32(int *, pp->skp[pp->mdl_no]) != NULL) 
     {
-        npSkinConvert(pp->mlwP->objP, pp->skp[pp->mdl_no]);
+        npSkinConvert(P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP), P32(int *, pp->skp[pp->mdl_no]));
     }
     
     njSetTexture(&ce->com_tlist);
@@ -1527,7 +1527,7 @@ void bhSetSpEvtComFade(float fdst, float fcnt)
 {
 	COM_EVT_WORK* ce;
 
-	ce = sys->com_exp;
+	ce = P32(void *, sys->com_exp);
 
     ce->fdst = fdst;
 
@@ -1544,7 +1544,7 @@ void bhCalcSpEvtComFade()
 	COM_EVT_WORK* ce;
     int nn;
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     ce->fsrc += ce->fcal;
 
@@ -1583,17 +1583,17 @@ void bhDrawSpEvtComFade()
     NJS_POINT2 p[4];   
     NJS_COLOR col[4];  
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
-    p2c.p   = p;
-    p2c.col = col;
-    p2c.tex = NULL;
+    p2c.p   = S32(p);
+    p2c.col = S32(col);
+    p2c.tex = S32(NULL);
     p2c.num = 1;
     
-    p2c.col[0].color = ce->fcol;
-    p2c.col[1].color = ce->fcol;
-    p2c.col[2].color = ce->fcol;
-    p2c.col[3].color = ce->fcol;
+    P32(NJS_COLOR *, p2c.col)[0].color = ce->fcol;
+    P32(NJS_COLOR *, p2c.col)[1].color = ce->fcol;
+    P32(NJS_COLOR *, p2c.col)[2].color = ce->fcol;
+    P32(NJS_COLOR *, p2c.col)[3].color = ce->fcol;
     
     p[0].x = 0;
     p[0].y = 0;
@@ -1619,7 +1619,7 @@ void bhEntrySpEvtBoxLine(NJS_LINE* line)
     COM_EVT_WORK* ce; 
     int i;           
     
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     for (i = 0; i < 128; i++) 
     {
@@ -1651,11 +1651,11 @@ void bhDrawSpEvtBoxLine()
     int i;            
     unsigned int argb;
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
-    p2c.p   = p;
-    p2c.col = col;
-    p2c.tex = NULL;
+    p2c.p   = S32(p);
+    p2c.col = S32(col);
+    p2c.tex = S32(NULL);
     p2c.num = 1;
     
     for (i = 0; i < 128; i++)
@@ -1664,10 +1664,10 @@ void bhDrawSpEvtBoxLine()
         {
             argb = (ce->lnct[i] << 0) | ((ce->lnct[i] << 8) | ((ce->lnct[i] << 24) | (ce->lnct[i] << 16)));
             
-            p2c.col[0].color = argb;
-            p2c.col[1].color = argb;
-            p2c.col[2].color = argb;
-            p2c.col[3].color = argb;
+            P32(NJS_COLOR *, p2c.col)[0].color = argb;
+            P32(NJS_COLOR *, p2c.col)[1].color = argb;
+            P32(NJS_COLOR *, p2c.col)[2].color = argb;
+            P32(NJS_COLOR *, p2c.col)[3].color = argb;
             
             p[0].x = ce->line[i].px;
             p[0].y = ce->line[i].py;
@@ -1698,7 +1698,7 @@ void bhClearComEvtText()
 {
 	COM_EVT_WORK* ce; // not from DWARF
 
-	ce = sys->com_exp;
+	ce = P32(void *, sys->com_exp);
 
     npSetMemoryL((unsigned int*)ce->txt, sizeof(ce->txt) / 4, 0);
 }
@@ -1711,9 +1711,9 @@ void bhInitComEvtScript()
 	unsigned char cmd;    
 	int end;
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
-    scp = ce->scp;
+    scp = P32(unsigned char *, ce->scp);
     
     ce->txcol = 0xFFFF00;
     ce->txflg = 0;
@@ -1745,7 +1745,7 @@ void bhInitComEvtScript()
             scp += 3;
             break;
         case 235:
-            ce->sclb[*scp] = scp + 1;
+            ce->sclb[*scp] = S32(scp + 1);
             
             scp++;
             break;
@@ -1785,7 +1785,7 @@ void bhControlComEvtScript()
     unsigned short flgno;
     char* wcpa, *wcpb;         
  
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     if (!(ce->txflg & 0x2)) 
     {
@@ -1813,13 +1813,13 @@ void bhControlComEvtScript()
         {
             ce->curct = 16384;
             
-            ce->txt[ce->ty][ce->tx] = ce->txcol | (*ce->mesp++ - 32);
+            ce->txt[ce->ty][ce->tx] = ce->txcol | (*P32_POSTINC(unsigned char *, ce->mesp) - 32);
             
             CallSystemSe(0, 0x8000026E);
             
             ce->tx++;
             
-            if (*ce->mesp)
+            if (*P32(unsigned char *, ce->mesp))
             {
                 return;
             }
@@ -1833,38 +1833,38 @@ void bhControlComEvtScript()
             return;
         }
         
-        switch (*ce->scp++) 
+        switch (*P32_POSTINC(unsigned char *, ce->scp)) 
         {
         case 224:
             ce->txflg |= 0x1;
-            ce->txmes = *ce->scp++;
+            ce->txmes = *P32_POSTINC(unsigned char *, ce->scp);
 
-            ce->mesp = ((unsigned char***)comevt_message_tab)[sys->com_num][ce->txmes];
+            ce->mesp = S32(((unsigned char***)comevt_message_tab)[sys->com_num][ce->txmes]);
             break;
         case 225:
-            ce->txwait = *ce->scp++;
+            ce->txwait = *P32_POSTINC(unsigned char *, ce->scp);
             break;
         case 226:
             ce->txflg |= 0x4;
             break;
         case 227:
-            r = *ce->scp++;
-            g = *ce->scp++;
-            b = *ce->scp++;
+            r = *P32_POSTINC(unsigned char *, ce->scp);
+            g = *P32_POSTINC(unsigned char *, ce->scp);
+            b = *P32_POSTINC(unsigned char *, ce->scp);
             
             ce->txcol = ((r & 0xF8) << 16) | ((g & 0xFC) << 11) | ((b & 0xF8) << 5);
             break;
         case 228:
-            ce->txt[ce->ty][ce->tx] = ce->txcol | (*ce->scp++ - 32);
+            ce->txt[ce->ty][ce->tx] = ce->txcol | (*P32_POSTINC(unsigned char *, ce->scp) - 32);
             
             CallSystemSe(0, 0x8000026E);
             
             ce->tx++;
             break;
         case 229:
-            ce->wordmax = *ce->scp++;
+            ce->wordmax = *P32_POSTINC(unsigned char *, ce->scp);
             
-            if (*ce->scp++ != 0)
+            if (*P32_POSTINC(unsigned char *, ce->scp) != 0)
             {
                 sys->com_flg |=  0x400;
             } 
@@ -1927,10 +1927,10 @@ void bhControlComEvtScript()
         case 234:
             mstb = comevt_message_tab[sys->com_num];
             
-            wcpa = (char*)ce->word[*ce->scp++];
-            wcpb = (char*)PS2_HOST(mstb[*ce->scp++]);
+            wcpa = (char*)ce->word[*P32_POSTINC(unsigned char *, ce->scp)];
+            wcpb = (char*)PS2_HOST(mstb[*P32_POSTINC(unsigned char *, ce->scp)]);
             
-            bit = *ce->scp++;
+            bit = *P32_POSTINC(unsigned char *, ce->scp);
             
             if (strcmp(wcpa, wcpb) == 0) 
             {
@@ -1943,38 +1943,38 @@ void bhControlComEvtScript()
             
             break;
         case 235:
-            ce->scp++;
+            P32_POSTINC(unsigned char *, ce->scp);
             break;
         case 236:
 #ifndef TARGET_PC
             ce->scp = ce->sclb[*ce->scp++];
 #else
-            { int lb_ = *ce->scp++; ce->scp = ce->sclb[lb_]; }   /* unsequenced in the original: jump target wins */
+            { int lb_ = *P32_POSTINC(unsigned char *, ce->scp); ce->scp = S32(P32(unsigned char *, ce->sclb[lb_])); }   /* unsequenced in the original: jump target wins */
 #endif
             break;
         case 237:
-            if ((ce->lcflg & (1 << *ce->scp++))) 
+            if ((ce->lcflg & (1 << *P32_POSTINC(unsigned char *, ce->scp)))) 
             {
 #ifndef TARGET_PC
                 ce->scp = ce->sclb[*ce->scp++];
 #else
-                { int lb_ = *ce->scp++; ce->scp = ce->sclb[lb_]; }   /* unsequenced in the original: jump target wins */
+                { int lb_ = *P32_POSTINC(unsigned char *, ce->scp); ce->scp = S32(P32(unsigned char *, ce->sclb[lb_])); }   /* unsequenced in the original: jump target wins */
 #endif
             }
             else 
             {
-                ce->scp++;
+                P32_POSTINC(unsigned char *, ce->scp);
             }
             
             break;
         case 238:
             sys->com_flg |= 0x40;
             
-            ce->chr_no = *ce->scp++;
+            ce->chr_no = *P32_POSTINC(unsigned char *, ce->scp);
             
-            ce->caxn = (char)*ce->scp++ << 8;
-            ce->cayn = (char)*ce->scp++ << 8;
-            ce->cazn = (char)*ce->scp++ << 8;
+            ce->caxn = (char)*P32_POSTINC(unsigned char *, ce->scp) << 8;
+            ce->cayn = (char)*P32_POSTINC(unsigned char *, ce->scp) << 8;
+            ce->cazn = (char)*P32_POSTINC(unsigned char *, ce->scp) << 8;
             
             ce->cox =  0;
             ce->coy =  0.1f;
@@ -1985,22 +1985,22 @@ void bhControlComEvtScript()
             ce->caz = 0;
             break;
         case 239:
-            ce->mtn_no = *ce->scp++;
-            ce->frm_no = *ce->scp++;
+            ce->mtn_no = *P32_POSTINC(unsigned char *, ce->scp);
+            ce->frm_no = *P32_POSTINC(unsigned char *, ce->scp);
             break;
         case 240:
 #ifndef TARGET_PC
             flgno = *ce->scp++ | (*ce->scp++ << 8);
 #else
-            flgno = *ce->scp++;              /* unsequenced in the original: MWCC read low byte first */
-            flgno |= *ce->scp++ << 8;
+            flgno = *P32_POSTINC(unsigned char *, ce->scp);              /* unsequenced in the original: MWCC read low byte first */
+            flgno |= *P32_POSTINC(unsigned char *, ce->scp) << 8;
 #endif
             
             bhStFlg(sys->ev_flg, flgno);
             break;
         case 241:
-            ce->mes_no = *ce->scp++;
-            ce->mes_ln = *ce->scp++;
+            ce->mes_no = *P32_POSTINC(unsigned char *, ce->scp);
+            ce->mes_ln = *P32_POSTINC(unsigned char *, ce->scp);
             
             sys->com_flg |= 0x80;
             break;
@@ -2048,7 +2048,7 @@ void bhControlComEvtKeyboard()
     int sel;
     int adt;
 
-    ce = sys->com_exp;
+    ce = P32(void *, sys->com_exp);
     
     switch (sys->pad_on & 0xF) 
     {

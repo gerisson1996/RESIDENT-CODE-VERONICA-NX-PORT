@@ -7,8 +7,8 @@
 typedef struct BUF_QUEUE 
 {
     // total size: 0x8
-    char* from;        // offset 0x0, size 0x4
-    unsigned char* to; // offset 0x4, size 0x4     
+    ps2ptr_t from; /* char* from */        // offset 0x0, size 0x4
+    ps2ptr_t to; /* unsigned char* to */ // offset 0x4, size 0x4     
 } BUF_QUEUE;
 
 typedef struct EXPAND_STATUS 
@@ -42,9 +42,9 @@ typedef struct EXPAND_CTRL_BUF
     int code;                   // offset 0x4, size 0x4
     int counter;                // offset 0x8, size 0x4
     int repeat;                 // offset 0xC, size 0x4
-    unsigned char* offset;      // offset 0x10, size 0x4
-    char* source;               // offset 0x14, size 0x4
-    unsigned char* destination; // offset 0x18, size 0x4
+    ps2ptr_t offset; /* unsigned char* offset */      // offset 0x10, size 0x4
+    ps2ptr_t source; /* char* source */               // offset 0x14, size 0x4
+    ps2ptr_t destination; /* unsigned char* destination */ // offset 0x18, size 0x4
     BUF_QUEUE que[2];           // offset 0x1C, size 0x10       
 } EXPAND_CTRL_BUF;
 

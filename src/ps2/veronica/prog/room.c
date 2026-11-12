@@ -68,7 +68,7 @@ void bhSetRoom()
     unsigned char* reladr; 
     unsigned char* texdat; // not from the debugging symbols
     
-    reladr = sys->rdtp;
+    reladr = P32(unsigned char *, sys->rdtp);
     
     if (*(float*)&*reladr < 1.72f) 
     {
@@ -80,29 +80,29 @@ void bhSetRoom()
     
     for (romp = (unsigned int*)rom; (unsigned int)PS2_ADDR(romp) < (unsigned int)PS2_ADDR(&rom->dmp00); romp++) 
     {
-        *romp = (unsigned int)PS2_ADDR(sys->rdtp) + *romp;
+        *romp = (unsigned int)PS2_ADDR(P32(unsigned char *, sys->rdtp)) + *romp;
     }
     
-    cp = rom->cutp;
+    cp = P32(struct CUT_WORK *, rom->cutp);
     
     for (i = 0; i < rom->cut_n; i++, cp++)
     {
-        cp->cuttp = (CUT_WRK*)&sys->rdtp[*(unsigned int*)&cp->cuttp];
+        cp->cuttp = S32((CUT_WRK*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)&cp->cuttp]);
     }
     
     rom->grand[31] = 0;
     
-    datp = &sys->rdtp[*(unsigned int*)(reladr + 20)];
+    datp = &P32(unsigned char *, sys->rdtp)[*(unsigned int*)(reladr + 20)];
     
     npSetMemory((unsigned char*)&rom->mdl, sizeof(ML_WORK), 0);
     
-    mdlhed = (unsigned int*)&sys->rdtp[*(unsigned int*)datp];
+    mdlhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)datp];
     
     datp += 4;
     
     bhMlbBinRealize(mdlhed, &rom->mdl); 
     
-    npCnkFlatOff(rom->mdl.objP);
+    npCnkFlatOff(P32(struct cnkobj *, rom->mdl.objP));
     
     for (i = 0; i < 100; i++) 
     {
@@ -110,7 +110,7 @@ void bhSetRoom()
         {
             for (k = 0; k < 16; k++) 
             {
-                sys->et_lp[i][j][k] = NULL;
+                sys->et_lp[i][j][k] = S32(NULL);
             }
         }
     } 
@@ -119,13 +119,13 @@ void bhSetRoom()
     spawn_room_setup();
 #endif
     
-    ep = rom->enep;
+    ep = P32(struct ETTY_WORK *, rom->enep);
     
     for (i = 0; i < rom->ene_n; i++, ep++) 
     {
         if ((ep->flg & 0x1)) 
         {
-            mdlhed = (unsigned int*)&sys->rdtp[*(unsigned int*)datp];
+            mdlhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)datp];
             
             datp += 4;
             
@@ -133,22 +133,22 @@ void bhSetRoom()
         }
     }
     
-    ep = &rom->objp[4];
+    ep = &P32(struct ETTY_WORK *, rom->objp)[4];
     
     for (i = 4; i < rom->obj_n; i++, ep++)
     {
-        mdlhed = (unsigned int*)&sys->rdtp[*(unsigned int*)datp];
+        mdlhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)datp];
         
         datp += 4;
         
         bhSetObjMdl((unsigned char*)mdlhed, ep, ep->id, i);
     }
     
-    ep = rom->itmp;
+    ep = P32(struct ETTY_WORK *, rom->itmp);
     
     for (i = 0; i < rom->itm_n; i++, ep++) 
     {
-        mdlhed = (unsigned int*)&sys->rdtp[*(unsigned int*)datp];
+        mdlhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)datp];
         
         datp += 4;
         
@@ -157,27 +157,27 @@ void bhSetRoom()
 
     reladr += 28;
     
-    rom->evtp = (EVT_WORK*)&sys->rdtp[*(unsigned int*)reladr];
+    rom->evtp = S32((EVT_WORK*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)reladr]);
     
     sys->txr_ct = 0;
     sys->txr_n = 0;
 
     reladr += 4;
 
-    texdat = &sys->rdtp[*(unsigned int*)reladr];
+    texdat = &P32(unsigned char *, sys->rdtp)[*(unsigned int*)reladr];
     
     nbt = *(unsigned int*)texdat;
     
     reladr = texdat;
     
-    texhed = (unsigned int*)&sys->rdtp[*(unsigned int*)(texdat + 4)];
+    texhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)(texdat + 4)];
     
     texdat += 8;
     
-    if (rom->mdl.texP != NULL) 
+    if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
     {
-        sys->txlp[sys->txr_n] = rom->mdl.texP;
-        sys->txdp[sys->txr_n] = (unsigned char*)texhed;
+        sys->txlp[sys->txr_n] = S32(P32(NJS_TEXLIST *, rom->mdl.texP));
+        sys->txdp[sys->txr_n] = S32((unsigned char*)texhed);
         
         sys->txloff[sys->txr_n] = 0;
         
@@ -192,16 +192,16 @@ void bhSetRoom()
     {
         for (j = 0; j < pwp->mdl_n; j++)
         {
-            if ((pwp->mdl[j].texP != NULL) && ((pwp->mdl[j].flg & 0x200)))
+            if ((P32(NJS_TEXLIST *, pwp->mdl[j].texP) != NULL) && ((pwp->mdl[j].flg & 0x200)))
             {
                 nbt--;
                 
-                texhed = (unsigned int*)&sys->rdtp[*(unsigned int*)texdat];
+                texhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)texdat];
                 
                 texdat += 4;
                 
-                sys->txlp[sys->txr_n] = pwp->mdl[j].texP;
-                sys->txdp[sys->txr_n] = (unsigned char*)texhed;
+                sys->txlp[sys->txr_n] = S32(P32(NJS_TEXLIST *, pwp->mdl[j].texP));
+                sys->txdp[sys->txr_n] = S32((unsigned char*)texhed);
                 
                 sys->txloff[sys->txr_n] = 0;
                 
@@ -212,29 +212,29 @@ void bhSetRoom()
     
     for (i = 0; i < 1300; i++) 
     {
-        sys->ot_lp[i] = NULL;
+        sys->ot_lp[i] = S32(NULL);
     } 
     
-    owp = &sys->obwp[4];
+    owp = &P32(struct O_WRK *, sys->obwp)[4];
     
     for (i = 4; i < rom->obj_n; i++, owp++)
     {
-        if (owp->mlwP->texP != NULL)
+        if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP) != NULL)
         {
-            if (sys->ot_lp[owp->id] == NULL) 
+            if (P32(NJS_TEXLIST *, sys->ot_lp[owp->id]) == NULL) 
             {
                 nbt--;
                 
-                owp->mlwP->flg |= 0x200;
+                P32(struct ML_WORK *, owp->mlwP)->flg |= 0x200;
                 
-                sys->ot_lp[owp->id] = owp->mlwP->texP;
+                sys->ot_lp[owp->id] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP));
                 
-                texhed = (unsigned int*)&sys->rdtp[*(unsigned int*)texdat];
+                texhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)texdat];
                 
                 texdat += 4;
                 
-                sys->txlp[sys->txr_n] = owp->mlwP->texP;
-                sys->txdp[sys->txr_n] = (unsigned char*)texhed;
+                sys->txlp[sys->txr_n] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP));
+                sys->txdp[sys->txr_n] = S32((unsigned char*)texhed);
                 
                 sys->txloff[sys->txr_n] = 0;
                 
@@ -242,38 +242,38 @@ void bhSetRoom()
             } 
             else 
             {
-                owp->mlwP->flg &= ~0x200;
+                P32(struct ML_WORK *, owp->mlwP)->flg &= ~0x200;
                 
-                owp->mlwP->texP = sys->ot_lp[owp->id];
+                P32(struct ML_WORK *, owp->mlwP)->texP = S32(P32(NJS_TEXLIST *, sys->ot_lp[owp->id]));
             }
         }
     }
     
     for (i = 0; i < 200; i++) 
     {
-        sys->it_lp[i] = NULL;
+        sys->it_lp[i] = S32(NULL);
     } 
     
-    owp = sys->itwp;
+    owp = P32(struct O_WRK *, sys->itwp);
     
     for (i = 0; i < rom->itm_n; i++, owp++) 
     {
-        if (owp->mlwP->texP != NULL)
+        if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP) != NULL)
         {
-            if (sys->it_lp[owp->id] == NULL) 
+            if (P32(NJS_TEXLIST *, sys->it_lp[owp->id]) == NULL) 
             {
                 nbt--;
                 
-                owp->mlwP->flg |= 0x200;
+                P32(struct ML_WORK *, owp->mlwP)->flg |= 0x200;
                 
-                sys->it_lp[owp->id] = owp->mlwP->texP;
+                sys->it_lp[owp->id] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP));
                 
-                texhed = (unsigned int*)&sys->rdtp[*(unsigned int*)texdat];
+                texhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)texdat];
                 
                 texdat += 4;
                 
-                sys->txlp[sys->txr_n] = owp->mlwP->texP;
-                sys->txdp[sys->txr_n] = (unsigned char*)texhed; 
+                sys->txlp[sys->txr_n] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, owp->mlwP)->texP));
+                sys->txdp[sys->txr_n] = S32((unsigned char*)texhed); 
                 
                 sys->txloff[sys->txr_n] = 0;
                 
@@ -281,14 +281,14 @@ void bhSetRoom()
             } 
             else 
             {
-                owp->mlwP->flg &= ~0x200;
+                P32(struct ML_WORK *, owp->mlwP)->flg &= ~0x200;
                 
-                owp->mlwP->texP = sys->it_lp[owp->id];
+                P32(struct ML_WORK *, owp->mlwP)->texP = S32(P32(NJS_TEXLIST *, sys->it_lp[owp->id]));
             }
         }
     }
     
-    efp = rom->effp;
+    efp = P32(struct EF_WRK *, rom->effp);
     
     for (i = 0; i < rom->eff_n; i++, efp++)
     {
@@ -298,7 +298,7 @@ void bhSetRoom()
         }
     }
     
-    efp = rom->effp;
+    efp = P32(struct EF_WRK *, rom->effp);
     
     for (i = 30; i < 100; i++)
     {
@@ -316,7 +316,7 @@ void bhSetRoom()
         {
             sys->efm[efp->id].flg |= 0x200;
             
-            texhed = (unsigned int*)&sys->rdtp[*(unsigned int*)texdat];
+            texhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[*(unsigned int*)texdat];
             
             texdat += 4;
             
@@ -334,7 +334,7 @@ void bhSetRoom()
             
             sys->ef_tlist.nbTexture = sys->ef_ct;
             
-            sys->ef_pbkb[efp->id] = *(unsigned char*)PS2_HOST((sys->ef_tlist.textures[sys->ef_tn[efp->id]].texaddr + 4));
+            sys->ef_pbkb[efp->id] = *(unsigned char*)PS2_HOST((P32(NJS_TEXNAME *, sys->ef_tlist.textures)[sys->ef_tn[efp->id]].texaddr + 4));
         }
     }
 #ifdef TARGET_PC
@@ -346,7 +346,7 @@ void bhSetRoom()
                sys->rom_no, (int)nbt < 0 ? -(int)nbt : (int)nbt, (int)nbt < 0 ? "fewer" : "more");
 #endif
 
-    sys->memp = reladr;
+    sys->memp = S32(reladr);
 }
 
 // 100% matching!
@@ -360,14 +360,14 @@ void bhFinishRoom()
     unsigned int* mtnhed; 
     unsigned char* datp; 
 
-    rh = (RDT_WORK*)sys->rdtp;
+    rh = (RDT_WORK*)P32(unsigned char *, sys->rdtp);
 
     for (i = 0; i < 128; i++)
     {
-        sys->emtp[i] = NULL;
+        sys->emtp[i] = S32(NULL);
     }
     
-    mtnhed = (unsigned int*)&sys->rdtp[rh->hed02];
+    mtnhed = (unsigned int*)&P32(unsigned char *, sys->rdtp)[rh->hed02];
     
     pwp = ene;
     
@@ -382,28 +382,28 @@ void bhFinishRoom()
         {
             bhStFlg(sys->en_flg, pwp->id);
             
-            bhSetEneMtn(&sys->rdtp[*mtnhed++], pwp, pwp->id);
+            bhSetEneMtn(&P32(unsigned char *, sys->rdtp)[*mtnhed++], pwp, pwp->id);
         }
         else 
         {
-            if (sys->emtp[pwp->id] != NULL) 
+            if (P32(MN_WORK *, sys->emtp[pwp->id]) != NULL) 
             {
-                pwp->mnwP = sys->emtp[pwp->id];
-                pwp->mnwPb = pwp->mnwP;
+                pwp->mnwP = S32(P32(MN_WORK *, sys->emtp[pwp->id]));
+                pwp->mnwPb = S32(P32(struct MN_WORK *, pwp->mnwP));
             }
             else 
             {
-                sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 7) & ~0x7));
+                sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 7) & ~0x7)));
                 
-                pwp->mnwP = (MN_WORK*)sys->memp;
+                pwp->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->memp));
                 
-                sys->memp += 12288;
+                P32_ADD(unsigned char *, sys->memp ,  12288);
                 
-                npSetMemory((unsigned char*)pwp->mnwP, 12288, 0);
+                npSetMemory((unsigned char*)P32(struct MN_WORK *, pwp->mnwP), 12288, 0);
                 
-                pwp->mnwPb = pwp->mnwP;
+                pwp->mnwPb = S32(P32(struct MN_WORK *, pwp->mnwP));
                 
-                sys->emtp[pwp->id] = pwp->mnwP;
+                sys->emtp[pwp->id] = S32(P32(struct MN_WORK *, pwp->mnwP));
             }
             
             mtnhed++;
@@ -412,41 +412,41 @@ void bhFinishRoom()
     
     if (*mtnhed != 0) 
     {
-        bhSetRoomMtn(&sys->rdtp[*mtnhed++]);
+        bhSetRoomMtn(&P32(unsigned char *, sys->rdtp)[*mtnhed++]);
     }
     else 
     {
-        sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x7) & ~0x7));
+        sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 0x7) & ~0x7)));
         
-        sys->rmthp = (MN_WORK*)sys->memp;
+        sys->rmthp = S32((MN_WORK*)P32(unsigned char *, sys->memp));
         
         mtnhed++;
         
-        npSetMemory((unsigned char*)sys->rmthp, 12288, 0);
+        npSetMemory((unsigned char*)P32(struct MN_WORK *, sys->rmthp), 12288, 0);
         
-        sys->memp += 12288;
+        P32_ADD(unsigned char *, sys->memp ,  12288);
     }
     
     if (*mtnhed != 0) 
     {
-        sys->mspp = &sys->rdtp[*mtnhed++];
+        sys->mspp = S32(&P32(unsigned char *, sys->rdtp)[*mtnhed++]);
     }
     else
     {
         mtnhed++;
         
-        sys->mspp = NULL;
+        sys->mspp = S32(NULL);
     }
     
     if (*mtnhed != 0) 
     {
-        sys->lspp = &sys->rdtp[*mtnhed++];
+        sys->lspp = S32(&P32(unsigned char *, sys->rdtp)[*mtnhed++]);
     }
     else 
     {
         mtnhed++;
         
-        sys->lspp = NULL;
+        sys->lspp = S32(NULL);
     }
     
     pwp = ene;
@@ -455,7 +455,7 @@ void bhFinishRoom()
     {
         for (j = 0; j < pwp->mdl_n; j++)
         {
-            sys->memp = bhKeepObjWork(&pwp->mdl[j], sys->memp);
+            sys->memp = S32(bhKeepObjWork(&pwp->mdl[j], P32(unsigned char *, sys->memp)));
             
             bhCalcModel(pwp);
         }
@@ -466,18 +466,18 @@ void bhFinishRoom()
         }
     }
 
-    owp = sys->obwp + 4;
+    owp = P32(struct O_WRK *, sys->obwp) + 4;
     
     for (i = 4; i < rom->obj_n; i++, owp++) 
     {
-        sys->memp = bhKeepObjWork(owp->mlwP, sys->memp);   
+        sys->memp = S32(bhKeepObjWork(P32(struct ML_WORK *, owp->mlwP), P32(unsigned char *, sys->memp)));   
     } 
     
-    owp = sys->itwp;
+    owp = P32(struct O_WRK *, sys->itwp);
     
     for (i = 0; i < rom->itm_n; i++, owp++) 
     {
-        sys->memp = bhKeepObjWork(owp->mlwP, sys->memp);
+        sys->memp = S32(bhKeepObjWork(P32(struct ML_WORK *, owp->mlwP), P32(unsigned char *, sys->memp)));
     }
     
     bhInitLight();
@@ -500,32 +500,32 @@ void bhFinishRoom()
         
         plp->stflg |= 0x40000000;
         
-        plp->px = plp->gpx = ((EXP_WORK*)plp->exp0)->spx = ((EXP_WORK*)plp->exp0)->plx = sys->ply_pos.x;
-        plp->py = plp->gpy = ((EXP_WORK*)plp->exp0)->spy = ((EXP_WORK*)plp->exp0)->ply = sys->ply_pos.y;
-        plp->pz = plp->gpz = ((EXP_WORK*)plp->exp0)->spz = ((EXP_WORK*)plp->exp0)->plz = sys->ply_pos.z;
+        plp->px = plp->gpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->plx = sys->ply_pos.x;
+        plp->py = plp->gpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->ply = sys->ply_pos.y;
+        plp->pz = plp->gpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->plz = sys->ply_pos.z;
         
-        ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-        ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = plp->py + 12.5f;
-        ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = plp->py + 12.5f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
         
         plp->ay = sys->ply_ang;
         
         plp->wpnr_no = sys->ply_wno[sys->ply_id];
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
-        ((EXP_WORK*)plp->exp0)->arn = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn = 0;
     }
     else if (rom->pos_n != 0)
     {
-        plp->px = plp->gpx = ((EXP_WORK*)plp->exp0)->spx = ((EXP_WORK*)plp->exp0)->plx = rom->posp[sys->pos_no].px;
-        plp->py = plp->gpy = ((EXP_WORK*)plp->exp0)->spy = ((EXP_WORK*)plp->exp0)->ply = rom->posp[sys->pos_no].py;
-        plp->pz = plp->gpz = ((EXP_WORK*)plp->exp0)->spz = ((EXP_WORK*)plp->exp0)->plz = rom->posp[sys->pos_no].pz;
+        plp->px = plp->gpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->plx = P32(struct POS *, rom->posp)[sys->pos_no].px;
+        plp->py = plp->gpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->ply = P32(struct POS *, rom->posp)[sys->pos_no].py;
+        plp->pz = plp->gpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->plz = P32(struct POS *, rom->posp)[sys->pos_no].pz;
         
-        ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-        ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = plp->py + 12.5f;
-        ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = plp->py + 12.5f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
         
-        plp->ay = rom->posp[sys->pos_no].ay;
+        plp->ay = P32(struct POS *, rom->posp)[sys->pos_no].ay;
         
         bhSetFloorNum(plp);
         
@@ -533,7 +533,7 @@ void bhFinishRoom()
 #ifdef TARGET_PC
         if ((rom->flg & PC_ROOM_SLOPES))   /* an entry on a slope: on its surface (hitchk.c pc_slope_ground) */
         {
-            NJS_POINT3 ps = { plp->px, rom->posp[sys->pos_no].py, plp->pz };
+            NJS_POINT3 ps = { plp->px, P32(struct POS *, rom->posp)[sys->pos_no].py, plp->pz };
 
             if (pc_slope_ground(plp, &ps, plp->ah) != 0)
             {
@@ -542,8 +542,8 @@ void bhFinishRoom()
         }
 #endif
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
-        ((EXP_WORK*)plp->exp0)->arn = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn = 0;
     }
     
     if ((sys->ss_flg & 0x100)) 
@@ -610,7 +610,7 @@ void bhSetEneMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno)
     
     epp = bhSetEnemy((EGG_WORK*)ep, eno);
     
-    epp->mlwP = (ML_WORK*)&epp->mdl;
+    epp->mlwP = S32((ML_WORK*)&epp->mdl);
     
     mdlver = -1;
     
@@ -625,53 +625,53 @@ void bhSetEneMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno)
             switch (*(unsigned int*)emdlp) 
             {                     
             case 0x4B53414D:
-                epp->mskp = emdlp;
+                epp->mskp = S32(emdlp);
                 break;
             case SKIN_MAGIC:
-                epp->skp[epp->mdl_n] = (int*)&emdlp[4];
+                epp->skp[epp->mdl_n] = S32((int*)&emdlp[4]);
                 break;
             default:
-                npSetMemory((unsigned char*)epp->mlwP, sizeof(ML_WORK), 0);
+                npSetMemory((unsigned char*)P32(struct ML_WORK *, epp->mlwP), sizeof(ML_WORK), 0);
                 
-                bhMlbBinRealize(emdlp, epp->mlwP);
+                bhMlbBinRealize(emdlp, P32(struct ML_WORK *, epp->mlwP));
                 
-                if (epp->skp[epp->mdl_n] != NULL) 
+                if (P32(int *, epp->skp[epp->mdl_n]) != NULL) 
                 {
-                    npSkinConvert(epp->mlwP->objP, epp->skp[epp->mdl_n]);
+                    npSkinConvert(P32(struct cnkobj *, P32(struct ML_WORK *, epp->mlwP)->objP), P32(int *, epp->skp[epp->mdl_n]));
                 }
                 
-                epp->mbp[epp->mdl_n] = epp->mlwP->objP;
-                epp->txp[epp->mdl_n] = epp->mlwP->texP;
+                epp->mbp[epp->mdl_n] = S32(P32(struct cnkobj *, P32(struct ML_WORK *, epp->mlwP)->objP));
+                epp->txp[epp->mdl_n] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epp->mlwP)->texP));
                 
-                if (epp->mlwP->texP != NULL) 
+                if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, epp->mlwP)->texP) != NULL) 
                 {
                     mdlver++;
                     
                     if (ET_LP(ep->id, mdlno)[mdlver] == 0) 
                     {
-                        epp->mlwP->flg |= 0x200;
+                        P32(struct ML_WORK *, epp->mlwP)->flg |= 0x200;
                         
-                        ET_LP(ep->id, mdlno)[mdlver] = epp->mlwP->texP;
+                        ET_LP(ep->id, mdlno)[mdlver] = P32(NJS_TEXLIST *, P32(struct ML_WORK *, epp->mlwP)->texP);
                     } 
                     else
                     {
-                        epp->mlwP->flg &= ~0x200;
+                        P32(struct ML_WORK *, epp->mlwP)->flg &= ~0x200;
                         
-                        epp->mlwP->texP = ET_LP(ep->id, mdlno)[mdlver];
+                        P32(struct ML_WORK *, epp->mlwP)->texP = S32(ET_LP(ep->id, mdlno)[mdlver]);
                     }
                 } 
                 else
                 {
-                    epp->mlwP->flg &= ~0x200;
+                    P32(struct ML_WORK *, epp->mlwP)->flg &= ~0x200;
                     
                     if (mdlver >= 0) 
                     {
-                        epp->mlwP->texP = ET_LP(ep->id, mdlno)[mdlver];
+                        P32(struct ML_WORK *, epp->mlwP)->texP = S32(ET_LP(ep->id, mdlno)[mdlver]);
                     }
                 }
                 
                 epp->mdl_n++;
-                epp->mlwP++;
+                P32_POSTINC(struct ML_WORK *, epp->mlwP);
                 break;
             }
             
@@ -683,7 +683,7 @@ void bhSetEneMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno)
         }
     }
     
-    epp->mlwP = epp->mdl;
+    epp->mlwP = S32(epp->mdl);
 }
 
 // 100% matching! 
@@ -699,16 +699,16 @@ void bhSetEneMtn(unsigned char* datp, BH_PWORK* ep, int id)
     
     *memp = (*memp + 7) & ~0x7;
     
-    ep->mnwP = (MN_WORK*)sys->memp;
-    ep->mnwPb = ep->mnwP;
+    ep->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->memp));
+    ep->mnwPb = S32(P32(struct MN_WORK *, ep->mnwP));
     
-    mtnp = ep->mnwP;
+    mtnp = P32(struct MN_WORK *, ep->mnwP);
     
-    sys->memp += sizeof(MN_WORK) * 512;
+    P32_ADD(unsigned char *, sys->memp ,  sizeof(MN_WORK) * 512);
     
-    npSetMemory((unsigned char*)ep->mnwP, sizeof(MN_WORK) * 512, 0);
+    npSetMemory((unsigned char*)P32(struct MN_WORK *, ep->mnwP), sizeof(MN_WORK) * 512, 0);
     
-    sys->emtp[id] = ep->mnwP;
+    sys->emtp[id] = S32(P32(struct MN_WORK *, ep->mnwP));
     
     for (mno = 0; (sz = *(unsigned int*)datp) != -1; mtnp++, mno++)
     {
@@ -740,13 +740,13 @@ void bhSetRoomMtn(unsigned char* datp)
     
     *memp = (*memp + 7) & ~0x7;
     
-    sys->rmthp = (MN_WORK*)sys->memp;
+    sys->rmthp = S32((MN_WORK*)P32(unsigned char *, sys->memp));
     
-    mtnp = sys->rmthp;
+    mtnp = P32(struct MN_WORK *, sys->rmthp);
     
-    sys->memp += sizeof(MN_WORK) * 512;
+    P32_ADD(unsigned char *, sys->memp ,  sizeof(MN_WORK) * 512);
     
-    npSetMemory((unsigned char*)sys->rmthp, sizeof(MN_WORK) * 512, 0);
+    npSetMemory((unsigned char*)P32(struct MN_WORK *, sys->rmthp), sizeof(MN_WORK) * 512, 0);
     
     for (mno = 0; (sz = *(unsigned int*)datp) != -1; mtnp++, mno++)
     {
@@ -783,16 +783,16 @@ void bhSetObjMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno) // thir
         {
             sz = *(unsigned int*)datp;
             
-            epp->skp[0] = (int*)&datp[8];
+            epp->skp[0] = S32((int*)&datp[8]);
             
             datp += sz + 8;
             
             bhMlbBinRealize(datp, epp->mdl);
             
-            npSkinConvert(epp->mdl->objP, epp->skp[0]);
+            npSkinConvert(P32(struct cnkobj *, epp->mdl->objP), P32(int *, epp->skp[0]));
         }
         
-        epp->mlwP = epp->mdl;
+        epp->mlwP = S32(epp->mdl);
     }
 }
 
@@ -807,7 +807,7 @@ void bhSetItmMdl(unsigned char* datp, ETTY_WORK* ep, int mdlno, int eno) // thir
         
         bhMlbBinRealize(datp, epp->mdl);
         
-        epp->mlwP = epp->mdl;
+        epp->mlwP = S32(epp->mdl);
     }
 }
 
@@ -817,7 +817,7 @@ void bhSetEffectTable()
     EF_WRK* ep; 
     int i;      
     
-    ep = rom->effp;
+    ep = P32(struct EF_WRK *, rom->effp);
     
     for (i = 0; i < rom->eff_n; i++, ep++) 
     {
@@ -859,7 +859,7 @@ void bhSetEffectLink(EF_WRK* efp, int efid)
             efp->lkno = 0;
         }
         
-        pwp = (BH_PWORK*)&sys->obwp[efp->lkno];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[efp->lkno];
         break;
     case 4:
         if (rom->itm_n <= efp->lkno)
@@ -867,7 +867,7 @@ void bhSetEffectLink(EF_WRK* efp, int efid)
             efp->lkno = 0;
         }
         
-        pwp = (BH_PWORK*)&sys->itwp[efp->lkno];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[efp->lkno];
         break;
     case 5:
         if (rom->eff_n <= efp->lkno)
@@ -891,9 +891,9 @@ void bhSetEffectLink(EF_WRK* efp, int efid)
         {
             op->flg |= 0x80;
             
-            op->lkwkp = (unsigned char*)pwp;
+            op->lkwkp = S32((unsigned char*)pwp);
             
-            if (pwp->mlwP->obj_num <= efp->lkono)
+            if (P32(struct ML_WORK *, pwp->mlwP)->obj_num <= efp->lkono)
             {
                 efp->lkono = 0;
             }
@@ -906,11 +906,11 @@ void bhSetEffectLink(EF_WRK* efp, int efid)
             
             if (efp->lkono == 0)
             {
-                njCalcPoint(pwp->mtx, (NJS_POINT3*)&efp->lx, (NJS_POINT3*)&efp->px);
+                njCalcPoint(P32(float (*)[16], pwp->mtx), (NJS_POINT3*)&efp->lx, (NJS_POINT3*)&efp->px);
             }
             else
             {
-                njCalcPoint((NJS_MATRIX*)pwp->mlwP->owP[efp->lkono].mtx, (NJS_POINT3*)&efp->lx, (NJS_POINT3*)&efp->px);
+                njCalcPoint((NJS_MATRIX*)P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[efp->lkono].mtx, (NJS_POINT3*)&efp->lx, (NJS_POINT3*)&efp->px);
             }
         }
     }

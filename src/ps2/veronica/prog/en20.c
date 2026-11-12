@@ -38,7 +38,7 @@ MoveMode2_proc bhEne20_MoveMode2[8] =
 void bhEne20(BH_PWORK* epw) 
 {
     bhEne20_Mode0[epw->mode0](epw);
-    bhSetMotion(epw, epw->mtn_add, (int) epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, (int) epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     bhCalcModel(epw);
 }
 
@@ -47,9 +47,9 @@ void bhEne20_Init(BH_PWORK* epw)
 {
 	float dx, dz;
     
-    if (epw->exp0 == NULL) 
+    if (P32(unsigned char *, epw->exp0) == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(0x30, 8);
+        epw->exp0 = S32(bhEne_CallocWork(0x30, 8));
     }
     
     epw->flg |= 1;
@@ -275,7 +275,7 @@ void bhEne20_MV04(BH_PWORK* epw)
                 epw->hokan_rate = 0x8000;
             }
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
             epw->spd = 0.0f;
             epw->mode3++;
         
@@ -307,7 +307,7 @@ void bhEne20_MV05(BH_PWORK* epw)
                 epw->hokan_rate = 0x8000;
             }
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
             epw->spd = 0.0f;
             epw->mode3++;
         
@@ -339,7 +339,7 @@ void bhEne20_MV06(BH_PWORK* epw)
                 epw->hokan_rate = 0x8000;
             }
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;    
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;    
             epw->mode3++;
         
             /* fallthrough */
@@ -350,7 +350,7 @@ void bhEne20_MV06(BH_PWORK* epw)
                 epw->frm_no = 0;
                 epw->hokan_count = 3;
                 epw->hokan_rate = 0x8000;
-                epw->ct0 = epw->mnwP[epw->mtn_no].frm_num * 2;
+                epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num * 2;
                 epw->mode3++;
             }
             
@@ -381,7 +381,7 @@ void bhEne20_MV07(BH_PWORK* epw)
                 epw->hokan_rate = 0x8000;
             }
             
-            epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+            epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
             epw->mode3++;
         
             /* fallthrough */
@@ -392,7 +392,7 @@ void bhEne20_MV07(BH_PWORK* epw)
                 epw->frm_no = 0;
                 epw->hokan_count = 3;
                 epw->hokan_rate = 0x8000;
-                epw->ct0 = epw->mnwP[epw->mtn_no].frm_num;
+                epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num;
                 epw->mode3++;
             }
             

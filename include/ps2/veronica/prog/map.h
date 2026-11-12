@@ -103,7 +103,7 @@ typedef struct _tag_wrk_typ
     // total size: 0x20
     int rom_no;                    // offset 0x0, size 0x4
     NJS_POINT3 pos;                // offset 0x4, size 0xC
-    struct _tag_wrk_typ* tagPP[4]; // offset 0x10, size 0x10
+    ps2ptr_t tagPP[4]; /* struct _tag_wrk_typ* tagPP[4] */ // offset 0x10, size 0x10
 } tag_wrk_typ;
 
 typedef struct _func_wrk_typ 
@@ -114,9 +114,9 @@ typedef struct _func_wrk_typ
     int param1;                          // offset 0x8, size 0x4
     int param2;                          // offset 0xC, size 0x4
     int FreeWrk[9];                      // offset 0x10, size 0x24
-    int (*funcP)(struct _func_wrk_typ*); // offset 0x34, size 0x4
-    struct _func_wrk_typ* prevP;         // offset 0x38, size 0x4
-    struct _func_wrk_typ* nextP;         // offset 0x3C, size 0x4
+    ps2ptr_t funcP; /* int (*funcP)(struct _func_wrk_typ*) */ // offset 0x34, size 0x4
+    ps2ptr_t prevP; /* struct _func_wrk_typ* prevP */         // offset 0x38, size 0x4
+    ps2ptr_t nextP; /* struct _func_wrk_typ* nextP */         // offset 0x3C, size 0x4
 } func_wrk_typ;
 
 typedef struct _cnc_wrk_typ 
@@ -125,10 +125,10 @@ typedef struct _cnc_wrk_typ
     int status;                     // offset 0x0, size 0x4
     int map_no;                     // offset 0x4, size 0x4
     int flr_no;                     // offset 0x8, size 0x4
-    struct _cnc_wrk_typ* flr_nextP; // offset 0xC, size 0x4
-    struct _cnc_wrk_typ* flr_prevP; // offset 0x10, size 0x4
-    struct _cnc_wrk_typ* map_nextP; // offset 0x14, size 0x4
-    struct _cnc_wrk_typ* map_prevP; // offset 0x18, size 0x4
+    ps2ptr_t flr_nextP; /* struct _cnc_wrk_typ* flr_nextP */ // offset 0xC, size 0x4
+    ps2ptr_t flr_prevP; /* struct _cnc_wrk_typ* flr_prevP */ // offset 0x10, size 0x4
+    ps2ptr_t map_nextP; /* struct _cnc_wrk_typ* map_nextP */ // offset 0x14, size 0x4
+    ps2ptr_t map_prevP; /* struct _cnc_wrk_typ* map_prevP */ // offset 0x18, size 0x4
 } cnc_wrk_typ;
 
 typedef struct _map_nxt 
@@ -167,39 +167,39 @@ typedef struct _map_wrk
     int ply_rom;                      // offset 0x44, size 0x4
     int ply_flr;                      // offset 0x48, size 0x4
     ML_WORK map_mdl;                  // offset 0x4C, size 0x18
-    NJS_CNK_OBJECT* map_objP;         // offset 0x64, size 0x4
+    ps2ptr_t map_objP; /* NJS_CNK_OBJECT* map_objP */         // offset 0x64, size 0x4
     ML_WORK MrkMdl[8];                // offset 0x68, size 0xC0
     NJS_POINT3 vew_pos;               // offset 0x128, size 0xC
     int vew_ang[3];                   // offset 0x134, size 0xC
     float vew_zom;                    // offset 0x140, size 0x4
     NJS_POINT3 vew_max;               // offset 0x144, size 0xC
     NJS_POINT3 vew_min;               // offset 0x150, size 0xC
-    NJS_MATRIX* vew_mtxP;             // offset 0x15C, size 0x4
+    ps2ptr_t vew_mtxP; /* NJS_MATRIX* vew_mtxP */             // offset 0x15C, size 0x4
     char Vew_Mtx[64];                 // offset 0x160, size 0x40
     NJS_POINT3 vew_pos_bak;           // offset 0x1A0, size 0xC
     float vew_zom_bak;                // offset 0x1AC, size 0x4
     int cur_rom;                      // offset 0x1B0, size 0x4
     int chk_rom;                      // offset 0x1B4, size 0x4
-    NJS_CNK_OBJECT* cur_objP;         // offset 0x1B8, size 0x4
-    NJS_MATRIX* cur_mtxP;             // offset 0x1BC, size 0x4
-    NJS_MATRIX* rom_mtxP;             // offset 0x1C0, size 0x4
-    NJS_MATRIX* tmp_mtxP;             // offset 0x1C4, size 0x4
+    ps2ptr_t cur_objP; /* NJS_CNK_OBJECT* cur_objP */         // offset 0x1B8, size 0x4
+    ps2ptr_t cur_mtxP; /* NJS_MATRIX* cur_mtxP */             // offset 0x1BC, size 0x4
+    ps2ptr_t rom_mtxP; /* NJS_MATRIX* rom_mtxP */             // offset 0x1C0, size 0x4
+    ps2ptr_t tmp_mtxP; /* NJS_MATRIX* tmp_mtxP */             // offset 0x1C4, size 0x4
     unsigned int Dummy2[2];           // offset 0x1C8, size 0x8
     char Rom_Mtx[192];                // offset 0x1D0, size 0xC0
-    short* map_cdeP;                  // offset 0x290, size 0x4
+    ps2ptr_t map_cdeP; /* short* map_cdeP */                  // offset 0x290, size 0x4
     int cde_bol;                      // offset 0x294, size 0x4
     NJS_POINT2 bck_p0;                // offset 0x298, size 0x8
     NJS_POINT2 bck_p1;                // offset 0x2A0, size 0x8
     float bck_depth;                  // offset 0x2A8, size 0x4
     float map_scale;                  // offset 0x2AC, size 0x4
     float lgt_scale;                  // offset 0x2B0, size 0x4
-    void* mem_bakP;                   // offset 0x2B4, size 0x4
-    void* rom_bakP;                   // offset 0x2B8, size 0x4
-    void* map_bufP;                   // offset 0x2BC, size 0x4
-    void* tex_pacP;                   // offset 0x2C0, size 0x4
-    NJS_TEXLIST* rom_texP;            // offset 0x2C4, size 0x4
-    NJS_TEXLIST* map_texP;            // offset 0x2C8, size 0x4
-    NJS_TEXLIST* stg_texP;            // offset 0x2CC, size 0x4
+    ps2ptr_t mem_bakP; /* void* mem_bakP */                   // offset 0x2B4, size 0x4
+    ps2ptr_t rom_bakP; /* void* rom_bakP */                   // offset 0x2B8, size 0x4
+    ps2ptr_t map_bufP; /* void* map_bufP */                   // offset 0x2BC, size 0x4
+    ps2ptr_t tex_pacP; /* void* tex_pacP */                   // offset 0x2C0, size 0x4
+    ps2ptr_t rom_texP; /* NJS_TEXLIST* rom_texP */            // offset 0x2C4, size 0x4
+    ps2ptr_t map_texP; /* NJS_TEXLIST* map_texP */            // offset 0x2C8, size 0x4
+    ps2ptr_t stg_texP; /* NJS_TEXLIST* stg_texP */            // offset 0x2CC, size 0x4
     float ar;                         // offset 0x2D0, size 0x4
     float ag;                         // offset 0x2D4, size 0x4
     float ab;                         // offset 0x2D8, size 0x4
@@ -210,8 +210,8 @@ typedef struct _map_wrk
     int yaw;                          // offset 0x2EC, size 0x4
     NJS_ARGB MapPal[32];              // offset 0x2F0, size 0x200
     NJS_COLOR MapCol[3];              // offset 0x4F0, size 0xC
-    struct _func_wrk_typ* busy_funcP; // offset 0x4FC, size 0x4
-    struct _func_wrk_typ* free_funcP; // offset 0x500, size 0x4
+    ps2ptr_t busy_funcP; /* struct _func_wrk_typ* busy_funcP */ // offset 0x4FC, size 0x4
+    ps2ptr_t free_funcP; /* struct _func_wrk_typ* free_funcP */ // offset 0x500, size 0x4
     NJS_SPRITE map_spr;               // offset 0x504, size 0x20
     NJS_ARGB map_mtr;                 // offset 0x524, size 0x10
     int bnk_mde;                      // offset 0x534, size 0x4
@@ -222,17 +222,17 @@ typedef struct _map_wrk
     int bnk_tag_rom;                  // offset 0x548, size 0x4
     int bnk_tag_pal;                  // offset 0x54C, size 0x4
     int bnk_tag_pal_wal;              // offset 0x550, size 0x4
-    unsigned int* mes_bufPP[10];      // offset 0x554, size 0x28
-    struct _tag_wrk_typ* tag_wrkP;    // offset 0x57C, size 0x4
-    struct _tag_wrk_typ* cur_tagP;    // offset 0x580, size 0x4
-    struct _tag_wrk_typ* fcs_tagP;    // offset 0x584, size 0x4
+    ps2ptr_t mes_bufPP[10]; /* unsigned int* mes_bufPP[10] */      // offset 0x554, size 0x28
+    ps2ptr_t tag_wrkP; /* struct _tag_wrk_typ* tag_wrkP */    // offset 0x57C, size 0x4
+    ps2ptr_t cur_tagP; /* struct _tag_wrk_typ* cur_tagP */    // offset 0x580, size 0x4
+    ps2ptr_t fcs_tagP; /* struct _tag_wrk_typ* fcs_tagP */    // offset 0x584, size 0x4
     int tag_num;                      // offset 0x588, size 0x4
     float dst_zom;                    // offset 0x58C, size 0x4
     NJS_POINT3 dst_pos;               // offset 0x590, size 0xC
     map_nxt map_nxt;                  // offset 0x59C, size 0x20
-    struct _cnc_wrk_typ* cnc_wrkP;    // offset 0x5BC, size 0x4
-    struct _cnc_wrk_typ* cnc_hedP;    // offset 0x5C0, size 0x4
-    struct _cnc_wrk_typ* cur_cncP;    // offset 0x5C4, size 0x4
+    ps2ptr_t cnc_wrkP; /* struct _cnc_wrk_typ* cnc_wrkP */    // offset 0x5BC, size 0x4
+    ps2ptr_t cnc_hedP; /* struct _cnc_wrk_typ* cnc_hedP */    // offset 0x5C0, size 0x4
+    ps2ptr_t cur_cncP; /* struct _cnc_wrk_typ* cur_cncP */    // offset 0x5C4, size 0x4
     int cnc_map;                      // offset 0x5C8, size 0x4
     int cnc_flr;                      // offset 0x5CC, size 0x4
     unsigned int Dummy3[2];           // offset 0x5D0, size 0x8
@@ -258,9 +258,9 @@ typedef struct FT_WORK
 {
     // total size: 0x20
     int mode;               // offset 0x0, size 0x4
-    mp_mod* map_mdeP;       // offset 0x4, size 0x4
+    ps2ptr_t map_mdeP; /* mp_mod* map_mdeP */       // offset 0x4, size 0x4
     int chg_mde;            // offset 0x8, size 0x4
-    int (*tskP)(FTS_WORK*); // offset 0xC, size 0x4
+    ps2ptr_t tskP; /* int (*tskP)(FTS_WORK*) */ // offset 0xC, size 0x4
     FTS_WORK tsk_sub;       // offset 0x10, size 0x10
 } FT_WORK;
 
@@ -283,13 +283,13 @@ typedef struct FM_WORK
 {
     // total size: 0x8
     int mode;     // offset 0x0, size 0x4
-    MD_WORK* mdP; // offset 0x4, size 0x4
+    ps2ptr_t mdP; /* MD_WORK* mdP */ // offset 0x4, size 0x4
 } FM_WORK;
 
 typedef struct FSD_WORK
 {
     // total size: 0x1C
-    mp_mod* act_mdeP;   // offset 0x0, size 0x4
+    ps2ptr_t act_mdeP; /* mp_mod* act_mdeP */   // offset 0x0, size 0x4
     int act_bit;        // offset 0x4, size 0x4
     mp_spr spr_no;      // offset 0x8, size 0x4
     int spr_col;        // offset 0xC, size 0x4
@@ -336,7 +336,7 @@ typedef struct FZ_WORK
     // total size: 0x2C
     int mode;               // offset 0x0, size 0x4
     int time;               // offset 0x4, size 0x4
-    const NJS_POINT2* dstP; // offset 0x8, size 0x4
+    ps2ptr_t dstP; /* const NJS_POINT2* dstP */ // offset 0x8, size 0x4
     NJS_POINT2 pos_a0;      // offset 0xC, size 0x8
     NJS_POINT2 pos_a1;      // offset 0x14, size 0x8
     NJS_POINT2 pos_b0;      // offset 0x1C, size 0x8

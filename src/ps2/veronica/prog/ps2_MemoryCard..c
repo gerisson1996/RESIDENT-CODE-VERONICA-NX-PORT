@@ -23,7 +23,7 @@ MEMORYCARDSTATE* CreateMemoryCard(MEMORYCARDSTATE* pCard)
     
     pCard->usMcSysState = 0; 
     
-    pCard->vpAddr = NULL; 
+    pCard->vpAddr = S32(NULL); 
     
     pCard->cRetryCount = 0; 
     
@@ -652,7 +652,7 @@ int ReadMemoryCard(MEMORYCARDSTATE* pCard, void* pvReadFile, unsigned int ulFile
     
     pCard->ulFileSize = ulFileSize; 
     
-    pCard->vpAddr = pvReadFile; 
+    pCard->vpAddr = S32(pvReadFile); 
     
     pCard->ulState = 1; 
     
@@ -697,7 +697,7 @@ int WriteMemoryCard(MEMORYCARDSTATE* pCard, void* pvReadFile, unsigned int ulFil
     
     pCard->ulFileSize = ulFileSize; 
     
-    pCard->vpAddr = pvReadFile; 
+    pCard->vpAddr = S32(pvReadFile); 
     
     pCard->ulState = 2; 
     
@@ -1434,7 +1434,7 @@ int MemoryCardFileRead(MEMORYCARDSTATE* pCard)
     switch (pCard->usMcSysState) 
     {  
     case 0:
-        lResult = sceMcRead(pCard->lOpenFileNumber, pCard->vpAddr, pCard->ulFileSize); 
+        lResult = sceMcRead(pCard->lOpenFileNumber, P32(void *, pCard->vpAddr), pCard->ulFileSize); 
         
         if (lResult < 0)
         {  
@@ -1505,7 +1505,7 @@ int MemoryCardFileWrite(MEMORYCARDSTATE* pCard)
     switch (pCard->usMcSysState) 
     {
     case 0:
-        lResult = sceMcWrite(pCard->lOpenFileNumber, pCard->vpAddr, pCard->ulFileSize);
+        lResult = sceMcWrite(pCard->lOpenFileNumber, P32(void *, pCard->vpAddr), pCard->ulFileSize);
         
         if (lResult < 0) 
         {

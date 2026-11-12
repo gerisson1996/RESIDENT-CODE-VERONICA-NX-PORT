@@ -131,15 +131,15 @@ void bhDraw134(O_WRK* op)
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(sys->ef_tn[44]);
     
-    p2c.p = p;
-    p2c.col = col;
+    p2c.p = S32(p);
+    p2c.col = S32(col);
     p2c.num = 1;
     
     col[3].color = col[2].color = col[1].color = col[0].color = -1;
     
     bhDrawPARAM2D(ef134tb, &p2c, -1.5f);
     
-    p2c.tex = NULL;
+    p2c.tex = S32(NULL);
     
     tmp = (int)op->aoy;
     
@@ -270,7 +270,7 @@ void bhEff134(O_WRK* op)
             
             sys->fixcno = op->type;
             
-            op->func = (void*)bhDraw134;
+            op->func = S32((void*)bhDraw134);
             
             op->ct0 = 0;
             op->aspd = 0;
@@ -453,8 +453,8 @@ void bhEff134(O_WRK* op)
             {
                 CallSystemSe(0, 0x8000020B);
                 
-                mm = fabsf(sys->obwp[op->lkono].px - op->px);
-                nn = fabsf(sys->obwp[op->lkono].pz - op->pz);
+                mm = fabsf(P32(struct O_WRK *, sys->obwp)[op->lkono].px - op->px);
+                nn = fabsf(P32(struct O_WRK *, sys->obwp)[op->lkono].pz - op->pz);
                 
                 if ((op->py <= -40.0f) && ((mm <= 3.0f) && (nn <= 8.0f))) 
                 {
@@ -557,9 +557,9 @@ void bhEff134(O_WRK* op)
                 sys->ufo_pos.z = 60.0f;
                 op->pz = 60.0f;
                 
-                sys->obwp[op->lkono].px = sys->obwp[op->lkono].gpx;
-                sys->obwp[op->lkono].py = sys->obwp[op->lkono].gpy;
-                sys->obwp[op->lkono].pz = sys->obwp[op->lkono].gpz;
+                P32(struct O_WRK *, sys->obwp)[op->lkono].px = P32(struct O_WRK *, sys->obwp)[op->lkono].gpx;
+                P32(struct O_WRK *, sys->obwp)[op->lkono].py = P32(struct O_WRK *, sys->obwp)[op->lkono].gpy;
+                P32(struct O_WRK *, sys->obwp)[op->lkono].pz = P32(struct O_WRK *, sys->obwp)[op->lkono].gpz;
             }
             
             bhStandPlayerMotion();
@@ -615,7 +615,7 @@ void bhEff134(O_WRK* op)
         
         if ((op->mode0 > 0) && (op->mode0 < 20)) 
         {
-            sys->ef_fnc[sys->ef_fncn++] = op;
+            sys->ef_fnc[sys->ef_fncn++] = S32(op);
         }
     }
 }
@@ -633,8 +633,8 @@ void bhEff135(O_WRK* op)
     {
         sys->ef_flg |= 0x4;
         
-        sys->zan_memp = bhGetFreeMemory(0x200000, 64);
-        sys->zanp = sys->zan_memp;
+        sys->zan_memp = S32(bhGetFreeMemory(0x200000, 64));
+        sys->zanp = S32(P32(unsigned char *, sys->zan_memp));
     }
     
     switch (op->mode0)
@@ -642,19 +642,19 @@ void bhEff135(O_WRK* op)
     case 0:
         if (((op->flg & 0x80)) && (op->mode1 != 0)) 
         {
-            pp = (BH_PWORK*)op->lkwkp;
+            pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
             
-            if ((pp->mdl[op->type].objP != NULL) && (pp->mdl[op->type].objP[op->lkono].model != NULL)) 
+            if ((P32(struct cnkobj *, pp->mdl[op->type].objP) != NULL) && (P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pp->mdl[op->type].objP)[op->lkono].model) != NULL)) 
             {
-                i = ((pp->mdl[op->type].objP[op->lkono].model->vlist[1] >> 16) << 5) + 72;
+                i = ((P32(int *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pp->mdl[op->type].objP)[op->lkono].model)->vlist)[1] >> 16) << 5) + 72;
                 
                 i += 64 - (i % 64);
                 
-                op->exp0 = sys->zanp;
+                op->exp0 = S32(P32(unsigned char *, sys->zanp));
                 
-                if (!(&sys->zanp[8 * i] >= (sys->zan_memp + 0x200000))) 
+                if (!(&P32(unsigned char *, sys->zanp)[8 * i] >= (P32(unsigned char *, sys->zan_memp) + 0x200000))) 
                 {
-                    sys->zanp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(&sys->zanp[8 * i]) + 63) & ~0x3F));
+                    sys->zanp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(&P32(unsigned char *, sys->zanp)[8 * i]) + 63) & ~0x3F)));
                     
                     ef_Zanzo[0] = ef_Zanzo[1] = ef_Zanzo[2] = ef_Zanzo[3] = ef_Zanzo[4] = ef_Zanzo[5] = NULL;
                     
@@ -669,7 +669,7 @@ void bhEff135(O_WRK* op)
     case 1:
         if (op->mode1 != 0)
         {
-            pp = (BH_PWORK*)op->lkwkp;
+            pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
             
             sys->ef.id = 136;
             
@@ -685,7 +685,7 @@ void bhEff135(O_WRK* op)
             sys->ef.py = pp->py;
             sys->ef.pz = pp->pz;
             
-            eno = bhSetEffectTb(&sys->ef, NULL, op->lkwkp, op->lkono);
+            eno = bhSetEffectTb(&sys->ef, NULL, P32(unsigned char *, op->lkwkp), op->lkono);
             
             if (eno != -1) 
             {
@@ -718,33 +718,33 @@ void bhDraw136(O_WRK* op)
         
         njSetConstantAttr(0, 0xA00);
         
-        pwp = (BH_PWORK*)op->lkwkp;
-        vp = pwp->mdl[op->mdlver].objP[op->lkono].model->vlist; 
+        pwp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
+        vp = P32(int *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono].model)->vlist); 
         
-        pwp->mdl[op->mdlver].objP[op->lkono].model->vlist = (int*)op->exp0;
+        P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono].model)->vlist = S32((int*)P32(unsigned char *, op->exp0));
         
         njCnkSetSimpleLightColor(1.0f, 1.0f, 1.0f);
         njCnkSetSimpleLightIntensity(1.0f, 0.8f);
         njCnkSetSimpleLight(0, 0.3f, 0.7f);
         
-        npSetAllMatAlphaColor(&pwp->mdl[op->mdlver].objP[op->lkono], 1, (op->ct0 + 1) * 40);
+        npSetAllMatAlphaColor(&P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono], 1, (op->ct0 + 1) * 40);
         
-        njSetMatrix(NULL, cam.mtx);
+        njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
         
-        if (!(pwp->mdl[op->mdlver].objP[op->lkono].evalflags & 0x80000000)) 
+        if (!(P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono].evalflags & 0x80000000)) 
         {
-            njMultiMatrix(NULL, op->mtx);
+            njMultiMatrix(NULL, P32(float (*)[16], op->mtx));
         }
         else 
         {
             njTranslate(NULL, op->px, op->py, op->pz);
         }
         
-        njSetTexture(pwp->mdl[op->mdlver].texP);
+        njSetTexture(P32(NJS_TEXLIST *, pwp->mdl[op->mdlver].texP));
         
-        njCnkSimpleDrawModel(pwp->mdl[op->mdlver].objP[op->lkono].model);
+        njCnkSimpleDrawModel(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono].model));
         
-        pwp->mdl[op->mdlver].objP[op->lkono].model->vlist = vp;
+        P32(NJS_CNK_MODEL *, P32(struct cnkobj *, pwp->mdl[op->mdlver].objP)[op->lkono].model)->vlist = S32(vp);
         
         njPopMatrixEx();
     }
@@ -760,47 +760,47 @@ void bhEff136(O_WRK* op)
     switch (op->mode0) 
     {
     case 0: 
-        pwp = (BH_PWORK*)op->lkwkp;
+        pwp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
         
         mlwP = &pwp->mdl[op->mdlver];
         
-        njSetMatrix(op->mtx, &mlwP->owP[op->lkono].mtx);
+        njSetMatrix(P32(float (*)[16], op->mtx), &P32(struct O_WORK *, mlwP->owP)[op->lkono].mtx);
 
-        i = ((mlwP->objP[op->lkono].model->vlist[1] >> 16) << 5) + 72;
+        i = ((P32(int *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, mlwP->objP)[op->lkono].model)->vlist)[1] >> 16) << 5) + 72;
         
         i += 64 - (i % 64);
         
-        op->exp0 = (unsigned char*)PS2_HOST((((O_WRK*)&eff->exp0)[op->type].flg + (i * op->flr_no)));
+        op->exp0 = S32((unsigned char*)PS2_HOST((((O_WRK*)&eff->exp0)[op->type].flg + (i * op->flr_no))));
 
-        if (pwp->skp[op->mdlver] != NULL) 
+        if (P32(int *, pwp->skp[op->mdlver]) != NULL) 
         {
-            npPushMdlstr(mlwP->objP, mlwP->obj_num);
+            npPushMdlstr(P32(struct cnkobj *, mlwP->objP), mlwP->obj_num);
             
-            mlwPb = pwp->mlwP;
+            mlwPb = P32(struct ML_WORK *, pwp->mlwP);
             
-            pwp->mlwP = &pwp->mdl[op->mdlver];
+            pwp->mlwP = S32(&pwp->mdl[op->mdlver]);
             
             if ((pwp->mdflg & 0x100)) 
             {
-                npCalcSkinFM(pwp, mlwP->obj_num, pwp->skp[op->mdlver]);
+                npCalcSkinFM(pwp, mlwP->obj_num, P32(int *, pwp->skp[op->mdlver]));
             } 
             else 
             {
-                npCalcSkin(pwp, mlwP->obj_num, pwp->skp[op->mdlver]);
+                npCalcSkin(pwp, mlwP->obj_num, P32(int *, pwp->skp[op->mdlver]));
             }
             
-            pwp->mlwP = mlwPb;
+            pwp->mlwP = S32(mlwPb);
             
-            npCopyVlist((int*)op->exp0, mlwP->objP[op->lkono].model->vlist);
+            npCopyVlist((int*)P32(unsigned char *, op->exp0), P32(int *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, mlwP->objP)[op->lkono].model)->vlist));
             
-            npPopMdlstr(mlwP->objP, mlwP->obj_num);
+            npPopMdlstr(P32(struct cnkobj *, mlwP->objP), mlwP->obj_num);
         }
         else 
         {
-            npCopyVlist((int*)op->exp0, mlwP->objP[op->lkono].model->vlist);
+            npCopyVlist((int*)P32(unsigned char *, op->exp0), P32(int *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, mlwP->objP)[op->lkono].model)->vlist));
         }
         
-        op->func = (void*)bhDraw136;
+        op->func = S32((void*)bhDraw136);
         
         op->ct0 = 5;
         
@@ -815,7 +815,7 @@ void bhEff136(O_WRK* op)
         {
             if ((((sys->stg_no == 1) && (sys->rom_no == 0)) && (sys->rcase == 2)) || ((sys->stg_no == 5) && (sys->rom_no == 82)) || (((sys->stg_no == 9) && (sys->rom_no == 32)) && (sys->rcase == 1)))
             {
-                sys->ef_fnc[sys->ef_fncn++] = op;
+                sys->ef_fnc[sys->ef_fncn++] = S32(op);
             }
             else 
             {
@@ -864,9 +864,9 @@ void bhDraw137(O_WRK* op)
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(sys->ef_tn[440]);
     
-    p2c.p = p;
-    p2c.col = col;
-    p2c.tex = uv;
+    p2c.p = S32(p);
+    p2c.col = S32(col);
+    p2c.tex = S32(uv);
     p2c.num = 1;
     
     col[3].color = col[2].color = col[1].color = col[0].color = 0x90FFFFFF;
@@ -1060,7 +1060,7 @@ void bhEff137(O_WRK* op)
         op->py = cam.py = cam.pyp = 29.3f;
         op->pz = cam.pz = cam.pzp = 6.5f;
         
-        op->func = (void*)bhDraw137;
+        op->func = S32((void*)bhDraw137);
         
         op->ct0 = 0;
         op->ct1 = 0;
@@ -1166,7 +1166,7 @@ void bhEff137(O_WRK* op)
         cam.ax = (int)(182.04445f * op->xn) & 0xFFFF;
         cam.ay = (int)(182.04445f * op->yn) & 0xFFFF;
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 2:                                         
         cam.pers -= 182;
@@ -1178,7 +1178,7 @@ void bhEff137(O_WRK* op)
             op->mode0 = 3;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 3:                                         
         if (((op->xn >= 13.0f) && (op->xn <= 16.0f)) && ((op->yn >= 262.0f) && (op->yn <= 266.0f))) 
@@ -1212,7 +1212,7 @@ void bhEff137(O_WRK* op)
             op->mode1 = 1;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 5:                                         
     case 6:                                         
@@ -1241,10 +1241,10 @@ void bhEff137(O_WRK* op)
             }
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 7:                                         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 10:                                        
         if (!(sys->ef_flg & 0x1))
@@ -1256,7 +1256,7 @@ void bhEff137(O_WRK* op)
                 op->mode0 = 1;
             }
             
-            sys->ef_fnc[sys->ef_fncn++] = op;
+            sys->ef_fnc[sys->ef_fncn++] = S32(op);
         }
         
         break;
@@ -1391,9 +1391,9 @@ void bhDraw138(O_WRK* op)
     
     njSetTexture(&sys->ef_tlist);
     
-    p2c.p = p;
-    p2c.col = col;
-    p2c.tex = uv;
+    p2c.p = S32(p);
+    p2c.col = S32(col);
+    p2c.tex = S32(uv);
     p2c.num = 1;
     
     njSetTextureNum(sys->ef_tn[441] + 3);
@@ -1437,7 +1437,7 @@ void bhDraw138(O_WRK* op)
     
     col[3].color = col[2].color = col[1].color = col[0].color = -1;
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     uv[0].tex.u = 8;
     uv[0].tex.v = 181;
@@ -1672,7 +1672,7 @@ void bhEff138(O_WRK* op)
         
         sys->gm_flg |= 0x8000;
         
-        op->func = (void*)bhDraw138;
+        op->func = S32((void*)bhDraw138);
         
         op->frm_no = 0;
         
@@ -1801,7 +1801,7 @@ void bhEff138(O_WRK* op)
             op->jno[2]++;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 2:                                         
         op->ct1++;
@@ -1902,7 +1902,7 @@ void bhEff138(O_WRK* op)
                 
                 op->mode0 = 1;
                 
-                sys->ef_fnc[sys->ef_fncn++] = op;
+                sys->ef_fnc[sys->ef_fncn++] = S32(op);
                 
                 StopSystemSe();
                 return;
@@ -1957,7 +1957,7 @@ void bhEff138(O_WRK* op)
             }
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 3:                                         
         op->ct1++; 
@@ -2043,7 +2043,7 @@ void bhEff138(O_WRK* op)
             op->jno[2]++;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 4:                                         
         op->ct1++;
@@ -2081,7 +2081,7 @@ void bhEff138(O_WRK* op)
             op->jno[2]++;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 10:                                        
         if (!(sys->cb_flg & 0x2)) 
@@ -2104,7 +2104,7 @@ void bhEff138(O_WRK* op)
             op->jno[2]++;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         break;
     case 11:                                        
         if (op->frm_no != 0) 

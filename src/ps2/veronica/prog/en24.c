@@ -100,14 +100,14 @@ void bhEne24(BH_PWORK* epw)
         
         epw->watr.r = 2.0f;
         
-        ep = (BH_PWORK*)epw->lkwkp;
+        ep = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
         if (ep != NULL && epw->flg & 0x80000)
         {
             if (3 < epw->frm_no)
             {
                 epw->frm_no = 0;
             }
-            epw->mlwP = &ep->mdl[epw->frm_no + 2];
+            epw->mlwP = S32(&ep->mdl[epw->frm_no + 2]);
             epw->frm_no++;
         }
     }
@@ -133,9 +133,9 @@ void bhEne24_Init(BH_PWORK* epw)
     
     epw->mode0 = 6;
     
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(72, 8);
+        epw->exp0 = S32(bhEne_CallocWork(72, 8));
     }
     EXP0_UC(0x20) = 0;
     EXP0_I(0) = 1148829696;
@@ -149,7 +149,7 @@ void bhEne24_Init(BH_PWORK* epw)
     
     epw->mdflg &= ~0x20;
     
-    epw->cpcl = CapColTab;
+    epw->cpcl = S32(CapColTab);
     
     EXP0_I(0x24) =(int)(30.0f * njRandom()) + 30;
 }
@@ -547,7 +547,7 @@ int bhEne24_DeadCheck(BH_PWORK* epw)
 
     for (i = 0; i < 2; i++)
     {
-        owk = &plp->mlwP->owP[joint[i]];
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[joint[i]];
 
         pos.x = owk->mtx[12];
         pos.y = owk->mtx[13];

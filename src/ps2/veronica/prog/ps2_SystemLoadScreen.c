@@ -28,19 +28,19 @@ SYSLOAD_SCREEN* CreateSysLoadScreen(SYSLOAD_SCREEN* pSysLoad, void* vpWorkPtrSys
     
     pSysLoad->cMesFlag = 0;
     
-    pSysLoad->pConfigFile = mcCreateConfigInit(&ConfigFile);
-    pSysLoad->pSaveFile = mcCreateSaveFileInit(&SaveFile);
+    pSysLoad->pConfigFile = S32(mcCreateConfigInit(&ConfigFile));
+    pSysLoad->pSaveFile = S32(mcCreateSaveFileInit(&SaveFile));
     
-    pSysLoad->pMcState = CreateMemoryCard(&McState);
+    pSysLoad->pMcState = S32(CreateMemoryCard(&McState));
     
-    pSysLoad->pIconInfo = mcCreateIconInit(&IconInfo, cpNameList, 1);
+    pSysLoad->pIconInfo = S32(mcCreateIconInit(&IconInfo, cpNameList, 1));
     
-    pSysLoad->pSelectFileInfo = mcSelectFileInfoInit(SelectFileInfo);
-    pSysLoad->pSelectFileWindow = mcCreateFileSelectWindow(&SelectFileWindow, pSysLoad->pSelectFileInfo, 15);
+    pSysLoad->pSelectFileInfo = S32(mcSelectFileInfoInit(SelectFileInfo));
+    pSysLoad->pSelectFileWindow = S32(mcCreateFileSelectWindow(&SelectFileWindow, P32(struct SELECTFILEINFO *, pSysLoad->pSelectFileInfo), 15));
     
-    pSysLoad->vpReadBuffer = vpWorkPtrSys;
+    pSysLoad->vpReadBuffer = S32(vpWorkPtrSys);
     
-    AnalyzeMemoryCardAll(pSysLoad->pMcState);
+    AnalyzeMemoryCardAll(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
     
     return pSysLoad;
 }
@@ -103,7 +103,7 @@ int ExecuteSysLoadScreen(SYSLOAD_SCREEN* pSysLoad)
     }
     
 #endif
-    pSysLoad->lCardState = ExecuteMemoryCard(pSysLoad->pMcState); 
+    pSysLoad->lCardState = ExecuteMemoryCard(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState)); 
     
     switch (pSysLoad->ulState) 
     { 
@@ -151,9 +151,9 @@ void SetStateSysLoadScreenAwarenessCard(SYSLOAD_SCREEN* pSysLoad)
     
     pSysLoad->cMesFlag = 0;
     
-    RecoveryMemoryCardError(pSysLoad->pMcState);
+    RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
     
-    AnalyzeMemoryCardAll(pSysLoad->pMcState);
+    AnalyzeMemoryCardAll(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
 }
 
 // 100% matching!
@@ -161,7 +161,7 @@ void ExecuteStateSysLoadScreenAwarenessCard(SYSLOAD_SCREEN* pSysLoad)
 { 
     int lResult;
 
-    lResult = RecoveryMemoryCardAnalyzeAllEnd(pSysLoad->pMcState); 
+    lResult = RecoveryMemoryCardAnalyzeAllEnd(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState)); 
     
     if (lResult == -1) 
     { 
@@ -172,7 +172,7 @@ void ExecuteStateSysLoadScreenAwarenessCard(SYSLOAD_SCREEN* pSysLoad)
         return;
     }
 
-    if ((GetMemoryCardSelectPortState(pSysLoad->pMcState, 0) == 2) && (GetMemoryCardSelectPortFormatType(pSysLoad->pMcState, 0) == 1)) 
+    if ((GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0) == 2) && (GetMemoryCardSelectPortFormatType(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0) == 1)) 
     { 
         SetStateSysLoadScreenDirCheck(pSysLoad); 
     } 
@@ -200,17 +200,17 @@ void SetStateSysLoadScreenErrAwareness(SYSLOAD_SCREEN* pSysLoad)
     char cFormat1;
     char cFormat2;
 
-    lSlot1 = GetMemoryCardSelectPortState(pSysLoad->pMcState, 0);
-    lSlot2 = GetMemoryCardSelectPortState(pSysLoad->pMcState, 1);
+    lSlot1 = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
+    lSlot2 = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    cFormat1 = GetMemoryCardSelectPortFormatType(pSysLoad->pMcState, 0);
-    cFormat2 = GetMemoryCardSelectPortFormatType(pSysLoad->pMcState, 1);
+    cFormat1 = GetMemoryCardSelectPortFormatType(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
+    cFormat2 = GetMemoryCardSelectPortFormatType(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    lFree2 = GetMemoryCardSelectPortFreeCapacity(pSysLoad->pMcState, 1);
+    lFree2 = GetMemoryCardSelectPortFreeCapacity(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    SetMemoryCardCurrentPort(pSysLoad->pMcState, 1);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    lDir2 = CheckMemoryCardExistSubDirectory(pSysLoad->pMcState);
+    lDir2 = CheckMemoryCardExistSubDirectory(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
     
     if (lSlot1 == 0)
     {
@@ -288,8 +288,8 @@ void SetStateSysLoadScreenDirCheck(SYSLOAD_SCREEN* pSysLoad)
     
     pSysLoad->ulMemCheckCountTimer = 10;
     
-    SetMemoryCardCurrentPort(pSysLoad->pMcState, 0);
-    SetCheckMcFlag(pSysLoad->pMcState, 1);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
 }
 
 // 100% matching! 
@@ -300,7 +300,7 @@ void ExecuteStateSysLoadScreenDirCheck(SYSLOAD_SCREEN* pSysLoad)
     switch (pSysLoad->ulSubState) 
     {                           
     case 0:
-        lResult = CheckMemoryCardExistSubDirectory(pSysLoad->pMcState);
+        lResult = CheckMemoryCardExistSubDirectory(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
         
         if (lResult == 1)
         {
@@ -308,18 +308,18 @@ void ExecuteStateSysLoadScreenDirCheck(SYSLOAD_SCREEN* pSysLoad)
         }
         else if (lResult < 0)
         {
-            SetCheckMcFlag(pSysLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
             
             pSysLoad->ulSubState = 2;
         }
         
         break;
     case 1:
-        lResult = CheckMemoryCardExistFileList(pSysLoad->pMcState, cpNameList, 18);
+        lResult = CheckMemoryCardExistFileList(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), cpNameList, 18);
         
         if (lResult < 0)
         {
-            SetCheckMcFlag(pSysLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
             
             pSysLoad->ulSubState = 3;
         } 
@@ -364,7 +364,7 @@ void ExecuteStateSysLoadScreenFreeCapacity(SYSLOAD_SCREEN* pSysLoad)
 {
     int lFree1;
 
-    lFree1 = GetMemoryCardSelectPortFreeCapacity(pSysLoad->pMcState, 0);
+    lFree1 = GetMemoryCardSelectPortFreeCapacity(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
     
     if (lFree1 < mcGetFreeCapacitySize()) 
     {
@@ -389,15 +389,15 @@ void SetStateSysLoadScreenErrFreeCapacity(SYSLOAD_SCREEN* pSysLoad)
     int lDir2;
     char cFormat2;
 
-    lSlot2 = GetMemoryCardSelectPortState(pSysLoad->pMcState, 1);
+    lSlot2 = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    lFree2 = GetMemoryCardSelectPortFreeCapacity(pSysLoad->pMcState, 1);
+    lFree2 = GetMemoryCardSelectPortFreeCapacity(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
 
-    cFormat2 = GetMemoryCardSelectPortFormatType(pSysLoad->pMcState, 1);
+    cFormat2 = GetMemoryCardSelectPortFormatType(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    SetMemoryCardCurrentPort(pSysLoad->pMcState, 1);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 1);
     
-    lDir2 = CheckMemoryCardExistSubDirectory(pSysLoad->pMcState);
+    lDir2 = CheckMemoryCardExistSubDirectory(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
     
     if (lSlot2 == 0) 
     {
@@ -494,37 +494,37 @@ void ExecuteStateSysLoadScreenSysLoad(SYSLOAD_SCREEN* pSysLoad)
     switch (pSysLoad->ulSubState) 
     {                             
     case 0:
-        if (mcReadStartConfigFile(pSysLoad->pMcState, pSysLoad->pConfigFile) == 1) 
+        if (mcReadStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), P32(struct CONFIGFILE *, pSysLoad->pConfigFile)) == 1) 
         {
             pSysLoad->ulSubState = 1;
         }
         
         break;
     case 1:
-        ulLoadResult = mcCheckReadStartConfigFile(pSysLoad->pMcState, pSysLoad->pConfigFile);
+        ulLoadResult = mcCheckReadStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), P32(struct CONFIGFILE *, pSysLoad->pConfigFile));
         
         if (ulLoadResult > 0) 
         {                     
-            memcpy(sys, pSysLoad->pConfigFile, ulLoadResult);
+            memcpy(sys, P32(struct CONFIGFILE *, pSysLoad->pConfigFile), ulLoadResult);
             
             pSysLoad->usExitFlag = 2;
             
-            SetUseVibrationUnit(pSysLoad->pConfigFile->vibration);
+            SetUseVibrationUnit(P32(struct CONFIGFILE *, pSysLoad->pConfigFile)->vibration);
             SetStateSysLoadScreenTitleExit(pSysLoad);
         }
         else if (ulLoadResult == -1)
         {
-            SetCheckMcFlag(pSysLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
             
             pSysLoad->ulSubState = 2;
         }
         else if (ulLoadResult == -2) 
         {      
-            SetCheckMcFlag(pSysLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState));
             
             pSysLoad->ulSubState = 3;
         }
@@ -600,9 +600,9 @@ void SetStateSysLoadScreenTitleExit(SYSLOAD_SCREEN* pSysLoad)
 
     pSysLoad->ulMemCheckCountTimer = 1; 
 
-    SetCheckMcFlag(pSysLoad->pMcState, 0); 
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState), 0); 
     
-    RecoveryMemoryCardError(pSysLoad->pMcState); 
+    RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysLoad->pMcState)); 
 } 
 
 // 100% matching!

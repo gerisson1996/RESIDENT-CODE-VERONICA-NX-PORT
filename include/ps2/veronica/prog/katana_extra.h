@@ -22,7 +22,7 @@ typedef struct {
 	                            /* Drive information.                      */
 	Uint32 Connect;             /* ?¿½?¿½?¿½?¿½?¿½?¿½?¿½[?¿½J?¿½[?¿½h?¿½?¿½?¿½Ú‘ï¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½é‚©        */
 	                            /* Is memory card connected ?              */
-	void* Work;                 /* ?¿½?¿½?¿½[?¿½N?¿½A?¿½h?¿½?¿½?¿½X                          */
+	ps2ptr_t Work; /* void* Work */                 /* ?¿½?¿½?¿½[?¿½N?¿½A?¿½h?¿½?¿½?¿½X                          */
 	                            /* Work address.                           */
 	Uint32 WorkSize;            /* ?¿½?¿½?¿½[?¿½N?¿½T?¿½C?¿½Y                            */
 	                            /* Work size (bytes).                      */

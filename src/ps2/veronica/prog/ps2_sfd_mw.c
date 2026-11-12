@@ -59,9 +59,9 @@ MWPLY ps2mwPlyCreateSofdec(MWS_PLY_CPRM_SFD* cprm, char* fname)
     
     sprintf(read_name, "%s%s;1", "\\MOVIE\\", fname);
     
-    infile.iopBuf = (unsigned char*)PS2_HOST(iop_read_buff);
+    infile.iopBuf = S32((unsigned char*)PS2_HOST(iop_read_buff));
     
-    sceCdStInit(iRingBufNum * 16, iRingBufNum, (((unsigned int)PS2_ADDR(infile.iopBuf) + 15) / 16) * 16);
+    sceCdStInit(iRingBufNum * 16, iRingBufNum, (((unsigned int)PS2_ADDR(P32(unsigned char *, infile.iopBuf)) + 15) / 16) * 16);
 
     while (sceCdSearchFile(&infile.fp, read_name) == 0)
     {
@@ -150,7 +150,7 @@ void mwPlyExecServer(void)
     
     sceGsSyncPath(0, 0);
     
-    setImageTag((unsigned int*)test_tag, voBuf.data);
+    setImageTag((unsigned int*)test_tag, P32(VoData *, voBuf.data));
     
     vbrank_draw();
     

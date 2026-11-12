@@ -184,7 +184,7 @@ void bhControlEOR()
                 return;
             }
 
-            temp = &rom->evcp[cam.evc_no].keyf[cam.keyf_no];
+            temp = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no].keyf[cam.keyf_no];
             
             if ((temp->flg & 0x8)) 
             {
@@ -225,7 +225,7 @@ void bhControlEOR()
                 
                 sys->gm_flg &= ~0x10;
 
-                temp = &rom->cutp[cam.ncut].cam[cam.camver];
+                temp = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver];
                 
                 if ((temp->flg & 0x8)) 
                 {

@@ -360,10 +360,10 @@ void bhInitEvent()
     
     bhControlEnemy();
 
-    bhScdPtr = rom->evtp->scd0;
-    bhScd2Ptr = rom->evtp->scd1;
+    bhScdPtr = P32(unsigned short *, P32(struct EVT_WORK *, rom->evtp)->scd0);
+    bhScd2Ptr = P32(unsigned short *, P32(struct EVT_WORK *, rom->evtp)->scd1);
     
-    bhEvdPtr = (unsigned char*)rom->evtp->evd;
+    bhEvdPtr = (unsigned char*)P32(unsigned short *, P32(struct EVT_WORK *, rom->evtp)->evd);
     
     bhCetask = bhEtask;
     
@@ -371,7 +371,7 @@ void bhInitEvent()
     
     Event_T_timer = 0;
 
-    swork.pip = &sys->itm[sys->ply_id * 16];
+    swork.pip = S32(&sys->itm[sys->ply_id * 16]);
 
     bhScenarioCheck((unsigned char*)bhScdPtr);
     
@@ -799,7 +799,7 @@ unsigned int bhCmpW()
         v0 = sys->stv_tm;  
         break;
     case 10:                
-        enep = &rom->enep[v4];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v4];
         e_ep = &ene[enep->wrk_no];
         
         v0 = e_ep->hp;
@@ -910,35 +910,35 @@ unsigned int bhSvW()
     case 11:
         v1 *= -1;
         
-        enep = &ene[rom->enep[0].wrk_no]; 
+        enep = &ene[P32(struct ETTY_WORK *, rom->enep)[0].wrk_no]; 
         
         enep->hp = v1;
         break;
     case 12:
         v1 *= -1;
         
-        enep = &ene[rom->enep[1].wrk_no];
+        enep = &ene[P32(struct ETTY_WORK *, rom->enep)[1].wrk_no];
         
         enep->hp = v1;
         break;
     case 13:
         v1 *= -1;
         
-        enep = &ene[rom->enep[2].wrk_no]; 
+        enep = &ene[P32(struct ETTY_WORK *, rom->enep)[2].wrk_no]; 
         
         enep->hp = v1;
         break;
     case 14:
         v1 *= -1;
         
-        enep = &ene[rom->enep[3].wrk_no];
+        enep = &ene[P32(struct ETTY_WORK *, rom->enep)[3].wrk_no];
         
         enep->hp = v1;
         break;
     case 15:
         v1 *= -1;
         
-        enep = &ene[rom->enep[4].wrk_no]; 
+        enep = &ene[P32(struct ETTY_WORK *, rom->enep)[4].wrk_no]; 
         
         enep->hp = v1;
         break;
@@ -1191,25 +1191,25 @@ unsigned int bhSeOn()
     switch (v1)
     {
     case 0:
-        pPos.x = plp->mlwP->owP->mtx[12];
-        pPos.y = plp->mlwP->owP->mtx[13];
-        pPos.z = plp->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         break;
     case 1:
-        enep = &rom->enep[v2];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v2];
         
         e_ep = &ene[enep->wrk_no];
         
-        pPos.x = e_ep->mlwP->owP->mtx[12];
-        pPos.y = e_ep->mlwP->owP->mtx[13];
-        pPos.z = e_ep->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[14];
         break;
     case 2:
-        e_ep = (BH_PWORK*)&sys->obwp[v2];
+        e_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v2];
     
-        pPos.x = e_ep->mlwP->owP->mtx[12];
-        pPos.y = e_ep->mlwP->owP->mtx[13];
-        pPos.z = e_ep->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[14];
         break;
     }
     
@@ -1505,24 +1505,24 @@ unsigned int bhVoiceOn()
     switch (v0) 
     {
     case 0:
-        pPos.x = plp->mlwP->owP->mtx[12];
-        pPos.y = plp->mlwP->owP->mtx[13];
-        pPos.z = plp->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         break;
     case 1:
-        enep = &rom->enep[v4];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v4];
         e_ep = &ene[enep->wrk_no];  
         
-        pPos.x = e_ep->mlwP->owP->mtx[12];
-        pPos.y = e_ep->mlwP->owP->mtx[13];
-        pPos.z = e_ep->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[14];
         break;
     case 2:
-        e_ep = (BH_PWORK*)&sys->obwp[v4];
+        e_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v4];
         
-        pPos.x = e_ep->mlwP->owP->mtx[12];
-        pPos.y = e_ep->mlwP->owP->mtx[13];
-        pPos.z = e_ep->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[14];
         break;
     }
     
@@ -1749,7 +1749,7 @@ unsigned int bhWalAtariSet()
     
     bhScePtr += 2;
     
-    e_walp = rom->walp;
+    e_walp = P32(struct ATR_WORK *, rom->walp);
     
     e_walp += v0;
     
@@ -1781,7 +1781,7 @@ unsigned int bhEtcAtariSet()
     
     bhScePtr += 2;
     
-    e_etcp = rom->etcp;
+    e_etcp = P32(struct ATR_WORK *, rom->etcp);
     
     e_etcp += v0;
     
@@ -1813,7 +1813,7 @@ unsigned int bhFlrAtariSet()
     
     bhScePtr += 2;
     
-    e_flrp = rom->flrp;
+    e_flrp = P32(struct ATR_WORK *, rom->flrp);
     
     e_flrp += v0;
     
@@ -1853,20 +1853,20 @@ unsigned int bhMotionPauseSet()
     switch (v0) 
     {
     case 0:
-        bhCetask->work->mode3 = 4;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 4;
         
-        if (bhCetask->work->id == 1)
+        if (P32(struct BH_PWORK *, bhCetask->work)->id == 1)
         {
-            ((BH_PWORK*)bhCetask->work->exp1)->mode3 = 4;
+            ((BH_PWORK*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode3 = 4;
         }
         
         break;
     case 1:
-        bhCetask->work->mode3 = 1;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 1;
         
-        if (bhCetask->work->id == 1) 
+        if (P32(struct BH_PWORK *, bhCetask->work)->id == 1) 
         {
-            ((BH_PWORK*)bhCetask->work->exp1)->mode3 = 1;
+            ((BH_PWORK*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode3 = 1;
         }
 
         break;
@@ -1912,7 +1912,7 @@ unsigned int bhInitMotionPause()
     
     bhScePtr++;
 
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
     e_ep->mode0 = 5;
@@ -1920,8 +1920,8 @@ unsigned int bhInitMotionPause()
     
     if (e_ep->id == 1) 
     {
-        ((BH_PWORK*)e_ep->exp1)->mode0 = 5;
-        ((BH_PWORK*)e_ep->exp1)->mode3 = 4;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->mode0 = 5;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->mode3 = 4;
     }
     
     return 1;
@@ -1944,7 +1944,7 @@ unsigned int bhInitMotionPauseEx()
     
     bhScePtr += 2;
 
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
     e_ep->mode0 = 5;
@@ -1953,15 +1953,15 @@ unsigned int bhInitMotionPauseEx()
     e_ep->frm_no = 0;
     e_ep->mtn_no = v1;
     
-    e_ep->mnwP = sys->rmthp;
+    e_ep->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
     
     if (e_ep->id == 1) 
     {
-        ((BH_PWORK*)e_ep->exp1)->mode0 = 5;
-        ((BH_PWORK*)e_ep->exp1)->mode3 = 4;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->mode0 = 5;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->mode3 = 4;
         
-        ((BH_PWORK*)e_ep->exp1)->frm_no = 0;
-        ((BH_PWORK*)e_ep->exp1)->mtn_no = v1;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->frm_no = 0;
+        ((BH_PWORK*)P32(unsigned char *, e_ep->exp1))->mtn_no = v1;
     }
     
     return 1;
@@ -2029,7 +2029,7 @@ unsigned int bhEffectSensyaSet()
     bhScePtr++;
     bhScePtr++;
     
-    bhCetask->ev_eff_no = bhSetEffect(120, &pnt, (unsigned char*)bhCetask->work, 0);
+    bhCetask->ev_eff_no = bhSetEffect(120, &pnt, (unsigned char*)P32(struct BH_PWORK *, bhCetask->work), 0);
     
     return 1;
 }
@@ -2061,11 +2061,11 @@ unsigned int bhEffectKokuenSet()
     
     if (bhCetask->bpx == 0) 
     {
-        sys->ef.px = (*(unsigned short*)bhScePtr / 100.0f) + bhEtask[v0].work->mlwP->objP->pos[0];
+        sys->ef.px = (*(unsigned short*)bhScePtr / 100.0f) + P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[0];
     } 
     else 
     {
-        sys->ef.px = (-1.0f * (*(unsigned short*)bhScePtr / 100.0f)) + bhEtask[v0].work->mlwP->objP->pos[0];
+        sys->ef.px = (-1.0f * (*(unsigned short*)bhScePtr / 100.0f)) + P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[0];
     }
     
     bhScePtr += 2;
@@ -2083,11 +2083,11 @@ unsigned int bhEffectKokuenSet()
     
     if (bhCetask->bpz == 0)
     {
-        sys->ef.pz = (*(unsigned short*)bhScePtr / 100.0f) + bhEtask[v0].work->mlwP->objP->pos[2];
+        sys->ef.pz = (*(unsigned short*)bhScePtr / 100.0f) + P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[2];
     } 
     else 
     {
-        sys->ef.pz = (-1.0f * (*(unsigned short*)bhScePtr / 100.0f)) + bhEtask[v0].work->mlwP->objP->pos[2];
+        sys->ef.pz = (-1.0f * (*(unsigned short*)bhScePtr / 100.0f)) + P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[2];
     }
     
     bhScePtr += 2;
@@ -2119,7 +2119,7 @@ unsigned int bhDieCk()
 
     if (((v0[(v2 & 0x3FF) >> 5] << (v2 & 0x1F)) < 0) ^ 1)
     {
-        e_enep = &rom->enep[*++a0]; 
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[*++a0]; 
 
         if ((ene[e_enep->wrk_no].flg & 0x2)) 
         {
@@ -2175,7 +2175,7 @@ unsigned int bhItmCk()
         
         if (((v0[(v2 & 0x3FF) >> 5] << (v2 & 0x1F)) < 0) ^ 1) 
         {
-            e_etcp = rom->etcp;
+            e_etcp = P32(struct ATR_WORK *, rom->etcp);
             
             e_etcp += v4;
             
@@ -2184,7 +2184,7 @@ unsigned int bhItmCk()
                 e_etcp->flg &= ~0x1;
             }
             
-            op = &sys->itwp[e_etcp->prm0];
+            op = &P32(struct O_WRK *, sys->itwp)[e_etcp->prm0];
             
             op->stflg |= 0x1000000;
             
@@ -2242,16 +2242,16 @@ unsigned int bhObjLinkSet()
     
     v1 = *bhScePtr;
    
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
-    sys->obwp[v1].lkwkp = (unsigned char*)e_ep;
+    P32(struct O_WRK *, sys->obwp)[v1].lkwkp = S32((unsigned char*)e_ep);
     
     bhScePtr++;
     
     v2 = *bhScePtr;
     
-    sys->obwp[v1].lkono = v2;
+    P32(struct O_WRK *, sys->obwp)[v1].lkono = v2;
     
     bhScePtr++;
     
@@ -2259,11 +2259,11 @@ unsigned int bhObjLinkSet()
     
     if (v2 == 0)
     {
-        sys->obwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg |= 0x80;
     } 
     else 
     {
-        sys->obwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg &= ~0x80;
     }
     
     bhScePtr++;
@@ -2274,33 +2274,33 @@ unsigned int bhObjLinkSet()
  
     if ((v2 & 0x1)) 
     {
-        sys->obwp[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->obwp[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
 
     if ((v2 & 0x2))
     {
-        sys->obwp[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->obwp[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
     
     if ((v2 & 0x4)) 
     {
-        sys->obwp[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->obwp[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
@@ -2319,11 +2319,11 @@ unsigned int bhSetObjMotion()
     bhScePtr++;
     bhScePtr++;
 
-    ob_ep = (BH_PWORK*)&sys->obwp[*++a0];
+    ob_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[*++a0];
     
     if ((ob_ep->mode3 == 1) && ((sys->sp_flg & 0x4)))
     {
-        bhSetMotion(ob_ep, (int)ob_ep->mtn_add, ob_ep->mtn_md, ob_ep->mtn_tp);
+        bhSetMotion(ob_ep, (int)ob_ep->mtn_add, ob_ep->mtn_md, P32(unsigned char *, ob_ep->mtn_tp));
         
         bhCalcModel(ob_ep);
     }
@@ -2358,14 +2358,14 @@ unsigned int bhSetDispObj()
         e_workp = plp;
         break;
     case 1:
-        enep = &rom->enep[v0];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
         e_workp = &ene[enep->wrk_no];
         break;
     case 2:
-        e_workp = (BH_PWORK*)&sys->obwp[v0];
+        e_workp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v0];
         break;
     case 3:
-        e_workp = (BH_PWORK*)&sys->itwp[v0];
+        e_workp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[v0];
         break;
     }
     
@@ -2519,7 +2519,7 @@ unsigned int bhInitSetKage()
     
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
     if (!(e_ep->flg & 0x800))
@@ -2559,13 +2559,13 @@ unsigned int bhObjLinkSetPly()
     
     v0 = *bhScePtr;
     
-    sys->obwp[v0].lkwkp = (unsigned char*)plp;
+    P32(struct O_WRK *, sys->obwp)[v0].lkwkp = S32((unsigned char*)plp);
     
     bhScePtr++;
     
     v1 = *bhScePtr;
     
-    sys->obwp[v0].lkono = v1;
+    P32(struct O_WRK *, sys->obwp)[v0].lkono = v1;
     
     bhScePtr++;
     
@@ -2573,11 +2573,11 @@ unsigned int bhObjLinkSetPly()
     
     if (v1 == 0)
     {
-        sys->obwp[v0].flg |= 0x80;
+        P32(struct O_WRK *, sys->obwp)[v0].flg |= 0x80;
     } 
     else 
     {
-        sys->obwp[v0].flg &= ~0x80;
+        P32(struct O_WRK *, sys->obwp)[v0].flg &= ~0x80;
     }
     
     bhScePtr++;
@@ -2588,33 +2588,33 @@ unsigned int bhObjLinkSetPly()
     
     if ((v1 & 0x1)) 
     {
-        sys->obwp[v0].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v0].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->obwp[v0].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v0].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
 
     if ((v1 & 0x2))
     {
-        sys->obwp[v0].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v0].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->obwp[v0].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v0].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
     
     if ((v1 & 0x4)) 
     {
-        sys->obwp[v0].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v0].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->obwp[v0].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v0].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
@@ -2737,17 +2737,17 @@ unsigned int bhFootSeCall()
     
     bhScePtr++;
     
-    if (bhCetask->work != NULL)
+    if (P32(struct BH_PWORK *, bhCetask->work) != NULL)
     {
-        flr_no = bhCheckFloorNum(bhCetask->work->mlwP->owP[v4].mtx[13]);
+        flr_no = bhCheckFloorNum(P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[v4].mtx[13]);
         
         if (v1 != 0) 
         {   
-            fsnd = bhCheckFloorSound(bhCetask->work, flr_no, bhCetask->work->mlwP->owP[(int)v4].mtx[12], bhCetask->work->mlwP->owP[(int)v4].mtx[14]);
+            fsnd = bhCheckFloorSound(P32(struct BH_PWORK *, bhCetask->work), flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[(int)v4].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[(int)v4].mtx[14]);
         } 
         else 
         {
-            fsnd = bhCheckFloorSound(bhCetask->work, flr_no, bhCetask->work->mlwP->owP[v4].mtx[12], bhCetask->work->mlwP->owP[v4].mtx[14]);
+            fsnd = bhCheckFloorSound(P32(struct BH_PWORK *, bhCetask->work), flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[v4].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[v4].mtx[14]);
         }
         
         v5 = 0;
@@ -2757,7 +2757,7 @@ unsigned int bhFootSeCall()
             v5 = 1;
         }
 
-        CallPlayerFootStepSeEx(fsnd, v3, v5, v2, (NJS_POINT3*)&bhCetask->work->mlwP->owP[v4].mtx[12]);
+        CallPlayerFootStepSeEx(fsnd, v3, v5, v2, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->owP)[v4].mtx[12]);
     }
     
     return 1;
@@ -2784,7 +2784,7 @@ unsigned int bhEneSetCk()
  
     if (!(((v0[(v2 & 0x1FF) >> 5] << (v2 & 0x1F)) < 0) ^ 1)) 
     {
-        e_enep = &rom->enep[*++a0];
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[*++a0];
         e_ep = &ene[e_enep->wrk_no];
         
         e_ep->stflg |= 0x1000000;
@@ -2825,7 +2825,7 @@ unsigned int bhItmSetCk()
         
     if (!(((v0[(v3 & 0x1FF) >> 5] << (v3 & 0x1F)) < 0) ^ 1)) 
     {
-        e_etcp = rom->etcp;
+        e_etcp = P32(struct ATR_WORK *, rom->etcp);
 
 		e_etcp += v4;
         
@@ -2834,13 +2834,13 @@ unsigned int bhItmSetCk()
             e_etcp->flg &= ~0x1;
         }
 
-        op = &sys->itwp[v2];
+        op = &P32(struct O_WRK *, sys->itwp)[v2];
         
         op->stflg |= 0x1000000;
     } 
     else 
     {
-        e_etcp = rom->etcp;
+        e_etcp = P32(struct ATR_WORK *, rom->etcp);
 
 		e_etcp += v4;
         
@@ -2891,7 +2891,7 @@ unsigned int bhInitModelSet()
         
         break;
     case 1:
-        enep = &rom->enep[v3];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v3];
         e_ep = &ene[enep->wrk_no];
         
         if (v4 == 0) 
@@ -2911,7 +2911,7 @@ unsigned int bhInitModelSet()
         
         break;
     case 2:
-        e_ip = &sys->obwp[v3];
+        e_ip = &P32(struct O_WRK *, sys->obwp)[v3];
         
         if (v4 == 0) 
         {
@@ -2924,7 +2924,7 @@ unsigned int bhInitModelSet()
         
         break;
     case 3:
-        e_ip = &sys->itwp[v3];
+        e_ip = &P32(struct O_WRK *, sys->itwp)[v3];
         
         if (v4 == 0) 
         {
@@ -2950,7 +2950,7 @@ unsigned int bhEtcAtariSet2()
     
     bhScePtr++;
     
-    e_etcp = rom->etcp;
+    e_etcp = P32(struct ATR_WORK *, rom->etcp);
     
     e_etcp += *bhScePtr;
     
@@ -3017,11 +3017,11 @@ unsigned int bhLightSet()
     
     if (v0 == 0) 
 	{
-        lp = &rom->lgtp[v1];
+        lp = &P32(struct LGT_WORK *, rom->lgtp)[v1];
     } 
 	else 
 	{
-        lp = &rom->evlp[v1];
+        lp = &P32(struct LGT_WORK *, rom->evlp)[v1];
     }
     
     if (v2 == 0) 
@@ -3091,7 +3091,7 @@ unsigned int bhWeaponSeCall()
 		{
 			if (WpnTab[plp->wpnr_no].seno0 != 0) 
 			{
-				CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[13].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
+				CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[13].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
 			}
 			
 			bhSetGunFire(plp, plp->wpnr_no, 13, v2, v6);
@@ -3100,7 +3100,7 @@ unsigned int bhWeaponSeCall()
 		{
 			if (WpnTab[plp->wpnr_no].seno0 != 0) 
 			{
-				CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
+				CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
 			}
 
 			bhSetGunFire(plp, plp->wpnr_no, 9, v2, v6);
@@ -3108,14 +3108,14 @@ unsigned int bhWeaponSeCall()
 
 		break;
 	case 1:
-		enep = &rom->enep[v7];
+		enep = &P32(struct ETTY_WORK *, rom->enep)[v7];
 		e_ep = &ene[enep->wrk_no];
 
 		if (v2 == 0) 
 		{
 			if (WpnTab[plp->wpnr_no].seno0 != 0) 
 			{
-				CallPlayerWeaponSeEx((NJS_POINT3*)&e_ep->mlwP->owP[v1].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
+				CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[v1].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
 			}
 			
 			bhSetGunFire(e_ep, v3, v1, v2, v6);
@@ -3124,7 +3124,7 @@ unsigned int bhWeaponSeCall()
 		{
 			if (WpnTab[plp->wpnr_no].seno0 != 0) 
 			{
-				CallPlayerWeaponSeEx((NJS_POINT3*)&e_ep->mlwP->owP[v1].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
+				CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[v1].mtx[12], WpnTab[plp->wpnr_no].seno0, v8);
 			}
 			
 			bhSetGunFire(e_ep, v3, v1, v2, v6);
@@ -3143,7 +3143,7 @@ unsigned int bhWeaponSeCall()
 
 		break;
 	case 3:
-		enep = &rom->enep[v7];
+		enep = &P32(struct ETTY_WORK *, rom->enep)[v7];
 		e_ep = &ene[enep->wrk_no];
 
 		if (v2 == 0) 
@@ -3219,7 +3219,7 @@ unsigned int bhYakkyouSet()
 
 		break;
 	case 1:
-		enep = &rom->enep[v4];
+		enep = &P32(struct ETTY_WORK *, rom->enep)[v4];
 		e_ep = &ene[enep->wrk_no];
 
 		if (v2 == 0) 
@@ -3326,13 +3326,13 @@ unsigned int bhFrameCheck()
 		v5 = plp->frm_no;
 		break;
 	case 1:
-		enep = &rom->enep[v1];
+		enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
 		e_ep = &ene[enep->wrk_no];
 
 		v5 = e_ep->frm_no;
 		break;
 	case 2:
-		e_ip = &sys->obwp[v1];
+		e_ip = &P32(struct O_WRK *, sys->obwp)[v1];
 
 		v5 = e_ip->frm_no;
 		break;
@@ -3362,7 +3362,7 @@ unsigned int bhCamInfoSet()
 
     bhScePtr += 2;
     
-    cp = &rom->cutp[v1];
+    cp = &P32(struct CUT_WORK *, rom->cutp)[v1];
     
     if (v0 == 0) 
 	{
@@ -3398,7 +3398,7 @@ unsigned int bhMaskSet()
 
     bhScePtr++;
 
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     e_ep = &ene[enep->wrk_no];
 
     bhSetMask(e_ep, v2, 0);
@@ -3427,10 +3427,10 @@ unsigned int bhLipSet()
 
     bhScePtr++;
 
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     pp = &ene[enep->wrk_no];
     
-    ((int*)pp->exp0)[4] = v0;
+    ((int*)P32(unsigned char *, pp->exp0))[4] = v0;
     
     bhSetLip(pp, v2);
     
@@ -3460,16 +3460,16 @@ unsigned int bhMaskStart()
 
     bhScePtr++;
 
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     pp = &ene[enep->wrk_no];
     
     if (v2 == 0) 
 	{
-        ((int*)pp->exp0)[0] |= 0x1;
+        ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x1;
     } 
 	else 
 	{
-        ((int*)pp->exp0)[0] &= ~0x1;
+        ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x1;
     }
     
     return 1;
@@ -3498,16 +3498,16 @@ unsigned int bhLipStart()
 
     bhScePtr++;
 
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     pp = &ene[enep->wrk_no];
     
     if (v2 == 0) 
 	{
-        ((int*)pp->exp0)[0] |= 0x4;
+        ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x4;
     } 
 	else 
 	{
-        ((int*)pp->exp0)[0] &= ~0x4;
+        ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x4;
     }
     
     return 1;
@@ -3547,39 +3547,39 @@ unsigned int bhLookGsetPlStart()
 
     bhScePtr++;
     
-    ((int*)plp->exp1)[0] |= 0x18;
+    ((int*)P32(unsigned char *, plp->exp1))[0] |= 0x18;
 
-    ((int*)plp->exp1)[16] = 1;
+    ((int*)P32(unsigned char *, plp->exp1))[16] = 1;
     
     if ((v1 & 0x1)) 
 	{
-        ((float*)plp->exp1)[18] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        ((float*)P32(unsigned char *, plp->exp1))[18] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
 	else 
 	{
-        ((float*)plp->exp1)[18] = *(unsigned short*)bhScePtr / 100.0f;
+        ((float*)P32(unsigned char *, plp->exp1))[18] = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v1 & 0x2)) 
 	{
-        ((float*)plp->exp1)[19] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        ((float*)P32(unsigned char *, plp->exp1))[19] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
 	else
 	{
-        ((float*)plp->exp1)[19] = *(unsigned short*)bhScePtr / 100.0f;
+        ((float*)P32(unsigned char *, plp->exp1))[19] = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v1 & 0x4)) 
 	{
-        ((float*)plp->exp1)[20] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        ((float*)P32(unsigned char *, plp->exp1))[20] = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
 	else
 	{
-        ((float*)plp->exp1)[20] = *(unsigned short*)bhScePtr / 100.0f;
+        ((float*)P32(unsigned char *, plp->exp1))[20] = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
@@ -3594,7 +3594,7 @@ unsigned int bhLookGsetPlStop()
 
 	bhScePtr += 2;
 
-	v0 = (int*)plp->exp1;
+	v0 = (int*)P32(unsigned char *, plp->exp1);
 	
 	*v0 &= ~0x18;
 
@@ -3641,21 +3641,21 @@ unsigned int bhDefModelSet()
         epw = plp;
         break;
     case 1:
-        e_enep = &rom->enep[v1];
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
         epw = &ene[e_enep->wrk_no];
         break;
     case 2:
-        epw = (BH_PWORK*)&sys->obwp[v1];
+        epw = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v1];
         break; 
     }
     
     if (v3 == 0)
     {
-        epw->mlwP->objP[v2].evalflags |= 0x8;
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[v2].evalflags |= 0x8;
     } 
     else
     {
-        epw->mlwP->objP[v2].evalflags &= ~0x8; 
+        P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[v2].evalflags &= ~0x8; 
     }
     
     return 1;
@@ -3677,7 +3677,7 @@ unsigned int bhItmAspdSet()
 
     bhScePtr += 2;
     
-    op = &sys->itwp[v0];
+    op = &P32(struct O_WRK *, sys->itwp)[v0];
 
     op->aspd = v1;
     
@@ -3760,11 +3760,11 @@ unsigned int bhObjLinkSetObjEne()
     
     v1 = *bhScePtr;
 
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
 
     e_ep = (BH_PWORK*)&ene[enep->wrk_no];
     
-    e_ep->lkwkp = (unsigned char*)&sys->obwp[v0]; 
+    e_ep->lkwkp = S32((unsigned char*)&P32(struct O_WRK *, sys->obwp)[v0]); 
     
     bhScePtr++; 
     
@@ -3841,13 +3841,13 @@ unsigned int bhObjLinkSetObjItem()
     
     v1 = *bhScePtr;
     
-    sys->itwp[v1].lkwkp = (unsigned char*)&sys->obwp[v0]; 
+    P32(struct O_WRK *, sys->itwp)[v1].lkwkp = S32((unsigned char*)&P32(struct O_WRK *, sys->obwp)[v0]); 
     
     bhScePtr++;
     
     v2 = *bhScePtr;
     
-    sys->itwp[v1].lkono = v2;
+    P32(struct O_WRK *, sys->itwp)[v1].lkono = v2;
     
     bhScePtr++;
     
@@ -3855,11 +3855,11 @@ unsigned int bhObjLinkSetObjItem()
     
     if (v2 == 0)
     {
-        sys->itwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg |= 0x80;
     } 
     else 
     {
-        sys->itwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg &= ~0x80;
     }
     
     bhScePtr++;
@@ -3870,33 +3870,33 @@ unsigned int bhObjLinkSetObjItem()
  
     if ((v2 & 0x1)) 
     {
-        sys->itwp[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->itwp[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
 
     if ((v2 & 0x2))
     {
-        sys->itwp[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->itwp[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
     
     if ((v2 & 0x4)) 
     {
-        sys->itwp[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->itwp[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
@@ -3920,16 +3920,16 @@ unsigned int bhObjLinkSetEneItem()
     
     v1 = *bhScePtr;
    
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
-    sys->itwp[v1].lkwkp = (unsigned char*)e_ep;
+    P32(struct O_WRK *, sys->itwp)[v1].lkwkp = S32((unsigned char*)e_ep);
     
     bhScePtr++;
     
     v2 = *bhScePtr;
     
-    sys->itwp[v1].lkono = v2;
+    P32(struct O_WRK *, sys->itwp)[v1].lkono = v2;
     
     bhScePtr++;
     
@@ -3937,11 +3937,11 @@ unsigned int bhObjLinkSetEneItem()
     
     if (v2 == 0)
     {
-        sys->itwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg |= 0x80;
     } 
     else 
     {
-        sys->itwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg &= ~0x80;
     }
     
     bhScePtr++;
@@ -3952,33 +3952,33 @@ unsigned int bhObjLinkSetEneItem()
  
     if ((v2 & 0x1)) 
     {
-        sys->itwp[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->itwp[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
 
     if ((v2 & 0x2))
     {
-        sys->itwp[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->itwp[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
     
     if ((v2 & 0x4)) 
     {
-        sys->itwp[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else
     {
-        sys->itwp[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
     
     bhScePtr += 2;
@@ -4002,13 +4002,13 @@ unsigned int bhObjLinkSetEneEne()
     
     v1 = *bhScePtr;
 
-    enep = &rom->enep[v1]; 
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1]; 
 
     e_ep2 = &ene[enep->wrk_no];
 
-    enep = &rom->enep[v0]; 
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0]; 
     
-    e_ep2->lkwkp = (unsigned char*)&ene[enep->wrk_no]; 
+    e_ep2->lkwkp = S32((unsigned char*)&ene[enep->wrk_no]); 
     
     bhScePtr++; 
     
@@ -4107,7 +4107,7 @@ unsigned int bhLightTypeSet()
 
     bhScePtr++;
     
-    lp = &rom->lgtp[v0];
+    lp = &P32(struct LGT_WORK *, rom->lgtp)[v0];
 
     lp->type = v1;
     lp->aspd = v2;
@@ -4181,7 +4181,7 @@ unsigned int bhEffectSandSet()
 
     bhScePtr++;
    
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     epw = &ene[enep->wrk_no];
 
     if (v2 == 0) 
@@ -4372,7 +4372,7 @@ unsigned int bhEffBloodSet()
     
     bhScePtr++;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     epw = &ene[enep->wrk_no];
     
     epw->djnt_no = v1;
@@ -4455,7 +4455,7 @@ unsigned int bhEffBloodPoolSet()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     epw = &ene[enep->wrk_no];
 
     epw->djnt_no = v1;
@@ -4463,29 +4463,29 @@ unsigned int bhEffBloodPoolSet()
     switch (v1) 
     { 
     case 0:
-        ang = (unsigned short)((epw->ay + epw->mlwP->objP[1].ang[1]) + (32767 + 1));
+        ang = (unsigned short)((epw->ay + P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[1].ang[1]) + (32767 + 1));
 
-        gpos.x = epw->mlwP->owP->mtx[12] - njSin(ang);
-        gpos.y = epw->mlwP->owP->mtx[13];
-        gpos.z = epw->mlwP->owP->mtx[14] - njCos(ang);
+        gpos.x = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12] - njSin(ang);
+        gpos.y = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
+        gpos.z = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[14] - njCos(ang);
         
         bhSetBloodPoolLnk(NULL, &gpos, ang, &evnt_BldTbl2, v2);
         break;
     case 1:
-        ang = epw->ay + epw->mlwP->objP[1].ang[1];
+        ang = epw->ay + P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[1].ang[1];
 
-        gpos.x = epw->mlwP->owP->mtx[12] - njSin(ang);
-        gpos.y = epw->mlwP->owP->mtx[13];
-        gpos.z = epw->mlwP->owP->mtx[14] - njCos(ang);
+        gpos.x = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12] - njSin(ang);
+        gpos.y = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
+        gpos.z = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[14] - njCos(ang);
         
         bhSetBloodPoolLnk(NULL, &gpos, ang, &evnt_BldTbl2, v2);
         break;
     case 2:
-        ang = epw->ay + epw->mlwP->objP[1].ang[1];
+        ang = epw->ay + P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[1].ang[1];
 
-        gpos.x = epw->mlwP->owP->mtx[12] - njSin(ang);
-        gpos.y = epw->mlwP->owP->mtx[13];
-        gpos.z = epw->mlwP->owP->mtx[14] - njCos(ang);
+        gpos.x = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12] - njSin(ang);
+        gpos.y = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
+        gpos.z = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[14] - njCos(ang);
 
         bhSetBloodPoolLnk(NULL, &gpos, ang, &evnt_BldTbl, v2);
         break;
@@ -4620,15 +4620,15 @@ unsigned int bhCyoutenHenkeiSet()
         epw = plp;
         break;
     case 1:
-        enep = &rom->enep[v1];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
         epw = &ene[enep->wrk_no];
         break;
     }
     
-    epw->mlwP->objP = epw->mbp[v2];
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v2]));
     
-    epw->obj_a = epw->mbp[v2];
-    epw->obj_b = epw->mbp[v3];
+    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v2]));
+    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v3]));
     
     return 1;
 }
@@ -4639,11 +4639,11 @@ unsigned int bhCyoutenHenkeiStart()
 	bhScePtr++;
     bhScePtr++;
     
-    if (bhCetask->work != NULL) 
+    if (P32(struct BH_PWORK *, bhCetask->work) != NULL) 
     {
-        bhCetask->work->mdflg |= 0x2;
+        P32(struct BH_PWORK *, bhCetask->work)->mdflg |= 0x2;
 
-        bhCetask->work->shp_ct = 1000.0f - ((1000.0f / bhCetask->cnt3) * bhCetask->cnt2);
+        P32(struct BH_PWORK *, bhCetask->work)->shp_ct = 1000.0f - ((1000.0f / bhCetask->cnt3) * bhCetask->cnt2);
     }
     
     return 0;
@@ -4688,11 +4688,11 @@ unsigned int bhObjLinkSetObjObj()
 
     bhScePtr++;
     
-    sys->obwp[v1].lkwkp = (unsigned char*)&sys->obwp[v0];
+    P32(struct O_WRK *, sys->obwp)[v1].lkwkp = S32((unsigned char*)&P32(struct O_WRK *, sys->obwp)[v0]);
     
     v2 = *bhScePtr;
 
-    sys->obwp[v1].lkono = v2;
+    P32(struct O_WRK *, sys->obwp)[v1].lkono = v2;
     
     bhScePtr++;
 
@@ -4700,11 +4700,11 @@ unsigned int bhObjLinkSetObjObj()
 
     if (v3 == 0) 
     {
-        sys->obwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg |= 0x80;
     } 
     else 
     {
-        sys->obwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg &= ~0x80;
     }
 
     bhScePtr++;
@@ -4715,33 +4715,33 @@ unsigned int bhObjLinkSetObjObj()
     
     if ((v4 & 0x1)) 
     {
-        sys->obwp[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->obwp[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v4 & 0x2)) 
     {
-        sys->obwp[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->obwp[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v4 & 0x4)) 
     {
-        sys->obwp[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->obwp)[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->obwp[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->obwp)[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
@@ -5064,10 +5064,10 @@ unsigned int bhObjAlphaSet()
     switch (v0) 
     {
     case 2:
-        op = &sys->obwp[v1];
+        op = &P32(struct O_WRK *, sys->obwp)[v1];
         break;
     case 3:
-        op = &sys->itwp[v1];
+        op = &P32(struct O_WRK *, sys->itwp)[v1];
         break;
     }
 
@@ -5321,7 +5321,7 @@ unsigned int bhObjLinkSetObjPly()
     
     v0 = *bhScePtr;
 
-    plp->lkwkp = (unsigned char*)&sys->obwp[v0];
+    plp->lkwkp = S32((unsigned char*)&P32(struct O_WRK *, sys->obwp)[v0]);
 
     bhScePtr += 2;
 
@@ -5428,14 +5428,14 @@ unsigned int bhAreaSearchObj()
         e_workp = plp;
         break;
     case 1:
-        enep = &rom->enep[v0];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
         e_workp = &ene[enep->wrk_no];
         break;
     case 2:
-        e_workp = (BH_PWORK*)&sys->obwp[v0];
+        e_workp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v0];
         break;
     case 3:
-        e_workp = (BH_PWORK*)&sys->itwp[v0];
+        e_workp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[v0];
         break;
     }
     
@@ -5585,11 +5585,11 @@ unsigned int bhLightParameterStart()
     
     if (v1 == 0) 
     {
-        lp = &rom->lgtp[v0];
+        lp = &P32(struct LGT_WORK *, rom->lgtp)[v0];
     } 
     else 
     {
-        lp = &rom->evlp[v0];
+        lp = &P32(struct LGT_WORK *, rom->evlp)[v0];
     }
     
     ips_w[0][0] = bhCetask->e_lgt[1][0];
@@ -5741,11 +5741,11 @@ unsigned int bhLightParameterSet()
 
     if (v1 == 0) 
     {
-        lp = &rom->lgtp[v0];
+        lp = &P32(struct LGT_WORK *, rom->lgtp)[v0];
     } 
     else 
     {
-        lp = &rom->evlp[v0];
+        lp = &P32(struct LGT_WORK *, rom->evlp)[v0];
     }
     
     lp->r = v2 / 100.0f;
@@ -5784,12 +5784,12 @@ unsigned int bhEneSeOn()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     epw = &ene[enep->wrk_no];
     
-    pPos.x = epw->mlwP->objP[v2].pos[0];
-    pPos.y = epw->mlwP->objP[v2].pos[1];
-    pPos.z = epw->mlwP->objP[v2].pos[2];
+    pPos.x = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[v2].pos[0];
+    pPos.y = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[v2].pos[1];
+    pPos.z = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[v2].pos[2];
     
     CallEnemySe(v0, &pPos, v3);
     
@@ -5820,7 +5820,7 @@ unsigned int bhWalAtariSet2()
 
     bhScePtr++;
     
-    e_walp = rom->walp;
+    e_walp = P32(struct ATR_WORK *, rom->walp);
     e_walp += *bhScePtr;
     
     bhScePtr++;
@@ -5860,7 +5860,7 @@ unsigned int bhFlrAtariSet2()
 
     bhScePtr++;
     
-    e_flrp = rom->flrp;
+    e_flrp = P32(struct ATR_WORK *, rom->flrp);
     e_flrp += *bhScePtr;
     
     bhScePtr++;
@@ -5909,30 +5909,30 @@ unsigned int bhMotionPosSetEnePly()
 
     v1 = *bhScePtr;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_workp = &ene[enep->wrk_no];
     
     bhScePtr++;
     bhScePtr++;
     
-    plp->px = e_workp->mlwP->owP->mtx[12];
+    plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, e_workp->mlwP)->owP)->mtx[12];
     
-    ((float*)plp->exp0)[18] = plp->pxb = plp->px;
+    ((float*)P32(unsigned char *, plp->exp0))[18] = plp->pxb = plp->px;
     
     plp->py = rom->grand[v1 + 1];
     plp->pyb = plp->py;
     
     plp->flr_no = bhCheckFloorNum(plp->py);
     
-    plp->pz = e_workp->mlwP->owP->mtx[14];
+    plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, e_workp->mlwP)->owP)->mtx[14];
 
-    ((float*)plp->exp0)[20] = plp->pzb = plp->pz;
+    ((float*)P32(unsigned char *, plp->exp0))[20] = plp->pzb = plp->pz;
     
-    ay = e_workp->mdl->objP[0].ang[1] - e_workp->mdl->objP[1].ang[1] - e_workp->mdl->objP[2].ang[1] - e_workp->mdl->objP[3].ang[1] - e_workp->mdl->objP[4].ang[1];
+    ay = P32(struct cnkobj *, e_workp->mdl->objP)[0].ang[1] - P32(struct cnkobj *, e_workp->mdl->objP)[1].ang[1] - P32(struct cnkobj *, e_workp->mdl->objP)[2].ang[1] - P32(struct cnkobj *, e_workp->mdl->objP)[3].ang[1] - P32(struct cnkobj *, e_workp->mdl->objP)[4].ang[1];
 
     plp->ayb = plp->ay = (short)(ay + (32767 + 1));
 
-    plp->mdl->objP->ang[1] = 0;
+    P32(struct cnkobj *, plp->mdl->objP)->ang[1] = 0;
     
     bhCalcModel(plp);
     
@@ -5975,7 +5975,7 @@ unsigned int bhKageSwSet()
 
         break;
     case 1:
-        enep = &rom->enep[v3];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v3];
         e_ep = &ene[enep->wrk_no];
 
         if (v4 == 0) 
@@ -5989,7 +5989,7 @@ unsigned int bhKageSwSet()
 
         break;
     case 2:
-        e_ep = (BH_PWORK*)&sys->obwp[v3];
+        e_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v3];
 
         if (v4 == 0) 
         {
@@ -6002,7 +6002,7 @@ unsigned int bhKageSwSet()
 
         break;
     case 3:
-        e_ep = (BH_PWORK*)&sys->itwp[v3];
+        e_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[v3];
 
         if (v4 == 0) 
         {
@@ -6078,7 +6078,7 @@ unsigned int bhInitPonySet()
         plp->flg2 |= 0x2;
         break;
     case 1:
-        enep = &rom->enep[v3];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v3];
         e_ep = &ene[enep->wrk_no];
 
         e_ep->flg2 |= 0x2;
@@ -6123,15 +6123,15 @@ unsigned int bhCyoutenHenkeiSetEX()
         epw = plp;
         break;
     case 1:
-        enep = &rom->enep[v1];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
         epw = &ene[enep->wrk_no];
         break;
     }
     
-    epw->mlwP->objP = epw->mbp[v2];
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v2]));
 
-    epw->obj_a = epw->mbp[v2];
-    epw->obj_b = epw->mbp[v3];
+    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v2]));
+    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[v3]));
     
     epw->mdflg |= 0x2;
 
@@ -6155,11 +6155,11 @@ unsigned int bhCyoutenHenkeiStartEX()
     frm0 = v0;
     frm1 = 1000.0f - frm0;
     
-    if (bhCetask->work != NULL) 
+    if (P32(struct BH_PWORK *, bhCetask->work) != NULL) 
     {
-        bhCetask->work->mdflg |= 0x2;
+        P32(struct BH_PWORK *, bhCetask->work)->mdflg |= 0x2;
 
-        bhCetask->work->shp_ct = frm0 + (frm1 - (bhCetask->cnt2 * (frm1 / bhCetask->cnt3)));
+        P32(struct BH_PWORK *, bhCetask->work)->shp_ct = frm0 + (frm1 - (bhCetask->cnt2 * (frm1 / bhCetask->cnt3)));
     }
 
     return 0;
@@ -6233,14 +6233,14 @@ unsigned int bhEasySESet()
         epw = plp;
         break;
     case 1:
-        enep = &rom->enep[v6];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v6];
         epw = &ene[enep->wrk_no];
         break;
     case 2:
-        epw = (BH_PWORK*)&sys->obwp[v6];
+        epw = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[v6];
         break;
     case 3:
-        epw = (BH_PWORK*)&sys->itwp[v6];
+        epw = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[v6];
         break;
     }
     
@@ -6252,7 +6252,7 @@ unsigned int bhEasySESet()
 
     bhScePtr += 2;
 
-    PlayGameSe4Event(&gp, (NJS_POINT3*)&epw->mlwP->owP[v7].mtx[12], v4, v8);
+    PlayGameSe4Event(&gp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v7].mtx[12], v4, v8);
     
     return 1;
 }
@@ -6503,10 +6503,10 @@ unsigned int bhZombieUpDieCk()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
 
-    if ((e_ep->id == 1) && ((((int*)e_ep->exp1)[0] & 0x2)))
+    if ((e_ep->id == 1) && ((((int*)P32(unsigned char *, e_ep->exp1))[0] & 0x2)))
     {
         bhFlagSet(4, v1, 0);
     }
@@ -6531,16 +6531,16 @@ unsigned int bhFacePauseSet()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     pp = &ene[enep->wrk_no];
 
     if (v2 == 0) 
     {
-        ((int*)pp->exp0)[0] |= 0x10;
+        ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x10;
     } 
     else 
     {
-        ((int*)pp->exp0)[0] &= ~0x10;
+        ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x10;
     }
 
     return 1;
@@ -6559,10 +6559,10 @@ unsigned int bhFaceReSet()
 
     bhScePtr++;
     
-    enep = &rom->enep[v1];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v1];
     pp = &ene[enep->wrk_no];
 
-    ((int*)pp->exp0)[0] |= 0x20;
+    ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x20;
 
     return 1;
 }
@@ -6607,7 +6607,7 @@ unsigned int bhEnemyHpUp()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
     
     e_ep->hp = e_ep->hp + ((e_ep->hp / 100) * v1);
@@ -6632,16 +6632,16 @@ unsigned int bhFaceRep()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     pp = &ene[enep->wrk_no];
     
     if (v1 == 0) 
     {
-        ((int*)pp->exp0)[0] |= 0x2;
+        ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x2;
     } 
     else 
     {
-        ((int*)pp->exp0)[0] &= ~0x2;
+        ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x2;
     }
 
     return 1;
@@ -6757,11 +6757,11 @@ unsigned int bhSetItmMotion()
     bhScePtr++;
     bhScePtr++;
     
-    ob_ep = (BH_PWORK*)&sys->itwp[*++a0];
+    ob_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[*++a0];
     
     if ((ob_ep->mode3 == 1) && ((sys->sp_flg & 0x4))) 
     {
-        bhSetMotion(ob_ep, (int)ob_ep->mtn_add, ob_ep->mtn_md, ob_ep->mtn_tp);
+        bhSetMotion(ob_ep, (int)ob_ep->mtn_add, ob_ep->mtn_md, P32(unsigned char *, ob_ep->mtn_tp));
     
         bhCalcModel(ob_ep);
     }
@@ -6785,7 +6785,7 @@ unsigned int bhObjAspdSet()
 
     bhScePtr += 2;
    
-    op = &sys->obwp[v0];
+    op = &P32(struct O_WRK *, sys->obwp)[v0];
 
     op->aspd = v1;
     
@@ -6935,7 +6935,7 @@ unsigned int bhEvtLighterFireSet()
 
     bhScePtr += 2;
     
-    bhSetLighterFire(&sys->obwp[v0], v1);
+    bhSetLighterFire(&P32(struct O_WRK *, sys->obwp)[v0], v1);
     
     return 1;
 }
@@ -6950,13 +6950,13 @@ unsigned int bhObjLinkSetPlyItem()
     
     v1 = *bhScePtr;
     
-    sys->itwp[v1].lkwkp = (unsigned char*)plp;
+    P32(struct O_WRK *, sys->itwp)[v1].lkwkp = S32((unsigned char*)plp);
     
     bhScePtr++;
     
     v0 = *bhScePtr;
     
-    sys->itwp[v1].lkono = v0;
+    P32(struct O_WRK *, sys->itwp)[v1].lkono = v0;
     
     bhScePtr++;
     
@@ -6964,11 +6964,11 @@ unsigned int bhObjLinkSetPlyItem()
     
     if (v0 == 0) 
     {
-        sys->itwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg |= 0x80;
     } 
     else 
     {
-        sys->itwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->itwp)[v1].flg &= ~0x80;
     }
     
     bhScePtr++;
@@ -6979,33 +6979,33 @@ unsigned int bhObjLinkSetPlyItem()
 
     if ((v0 & 0x1)) 
     {
-        sys->itwp[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].lox = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->itwp[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].lox = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v0 & 0x2)) 
     {
-        sys->itwp[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loy = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     } 
     else 
     {
-        sys->itwp[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loy = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
     
     if ((v0 & 0x4)) 
     {
-        sys->itwp[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+        P32(struct O_WRK *, sys->itwp)[v1].loz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
     }
     else 
     {
-        sys->itwp[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
+        P32(struct O_WRK *, sys->itwp)[v1].loz = *(unsigned short*)bhScePtr / 100.0f;
     }
 
     bhScePtr += 2;
@@ -7050,7 +7050,7 @@ unsigned int bhEneRenderSet()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     epw = &ene[enep->wrk_no];
     
     if (v1 == 0) 
@@ -7238,7 +7238,7 @@ unsigned int bhEffUVSet2()
     
     op = &eff[sys->efid[v0]];
 
-    tvp = (NJS_TEXTUREH_VTX*)op->pvp;
+    tvp = (NJS_TEXTUREH_VTX*)P32(NJS_POLYGON_VTX *, op->pvp);
     
     tvp[0].u = v1 / 512.0f;
     tvp[0].v = v2 / 512.0f;
@@ -7437,16 +7437,16 @@ unsigned int bhPlyHandChange()
 
     v0 = *bhScePtr;
 
-    sys->obwp[v0].lkwkp = (unsigned char*)plp;
+    P32(struct O_WRK *, sys->obwp)[v0].lkwkp = S32((unsigned char*)plp);
     
     bhScePtr++;
 
     v1 = *bhScePtr;
 
-    sys->obwp[v1].lkwkp = (unsigned char*)plp;
+    P32(struct O_WRK *, sys->obwp)[v1].lkwkp = S32((unsigned char*)plp);
     
-    sys->obwp[v0].lkono = 9;
-    sys->obwp[v1].lkono = 13;
+    P32(struct O_WRK *, sys->obwp)[v0].lkono = 9;
+    P32(struct O_WRK *, sys->obwp)[v1].lkono = 13;
     
     bhScePtr++;
 
@@ -7456,14 +7456,14 @@ unsigned int bhPlyHandChange()
 
     if (v2 == 0) 
     {
-        sys->obwp[v0].stflg &= ~0x1000000;
-        sys->obwp[v1].stflg &= ~0x1000000;
+        P32(struct O_WRK *, sys->obwp)[v0].stflg &= ~0x1000000;
+        P32(struct O_WRK *, sys->obwp)[v1].stflg &= ~0x1000000;
 
-        sys->obwp[v0].flg |= 0x80;
-        sys->obwp[v1].flg |= 0x80;
+        P32(struct O_WRK *, sys->obwp)[v0].flg |= 0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg |= 0x80;
 
-        sys->obwp[0].mdflg |= 0x1;
-        sys->obwp[1].mdflg |= 0x1;
+        P32(struct O_WRK *, sys->obwp)[0].mdflg |= 0x1;
+        P32(struct O_WRK *, sys->obwp)[1].mdflg |= 0x1;
 
         if (plp->wpnr_no == 1) 
         {
@@ -7472,29 +7472,29 @@ unsigned int bhPlyHandChange()
 
             sys->ply_wno[sys->ply_id] = 0;
 
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 7;
             owk->flg &= ~0x2;
 
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 8;
             owk->flg &= ~0x2;
 
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 9;
             owk->flg &= ~0x2;
         }
     } 
     else 
     {
-        sys->obwp[v0].flg &= ~0x80;
-        sys->obwp[v1].flg &= ~0x80;
+        P32(struct O_WRK *, sys->obwp)[v0].flg &= ~0x80;
+        P32(struct O_WRK *, sys->obwp)[v1].flg &= ~0x80;
 
-        sys->obwp[0].mdflg &= ~0x1;
-        sys->obwp[1].mdflg &= ~0x1;
+        P32(struct O_WRK *, sys->obwp)[0].mdflg &= ~0x1;
+        P32(struct O_WRK *, sys->obwp)[1].mdflg &= ~0x1;
 
-        sys->obwp[v0].stflg |= 0x1000000;
-        sys->obwp[v1].stflg |= 0x1000000;
+        P32(struct O_WRK *, sys->obwp)[v0].stflg |= 0x1000000;
+        P32(struct O_WRK *, sys->obwp)[v1].stflg |= 0x1000000;
 
         if (bhEtask[1].wpnr_no == 1) 
         {
@@ -7503,15 +7503,15 @@ unsigned int bhPlyHandChange()
 
             sys->ply_wno[sys->ply_id] = 1;
             
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 7;
             owk->flg |= 0x2;
 
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 8;
             owk->flg |= 0x2;
 
-            owk = plp->mdl->owP;
+            owk = P32(struct O_WORK *, plp->mdl->owP);
             owk += 9;
             owk->flg |= 0x2;
         }
@@ -7698,7 +7698,7 @@ unsigned int bhObjDposCk()
         eay = v2 * (65536.0f / 360.0f);
         eay2 = v3 * (65536.0f / 360.0f);
         
-        op = &sys->obwp[v0];
+        op = &P32(struct O_WRK *, sys->obwp)[v0];
 
         op->ay = (short)op->ay;
 
@@ -7746,10 +7746,10 @@ unsigned int bhObjDposCk()
         eay2 = v3 * (65536.0f / 360.0f);
 		eay2 = (short)eay2;
         
-        enep = &rom->enep[v0];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
         e_ep = &ene[enep->wrk_no];
 
-        objP = e_ep->mdl->objP;
+        objP = P32(struct cnkobj *, e_ep->mdl->objP);
         objP += v4;
         
         objP->ang[0] = (short)objP->ang[0];
@@ -7879,20 +7879,20 @@ unsigned int bhEtcAtariEnePosSet()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     epw = &ene[enep->wrk_no];
     
-    e_etcp = rom->etcp;
+    e_etcp = P32(struct ATR_WORK *, rom->etcp);
     e_etcp += v1;
     
-    e_posp = rom->posp;
+    e_posp = P32(struct POS *, rom->posp);
     e_posp += v2;
     
-    sw2 = njDistanceP2P((NJS_POINT3*)e_posp, (NJS_POINT3*)&epw->mlwP->owP[v5].mtx[12]);
+    sw2 = njDistanceP2P((NJS_POINT3*)e_posp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v5].mtx[12]);
 
     for (cnt = v2, cnt2 = v2; cnt < v3; cnt++, e_posp++) 
 	{
-        sw1 = njDistanceP2P((NJS_POINT3*)e_posp, (NJS_POINT3*)&epw->mlwP->owP[v5].mtx[12]);
+        sw1 = njDistanceP2P((NJS_POINT3*)e_posp, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v5].mtx[12]);
 
         if (sw1 < sw2) 
 		{
@@ -7901,7 +7901,7 @@ unsigned int bhEtcAtariEnePosSet()
         }
     }
 
-    e_posp = rom->posp;
+    e_posp = P32(struct POS *, rom->posp);
     e_posp += cnt2;
     
     e_etcp->px = e_posp->px - (e_etcp->w / 2.0f);
@@ -7937,10 +7937,10 @@ unsigned int bhEtcAtariEvtPosSet()
 
     bhScePtr++;
     
-    e_etcp = rom->etcp;
+    e_etcp = P32(struct ATR_WORK *, rom->etcp);
     e_etcp += v1;
 
-    e_posp = rom->posp;
+    e_posp = P32(struct POS *, rom->posp);
 
     e_posp += sys->evt_posno[v0];
     
@@ -7948,7 +7948,7 @@ unsigned int bhEtcAtariEvtPosSet()
     e_etcp->py = e_posp->py;
     e_etcp->pz = e_posp->pz - (e_etcp->d / 2.0f);
     
-    op = &sys->itwp[v3];
+    op = &P32(struct O_WRK *, sys->itwp)[v3];
     
     op->px = e_posp->px;
     op->py = e_posp->py;
@@ -8034,7 +8034,7 @@ unsigned int bhGrdPosSet()
  
     bhScePtr++;
  
-    e_walp = rom->walp;
+    e_walp = P32(struct ATR_WORK *, rom->walp);
 
     e_walp += *bhScePtr;
     
@@ -8174,7 +8174,7 @@ unsigned int bhGrdPosMoveStart()
     
     bhScePtr++;
     
-    e_walp = rom->walp;
+    e_walp = P32(struct ATR_WORK *, rom->walp);
 	
     e_walp += *bhScePtr;
 
@@ -8494,19 +8494,19 @@ unsigned int bhCyodanSetEx()
     switch (w4) 
 	{
 	case 1:
-		enep = &rom->enep[w5];
+		enep = &P32(struct ETTY_WORK *, rom->enep)[w5];
 		e_ep = &ene[enep->wrk_no];
 		
-		wps.x += e_ep->mlwP->owP[w6].mtx[12];
-		wps.y += e_ep->mlwP->owP[w6].mtx[13];
-		wps.z += e_ep->mlwP->owP[w6].mtx[14];
+		wps.x += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[12];
+		wps.y += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[13];
+		wps.z += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[14];
 		break;
 	case 2:
-		e_ep = (BH_PWORK*)&sys->obwp[w5];
+		e_ep = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[w5];
 	
-		wps.x += e_ep->mlwP->owP[w6].mtx[12];
-		wps.y += e_ep->mlwP->owP[w6].mtx[13];
-		wps.z += e_ep->mlwP->owP[w6].mtx[14];
+		wps.x += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[12];
+		wps.y += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[13];
+		wps.z += P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)[w6].mtx[14];
 		break;
     }
     
@@ -8691,24 +8691,24 @@ unsigned int bhVoiceWait()
     switch (v0) 
     {
     case 0:
-        pPos.x = plp->mlwP->owP->mtx[12];
-        pPos.y = plp->mlwP->owP->mtx[13];
-        pPos.z = plp->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         break;
     case 1:
-        enep = &rom->enep[v4];
+        enep = &P32(struct ETTY_WORK *, rom->enep)[v4];
         e_ep = &ene[enep->wrk_no];
         
-        pPos.x = e_ep->mlwP->owP->mtx[12];
-        pPos.y = e_ep->mlwP->owP->mtx[13];
-        pPos.z = e_ep->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, e_ep->mlwP)->owP)->mtx[14];
         break;
     case 2:
-        op = &sys->obwp[v4];
+        op = &P32(struct O_WRK *, sys->obwp)[v4];
         
-        pPos.x = op->mlwP->owP->mtx[12];
-        pPos.y = op->mlwP->owP->mtx[13];
-        pPos.z = op->mlwP->owP->mtx[14];
+        pPos.x = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12];
+        pPos.y = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13];
+        pPos.z = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14];
         break;
     }
 
@@ -8892,7 +8892,7 @@ unsigned int bhEneLookFlgSet()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v2];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v2];
     e_ep = &ene[enep->wrk_no];
 
     if (v3 == 0) 
@@ -8981,7 +8981,7 @@ unsigned int bhEneLifeSetM()
 
     bhScePtr += 2;
     
-    enep = &rom->enep[v0];
+    enep = &P32(struct ETTY_WORK *, rom->enep)[v0];
     e_ep = &ene[enep->wrk_no];
 
     e_ep->hp = v1;
@@ -9125,7 +9125,7 @@ unsigned int bhRankingCall()
     
     sys->ssv_tim = 0;
     
-    sys->memp = sys->mempb;
+    sys->memp = S32(P32(unsigned char *, sys->mempb));
     
     sys->ss_flg &= ~0x20000;
     
@@ -9185,11 +9185,11 @@ unsigned int bhWhile()
 {
     bhCetask->loop++;
     
-    bhCetask->lcondition[bhCetask->loop] = &bhScePtr[2];
+    bhCetask->lcondition[bhCetask->loop] = S32(&bhScePtr[2]);
     
     bhScePtr = &bhScePtr[bhScePtr[1]];
     
-    bhCetask->lstack[bhCetask->loop] = bhScePtr;
+    bhCetask->lstack[bhCetask->loop] = S32(bhScePtr);
     
     return 1;
 }
@@ -9197,17 +9197,17 @@ unsigned int bhWhile()
 // 100% matching! 
 unsigned int bhEwhile() 
 {
-    bhCetask->data = bhScePtr;
+    bhCetask->data = S32(bhScePtr);
     
-    bhScePtr = bhCetask->lcondition[bhCetask->loop];
+    bhScePtr = P32(unsigned char *, bhCetask->lcondition[bhCetask->loop]);
 
     if (bhScenarioJmpT[*bhScePtr]() != 0) 
     {
-        bhScePtr = bhCetask->lstack[bhCetask->loop];
+        bhScePtr = P32(unsigned char *, bhCetask->lstack[bhCetask->loop]);
     } 
     else 
     {
-        bhScePtr = bhCetask->data;
+        bhScePtr = P32(unsigned char *, bhCetask->data);
         
         bhScePtr++;
         
@@ -9222,17 +9222,17 @@ unsigned int bhEwhile()
 // 100% matching! 
 unsigned int bhEwhile2()
 {
-	bhCetask->data = bhScePtr;
+	bhCetask->data = S32(bhScePtr);
     
-    bhScePtr = bhCetask->lcondition[bhCetask->loop];
+    bhScePtr = P32(unsigned char *, bhCetask->lcondition[bhCetask->loop]);
 
     if (bhScenarioJmpT[*bhScePtr]() != 0) 
     {
-        bhScePtr = bhCetask->lstack[bhCetask->loop];
+        bhScePtr = P32(unsigned char *, bhCetask->lstack[bhCetask->loop]);
     } 
     else 
     {
-        bhScePtr = bhCetask->data;
+        bhScePtr = P32(unsigned char *, bhCetask->data);
         
         bhScePtr++;
         
@@ -9280,7 +9280,7 @@ unsigned int bhFor()
     
     bhScePtr += 4;
     
-    bhCetask->lstack[bhCetask->loop] = bhScePtr;
+    bhCetask->lstack[bhCetask->loop] = S32(bhScePtr);
     
     return 1;
 }
@@ -9292,7 +9292,7 @@ unsigned int bhNext()
     {
         bhCetask->cnt2 = bhCetask->cnt[bhCetask->loop];
         
-        bhScePtr = bhCetask->lstack[bhCetask->loop];
+        bhScePtr = P32(unsigned char *, bhCetask->lstack[bhCetask->loop]);
     }
     else 
     {
@@ -9329,12 +9329,12 @@ int Player_controll()
         
         if (*bhScePtr == 0) 
         {
-            ((int*)plp->exp1)[0] |= 0x1E0;
-            ((int*)plp->exp1)[0] &= ~0x14;
+            ((int*)P32(unsigned char *, plp->exp1))[0] |= 0x1E0;
+            ((int*)P32(unsigned char *, plp->exp1))[0] &= ~0x14;
         } 
         else 
         {
-            ((int*)plp->exp1)[0] |= 0x14;
+            ((int*)P32(unsigned char *, plp->exp1))[0] |= 0x14;
         }
         
         bhScePtr += 2;
@@ -9354,56 +9354,56 @@ int Player_controll()
         
         bhScePtr++;
         
-        ((int*)bhCetask->work->exp1)[24] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[24] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
         
         v0 = *bhScePtr;
         
         bhScePtr++;
         
-        ((int*)bhCetask->work->exp1)[25] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[25] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
         
         v0 = *bhScePtr;
         
         bhScePtr++;
         
-        ((int*)bhCetask->work->exp1)[26] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[26] = (int)(v0 * (65536.0f / 360.0f)) >> 1;
         
         v0 = *bhScePtr;
         
         bhScePtr++;
         
-        ((char*)bhCetask->work->exp1)[120] = v0;
+        ((char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[120] = v0;
             
-        if (!(((unsigned char*)bhCetask->work->exp1)[120] & 0x1)) 
+        if (!(((unsigned char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[120] & 0x1)) 
         {
-            ((int*)bhCetask->work->exp1)[27] = 0;
-            ((int*)bhCetask->work->exp1)[28] = 0;
-            ((int*)bhCetask->work->exp1)[29] = 0;
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[27] = 0;
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[28] = 0;
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[29] = 0;
         }
             
-        if ((((unsigned char*)bhCetask->work->exp1)[120] & 0x40)) 
+        if ((((unsigned char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[120] & 0x40)) 
         {
-            ((int*)bhCetask->work->exp1)[21] = -(*a0++ >> 1) * (65536.0f / 360.0f);
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[21] = -(*a0++ >> 1) * (65536.0f / 360.0f);
         } 
         else
         {
-            ((int*)bhCetask->work->exp1)[21] = (*a0++ >> 1) * (65536.0f / 360.0f);
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[21] = (*a0++ >> 1) * (65536.0f / 360.0f);
         }
         
-        if ((((unsigned char*)bhCetask->work->exp1)[120] & 0x20))
+        if ((((unsigned char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[120] & 0x20))
         {
-            ((int*)bhCetask->work->exp1)[22] = -(*a0++ >> 1) * (65536.0f / 360.0f);
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[22] = -(*a0++ >> 1) * (65536.0f / 360.0f);
         } 
         else 
         {
-            ((int*)bhCetask->work->exp1)[22] = (*a0++ >> 1) * (65536.0f / 360.0f);
+            ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[22] = (*a0++ >> 1) * (65536.0f / 360.0f);
         }
         
-        ((int*)bhCetask->work->exp1)[23] = (*a0++ >> 1) * (65536.0f / 360.0f);
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[23] = (*a0++ >> 1) * (65536.0f / 360.0f);
         break;
     }
     case 130:
-        ((unsigned char*)bhCetask->work->exp1)[120] = 0;
+        ((unsigned char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[120] = 0;
         
         bhScePtr++;
         break;
@@ -9426,17 +9426,17 @@ int Player_controll()
         bhScePtr++;
         bhScePtr++;
         
-        ((int*)bhCetask->work->exp1)[0] |= 0x1C;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[0] |= 0x1C;
             
-        ((int*)bhCetask->work->exp1)[16] = v0;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[16] = v0;
         
-        ((short*)bhCetask->work->exp1)[34] = v1;
-        ((short*)bhCetask->work->exp1)[35] = v2;
+        ((short*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[34] = v1;
+        ((short*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[35] = v2;
         break;
     }
     case 142:
-        ((int*)bhCetask->work->exp1)[0] |= 0x1E0;
-        ((int*)bhCetask->work->exp1)[0] &= ~0x1C;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[0] |= 0x1E0;
+        ((int*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[0] &= ~0x1C;
         
         bhScePtr++;
         break;
@@ -9454,22 +9454,22 @@ int Player_controll()
         
         bhScePtr++;
         
-        if (bhCetask->work->mode2 == v0)
+        if (P32(struct BH_PWORK *, bhCetask->work)->mode2 == v0)
         {
-            bhCetask->work->mode3 = 1;
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = 1;
         }
         else 
         {
-            bhCetask->work->mode3 = 0;
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         }
         
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode1 = v1;
-        bhCetask->work->mode2 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = v1;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = v0;
         
-        if (bhCetask->work->mode2 == 1) 
+        if (P32(struct BH_PWORK *, bhCetask->work)->mode2 == 1) 
         {
-            bhCetask->work->mode3 = 0;
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         }
         
         break;
@@ -9485,27 +9485,27 @@ int Player_controll()
         bhScePtr++;
         bhScePtr++;
             
-        if (bhCetask->work->mode2 == v0) 
+        if (P32(struct BH_PWORK *, bhCetask->work)->mode2 == v0) 
         {
-            bhCetask->work->mode3 = 1;
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = 1;
         } 
         else 
         {
-            bhCetask->work->mode3 = 0;
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         }
 
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode2 = v0 + 4;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = v0 + 4;
         
         v0 = *(unsigned short*)bhScePtr;
         
         if (bhCetask->bpx == 0) 
         {
-            bhCetask->work->ct0 = v0 << 16;
+            P32(struct BH_PWORK *, bhCetask->work)->ct0 = v0 << 16;
         } 
         else 
         {
-            bhCetask->work->ct0 = (v0 * -1) << 16;
+            P32(struct BH_PWORK *, bhCetask->work)->ct0 = (v0 * -1) << 16;
         }
         
         bhScePtr += 2;
@@ -9514,11 +9514,11 @@ int Player_controll()
         
         if (bhCetask->bpz == 0) 
         {
-            bhCetask->work->ct0 |= v0;
+            P32(struct BH_PWORK *, bhCetask->work)->ct0 |= v0;
         } 
         else 
         {
-            bhCetask->work->ct0 |= v0 * -1;
+            P32(struct BH_PWORK *, bhCetask->work)->ct0 |= v0 * -1;
         }
         
         bhScePtr += 2;
@@ -9560,35 +9560,35 @@ int Player_controll()
     {
         unsigned int v0;
         
-        bhCetask->work->mnwP = (MN_WORK*)sys->plmthp;
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
         
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode2 = 5;
-        bhCetask->work->mode3 = 0;
-        
-        bhScePtr++;
-        
-        v0 = *bhScePtr;
-        
-        bhCetask->work->mode1 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 5;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct0 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = v0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct1 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->ct0 = v0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct2 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
+        
+        bhScePtr++;
+        
+        v0 = *bhScePtr;
+        
+        P32(struct BH_PWORK *, bhCetask->work)->ct2 = v0;
         
         bhScePtr++;
         break;
@@ -9597,16 +9597,16 @@ int Player_controll()
     {
         unsigned int v0;
         
-        bhCetask->work->mnwP = (MN_WORK*)sys->plmthp;
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
         
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode2 = 5;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 5;
     
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->mode3 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = v0;
         
         bhScePtr++;
         bhScePtr++;
@@ -9616,37 +9616,37 @@ int Player_controll()
     {
         unsigned int v0;
         
-        bhCetask->work->mtn_add = 32768;
+        P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 32768;
         
-        bhCetask->work->mnwP = sys->rmthp;
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
     
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode2 = 8;
-        bhCetask->work->mode3 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 8;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->mode1 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = v0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct0 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->ct0 = v0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct1 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        bhCetask->work->ct2 = v0;
+        P32(struct BH_PWORK *, bhCetask->work)->ct2 = v0;
         
         bhScePtr++;
         break;
@@ -9656,45 +9656,45 @@ int Player_controll()
         unsigned int v0; 
         POS *e_posp;
         
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode1 = 0;
-        bhCetask->work->mode2 = 1;
-        bhCetask->work->mode3 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 1;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         
         bhScePtr++;
         
         v0 = *bhScePtr;
         
-        e_posp = rom->posp;
+        e_posp = P32(struct POS *, rom->posp);
         e_posp += v0;
         
-        bhCetask->work->py = e_posp->py;
+        P32(struct BH_PWORK *, bhCetask->work)->py = e_posp->py;
         
-        bhSetFloorNum(bhCetask->work);
+        bhSetFloorNum(P32(struct BH_PWORK *, bhCetask->work));
         
-        bhCetask->work->px = e_posp->px;
-        bhCetask->work->py = e_posp->py;
-        bhCetask->work->pz = e_posp->pz;
+        P32(struct BH_PWORK *, bhCetask->work)->px = e_posp->px;
+        P32(struct BH_PWORK *, bhCetask->work)->py = e_posp->py;
+        P32(struct BH_PWORK *, bhCetask->work)->pz = e_posp->pz;
         
-        bhCetask->work->ay = e_posp->ay;
+        P32(struct BH_PWORK *, bhCetask->work)->ay = e_posp->ay;
         
         bhScePtr += 2;
         break;
     }
     case 128:
-        bhCetask->work->mtn_add = 65536;
+        P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 65536;
         
-        bhCetask->work->flg |= 0x10;
+        P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x10;
         
-        bhCetask->work->mnwP = (MN_WORK*)sys->plmthp;
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
         
-        bhCetask->work->mode0 = 1;
-        bhCetask->work->mode1 = 0;
-        bhCetask->work->mode2 = 0;
-        bhCetask->work->mode3 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 1;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         
-        bhCetask->work->stflg &= ~0x10000;
-        bhCetask->work->flg &= ~0x210000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x210000;
     case 139:
         bhCetask->mode1 = 0;
         
@@ -9707,42 +9707,42 @@ int Player_controll()
         
         if (bhCetask->bpx == 0) 
         {
-            bhCetask->work->px = *(unsigned short*)bhScePtr / 100.0f;
+            P32(struct BH_PWORK *, bhCetask->work)->px = *(unsigned short*)bhScePtr / 100.0f;
         } 
         else 
         {
-            bhCetask->work->px = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+            P32(struct BH_PWORK *, bhCetask->work)->px = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
         }
         
-        ((float*)plp->exp0)[18] = bhCetask->work->pxb = bhCetask->work->px;
+        ((float*)P32(unsigned char *, plp->exp0))[18] = P32(struct BH_PWORK *, bhCetask->work)->pxb = P32(struct BH_PWORK *, bhCetask->work)->px;
         
         bhScePtr += 2;
         
         if (bhCetask->bpy == 0) 
         {
-            bhCetask->work->py = *(unsigned short*)bhScePtr / 100.0f;
+            P32(struct BH_PWORK *, bhCetask->work)->py = *(unsigned short*)bhScePtr / 100.0f;
         } 
         else 
         {
-            bhCetask->work->py = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+            P32(struct BH_PWORK *, bhCetask->work)->py = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
         }
         
-        bhCetask->work->pyb = bhCetask->work->py;
+        P32(struct BH_PWORK *, bhCetask->work)->pyb = P32(struct BH_PWORK *, bhCetask->work)->py;
         
-        bhCetask->work->flr_no = bhCheckFloorNum(bhCetask->work->py);
+        P32(struct BH_PWORK *, bhCetask->work)->flr_no = bhCheckFloorNum(P32(struct BH_PWORK *, bhCetask->work)->py);
         
         bhScePtr += 2;
         
         if (bhCetask->bpz == 0)
         {
-            bhCetask->work->pz = *(unsigned short*)bhScePtr / 100.0f;
+            P32(struct BH_PWORK *, bhCetask->work)->pz = *(unsigned short*)bhScePtr / 100.0f;
         } 
         else 
         {
-            bhCetask->work->pz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
+            P32(struct BH_PWORK *, bhCetask->work)->pz = -1.0f * (*(unsigned short*)bhScePtr / 100.0f);
         }
         
-        ((float*)plp->exp0)[20] = bhCetask->work->pzb = bhCetask->work->pz;
+        ((float*)P32(unsigned char *, plp->exp0))[20] = P32(struct BH_PWORK *, bhCetask->work)->pzb = P32(struct BH_PWORK *, bhCetask->work)->pz;
         
         bhScePtr += 2;
         break;
@@ -9783,8 +9783,8 @@ int Obj_controll()
         
         bhScePtr += 2;
 
-        bhCetask->work->px += bhEtask[v0].work->mlwP->objP->pos[0];
-        bhCetask->work->pz += bhEtask[v0].work->mlwP->objP->pos[2];
+        P32(struct BH_PWORK *, bhCetask->work)->px += P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[0];
+        P32(struct BH_PWORK *, bhCetask->work)->pz += P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhEtask[v0].work)->mlwP)->objP)->pos[2];
         break;
     case 1:
         bhCetask->mode1 = 0;
@@ -9812,17 +9812,17 @@ int Sub_controll()
 	switch (*bhScePtr)
     {
     case 128:
-        if (bhCetask->work != NULL) 
+        if (P32(struct BH_PWORK *, bhCetask->work) != NULL) 
         {
-            bhCetask->work->mnwP = sys->emtp[bhCetask->work->id];
+            P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
             
-            bhCetask->work->mode0 = 1;
-            bhCetask->work->mode2 = 0;
+            P32(struct BH_PWORK *, bhCetask->work)->mode0 = 1;
+            P32(struct BH_PWORK *, bhCetask->work)->mode2 = 0;
             
-            *(char*)&bhCetask->work->ct2 = 0;
+            *(char*)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0;
             
-            bhCetask->work->stflg &= ~0x10000;
-            bhCetask->work->flg &= ~0x200000;
+            P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x10000;
+            P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x200000;
         } 
         else 
         {
@@ -9838,14 +9838,14 @@ int Sub_controll()
         bhCetask->mode0 = 0;
         break;
     case 144:
-        bhCetask->work->mode0 = 1;
-        bhCetask->work->mode2 = 0;
-        bhCetask->work->mode3 = 3;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 1;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 3;
         
-        *(char*)&bhCetask->work->ct2 = 0; 
+        *(char*)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0; 
         
-        bhCetask->work->stflg &= ~0x10000;
-        bhCetask->work->flg &= ~0x200000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x200000;
         
         bhCetask->mode1 = 0;
         
@@ -9854,110 +9854,110 @@ int Sub_controll()
         bhCetask->mode0 = 0;
         break;
     case 143:
-        bhCetask->work->mnwP = sys->emtp[bhCetask->work->id];
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
         
         bhScePtr++;
         
-        bhCetask->work->mode0 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode1 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode2 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode3 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = 0;
         
-        *(unsigned char*)&bhCetask->work->type = *bhScePtr; 
+        *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->type = *bhScePtr; 
         
         bhScePtr++;
         
-        *(char*)&bhCetask->work->ct2 = 0; 
+        *(char*)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0; 
         
-        bhCetask->work->stflg &= ~0x10000;
-        bhCetask->work->flg &= ~0x200000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x200000;
         
         bhCetask->mode1 = 0;
         bhCetask->mode0 = 0;
         
-        if (bhCetask->work->id == 1)
+        if (P32(struct BH_PWORK *, bhCetask->work)->id == 1)
         {
-            ((char*)bhCetask->work->exp1)[12] = 1;
-            ((void**)bhCetask->work->exp1)[215] = sys->emtp[bhCetask->work->id];
+            ((char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[12] = 1;
+            ((void**)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]);
         }
         
-        bhCetask->work->mtn_md = bhCetask->mtn_md;
-        bhCetask->work->mdflg = bhCetask->mdflg;
+        P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;
+        P32(struct BH_PWORK *, bhCetask->work)->mdflg = bhCetask->mdflg;
         
-        bhCetask->work->hokan_rate = bhCetask->hokan_rate;
+        P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = bhCetask->hokan_rate;
         break;
     case 146:
-        bhCetask->work->mnwP = sys->emtp[bhCetask->work->id];
+        P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
         
         bhScePtr++;
         
-        bhCetask->work->mode0 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode1 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode2 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = *bhScePtr;
         
         bhScePtr++;
         
-        *(unsigned char*)&bhCetask->work->type = *bhScePtr; 
+        *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->type = *bhScePtr; 
         
         bhScePtr++;
         
-        bhCetask->work->mode3 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = *bhScePtr;
         
         bhScePtr += 2;
         
-        *(char*)&bhCetask->work->ct2 = 0; 
+        *(char*)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0; 
         
-        bhCetask->work->stflg &= ~0x10000;
-        bhCetask->work->flg &= ~0x200000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x200000;
         
         bhCetask->mode1 = 0;
         bhCetask->mode0 = 0;
         
-        if (bhCetask->work->id == 1) 
+        if (P32(struct BH_PWORK *, bhCetask->work)->id == 1) 
         {
-            ((char*)bhCetask->work->exp1)[12] = 1;
-            ((void**)bhCetask->work->exp1)[215] = sys->emtp[bhCetask->work->id];
+            ((char*)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[12] = 1;
+            ((void**)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))[215] = P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]);
         }
         
-        bhCetask->work->mtn_md = bhCetask->mtn_md;
+        P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;
         
-		bhCetask->work->hokan_rate = bhCetask->hokan_rate;
+		P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = bhCetask->hokan_rate;
         break;
     case 147:
         bhScePtr++;
         
-        bhCetask->work->mode0 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode1 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode2 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = *bhScePtr;
         
         bhScePtr++;
         
-        bhCetask->work->mode3 = *bhScePtr;
+        P32(struct BH_PWORK *, bhCetask->work)->mode3 = *bhScePtr;
         
         bhScePtr++;
         
-        *(unsigned char*)&bhCetask->work->type = *bhScePtr; 
+        *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->type = *bhScePtr; 
         
         bhScePtr += 2;
         break;
@@ -9971,7 +9971,7 @@ int Sub_controll()
     
         bhScePtr += 2;
         
-        bhEne11_LightControl(bhCetask->work, v0);
+        bhEne11_LightControl(P32(struct BH_PWORK *, bhCetask->work), v0);
         break;
     }
     case 149:
@@ -9986,11 +9986,11 @@ int Sub_controll()
         
         if (v0 == 0) 
         {
-            bhCetask->work->flg &= ~0x10000;
+            P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x10000;
         } 
         else
         {
-            bhCetask->work->flg |= 0x10000;
+            P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x10000;
         }
         
         break;
@@ -10023,25 +10023,25 @@ int Common_controll()
             bhScePtr++;
             v0 = bhScePtr[0];
             bhScePtr += 2;
-            bhCetask->work->mtn_md |= 0x20;
-            if (bhCetask->work->id == 0x1) 
+            P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x20;
+            if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
             {
-                ((BH_PWORK *)bhCetask->work->exp1)->mtn_md |= 0x20;
+                ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md |= 0x20;
             }
             if (v0 == 0) 
             {
-                bhCetask->work->mtn_md |= 0x8;
-                if (bhCetask->work->id == 0x1) 
+                P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
+                if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                 {
-                    ((BH_PWORK *)bhCetask->work->exp1)->mtn_md |= 0x8;
+                    ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md |= 0x8;
                 }
             } 
             else 
             {
-                bhCetask->work->mtn_md &= ~8;
-                if (bhCetask->work->id == 0x1) 
+                P32(struct BH_PWORK *, bhCetask->work)->mtn_md &= ~8;
+                if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                 {
-                    ((BH_PWORK *)bhCetask->work->exp1)->mtn_md &= ~8;
+                    ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md &= ~8;
                 }
             }
         }
@@ -10060,23 +10060,23 @@ int Common_controll()
             v1 = *bhScePtr++;
             v2 = *bhScePtr;
             bhScePtr += 2;
-            temp = &rom->enep[v0];
+            temp = &P32(struct ETTY_WORK *, rom->enep)[v0];
             
             epw = &ene[temp->wrk_no];
-            e_posp = rom->posp;
+            e_posp = P32(struct POS *, rom->posp);
             e_posp += sys->evt_posno[v2];
-            bhCetask->ips[0x0][0x0] = epw->mlwP->owP[v1].mtx[0xc];
-            bhCetask->ips[0x0][0x1] = epw->mlwP->owP[v1].mtx[0xd];
-            bhCetask->ips[0x0][0x2] = epw->mlwP->owP[v1].mtx[0xe];
-            bhCetask->ips[0x1][0x0] = epw->mlwP->owP[v1].mtx[0xc];
-            bhCetask->ips[0x1][0x1] = epw->mlwP->owP[v1].mtx[0xd];
-            bhCetask->ips[0x1][0x2] = epw->mlwP->owP[v1].mtx[0xe];
-            bhCetask->ips[0x2][0x0] = e_posp->px - (e_posp->px - epw->mlwP->owP[v1].mtx[0xc]) / 2.0f;
+            bhCetask->ips[0x0][0x0] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xc];
+            bhCetask->ips[0x0][0x1] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xd];
+            bhCetask->ips[0x0][0x2] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xe];
+            bhCetask->ips[0x1][0x0] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xc];
+            bhCetask->ips[0x1][0x1] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xd];
+            bhCetask->ips[0x1][0x2] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xe];
+            bhCetask->ips[0x2][0x0] = e_posp->px - (e_posp->px - P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xc]) / 2.0f;
             bhCetask->ips[0x2][0x1] = e_posp->py;
-            bhCetask->ips[0x2][0x2] = e_posp->pz - (e_posp->pz - epw->mlwP->owP[v1].mtx[0xe]) / 2.0f;
-            bhCetask->ips[0x3][0x0] = epw->mlwP->owP[v1].mtx[0xc];
-            bhCetask->ips[0x3][0x1] = epw->mlwP->owP[v1].mtx[0xd] * -1.0f;
-            bhCetask->ips[0x3][0x2] = epw->mlwP->owP[v1].mtx[0xe];
+            bhCetask->ips[0x2][0x2] = e_posp->pz - (e_posp->pz - P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xe]) / 2.0f;
+            bhCetask->ips[0x3][0x0] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xc];
+            bhCetask->ips[0x3][0x1] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xd] * -1.0f;
+            bhCetask->ips[0x3][0x2] = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[v1].mtx[0xe];
         }
         break;
         case 52:
@@ -10087,11 +10087,11 @@ int Common_controll()
             bhScePtr++;
             v0 = *bhScePtr;
             bhScePtr += 2;
-            e_posp = rom->posp;
+            e_posp = P32(struct POS *, rom->posp);
             e_posp += sys->evt_posno[v0];
-            bhCetask->ips[0x0][0x0] = bhCetask->work->px;
-            bhCetask->ips[0x0][0x1] = bhCetask->work->py;
-            bhCetask->ips[0x0][0x2] = bhCetask->work->pz;
+            bhCetask->ips[0x0][0x0] = P32(struct BH_PWORK *, bhCetask->work)->px;
+            bhCetask->ips[0x0][0x1] = P32(struct BH_PWORK *, bhCetask->work)->py;
+            bhCetask->ips[0x0][0x2] = P32(struct BH_PWORK *, bhCetask->work)->pz;
             bhCetask->ips[0x1][0x0] = e_posp->px;
             bhCetask->ips[0x1][0x1] = e_posp->py;
             bhCetask->ips[0x1][0x2] = e_posp->pz;
@@ -10099,12 +10099,12 @@ int Common_controll()
         break;
         case 50:
             bhScePtr++;
-            *(unsigned char *)&bhCetask->work->type = *bhScePtr;
+            *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->type = *bhScePtr;
             bhScePtr += 2;
         break;
         case 47:
             bhScePtr++;
-            bhCalcModel(bhCetask->work);
+            bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
         break;
         case 43:
         {
@@ -10158,22 +10158,22 @@ int Common_controll()
             {
                 if ((v1 & 0x1) != 0x0) 
                 {
-                    bhCetask->work->px = ans[0x0];
+                    P32(struct BH_PWORK *, bhCetask->work)->px = ans[0x0];
                 }
                 if ((v1 & 0x2) != 0x0) 
                 {
-                    bhCetask->work->py = ans[0x1];
+                    P32(struct BH_PWORK *, bhCetask->work)->py = ans[0x1];
                 }
                 if ((v1 & 0x4) != 0x0) 
                 {
-                    bhCetask->work->pz = ans[0x2];
+                    P32(struct BH_PWORK *, bhCetask->work)->pz = ans[0x2];
                 }
             }
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 if ((v1 & 0x1) != 0x0) 
                 {
@@ -10201,22 +10201,22 @@ int Common_controll()
             {
                 if ((v2 & 0x1) != 0x0) 
                 {
-                    bhCetask->work->ax = ans[0x0] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0x0] * 182.04445f;
                 }
                 if ((v2 & 0x2) != 0x0) 
                 {
-                    bhCetask->work->ay = ans[0x1] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->ay = ans[0x1] * 182.04445f;
                 }
                 if ((v2 & 0x4) != 0x0) 
                 {
-                    bhCetask->work->az = ans[0x2] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->az = ans[0x2] * 182.04445f;
                 }
             }
             else
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 if ((v2 & 0x1) != 0x0) 
                 {
@@ -10271,22 +10271,22 @@ int Common_controll()
             {
                 if ((v1 & 0x1) != 0x0) 
                 {
-                    bhCetask->work->px = ans[0];
+                    P32(struct BH_PWORK *, bhCetask->work)->px = ans[0];
                 }
                 if ((v1 & 0x2) != 0x0)
                 {
-                    bhCetask->work->py = ans[1];
+                    P32(struct BH_PWORK *, bhCetask->work)->py = ans[1];
                 }
                 if ((v1 & 0x4) != 0x0) 
                 {
-                    bhCetask->work->pz = ans[2];
+                    P32(struct BH_PWORK *, bhCetask->work)->pz = ans[2];
                 }
             } 
             else
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 if ((v1 & 0x1) != 0x0) 
                 {
@@ -10341,22 +10341,22 @@ int Common_controll()
             {
                 if ((v1 & 0x1) != 0x0) 
                 {
-                    bhCetask->work->ax = ans[0] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0] * 182.04445f;
                 }
                 if ((v1 & 0x2) != 0x0) 
                 {
-                    bhCetask->work->ay = ans[1] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->ay = ans[1] * 182.04445f;
                 }
                 if ((v1 & 0x4) != 0x0) 
                 {
-                    bhCetask->work->az = ans[2] * 182.04445f;
+                    P32(struct BH_PWORK *, bhCetask->work)->az = ans[2] * 182.04445f;
                 }
             } 
             else
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 if ((v1 & 0x1) != 0x0) 
                 {
@@ -10379,7 +10379,7 @@ int Common_controll()
             int v1; 
             O_WORK* owk; 
             
-            owk = bhCetask->work->mdl->owP;
+            owk = P32(struct O_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mdl->owP);
             bhScePtr++;
             v0 = *bhScePtr++;
             v1 = *bhScePtr++;
@@ -10399,11 +10399,11 @@ int Common_controll()
             bhScePtr++;
             if (*(unsigned short *)bhScePtr == 0x0) 
             {
-                bhCetask->work->flg &= ~0x40000;
+                P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x40000;
             }
             else 
             {
-                bhCetask->work->flg |= 0x40000;
+                P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x40000;
             }
             bhScePtr += 2;
         break;
@@ -10411,11 +10411,11 @@ int Common_controll()
             bhScePtr++;
             if (*(unsigned short *)bhScePtr == 0x0) 
             {
-                bhCetask->work->flg &= ~0x20;
+                P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x20;
             }
             else 
             {
-                bhCetask->work->flg |= 0x20;
+                P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x20;
             }
             bhScePtr += 2;
         break;
@@ -10425,10 +10425,10 @@ int Common_controll()
             
             bhScePtr++;
             v0 = *(unsigned short *)bhScePtr;
-            bhCetask->work->frm_no = v0 << 0x10;
-            if (bhCetask->work->id == 0x1) 
+            P32(struct BH_PWORK *, bhCetask->work)->frm_no = v0 << 0x10;
+            if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
             {
-                ((BH_PWORK *)bhCetask->work->exp1)->frm_no = v0 << 0x10;
+                ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_no = v0 << 0x10;
             }
             bhScePtr += 2;
         }
@@ -10479,15 +10479,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->px = ans[0];
-                bhCetask->work->py = ans[1];
-                bhCetask->work->pz = ans[2];
+                P32(struct BH_PWORK *, bhCetask->work)->px = ans[0];
+                P32(struct BH_PWORK *, bhCetask->work)->py = ans[1];
+                P32(struct BH_PWORK *, bhCetask->work)->pz = ans[2];
             }
             else
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->pos[0] = ans[0];
                 objP->pos[1] = ans[1];
@@ -10505,15 +10505,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->ax = ans[0] * 182.04445f;
-                bhCetask->work->ay = ans[1] * 182.04445f;
-                bhCetask->work->az = ans[2] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ay = ans[1] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->az = ans[2] * 182.04445f;
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->ang[0] = ans[0] * 182.04445f;
                 objP->ang[1] = ans[1] * 182.04445f;
@@ -10554,15 +10554,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->px = ans[0];
-                bhCetask->work->py = ans[1];
-                bhCetask->work->pz = ans[2];
+                P32(struct BH_PWORK *, bhCetask->work)->px = ans[0];
+                P32(struct BH_PWORK *, bhCetask->work)->py = ans[1];
+                P32(struct BH_PWORK *, bhCetask->work)->pz = ans[2];
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->pos[0] = ans[0];
                 objP->pos[1] = ans[1];
@@ -10604,15 +10604,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->ax = ans[0] * 182.04445f;
-                bhCetask->work->ay = ans[1] * 182.04445f;
-                bhCetask->work->az = ans[2] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ay = ans[1] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->az = ans[2] * 182.04445f;
             } 
             else
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->ang[0] = ans[0] * 182.04445f;
                 objP->ang[1] = ans[1] * 182.04445f;
@@ -10658,15 +10658,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0)
             {
-                bhCetask->work->px = ans[0];
-                bhCetask->work->py = ans[1];
-                bhCetask->work->pz = ans[2];
+                P32(struct BH_PWORK *, bhCetask->work)->px = ans[0];
+                P32(struct BH_PWORK *, bhCetask->work)->py = ans[1];
+                P32(struct BH_PWORK *, bhCetask->work)->pz = ans[2];
             }
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->pos[0] = ans[0];
                 objP->pos[1] = ans[1];
@@ -10677,15 +10677,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->ax = ans[0] * 182.04445f;
-                bhCetask->work->ay = ans[1] * 182.04445f;
-                bhCetask->work->az = ans[2] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ay = ans[1] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->az = ans[2] * 182.04445f;
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->ang[0] = ans[0] * 182.04445f;
                 objP->ang[1] = ans[1] * 182.04445f;
@@ -10717,15 +10717,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->work->px = ans[0];
-                bhCetask->work->py = ans[1];
-                bhCetask->work->pz = ans[2];
+                P32(struct BH_PWORK *, bhCetask->work)->px = ans[0];
+                P32(struct BH_PWORK *, bhCetask->work)->py = ans[1];
+                P32(struct BH_PWORK *, bhCetask->work)->pz = ans[2];
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP;
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->pos[0] = ans[0];
                 objP->pos[1] = ans[1];
@@ -10757,15 +10757,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             { 
-                bhCetask->work->ax = ans[0] * 182.04445f;
-                bhCetask->work->ay = ans[1] * 182.04445f;
-                bhCetask->work->az = ans[2] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ax = ans[0] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->ay = ans[1] * 182.04445f;
+                P32(struct BH_PWORK *, bhCetask->work)->az = ans[2] * 182.04445f;
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 objP->ang[0] = ans[0] * 182.04445f;
                 objP->ang[1] = ans[1] * 182.04445f;
@@ -10858,15 +10858,15 @@ int Common_controll()
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->ips[v0][0x0] = bhCetask->work->px;
-                bhCetask->ips[v0][0x1] = bhCetask->work->py;
-                bhCetask->ips[v0][0x2] = bhCetask->work->pz;
+                bhCetask->ips[v0][0x0] = P32(struct BH_PWORK *, bhCetask->work)->px;
+                bhCetask->ips[v0][0x1] = P32(struct BH_PWORK *, bhCetask->work)->py;
+                bhCetask->ips[v0][0x2] = P32(struct BH_PWORK *, bhCetask->work)->pz;
             } 
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 bhCetask->ips[v0][0x0] = objP->pos[0];
                 bhCetask->ips[v0][0x1] = objP->pos[1];
@@ -10882,21 +10882,21 @@ int Common_controll()
             bhScePtr++;
             v0 = *bhScePtr++;
             v1 = *bhScePtr++;
-            bhCetask->ian[v0][0x0] = *(short *)&bhCetask->work->ax * 0.005493164f;
-            bhCetask->ian[v0][0x1] = *(short *)&bhCetask->work->ay * 0.005493164f;
-            bhCetask->ian[v0][0x2] = *(short *)&bhCetask->work->az * 0.005493164f;
+            bhCetask->ian[v0][0x0] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->ax * 0.005493164f;
+            bhCetask->ian[v0][0x1] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->ay * 0.005493164f;
+            bhCetask->ian[v0][0x2] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->az * 0.005493164f;
             
             if (bhCetask->model_cno == 0x0) 
             {
-                bhCetask->ian[v0][0x0] = *(short *)&bhCetask->work->ax * 0.005493164f;
-                bhCetask->ian[v0][0x1] = *(short *)&bhCetask->work->ay * 0.005493164f;
-                bhCetask->ian[v0][0x2] = *(short *)&bhCetask->work->az * 0.005493164f;
+                bhCetask->ian[v0][0x0] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->ax * 0.005493164f;
+                bhCetask->ian[v0][0x1] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->ay * 0.005493164f;
+                bhCetask->ian[v0][0x2] = *(short *)&P32(struct BH_PWORK *, bhCetask->work)->az * 0.005493164f;
             }
             else 
             {
                 NJS_CNK_OBJECT* objP; 
                 
-                objP = bhCetask->work->mdl->objP;
+                objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
                 objP += bhCetask->model_cno;
                 bhCetask->ian[v0][0x0] = *(short *)&objP->ang[0] * 0.005493164f;
                 bhCetask->ian[v0][0x1] = *(short *)&objP->ang[1] * 0.005493164f;
@@ -10939,71 +10939,71 @@ int Common_controll()
             {
                 case 1:
                 case 2:
-                    bhCetask->work->mtn_add = 0x10000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x10000;
                     break;
                 case 0:
                 case 3:
                 case 8:
-                    bhCetask->work->mtn_add = 0x8000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x8000;
                     break;
                 case 4:
-                    bhCetask->work->mtn_add = 0x5555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x5555;
                     break;
                 case 5:
                 case 9:
-                    bhCetask->work->mtn_add = 0x4000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x4000;
                     break;
                 case 6:
-                    bhCetask->work->mtn_add = 0x3333;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x3333;
                     break;
                 case 7:
                 case 10:
-                    bhCetask->work->mtn_add = 0x2aaa;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2aaa;
                     break;
                 case 11:
-                    bhCetask->work->mtn_add = 0x2000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
                     break;
                 case 12:
-                    bhCetask->work->mtn_add = 0x1999;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
                     break;
                 case 13:
-                    bhCetask->work->mtn_add = 0x1555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
                     break;
                 case 14:
-                    bhCetask->work->mtn_add = 0x2492;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2492;
                     break;
                 case 15:
-                    bhCetask->work->mtn_add = 0x2000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
                     break;
                 case 16:
-                    bhCetask->work->mtn_add = 0x1c71;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1c71;
                     break;
                 case 17:
-                    bhCetask->work->mtn_add = 0x1999;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
                     break;
                 case 18:
-                    bhCetask->work->mtn_add = 0x1745;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1745;
                     break;
                 case 19:
-                    bhCetask->work->mtn_add = 0x1555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
                     break;
                 case 20:
-                    bhCetask->work->mtn_add = 0x1249;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1249;
                     break;
                 case 21:
-                    bhCetask->work->mtn_add = 0x1000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1000;
                     break;
                 case 22:
-                    bhCetask->work->mtn_add = 0xe38;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xe38;
                     break;
                 case 23:
-                    bhCetask->work->mtn_add = 0xccc;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xccc;
                     break;
                 case 24:
-                    bhCetask->work->mtn_add = 0xba2;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xba2;
                     break;
                 case 25:
-                    bhCetask->work->mtn_add = 0xaaa;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xaaa;
                     break;
             }
             
@@ -11011,140 +11011,140 @@ int Common_controll()
             switch (*bhScePtr) 
             {
                 case 0:
-                    bhCetask->work->mnwP = (MN_WORK*)sys->plmthp;
-                    bhCetask->work->mode0 = '\a';
-                    bhCetask->work->mode2 = '\b';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\a';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\b';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
-                    bhCetask->work->mode1 = *bhScePtr++;
-                    bhCetask->work->ct0 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct0 = *bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = v0;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
                     bhScePtr++;
                     
                     t1 = *bhScePtr;
-                    bhCetask->work->ct2 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     
                     if (t1 == 0x6) 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     } 
                     else 
                     {
-                        bhCetask->work->hokan_count = 0x8;
-                        bhCetask->work->mtn_md &= ~8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md &= ~8;
                     }
                     bhScePtr++;
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                 break;
                 case 1:
-                    bhCetask->work->mnwP = sys->emtp[bhCetask->work->id];
-                    bhCetask->work->mode0 = '\x01';
-                    bhCetask->work->mode2 = '\0';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    *(unsigned char*)&bhCetask->work->mtn_no = t1;
-                    bhCetask->work->mode1 = t1;
+                    *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = t1;
                     
-                    bhCetask->work->mtn_md = bhCetask->mtn_md;
-                    bhCetask->work->hokan_rate = bhCetask->hokan_rate;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = bhCetask->hokan_rate;
                     
-                    if (bhCetask->work->id == 0x1) 
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mode0 = 6;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x20;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_no = t1 + 0xc8;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x8;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_add = bhCetask->work->mtn_add;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_rate = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_no = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_mode = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mnwP = sys->emtp[bhCetask->work->id];
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode0 = 6;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x20;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_no = t1 + 0xc8;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x8;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_add = P32(struct BH_PWORK *, bhCetask->work)->mtn_add;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_rate = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_no = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_mode = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
                     }
                     
                     bhScePtr++;
                     if (*bhScePtr == '\0') 
                     {
-                        bhCetask->work->mode0 = '\x01';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
                     } 
                     else 
                     {
-                        bhCetask->work->mode0 = '\x05';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
                     }
                     
                     bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = v0;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
                     
                     bhScePtr++;
                     t1 = *bhScePtr;
                     if (t1 > 8) 
                     {
-                        bhCetask->work->ct2 = 0xa;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0xa;
                     } 
                     else 
                     {
-                        bhCetask->work->ct2 = t1;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     }
                     
                     bhScePtr++;
                     if (t1 == 0x6) 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |= 8;
-                        if (bhCetask->work->id == 0x1)
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 8;
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x0;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x0;
                         }
                     } 
                     else if (t1 > 0x8) 
                     {
-                        bhCetask->work->hokan_count = t1;
-                        if (bhCetask->work->id == 0x1) 
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = t1;
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = t1;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = t1;
                         }
                     } 
                     else 
                     {
-                        bhCetask->work->hokan_count = 0x8;
-                        bhCetask->work->mtn_md &= ~8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md &= ~8;
                     }
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                 break;
             }
                 
             switch(v0) 
             {
                 case 0x0:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x2:
-                    bhSetMotion(bhCetask->work,0,0,0);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
                     break;
                 case 0x3:
-                    bhCalcModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x4:
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x5:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x6:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x7:
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
             }
         }
@@ -11159,71 +11159,71 @@ int Common_controll()
             {
                 case 1:
                 case 2:
-                    bhCetask->work->mtn_add = 0x10000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x10000;
                     break;
                 case 0:
                 case 3:
                 case 8:
-                    bhCetask->work->mtn_add = 0x8000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x8000;
                     break;
                 case 4:
-                    bhCetask->work->mtn_add = 0x5555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x5555;
                     break;
                 case 5:
                 case 9:
-                    bhCetask->work->mtn_add = 0x4000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x4000;
                     break;
                 case 6:
-                    bhCetask->work->mtn_add = 0x3333;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x3333;
                     break;
                 case 7:
                 case 10:
-                    bhCetask->work->mtn_add = 0x2aaa;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2aaa;
                     break;
                 case 11:
-                    bhCetask->work->mtn_add = 0x2000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
                     break;
                 case 12:
-                    bhCetask->work->mtn_add = 0x1999;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
                     break;
                 case 13:
-                    bhCetask->work->mtn_add = 0x1555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
                     break;
                 case 14:
-                    bhCetask->work->mtn_add = 0x2492;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2492;
                     break;
                 case 15:
-                    bhCetask->work->mtn_add = 0x2000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
                     break;
                 case 16:
-                    bhCetask->work->mtn_add = 0x1c71;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1c71;
                     break;
                 case 17:
-                    bhCetask->work->mtn_add = 0x1999;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
                     break;
                 case 18:
-                    bhCetask->work->mtn_add = 0x1745;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1745;
                     break;
                 case 19:
-                    bhCetask->work->mtn_add = 0x1555;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
                     break;
                 case 20:
-                    bhCetask->work->mtn_add = 0x1249;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1249;
                     break;
                 case 21:
-                    bhCetask->work->mtn_add = 0x1000;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1000;
                     break;
                 case 22:
-                    bhCetask->work->mtn_add = 0xe38;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xe38;
                     break;
                 case 23:
-                    bhCetask->work->mtn_add = 0xccc;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xccc;
                     break;
                 case 24:
-                    bhCetask->work->mtn_add = 0xba2;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xba2;
                     break;
                 case 25:
-                    bhCetask->work->mtn_add = 0xaaa;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xaaa;
                     break;
             }
             
@@ -11231,88 +11231,88 @@ int Common_controll()
             switch (*bhScePtr) 
             {
                 case 0:
-                    bhCetask->work->mnwP = (MN_WORK*)sys->plmthp;
-                    bhCetask->work->mode0 = '\a';
-                    bhCetask->work->mode2 = '\b';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\a';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\b';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
-                    bhCetask->work->mode1 = *bhScePtr;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr;
                     
                     bhScePtr++;
-                    bhCetask->work->ct0 = *bhScePtr;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct0 = *bhScePtr;
                     
                     bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = v0;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
                     bhScePtr++;
 
                     t1 = *bhScePtr;
-                    bhCetask->work->ct2 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     
                     if (t1 == 0x6) 
                     {
-                        bhCetask->work->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
                     } 
                     else 
                     {
-                        bhCetask->work->hokan_count = 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
                     }
                     bhScePtr++;
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                 break;
                 case 1:
-                    bhCetask->work->mnwP = sys->emtp[bhCetask->work->id];
-                    bhCetask->work->mode0 = '\x01';
-                    bhCetask->work->mode2 = '\0';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    *(unsigned char*)&bhCetask->work->mtn_no = t1;
-                    bhCetask->work->mode1 = t1;
+                    *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = t1;
                     
-                    bhCetask->work->mtn_md = bhCetask->mtn_md;
-                    bhCetask->work->hokan_rate = bhCetask->hokan_rate;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = bhCetask->mtn_md;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = bhCetask->hokan_rate;
                     
-                    if (bhCetask->work->id == 0x1) 
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mode0 = 6;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x20;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_no = t1 + 1;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x8;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_add = bhCetask->work->mtn_add;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_rate = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_no = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_mode = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mnwP = sys->emtp[bhCetask->work->id];
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode0 = 6;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x20;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_no = t1 + 1;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x8;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_add = P32(struct BH_PWORK *, bhCetask->work)->mtn_add;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_rate = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_no = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_mode = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mnwP = S32(P32(MN_WORK *, sys->emtp[P32(struct BH_PWORK *, bhCetask->work)->id]));
                     }
                     
                     bhScePtr++;
                     if (*bhScePtr == '\0') 
                     {
-                        bhCetask->work->mode0 = '\x01';
-                        *(unsigned char *)&bhCetask->work->ct2 = 0x1;
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                        *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0x1;
                     } 
                     else
                     {
-                        bhCetask->work->mode0 = '\x05';
-                        *(unsigned char *)&bhCetask->work->ct2 = 0x3;
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
+                        *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0x3;
                     }
 
                     t1 = *bhScePtr;
                     if (bhCetask->bpx == '\0') 
                     {
-                        bhCetask->work->ct0 = t1 << 0x10;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct0 = t1 << 0x10;
                     }
                     else
                     {
-                        bhCetask->work->ct0 = (t1 * -1) << 0x10;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct0 = (t1 * -1) << 0x10;
                     }
                     
                     bhScePtr++;
                     v0 = *bhScePtr++;
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                     bhScePtr += 2;
                 break;
             }
@@ -11320,30 +11320,30 @@ int Common_controll()
             switch(v0) 
             {
                 case 0x0:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x2:
-                    bhSetMotion(bhCetask->work,0,0,0);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
                     break;
                 case 0x3:
-                    bhCalcModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x4:
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x5:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x6:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x7:
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
             }
         }
@@ -11354,7 +11354,7 @@ int Common_controll()
             unsigned int t0; 
             unsigned int t1; 
             
-            bhCetask->work->mnwP = sys->rmthp;
+            P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
             bhScePtr++;
             t0 = false;
             switch(*bhScePtr) 
@@ -11362,154 +11362,154 @@ int Common_controll()
                 case 1:
                 case 2:
                     t0 = true;
-                    bhCetask->work->mtn_add = 0x10000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x10000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x20;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x20;
                     }
                     break;
                 case 0:
                 case 3:
                 case 8:
-                    bhCetask->work->mtn_add = 0x8000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x8000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 4:
-                    bhCetask->work->mtn_add = 0x5555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x5555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 5:
                 case 9:
-                    bhCetask->work->mtn_add = 0x4000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x4000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 6:
-                    bhCetask->work->mtn_add = 0x3333;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x3333;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 7:
                 case 10:
-                    bhCetask->work->mtn_add = 0x2aaa;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2aaa;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 11:
-                    bhCetask->work->mtn_add = 0x2000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 12:
-                    bhCetask->work->mtn_add = 0x1999;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 13:
-                    bhCetask->work->mtn_add = 0x1555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 14:
-                    bhCetask->work->mtn_add = 0x2492;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2492;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 15:
-                    bhCetask->work->mtn_add = 0x2000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 16:
-                    bhCetask->work->mtn_add = 0x1c71;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1c71;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 17:
-                    bhCetask->work->mtn_add = 0x1999;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 18:
-                    bhCetask->work->mtn_add = 0x1745;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1745;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 19:
-                    bhCetask->work->mtn_add = 0x1555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 20:
-                    bhCetask->work->mtn_add = 0x1249;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1249;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 21:
-                    bhCetask->work->mtn_add = 0x1000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 22:
-                    bhCetask->work->mtn_add = 0xe38;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xe38;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 23:
-                    bhCetask->work->mtn_add = 0xccc;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xccc;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 24:
-                    bhCetask->work->mtn_add = 0xba2;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xba2;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 25:
-                    bhCetask->work->mtn_add = 0xaaa;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xaaa;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
             }
@@ -11519,130 +11519,130 @@ int Common_controll()
             switch(*bhScePtr) 
             {
                 case 0:
-                    bhCetask->work->mode0 = '\a';
-                    bhCetask->work->mode2 = '\b';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\a';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\b';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
-                    bhCetask->work->mode1 = *bhScePtr++;
-                    bhCetask->work->ct0 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct0 = *bhScePtr++;
                     
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr++;
                     
                     t1 = *bhScePtr;
-                    bhCetask->work->ct2 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     if (!t0) 
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     
                     if (t1 == 0x6) 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     else
                     {
-                        bhCetask->work->hokan_count = 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
                     }
                     
                     bhScePtr++;
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                 break;
                 case 1:
-                    bhCetask->work->mode0 = '\x01';
-                    bhCetask->work->mode2 = '\0';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    *(unsigned char *)&bhCetask->work->mtn_no = t1;
-                    bhCetask->work->mode1 = t1;
-                    bhCetask->work->mtn_md = 0x20;
+                    *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = 0x20;
                     if (!t0) 
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
-                    bhCetask->work->hokan_rate = 0x0;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = 0x0;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mode0 = '\x06';
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_no = t1 + 0x1;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x8;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_add = bhCetask->work->mtn_add;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_rate = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_no = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_mode = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mnwP = sys->rmthp;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode0 = '\x06';
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_no = t1 + 0x1;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x8;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_add = P32(struct BH_PWORK *, bhCetask->work)->mtn_add;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_rate = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_no = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_mode = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
                     }
                     
                     bhScePtr++;
                     if (*bhScePtr == '\0') 
                     {
-                        bhCetask->work->mode0 = '\x01';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
                     }
                     else 
                     {
-                        bhCetask->work->mode0 = '\x05';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
                     }
                     
                     bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = *bhScePtr;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr;
                     bhScePtr++;
                     
                     t1 = *bhScePtr;
                     if (t1 > 0x8)
                     {
-                        bhCetask->work->ct2 = 0xa;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0xa;
                     }
                     else 
                     {
-                        bhCetask->work->ct2 = t1;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     }
                     
                     if (t1 == 0x6)
                     {
-                        if (bhCetask->work->id == 0x1) 
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x0;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x0;
                         }
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     else if (0x8 < t1) 
                     {
-                        bhCetask->work->hokan_count = t1;
-                        if (bhCetask->work->id == 0x1)
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = t1;
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = t1;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = t1;
                         }
                     }
                     bhScePtr++;
-                    bhCetask->work->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
                 break;
                 case 2:
                 case 3:
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    bhCetask->work->mode3 = '\x01';
-                    bhCetask->work->mtn_md = 0x20;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = 0x20;
                     if (!t0)
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
-                    bhCetask->work->mtn_no = t1;
-                    bhCetask->work->hokan_rate = 0x0;
-                    bhCetask->work->frm_no = 0x0;
-                    bhCetask->work->frm_mode = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_mode = 0x0;
                     bhScePtr++;
                     bhScePtr++;
                     v0 = *bhScePtr++;
                     t1 = *bhScePtr;
-                    bhCetask->work->hokan_count = 0x8;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
                     if (t1 == '\x06') 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     bhScePtr++;
                 break;
@@ -11651,32 +11651,32 @@ int Common_controll()
             switch(v0) 
             {
                 case 0x0:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x1:
                     break;
                 case 0x2:
-                    bhSetMotion(bhCetask->work,0,0,0);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
                     break;
                 case 0x3:
-                    bhCalcModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x4:
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x5:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x6:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x7:
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
             }
         }
@@ -11687,7 +11687,7 @@ int Common_controll()
             unsigned int t0; 
             unsigned int t1; 
             
-            bhCetask->work->mnwP = sys->rmthp;
+            P32(struct BH_PWORK *, bhCetask->work)->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
             t0 = false;
             bhScePtr++;
             switch(*bhScePtr) 
@@ -11695,154 +11695,154 @@ int Common_controll()
                 case 1:
                 case 2:
                     t0 = true;
-                    bhCetask->work->mtn_add = 0x10000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x10000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x20;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x20;
                     }
                     break;
                 case 0:
                 case 3:
                 case 8:
-                    bhCetask->work->mtn_add = 0x8000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x8000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 4:
-                    bhCetask->work->mtn_add = 0x5555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x5555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 5:
                 case 9:
-                    bhCetask->work->mtn_add = 0x4000;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x4000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 6:
-                    bhCetask->work->mtn_add = 0x3333;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x3333;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 7:
                 case 10:
-                    bhCetask->work->mtn_add = 0x2aaa;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2aaa;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 11:
-                    bhCetask->work->mtn_add = 0x2000;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 12:
-                    bhCetask->work->mtn_add = 0x1999;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 13:
-                    bhCetask->work->mtn_add = 0x1555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 14:
-                    bhCetask->work->mtn_add = 0x2492;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2492;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 15:
-                    bhCetask->work->mtn_add = 0x2000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x2000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 16:
-                    bhCetask->work->mtn_add = 0x1c71;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1c71;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 17:
-                    bhCetask->work->mtn_add = 0x1999;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1999;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 18:
-                    bhCetask->work->mtn_add = 0x1745;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1745;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 19:
-                    bhCetask->work->mtn_add = 0x1555;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1555;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 20:
-                    bhCetask->work->mtn_add = 0x1249;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1249;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 21:
-                    bhCetask->work->mtn_add = 0x1000;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0x1000;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 22:
-                    bhCetask->work->mtn_add = 0xe38;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xe38;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 23:
-                    bhCetask->work->mtn_add = 0xccc;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xccc;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 24:
-                    bhCetask->work->mtn_add = 0xba2;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xba2;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
                 case 25:
-                    bhCetask->work->mtn_add = 0xaaa;
-                    if (bhCetask->work->id == 0x1)
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_add = 0xaaa;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1)
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_md = 0x28;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_md = 0x28;
                     }
                     break;
             }
@@ -11852,110 +11852,110 @@ int Common_controll()
             switch(*bhScePtr) 
             {
                 case 0:
-                    bhCetask->work->mode0 = '\a';
-                    bhCetask->work->mode2 = '\b';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\a';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\b';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
-                    bhCetask->work->mode1 = *bhScePtr++;
-                    bhCetask->work->ct0 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct0 = *bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr++;
                     
                     t1 = *bhScePtr;
-                    bhCetask->work->ct2 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     if (!t0) 
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     
                     if (t1 == 0x6) 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     } 
                     else
                     {
-                        bhCetask->work->hokan_count = 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
                     }
                     
                     bhScePtr++;
-                    bhCetask->work->frm_no = *(unsigned short *)bhScePtr << 0x10;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = *(unsigned short *)bhScePtr << 0x10;
                     bhScePtr += 2;
                 break;
                 case 1:
-                    bhCetask->work->mode0 = '\x01';
-                    bhCetask->work->mode2 = '\0';
-                    bhCetask->work->mode3 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
                     
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    *(unsigned char *)&bhCetask->work->mtn_no = t1;
-                    bhCetask->work->mode1 = t1;
-                    bhCetask->work->mtn_md = 0x20;
+                    *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode1 = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = 0x20;
                     
                     if (!t0) 
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     
-                    bhCetask->work->hokan_rate = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = 0x0;
                     bhScePtr++;
                     if (*bhScePtr == '\0')
                     {
-                        bhCetask->work->mode0 = '\x01';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
                     }
                     else 
                     {
-                        bhCetask->work->mode0 = '\x05';
+                        P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
                     }
                     
                     bhScePtr++;
                     v0 = *bhScePtr;
-                    bhCetask->work->ct1 = *bhScePtr++;
+                    P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr++;
                     t1 = *bhScePtr;
                     if (t1 > 8) 
                     {
-                        bhCetask->work->ct2 = 0xa;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0xa;
                     }
                     else 
                     {
-                        bhCetask->work->ct2 = t1;
+                        P32(struct BH_PWORK *, bhCetask->work)->ct2 = t1;
                     }
                     
-                    if (bhCetask->work->id == 0x1) 
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x8;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x8;
                     }
                     
                     if (t1 == 0x6) 
                     {
-                        if (bhCetask->work->id == 0x1) 
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = 0x0;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = 0x0;
                         }
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
                     else if (0x8 < t1) 
                     {
-                        bhCetask->work->hokan_count = t1;
-                        if (bhCetask->work->id == 0x1) 
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = t1;
+                        if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                         {
-                            ((BH_PWORK *)bhCetask->work->exp1)->hokan_count = t1;
+                            ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_count = t1;
                         }
                     }
                     
                     bhScePtr++;
-                    bhCetask->work->frm_no = *(unsigned short *)bhScePtr << 0x10;
-                    if (bhCetask->work->id == 0x1) 
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = *(unsigned short *)bhScePtr << 0x10;
+                    if (P32(struct BH_PWORK *, bhCetask->work)->id == 0x1) 
                     {
-                        ((BH_PWORK *)bhCetask->work->exp1)->mode0 = '\x06';
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_no = bhCetask->work->mtn_no + 0x1;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mtn_add = bhCetask->work->mtn_add;
-                        ((BH_PWORK *)bhCetask->work->exp1)->hokan_rate = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_no = bhCetask->work->frm_no;
-                        ((BH_PWORK *)bhCetask->work->exp1)->frm_mode = 0x0;
-                        ((BH_PWORK *)bhCetask->work->exp1)->mnwP = sys->rmthp;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mode0 = '\x06';
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_no = P32(struct BH_PWORK *, bhCetask->work)->mtn_no + 0x1;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mtn_add = P32(struct BH_PWORK *, bhCetask->work)->mtn_add;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->hokan_rate = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_no = P32(struct BH_PWORK *, bhCetask->work)->frm_no;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->frm_mode = 0x0;
+                        ((BH_PWORK *)P32(unsigned char *, P32(struct BH_PWORK *, bhCetask->work)->exp1))->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
                     }
                     bhScePtr += 2;
                 break;
@@ -11963,28 +11963,28 @@ int Common_controll()
                 case 3:
                     bhScePtr++;
                     t1 = *bhScePtr;
-                    bhCetask->work->mode3 = '\x01';
-                    bhCetask->work->mtn_md = 0x20;
+                    P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\x01';
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_md = 0x20;
                     if (!t0) 
                     {
-                        bhCetask->work->mtn_md |= 0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |= 0x8;
                     }
-                    bhCetask->work->mtn_no = t1;
-                    bhCetask->work->hokan_rate = 0x0;
-                    bhCetask->work->frm_no = 0x0;
-                    bhCetask->work->frm_mode = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->mtn_no = t1;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_rate = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = 0x0;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_mode = 0x0;
                     bhScePtr++;
                     bhScePtr++;
                     v0 = *bhScePtr++;
                     t1 = *bhScePtr;
-                    bhCetask->work->hokan_count = 0x8;
+                    P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x8;
                     if (t1 == '\x06') 
                     {
-                        bhCetask->work->hokan_count = 0x0;
-                        bhCetask->work->mtn_md |=  0x8;
+                        P32(struct BH_PWORK *, bhCetask->work)->hokan_count = 0x0;
+                        P32(struct BH_PWORK *, bhCetask->work)->mtn_md |=  0x8;
                     }
                     bhScePtr++;
-                    bhCetask->work->frm_no = *(unsigned short *)bhScePtr << 0x10;
+                    P32(struct BH_PWORK *, bhCetask->work)->frm_no = *(unsigned short *)bhScePtr << 0x10;
                     bhScePtr += 2;
                 break;
             }
@@ -11992,30 +11992,30 @@ int Common_controll()
             switch(v0) 
             {
                 case 0x0:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x2:
-                    bhSetMotion(bhCetask->work,0,0,0);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
                     break;
                 case 0x3:
-                    bhCalcModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x4:
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x5:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x6:
-                    bhSetMotion(bhCetask->work,0,0,0);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhSetMotion(P32(struct BH_PWORK *, bhCetask->work),0,0,0);
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
                 case 0x7:
-                    bhCalcModel(bhCetask->work);
-                    bhCalcLinkModel(bhCetask->work);
+                    bhCalcModel(P32(struct BH_PWORK *, bhCetask->work));
+                    bhCalcLinkModel(P32(struct BH_PWORK *, bhCetask->work));
                     break;
             }
         }
@@ -12031,16 +12031,16 @@ int Common_controll()
             switch(v0) 
             {
                 case 0:
-                bhCetask->work->flg &= ~0x118;
+                P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x118;
                 break;
                 case 1:
-                bhCetask->work->flg |= 0x118;
+                P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x118;
                 break;
                 case 2:
-                bhCetask->work->flg &= ~0x18;
+                P32(struct BH_PWORK *, bhCetask->work)->flg &= ~0x18;
                 break;
                 case 3:
-                bhCetask->work->flg |= 0x18;
+                P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x18;
                 break;
             }
         }
@@ -12087,34 +12087,34 @@ int Common_controll()
             bhScePtr++;
             if (bhCetask->bpx == '\0') 
             {
-                bhCetask->work->px = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->px = *(unsigned short *)bhScePtr / 100.0f;
             }
             else 
             {
-                bhCetask->work->px = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->px = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
-            bhCetask->work->pxb = bhCetask->work->px;
+            P32(struct BH_PWORK *, bhCetask->work)->pxb = P32(struct BH_PWORK *, bhCetask->work)->px;
             bhScePtr += 2;
             if (bhCetask->bpy == '\0') 
             {
-                bhCetask->work->py = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->py = *(unsigned short *)bhScePtr / 100.0f;
             }
             else 
             {
-                bhCetask->work->py = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->py = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
-            bhCetask->work->pyb = bhCetask->work->py;
-            bhCetask->work->flr_no = bhCheckFloorNum(bhCetask->work->py);
+            P32(struct BH_PWORK *, bhCetask->work)->pyb = P32(struct BH_PWORK *, bhCetask->work)->py;
+            P32(struct BH_PWORK *, bhCetask->work)->flr_no = bhCheckFloorNum(P32(struct BH_PWORK *, bhCetask->work)->py);
             bhScePtr += 2;
             if (bhCetask->bpz == '\0') 
             {
-                bhCetask->work->pz = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->pz = *(unsigned short *)bhScePtr / 100.0f;
             }
             else 
             {
-                bhCetask->work->pz = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct BH_PWORK *, bhCetask->work)->pz = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
-            bhCetask->work->pzb = bhCetask->work->pz;
+            P32(struct BH_PWORK *, bhCetask->work)->pzb = P32(struct BH_PWORK *, bhCetask->work)->pz;
             bhScePtr += 2;
         break;
         case 11:
@@ -12127,24 +12127,24 @@ int Common_controll()
             {
                 v0 = -v0;
             }
-            bhCetask->work->ax = v0 * 182.04445f;
-            bhCetask->work->axb = bhCetask->work->ax;
+            P32(struct BH_PWORK *, bhCetask->work)->ax = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->axb = P32(struct BH_PWORK *, bhCetask->work)->ax;
             bhScePtr++;
             v0 = *bhScePtr;
             if (bhCetask->bay != '\0') 
             {
                 v0 = -v0;
             }
-            bhCetask->work->ay = v0 * 182.04445f;
-            bhCetask->work->ayb = bhCetask->work->ay;
+            P32(struct BH_PWORK *, bhCetask->work)->ay = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->ayb = P32(struct BH_PWORK *, bhCetask->work)->ay;
             bhScePtr++;
             v0 = *bhScePtr;
             if (bhCetask->baz != '\0') 
             {
                 v0 = -v0;
             }
-            bhCetask->work->az = v0 * 182.04445f;
-            bhCetask->work->azb = bhCetask->work->az;
+            P32(struct BH_PWORK *, bhCetask->work)->az = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->azb = P32(struct BH_PWORK *, bhCetask->work)->az;
             bhScePtr += 2;
         }
         break;
@@ -12152,7 +12152,7 @@ int Common_controll()
         {
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             
             bhScePtr++;
@@ -12190,7 +12190,7 @@ int Common_controll()
             int v1; 
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             bhScePtr++;
             v1 = *bhScePtr;
@@ -12219,27 +12219,27 @@ int Common_controll()
         case 2:
             if (bhCetask->bpx == '\0')
             {
-                bhCetask->work->px += bhCetask->addpx;
+                P32(struct BH_PWORK *, bhCetask->work)->px += bhCetask->addpx;
             }
             else
             {
-                bhCetask->work->px -= bhCetask->addpx;
+                P32(struct BH_PWORK *, bhCetask->work)->px -= bhCetask->addpx;
             }
             if (bhCetask->bpy == '\0')
             {
-                bhCetask->work->py += bhCetask->addpy;
+                P32(struct BH_PWORK *, bhCetask->work)->py += bhCetask->addpy;
             }
             else 
             {
-                bhCetask->work->py -= bhCetask->addpy;
+                P32(struct BH_PWORK *, bhCetask->work)->py -= bhCetask->addpy;
             }
             if (bhCetask->bpz == '\0') 
             {
-                bhCetask->work->pz += bhCetask->addpz;
+                P32(struct BH_PWORK *, bhCetask->work)->pz += bhCetask->addpz;
             }
             else
             {
-                bhCetask->work->pz -= bhCetask->addpz;
+                P32(struct BH_PWORK *, bhCetask->work)->pz -= bhCetask->addpz;
             }
             bhScePtr++;
             bhScePtr++;
@@ -12247,27 +12247,27 @@ int Common_controll()
         case 3:
             if (bhCetask->bax == '\0')
             {
-                bhCetask->work->ax += bhCetask->addax;
+                P32(struct BH_PWORK *, bhCetask->work)->ax += bhCetask->addax;
             }
             else 
             {
-                bhCetask->work->ax -= bhCetask->addax;
+                P32(struct BH_PWORK *, bhCetask->work)->ax -= bhCetask->addax;
             }
             if (bhCetask->bay == '\0') 
             {
-                bhCetask->work->ay += bhCetask->adday;
+                P32(struct BH_PWORK *, bhCetask->work)->ay += bhCetask->adday;
             }
             else 
             {
-                bhCetask->work->ay -= bhCetask->adday;
+                P32(struct BH_PWORK *, bhCetask->work)->ay -= bhCetask->adday;
             }
             if (bhCetask->baz == '\0')
             {
-                bhCetask->work->az += bhCetask->addaz;
+                P32(struct BH_PWORK *, bhCetask->work)->az += bhCetask->addaz;
             }
             else
             {
-                bhCetask->work->az -= bhCetask->addaz;
+                P32(struct BH_PWORK *, bhCetask->work)->az -= bhCetask->addaz;
             }
             bhScePtr++;
             bhScePtr++;
@@ -12275,51 +12275,51 @@ int Common_controll()
         case 4:
             if (bhCetask->bpx == '\0') 
             {
-                bhCetask->work->px += bhCetask->addpx;
+                P32(struct BH_PWORK *, bhCetask->work)->px += bhCetask->addpx;
             }
             else 
             {
-                bhCetask->work->px -= bhCetask->addpx;
+                P32(struct BH_PWORK *, bhCetask->work)->px -= bhCetask->addpx;
             }
             if (bhCetask->bpy == '\0') 
             {
-                bhCetask->work->py += bhCetask->addpy;
+                P32(struct BH_PWORK *, bhCetask->work)->py += bhCetask->addpy;
             }
             else 
             {
-                bhCetask->work->py -= bhCetask->addpy;
+                P32(struct BH_PWORK *, bhCetask->work)->py -= bhCetask->addpy;
             }
             if (bhCetask->bpz == '\0') 
             {
-                bhCetask->work->pz += bhCetask->addpz;
+                P32(struct BH_PWORK *, bhCetask->work)->pz += bhCetask->addpz;
             }
             else 
             {
-                bhCetask->work->pz -= bhCetask->addpz;
+                P32(struct BH_PWORK *, bhCetask->work)->pz -= bhCetask->addpz;
             }
             if (bhCetask->bax == '\0') 
             {
-                bhCetask->work->ax += bhCetask->addax;
+                P32(struct BH_PWORK *, bhCetask->work)->ax += bhCetask->addax;
             }
             else
             {
-                bhCetask->work->ax -= bhCetask->addax;
+                P32(struct BH_PWORK *, bhCetask->work)->ax -= bhCetask->addax;
             }
             if (bhCetask->bay == '\0') 
             {
-                bhCetask->work->ay += bhCetask->adday;
+                P32(struct BH_PWORK *, bhCetask->work)->ay += bhCetask->adday;
             }
             else 
             {
-                bhCetask->work->ay -= bhCetask->adday;
+                P32(struct BH_PWORK *, bhCetask->work)->ay -= bhCetask->adday;
             }
             if (bhCetask->baz == '\0') 
             {
-                bhCetask->work->az += bhCetask->addaz;
+                P32(struct BH_PWORK *, bhCetask->work)->az += bhCetask->addaz;
             }
             else 
             {
-                bhCetask->work->az -= bhCetask->addaz;
+                P32(struct BH_PWORK *, bhCetask->work)->az -= bhCetask->addaz;
             }
             bhScePtr++;
             bhScePtr++;
@@ -12328,7 +12328,7 @@ int Common_controll()
         {
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             
             if (bhCetask->bpx == '\0') 
@@ -12363,7 +12363,7 @@ int Common_controll()
         {
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             
             if (bhCetask->bax == '\0')
@@ -12398,7 +12398,7 @@ int Common_controll()
         {
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             if (bhCetask->bpx == '\0') 
             {
@@ -12456,7 +12456,7 @@ int Common_controll()
         {
             NJS_CNK_OBJECT* objP; 
             
-            objP = bhCetask->work->mdl->objP;
+            objP = P32(struct cnkobj *, P32(struct BH_PWORK *, bhCetask->work)->mdl->objP);
             objP += bhCetask->model_cno;
             
             bhScePtr++;
@@ -12510,11 +12510,11 @@ int Common_controll()
                     bhScePtr += 2;
                     if (bhCetask->bpx == '\0') 
                     {
-                        bhCetask->work->px = *(unsigned short *)bhScePtr / 100.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->px = *(unsigned short *)bhScePtr / 100.0f;
                     } 
                     else 
                     {
-                        bhCetask->work->px = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->px = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
                     }
                     bhScePtr += 2;
                 break;
@@ -12522,11 +12522,11 @@ int Common_controll()
                     bhScePtr += 2;
                     if (bhCetask->bpy == '\0') 
                     {
-                        bhCetask->work->py = *(unsigned short *)bhScePtr / 100.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->py = *(unsigned short *)bhScePtr / 100.0f;
                     } 
                     else 
                     {
-                        bhCetask->work->py = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->py = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
                     }
                     bhScePtr += 2;
                 break;
@@ -12534,92 +12534,92 @@ int Common_controll()
                     bhScePtr += 2;
                     if (bhCetask->bpz == '\0') 
                     {
-                        bhCetask->work->pz = *(unsigned short *)bhScePtr / 100.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->pz = *(unsigned short *)bhScePtr / 100.0f;
                     } 
                     else 
                     {
-                        bhCetask->work->pz = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                        P32(struct BH_PWORK *, bhCetask->work)->pz = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
                     }
                     bhScePtr += 2;
                 break;
             }
         break;
         case 132:
-            bhCetask->work->mode0 = '\x01';
-            bhCetask->work->mode2 = '\0';
-            bhCetask->work->mode3 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+            P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
             
             bhScePtr++;
-            bhCetask->work->mode1 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
             
             if (*bhScePtr == '\0') 
             {
-                bhCetask->work->mode0 = '\x01';
+                P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
             }
             else 
             {
-                bhCetask->work->mode0 = '\x05';
+                P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
             }
 
             bhScePtr++;
-            bhCetask->work->ct1 = *bhScePtr++;
-            bhCetask->work->ct2 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->ct2 = *bhScePtr++;
         break;
         case 140:
         {
             unsigned int v0; 
             
-            bhCetask->work->mode2 = '\0';
-            bhCetask->work->mode3 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
             
             bhScePtr++;
-            bhCetask->work->mode1 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
             
             if (*bhScePtr == '\0') 
             {
-                bhCetask->work->mode0 = '\x01';
-                *(unsigned char *)&bhCetask->work->ct2 = 0x1;
+                P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x01';
+                *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0x1;
             }
             else 
             {
-                bhCetask->work->mode0 = '\x05';
-                *(unsigned char *)&bhCetask->work->ct2 = 0x3;
+                P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
+                *(unsigned char *)&P32(struct BH_PWORK *, bhCetask->work)->ct2 = 0x3;
             }
             
             bhScePtr++;
             v0 = *(unsigned short *)bhScePtr;
             if (bhCetask->bpx == '\0') 
             {
-                bhCetask->work->ct0 = v0 << 0x10;
+                P32(struct BH_PWORK *, bhCetask->work)->ct0 = v0 << 0x10;
             }
             else
             {
-                bhCetask->work->ct0 = (v0 * -1) << 0x10;
+                P32(struct BH_PWORK *, bhCetask->work)->ct0 = (v0 * -1) << 0x10;
             }
             
             bhScePtr += 2;
             v0 = *(unsigned short *)bhScePtr;
             if (bhCetask->bpz == '\0') 
             {
-                bhCetask->work->ct0 |= v0;
+                P32(struct BH_PWORK *, bhCetask->work)->ct0 |= v0;
             }
             else 
             {
-                bhCetask->work->ct0 |= v0 * -1;
+                P32(struct BH_PWORK *, bhCetask->work)->ct0 |= v0 * -1;
             }
             bhScePtr += 2;
         }
         break;
         case 141:
-            bhCetask->work->mode0 = '\x05';
-            bhCetask->work->mode2 = '\0';
-            bhCetask->work->mode3 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode0 = '\x05';
+            P32(struct BH_PWORK *, bhCetask->work)->mode2 = '\0';
+            P32(struct BH_PWORK *, bhCetask->work)->mode3 = '\0';
             
             bhScePtr++;
-            bhCetask->work->mode1 = *bhScePtr++;
-            bhCetask->work->ct0 = *bhScePtr++;
-            bhCetask->work->ct1 = *bhScePtr++;
-            bhCetask->work->ct2 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->mode1 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->ct0 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->ct1 = *bhScePtr++;
+            P32(struct BH_PWORK *, bhCetask->work)->ct2 = *bhScePtr++;
         break;
         case 14:
         {
@@ -12627,7 +12627,7 @@ int Common_controll()
             
             bhScePtr++;
             v0 = *bhScePtr;
-            bhCetask->work->ct3 = v0;
+            P32(struct BH_PWORK *, bhCetask->work)->ct3 = v0;
             bhScePtr++;
             bhScePtr++;
         }
@@ -12638,7 +12638,7 @@ int Common_controll()
             
             bhScePtr++;
             v0 = *bhScePtr;
-            bhCetask->work->ct1 = v0;
+            P32(struct BH_PWORK *, bhCetask->work)->ct1 = v0;
             bhScePtr++;
             bhScePtr++;
         }
@@ -12653,27 +12653,27 @@ int Common_controll()
             {
                 v0 = -v0;
             }
-            bhCetask->work->ax = v0 * 182.04445f;
-            bhCetask->work->axb = bhCetask->work->ax;
-            bhCetask->work->mlwP->objP->ang[0x0] = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->ax = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->axb = P32(struct BH_PWORK *, bhCetask->work)->ax;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->ang[0x0] = v0 * 182.04445f;
             bhScePtr++;
             v0 = (unsigned int)*bhScePtr;
             if (bhCetask->bay != '\0') 
             {
                 v0 = -v0;
             }
-            bhCetask->work->ay = v0 * 182.04445f;
-            bhCetask->work->ayb = bhCetask->work->ay;
-            bhCetask->work->mlwP->objP->ang[0x1] = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->ay = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->ayb = P32(struct BH_PWORK *, bhCetask->work)->ay;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->ang[0x1] = v0 * 182.04445f;
             bhScePtr++;
             v0 = (unsigned int)*bhScePtr;
             if (bhCetask->baz != '\0') 
             {
                 v0 = -v0;
             }
-            bhCetask->work->az = v0 * 182.04445f;
-            bhCetask->work->azb = bhCetask->work->az;
-            bhCetask->work->mlwP->objP->ang[0x2] = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->az = v0 * 182.04445f;
+            P32(struct BH_PWORK *, bhCetask->work)->azb = P32(struct BH_PWORK *, bhCetask->work)->az;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->ang[0x2] = v0 * 182.04445f;
             bhScePtr += 2;
         }
         break;
@@ -12692,28 +12692,28 @@ int Common_controll()
             {
                 v0 = -v0;
             }
-            bhCetask->work->mlwP->objP[0x1].ang[0x0] = v0 * 182.04445f;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[0x1].ang[0x0] = v0 * 182.04445f;
             bhScePtr++;
             v0 = *bhScePtr;
             if ((v1 & 0x2) != 0x0) 
             {
                 v0 = -v0;
             }
-            bhCetask->work->mlwP->objP[0x1].ang[0x1] = v0 * 182.04445f;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[0x1].ang[0x1] = v0 * 182.04445f;
             bhScePtr++;
             v0 = *bhScePtr;
             if ((v1 & 0x4) != 0x0)
             {
                 v0 = -v0;
             }
-            bhCetask->work->mlwP->objP[0x1].ang[0x2] = v0 * 182.04445f;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[0x1].ang[0x2] = v0 * 182.04445f;
             bhScePtr += 2;
         }
         break;
         case 36:
-            bhCetask->work->mlwP->objP->pos[0x0] = 0.0f;
-            bhCetask->work->mlwP->objP->pos[0x1] = 0.0f;
-            bhCetask->work->mlwP->objP->pos[0x2] = 0.0f; 
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->pos[0x0] = 0.0f;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->pos[0x1] = 0.0f;
+            P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)->pos[0x2] = 0.0f; 
             bhScePtr++;
         break;
         case 38:
@@ -12727,30 +12727,30 @@ int Common_controll()
             
             if ((v1 & 0x1) != 0x0)
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x0] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x0] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
             else
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x0] = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x0] = *(unsigned short *)bhScePtr / 100.0f;
             }
             bhScePtr += 2;
             if ((v1 & 0x2) != 0x0)
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x1] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x1] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
             else 
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x1] = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x1] = *(unsigned short *)bhScePtr / 100.0f;
             }
             
             bhScePtr += 2;
             if ((v1 & 0x4) != 0x0) 
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x2] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x2] = (*(unsigned short *)bhScePtr / 100.0f) * -1.0f;
             }
             else 
             {
-                bhCetask->work->mlwP->objP[v0].pos[0x2] = *(unsigned short *)bhScePtr / 100.0f;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct BH_PWORK *, bhCetask->work)->mlwP)->objP)[v0].pos[0x2] = *(unsigned short *)bhScePtr / 100.0f;
             }
             bhScePtr += 2;
         }
@@ -12771,20 +12771,20 @@ unsigned int bhLoadWork()
     switch (*bhScePtr) 
     {                         
     case 0:
-        bhCetask->work = plp;
+        bhCetask->work = S32(plp);
         
-        bhCetask->work->mode0 = 7;
-        bhCetask->work->mode2 = 0;
-        bhCetask->work->mode2 = 0; // strange this wasn't optimized out
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 0;
+        P32(struct BH_PWORK *, bhCetask->work)->mode2 = 0; // strange this wasn't optimized out
         
-        *(unsigned char*)&bhCetask->work->mtn_no = 42;
+        *(unsigned char*)&P32(struct BH_PWORK *, bhCetask->work)->mtn_no = 42;
         
-        bhCetask->work->stflg |= 0x10000;
-        bhCetask->work->stflg &= ~0x80;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg |= 0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg &= ~0x80;
         
         bhCetask->model_cno = 0;
         
-        bhCetask->work->flg |= 0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x10000;
         
         bhScePtr += 3;
         break;
@@ -12797,16 +12797,16 @@ unsigned int bhLoadWork()
         bhScePtr++;
         bhScePtr += 2;
         
-        e_enep = &rom->enep[*++a0];
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[*++a0];
         
-        bhCetask->work = &ene[e_enep->wrk_no];
+        bhCetask->work = S32(&ene[e_enep->wrk_no]);
         
         bhCetask->model_cno = *++a0;
         
-        bhCetask->mtn_md = bhCetask->work->mtn_md;
-        bhCetask->mdflg = bhCetask->work->mdflg;
+        bhCetask->mtn_md = P32(struct BH_PWORK *, bhCetask->work)->mtn_md;
+        bhCetask->mdflg = P32(struct BH_PWORK *, bhCetask->work)->mdflg;
         
-        bhCetask->hokan_rate = bhCetask->work->hokan_rate;
+        bhCetask->hokan_rate = P32(struct BH_PWORK *, bhCetask->work)->hokan_rate;
         break;
     }
     case 2:
@@ -12818,7 +12818,7 @@ unsigned int bhLoadWork()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhCetask->work = (BH_PWORK*)&sys->obwp[*++a0];
+        bhCetask->work = S32((BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[*++a0]);
         
         bhCetask->model_cno = *++a0;
         break;
@@ -12832,7 +12832,7 @@ unsigned int bhLoadWork()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhCetask->work = (BH_PWORK*)&sys->itwp[*++a0];
+        bhCetask->work = S32((BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[*++a0]);
         
         bhCetask->model_cno = 0;
         break;
@@ -12846,7 +12846,7 @@ unsigned int bhLoadWork()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhCetask->work = (BH_PWORK*)&eff[sys->efid[*++a0]];
+        bhCetask->work = S32((BH_PWORK*)&eff[sys->efid[*++a0]]);
         
         bhCetask->model_cno = 0;
         break;
@@ -12866,18 +12866,18 @@ unsigned int bhLoadWorkEx()
     switch (*bhScePtr) 
     {                         
     case 0:
-        bhEtask->work = plp;
+        bhEtask->work = S32(plp);
         
-        bhEtask->work->mode0 = 7;
-        bhEtask->work->mode2 = 0;
-        bhEtask->work->mode2 = 0; // strange this wasn't optimized out
+        P32(struct BH_PWORK *, bhEtask->work)->mode0 = 7;
+        P32(struct BH_PWORK *, bhEtask->work)->mode2 = 0;
+        P32(struct BH_PWORK *, bhEtask->work)->mode2 = 0; // strange this wasn't optimized out
         
-        *(unsigned char*)&bhEtask->work->mtn_no = 42;
+        *(unsigned char*)&P32(struct BH_PWORK *, bhEtask->work)->mtn_no = 42;
         
-        bhEtask->work->stflg |= 0x10000;
-        bhEtask->work->stflg &= ~0x80;
+        P32(struct BH_PWORK *, bhEtask->work)->stflg |= 0x10000;
+        P32(struct BH_PWORK *, bhEtask->work)->stflg &= ~0x80;
         
-        bhEtask->work->flg |= 0x10000;
+        P32(struct BH_PWORK *, bhEtask->work)->flg |= 0x10000;
 
         bhEtask->model_cno = 0;
         
@@ -12892,16 +12892,16 @@ unsigned int bhLoadWorkEx()
         bhScePtr++;
         bhScePtr += 2;
         
-        e_enep = &rom->enep[*++a0];
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[*++a0];
         
-        bhEtask->work = &ene[e_enep->wrk_no];
+        bhEtask->work = S32(&ene[e_enep->wrk_no]);
         
         bhEtask->model_cno = *++a0;
         
-        bhEtask->mtn_md = bhEtask->work->mtn_md;
-        bhEtask->mdflg = bhEtask->work->mdflg;
+        bhEtask->mtn_md = P32(struct BH_PWORK *, bhEtask->work)->mtn_md;
+        bhEtask->mdflg = P32(struct BH_PWORK *, bhEtask->work)->mdflg;
         
-        bhEtask->hokan_rate = bhEtask->work->hokan_rate;
+        bhEtask->hokan_rate = P32(struct BH_PWORK *, bhEtask->work)->hokan_rate;
         break;
     }
     case 2:
@@ -12913,7 +12913,7 @@ unsigned int bhLoadWorkEx()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhEtask->work = (BH_PWORK*)&sys->obwp[*++a0];
+        bhEtask->work = S32((BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[*++a0]);
         
         bhEtask->model_cno = *++a0;
         break;
@@ -12927,7 +12927,7 @@ unsigned int bhLoadWorkEx()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhEtask->work = (BH_PWORK*)&sys->itwp[*++a0];
+        bhEtask->work = S32((BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[*++a0]);
         
         bhEtask->model_cno = 0;
         break;
@@ -12941,7 +12941,7 @@ unsigned int bhLoadWorkEx()
         bhScePtr++;
         bhScePtr += 2;
         
-        bhEtask->work = (BH_PWORK*)&eff[sys->efid[*++a0]];
+        bhEtask->work = S32((BH_PWORK*)&eff[sys->efid[*++a0]]);
         
         bhEtask->model_cno = 0;
         break;
@@ -12962,12 +12962,12 @@ unsigned int bhLoadWork2()
     switch (*bhScePtr) 
     {                             
     case 0:
-        bhCetask->work = plp;
+        bhCetask->work = S32(plp);
         
-        bhCetask->work->mode0 = 7;
+        P32(struct BH_PWORK *, bhCetask->work)->mode0 = 7;
         
-        bhCetask->work->stflg |= 0x10000;
-        bhCetask->work->flg |= 0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->stflg |= 0x10000;
+        P32(struct BH_PWORK *, bhCetask->work)->flg |= 0x10000;
         
         bhCetask->model_cno = 0;
         break;
@@ -12977,9 +12977,9 @@ unsigned int bhLoadWork2()
         
         a0 = bhScePtr;
         
-        e_enep = &rom->enep[*++a0]; 
+        e_enep = &P32(struct ETTY_WORK *, rom->enep)[*++a0]; 
         
-        bhCetask->work = &ene[e_enep->wrk_no];
+        bhCetask->work = S32(&ene[e_enep->wrk_no]);
         break;
     }
     case 2:
@@ -12992,7 +12992,7 @@ unsigned int bhLoadWork2()
         
         tk_no = *++a0;
         
-        bhEtask[tk_no].work = (BH_PWORK*)&sys->obwp[*++a0];
+        bhEtask[tk_no].work = S32((BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[*++a0]);
         
         bhEtask[tk_no].model_cno = *++a0;
         break;
@@ -13011,8 +13011,8 @@ int Event_init(BH_SCEWORK* a0, unsigned int evt_id)
     
     *(short*)&a0->mode0 = 0;
     
-    a0->data = (unsigned char*)rom->evtp;
-    a0->data = (unsigned char*)a0->data + ((int*)rom->evtp)[evt_id + ((sizeof(EVT_WORK) / 4) - 1)];
+    a0->data = S32((unsigned char*)P32(struct EVT_WORK *, rom->evtp));
+    a0->data = S32((unsigned char*)P32(unsigned char *, a0->data) + ((int*)P32(struct EVT_WORK *, rom->evtp))[evt_id + ((sizeof(EVT_WORK) / 4) - 1)]);
     
     a0->loop = -1;
     
@@ -13092,7 +13092,7 @@ int bhEventScheduler2()
                 
                 t_time_flg = 1;
                 
-                bhScePtr = scep->data;
+                bhScePtr = P32(unsigned char *, scep->data);
                 
                 while (TRUE) 
                 {
@@ -13110,7 +13110,7 @@ int bhEventScheduler2()
                     bhScePtr = gsp;
                 }
                 
-                bhCetask->data = bhScePtr;
+                bhCetask->data = S32(bhScePtr);
             }
         } 
     }
@@ -13121,7 +13121,7 @@ void bhScenarioCheck(unsigned char* next_ptr)
 {
     unsigned char* gsp; // not from DWARF
     
-    bhScePtr = (unsigned char*)rom->evtp;
+    bhScePtr = (unsigned char*)P32(struct EVT_WORK *, rom->evtp);
     
     bhIfelFlg = 0;
     

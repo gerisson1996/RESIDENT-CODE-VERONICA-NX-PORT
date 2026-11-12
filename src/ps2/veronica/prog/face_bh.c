@@ -17,7 +17,7 @@ void fmSetLipSyncParam(MASK_WORK* fm, PARAM_WORK* base, LIP_WORK* lip, unsigned 
     {
         lip->cnt -= lip->time;
         
-        if (*lip->ptr == 0xFF)
+        if (*P32(unsigned char *, lip->ptr) == 0xFF)
         {
             lip->cur = 0;
             
@@ -25,17 +25,17 @@ void fmSetLipSyncParam(MASK_WORK* fm, PARAM_WORK* base, LIP_WORK* lip, unsigned 
         } 
         else 
         {
-            lip->cur = *lip->ptr++;
+            lip->cur = *P32_POSTINC(unsigned char *, lip->ptr);
             
-            lip->time = *lip->ptr++;
+            lip->time = *P32_POSTINC(unsigned char *, lip->ptr);
             
-            if (*lip->ptr == 0xFF)
+            if (*P32(unsigned char *, lip->ptr) == 0xFF)
             {
                 lip->next = 0;
             }
             else
             {
-                lip->next = *lip->ptr;
+                lip->next = *P32(unsigned char *, lip->ptr);
             }
         }
     }
@@ -74,10 +74,10 @@ void _fmSetObjP(ML_WORK* mlwP)
     NJS_CNK_OBJECT* stack[256]; 
     int sp;   
 
-    obj = mlwP->objP;
-    obj2 = mlwP->objP = (NJS_CNK_OBJECT*)bhGetFreeMemory(mlwP->obj_num * sizeof(NJS_CNK_OBJECT), 64);
+    obj = P32(struct cnkobj *, mlwP->objP);
+    obj2 = P32(struct cnkobj *, mlwP->objP = S32((NJS_CNK_OBJECT*)bhGetFreeMemory(mlwP->obj_num * sizeof(NJS_CNK_OBJECT), 64)));
     
-    mlwP->owP = (O_WORK*)bhGetFreeMemory(mlwP->obj_num * sizeof(O_WORK), 64); 
+    mlwP->owP = S32((O_WORK*)bhGetFreeMemory(mlwP->obj_num * sizeof(O_WORK), 64)); 
     
     sp = 0;
     
@@ -87,14 +87,14 @@ void _fmSetObjP(ML_WORK* mlwP)
         
         obj2++;
         
-        if (obj->sibling != NULL) 
+        if (P32(struct cnkobj *, obj->sibling) != NULL) 
         { 
-            stack[sp++] = obj->sibling;
+            stack[sp++] = P32(struct cnkobj *, obj->sibling);
         }
         
-        if (obj->child != NULL)
+        if (P32(struct cnkobj *, obj->child) != NULL)
         {
-            obj = obj->child;
+            obj = P32(struct cnkobj *, obj->child);
             continue;
         }
         
@@ -131,7 +131,7 @@ NJS_CNK_OBJECT* _fmCnkSearchObject(MASK_WORK* fm, NJS_CNK_OBJECT* root, char id)
     
     while (obj != NULL)
     {
-        if (obj->model != NULL)
+        if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
         {
             if (n++ == id) 
             { 
@@ -139,34 +139,34 @@ NJS_CNK_OBJECT* _fmCnkSearchObject(MASK_WORK* fm, NJS_CNK_OBJECT* root, char id)
             }
         }
         
-        if (obj->sibling != NULL) 
+        if (P32(struct cnkobj *, obj->sibling) != NULL) 
         { 
-            stack[sp++] = obj->sibling; 
+            stack[sp++] = P32(struct cnkobj *, obj->sibling); 
         }
         
         dummy = 0;
         
-        if (obj == fm->tangorg) 
+        if (obj == P32(struct cnkobj *, fm->tangorg)) 
         {
             dummy = 1;
         }
         
-        if (obj == fm->toothsrc)
+        if (obj == P32(struct cnkobj *, fm->toothsrc))
         { 
             dummy = 1;
         }
 
         for (i = 0; i < 9; i++)
         {
-            if (obj == fm->eyesrc[i]) 
+            if (obj == P32(NJS_CNK_OBJECT *, fm->eyesrc[i])) 
             {
                 dummy = 1;
             }
         }
 
-        if ((obj->child != NULL) && (dummy == 0))
+        if ((P32(struct cnkobj *, obj->child) != NULL) && (dummy == 0))
         {
-            obj = obj->child;
+            obj = P32(struct cnkobj *, obj->child);
             continue;
         }
         
@@ -186,7 +186,7 @@ NJS_CNK_OBJECT* _fmCnkSearchObject(MASK_WORK* fm, NJS_CNK_OBJECT* root, char id)
 // 100% matching!
 void _fmGetVChunkType(MASK_WORK* fm)
 {
-    fm->vtype = *(unsigned short*)PS2_HOST(*(unsigned int*)fm->src);
+    fm->vtype = *(unsigned short*)PS2_HOST(*(unsigned int*)P32(NJS_CNK_MODEL *, fm->src));
 
     switch (fm->vtype)
     {
@@ -276,20 +276,20 @@ void _fmCnkSetFaceObject(MASK_WORK* fm, NJS_CNK_OBJECT* face)
 {
     if (face != NULL) 
     {
-        fm->obj = face;
+        fm->obj = S32(face);
         
-        fm->src = face->model;
-        fm->dst = (NJS_CNK_MODEL*)bhGetFreeMemory(sizeof(NJS_CNK_MODEL), 64);
+        fm->src = S32(P32(NJS_CNK_MODEL *, face->model));
+        fm->dst = S32((NJS_CNK_MODEL*)bhGetFreeMemory(sizeof(NJS_CNK_MODEL), 64));
         
-        njMemCopy(fm->dst, fm->src, sizeof(NJS_CNK_MODEL));
+        njMemCopy(P32(NJS_CNK_MODEL *, fm->dst), P32(NJS_CNK_MODEL *, fm->src), sizeof(NJS_CNK_MODEL));
         
-        face->model = fm->dst;
+        face->model = S32(P32(NJS_CNK_MODEL *, fm->dst));
         
         _fmGetVChunkType(fm);
         
-        fm->dst->vlist = (int*)bhGetFreeMemory((((fm->src->vlist[1] >> 16) * fm->vofs) + 128) * 4, 64);
+        P32(NJS_CNK_MODEL *, fm->dst)->vlist = S32((int*)bhGetFreeMemory((((P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[1] >> 16) * fm->vofs) + 128) * 4, 64));
         
-        njMemCopy(fm->dst->vlist, fm->src->vlist, (((fm->src->vlist[1] >> 16) * fm->vofs) + 128) * 4);
+        njMemCopy(P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist), P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist), (((P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[1] >> 16) * fm->vofs) + 128) * 4);
     }
 }
 
@@ -310,10 +310,10 @@ void _fmCnkSetEyeballObject(MASK_WORK* fm, unsigned int id, NJS_CNK_OBJECT* eye,
     
     njMemCopy(&fm->eye[id], eye, sizeof(NJS_CNK_OBJECT));
     
-    fm->eye[id].child = NULL;
-    fm->eye[id].sibling = eye->child;
+    fm->eye[id].child = S32(NULL);
+    fm->eye[id].sibling = S32(P32(struct cnkobj *, eye->child));
     
-    eye->child = &fm->eye[id];
+    eye->child = S32(&fm->eye[id]);
     
     eye->evalflags |= 0xA0000008;
     
@@ -331,7 +331,7 @@ void _fmCnkSetEyeballObject(MASK_WORK* fm, unsigned int id, NJS_CNK_OBJECT* eye,
         eye->ang[i] = 0;
     }
     
-    fm->eyesrc[id] = eye;
+    fm->eyesrc[id] = S32(eye);
     
     njPushMatrix(NULL);
     njUnitMatrix(NULL);
@@ -340,26 +340,26 @@ void _fmCnkSetEyeballObject(MASK_WORK* fm, unsigned int id, NJS_CNK_OBJECT* eye,
     
     while (TRUE)
     {
-        if (obj->sibling != NULL) 
+        if (P32(struct cnkobj *, obj->sibling) != NULL) 
         {
             njPushMatrix(NULL);
             
-            stack[sp++] = obj->sibling;
+            stack[sp++] = P32(struct cnkobj *, obj->sibling);
         }
         
         njTranslate(NULL, obj->pos[0], obj->pos[1], obj->pos[2]);
         njRotateXYZ(NULL, obj->ang[0], obj->ang[1], obj->ang[2]);
         njScale(NULL, obj->scl[0], obj->scl[1], obj->scl[2]);
         
-        if (obj == fm->eyesrc[id])
+        if (obj == P32(NJS_CNK_OBJECT *, fm->eyesrc[id]))
         {
             njGetMatrix(&fm->eyemat[id]);
             break;
         }
 
-        if (obj->child != NULL)
+        if (P32(struct cnkobj *, obj->child) != NULL)
         {
-            obj = obj->child;
+            obj = P32(struct cnkobj *, obj->child);
             continue;
         }
         
@@ -385,29 +385,29 @@ void _fmCnkSetTangObject(MASK_WORK* fm, NJS_CNK_OBJECT* tang)
 
     if (tang != NULL) 
     {
-        fm->tangsrc = tang->model;
-        fm->tangdst = (NJS_CNK_MODEL*)bhGetFreeMemory(sizeof(NJS_CNK_MODEL), 64);
+        fm->tangsrc = S32(P32(NJS_CNK_MODEL *, tang->model));
+        fm->tangdst = S32((NJS_CNK_MODEL*)bhGetFreeMemory(sizeof(NJS_CNK_MODEL), 64));
         
-        njMemCopy(fm->tangdst, fm->tangsrc, sizeof(NJS_CNK_MODEL));
+        njMemCopy(P32(NJS_CNK_MODEL *, fm->tangdst), P32(NJS_CNK_MODEL *, fm->tangsrc), sizeof(NJS_CNK_MODEL));
         
-        tang->model = fm->tangdst;
+        tang->model = S32(P32(NJS_CNK_MODEL *, fm->tangdst));
         
-        fm->tangdst->vlist = (int*)bhGetFreeMemory((((fm->tangsrc->vlist[1] >> 16) * fm->vofs) + 128) * 4, 64);
+        P32(NJS_CNK_MODEL *, fm->tangdst)->vlist = S32((int*)bhGetFreeMemory((((P32(int *, P32(NJS_CNK_MODEL *, fm->tangsrc)->vlist)[1] >> 16) * fm->vofs) + 128) * 4, 64));
         
-        src_128 = (u_long128*)fm->tangsrc->vlist;
-        dst_128 = (u_long128*)fm->tangdst->vlist;
+        src_128 = (u_long128*)P32(int *, P32(NJS_CNK_MODEL *, fm->tangsrc)->vlist);
+        dst_128 = (u_long128*)P32(int *, P32(NJS_CNK_MODEL *, fm->tangdst)->vlist);
         
-        for (i = ((((unsigned int)(fm->tangsrc->vlist[1] >> 16) * fm->vofs) + 128) * 4) >> 2; i > 0; i--)
+        for (i = ((((unsigned int)(P32(int *, P32(NJS_CNK_MODEL *, fm->tangsrc)->vlist)[1] >> 16) * fm->vofs) + 128) * 4) >> 2; i > 0; i--)
         {
             *dst_128++ = *src_128++;
         }
         
         njMemCopy(&fm->tangobj, tang, sizeof(NJS_CNK_OBJECT));
         
-        fm->tangobj.child = NULL;
-        fm->tangobj.sibling = tang->child;
+        fm->tangobj.child = S32(NULL);
+        fm->tangobj.sibling = S32(P32(struct cnkobj *, tang->child));
         
-        tang->child = &fm->tangobj;
+        tang->child = S32(&fm->tangobj);
         
         tang->evalflags |= 0xA0000008;
         
@@ -425,7 +425,7 @@ void _fmCnkSetTangObject(MASK_WORK* fm, NJS_CNK_OBJECT* tang)
             tang->ang[i] = 0;
         }
         
-        fm->tangorg = tang;
+        fm->tangorg = S32(tang);
     }
 }
 
@@ -438,10 +438,10 @@ void _fmCnkSetToothObject(MASK_WORK* fm, NJS_CNK_OBJECT* tooth)
     {
         njMemCopy(&fm->tooth, tooth, sizeof(NJS_CNK_OBJECT));
         
-        fm->tooth.child = NULL;
-        fm->tooth.sibling = tooth->child;
+        fm->tooth.child = S32(NULL);
+        fm->tooth.sibling = S32(P32(struct cnkobj *, tooth->child));
         
-        tooth->child = &fm->tooth;
+        tooth->child = S32(&fm->tooth);
         
         tooth->evalflags |= 0xA0000008;
         
@@ -459,7 +459,7 @@ void _fmCnkSetToothObject(MASK_WORK* fm, NJS_CNK_OBJECT* tooth)
             tooth->ang[i] = 0;
         }
         
-        fm->toothsrc = tooth;
+        fm->toothsrc = S32(tooth);
     }
 }
 
@@ -477,7 +477,7 @@ void _fmCnkSetJaw(MASK_WORK* fm, unsigned int v0, unsigned int v1)
 
     vofs = fm->vofs;
     
-    svp = (float*)&fm->src->vlist[fm->vtop];
+    svp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[fm->vtop];
     
     *(u_long128*)svp0 = *(u_long128*)&svp[v0 * vofs];
     
@@ -505,16 +505,16 @@ void _fmCnkSetJaw(MASK_WORK* fm, unsigned int v0, unsigned int v1)
     
     njPopMatrixEx();
     
-    if (fm->toothsrc != NULL)
+    if (P32(struct cnkobj *, fm->toothsrc) != NULL)
     {
-        fm->toothsrc->ang[1] = rz;
-        fm->toothsrc->ang[2] = ry;
+        P32(struct cnkobj *, fm->toothsrc)->ang[1] = rz;
+        P32(struct cnkobj *, fm->toothsrc)->ang[2] = ry;
     }
     
-    if (fm->tangorg != NULL)
+    if (P32(struct cnkobj *, fm->tangorg) != NULL)
     {
-        fm->tangorg->ang[1] = rz;
-        fm->tangorg->ang[2] = ry;
+        P32(struct cnkobj *, fm->tangorg)->ang[1] = rz;
+        P32(struct cnkobj *, fm->tangorg)->ang[2] = ry;
     }
 }
 
@@ -531,11 +531,11 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
 
     memset(fm, 0, sizeof(MASK_WORK));
     
-    fm->head = data;
+    fm->head = S32(data);
     
-    _fmCnkSetFaceObject(fm, _fmCnkSearchObject(fm, root, fm->head->faceId));
+    _fmCnkSetFaceObject(fm, _fmCnkSearchObject(fm, root, P32(struct HEAD_WORK *, fm->head)->faceId));
     
-    obj = _fmCnkSearchObject(fm, root, fm->head->toothId);
+    obj = _fmCnkSearchObject(fm, root, P32(struct HEAD_WORK *, fm->head)->toothId);
     
     if (obj != NULL) 
     {
@@ -544,7 +544,7 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
         mlwP->obj_num++;
     }
     
-    obj = _fmCnkSearchObject(fm, root, fm->head->tangId);
+    obj = _fmCnkSearchObject(fm, root, P32(struct HEAD_WORK *, fm->head)->tangId);
     
     if (obj != NULL) 
     {
@@ -555,7 +555,7 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
     
     for (i = 0; i < 9; i++) 
     {
-        obj = _fmCnkSearchObject(fm, root, fm->head->eyeId[i]);
+        obj = _fmCnkSearchObject(fm, root, P32(struct HEAD_WORK *, fm->head)->eyeId[i]);
         
         if (obj != NULL) 
         {
@@ -565,18 +565,18 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
         }
     }
     
-    fm->vlist = (VLIST_WORK*)&fm->head[1];
+    fm->vlist = S32((VLIST_WORK*)&P32(struct HEAD_WORK *, fm->head)[1]);
     
-    fm->nvpt = (NJS_POINT3*)&fm->vlist[fm->head->nList];
+    fm->nvpt = S32((NJS_POINT3*)&P32(struct VLIST_WORK *, fm->vlist)[P32(struct HEAD_WORK *, fm->head)->nList]);
     
-    nlist = (unsigned int*)fm->nvpt;
-    vlist = fm->vlist;
+    nlist = (unsigned int*)P32(NJS_POINT3 *, fm->nvpt);
+    vlist = P32(struct VLIST_WORK *, fm->vlist);
     
-    dvp = &fm->dst->vlist[fm->vtop];
+    dvp = &P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->vtop];
     
     vofs = fm->vofs;
     
-    for (i = 0; i++ < fm->head->nList; vlist++) 
+    for (i = 0; i++ < P32(struct HEAD_WORK *, fm->head)->nList; vlist++) 
     {
         for (j = 0; j++ < vlist->nvnum; ) 
         {
@@ -589,20 +589,20 @@ void fmCnkInitContext(MASK_WORK* fm, void* data, NJS_CNK_OBJECT* root, ML_WORK* 
         } 
     }
     
-    fm->list = (LIST_WORK*)nlist;
+    fm->list = S32((LIST_WORK*)nlist);
     
-    fm->jaw = (TANG_WORK*)&fm->list[fm->head->nConnect];
+    fm->jaw = S32((TANG_WORK*)&P32(struct LIST_WORK *, fm->list)[P32(struct HEAD_WORK *, fm->head)->nConnect]);
     
-    fm->tang = &fm->jaw[fm->head->nJaw];
+    fm->tang = S32(&P32(struct TANG_WORK *, fm->jaw)[P32(struct HEAD_WORK *, fm->head)->nJaw]);
     
-    fm->face = (PARAM_WORK*)&fm->tang[fm->head->nTang];
+    fm->face = S32((PARAM_WORK*)&P32(struct TANG_WORK *, fm->tang)[P32(struct HEAD_WORK *, fm->head)->nTang]);
     
-    fm->lnum = fm->head->nList;
-    fm->jnum = fm->head->nJaw;
-    fm->tnum = fm->head->nTang;
-    fm->fnum = fm->head->nFace;
+    fm->lnum = P32(struct HEAD_WORK *, fm->head)->nList;
+    fm->jnum = P32(struct HEAD_WORK *, fm->head)->nJaw;
+    fm->tnum = P32(struct HEAD_WORK *, fm->head)->nTang;
+    fm->fnum = P32(struct HEAD_WORK *, fm->head)->nFace;
     
-    _fmCnkSetJaw(fm, fm->head->jawId[0], fm->head->jawId[1]);
+    _fmCnkSetJaw(fm, P32(struct HEAD_WORK *, fm->head)->jawId[0], P32(struct HEAD_WORK *, fm->head)->jawId[1]);
     _fmSetObjP(mlwP);
 }
 
@@ -743,7 +743,7 @@ void fmCnkSetCurrentFrame(MASK_WORK* fm, float frame)
 
     for (i = 0; i < fm->fnum; i++)
     {
-        if (fm->face[i].frame > (unsigned int)frame)
+        if (P32(struct PARAM_WORK *, fm->face)[i].frame > (unsigned int)frame)
         {
             break;
         }
@@ -751,24 +751,24 @@ void fmCnkSetCurrentFrame(MASK_WORK* fm, float frame)
     
     if (i == 0) 
     {
-        fmCnkSetParam(fm, fm->face);
+        fmCnkSetParam(fm, P32(struct PARAM_WORK *, fm->face));
     }
     else if (i == fm->fnum) 
     {
-        fmCnkSetParam(fm, &fm->face[fm->fnum - 1]);
+        fmCnkSetParam(fm, &P32(struct PARAM_WORK *, fm->face)[fm->fnum - 1]);
     }
     else
     {
         key = i - 1;
         
-        fmCnkSetInterParam(fm, &fm->face[key], &fm->face[key + 1], (frame - fm->face[key].frame) / ((float)fm->face[key + 1].frame - fm->face[key].frame), 1.0f, -1);
+        fmCnkSetInterParam(fm, &P32(struct PARAM_WORK *, fm->face)[key], &P32(struct PARAM_WORK *, fm->face)[key + 1], (frame - P32(struct PARAM_WORK *, fm->face)[key].frame) / ((float)P32(struct PARAM_WORK *, fm->face)[key + 1].frame - P32(struct PARAM_WORK *, fm->face)[key].frame), 1.0f, -1);
     }
 }
 
 // 100% matching! 
 unsigned int fmCnkGetLastFrame(MASK_WORK* fm)
 {
-	return fm->face[fm->fnum - 1].frame;
+	return P32(struct PARAM_WORK *, fm->face)[fm->fnum - 1].frame;
 }
 
 // 100% matching!
@@ -791,10 +791,10 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
     float rsum;          
     void* p0, *p1; // not from DWARF
 
-    dvp = (float*)&fm->dst->vlist[fm->vtop];
-    svp = (float*)&fm->src->vlist[fm->vtop];
+    dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->vtop];
+    svp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[fm->vtop];
 
-    jaw = fm->jaw;
+    jaw = P32(struct TANG_WORK *, fm->jaw);
 
     PREFETCH(*(u_long128*)&svp[jaw->id * 8]);
     PREFETCH(*(u_long128*)&dvp[jaw->id * 8]);
@@ -863,8 +863,8 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
     }
 #endif
     
-    con = fm->list;
-    list = fm->vlist;
+    con = P32(struct LIST_WORK *, fm->list);
+    list = P32(struct VLIST_WORK *, fm->vlist);
 
     param = (float*)&fm->param;
     
@@ -904,7 +904,7 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
 
         rsum = 1.0f / sum;
         
-        dvp = (float*)&fm->dst->vlist[(list->id * 8) + 16];
+        dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[(list->id * 8) + 16];
         *(u_long128*)dvp = *(u_long128*)&svp[list->id * 8];
 
         p0 = mvp;
@@ -1062,11 +1062,11 @@ void _fmCnkCalcJaw(MASK_WORK* fm)
         
         njMultiMatrix(mat, jmat1);
         
-        jaw = fm->jaw;
+        jaw = P32(struct TANG_WORK *, fm->jaw);
         
         vofs = fm->vofs;
         
-        dvp = (float*)&fm->dst->vlist[fm->vtop];
+        dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->vtop];
         
         for (i = fm->jnum; i > 0; i--)  
         {
@@ -1279,14 +1279,14 @@ void _fmCnkCalcJaw(MASK_WORK* fm)
             jaw++;
         }
         
-        if (fm->toothsrc != NULL) 
+        if (P32(struct cnkobj *, fm->toothsrc) != NULL) 
         {
-            fm->toothsrc->ang[0] = (int)(182.04445f * jawang) & 0xFFFF;
+            P32(struct cnkobj *, fm->toothsrc)->ang[0] = (int)(182.04445f * jawang) & 0xFFFF;
         }
         
-        if (fm->tangorg != NULL) 
+        if (P32(struct cnkobj *, fm->tangorg) != NULL) 
         {
-            fm->tangorg->ang[0] = (int)(182.04445f * jawang) & 0xFFFF;
+            P32(struct cnkobj *, fm->tangorg)->ang[0] = (int)(182.04445f * jawang) & 0xFFFF;
         }
     }
 }
@@ -1309,7 +1309,7 @@ void _fmCnkCalcEye(MASK_WORK* fm)
     
     for (i = 0; i < 9; i++) 
     {
-        obj = fm->eyesrc[i];
+        obj = P32(NJS_CNK_OBJECT *, fm->eyesrc[i]);
         
         if (obj != NULL) 
         { 
@@ -1483,8 +1483,8 @@ void _fmCnkCalcTang(MASK_WORK* fm)
     
     if (i != 0) 
     {
-        svp = (float*)&fm->tangsrc->vlist[fm->vtop];
-        dvp = (float*)&fm->tangdst->vlist[fm->vtop];
+        svp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->tangsrc)->vlist)[fm->vtop];
+        dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->tangdst)->vlist)[fm->vtop];
         
         tangx = fm->param.tangx;
         tangy = fm->param.tangy;
@@ -1492,7 +1492,7 @@ void _fmCnkCalcTang(MASK_WORK* fm)
         
         vofs = fm->vofs;
         
-        tang = fm->tang;
+        tang = P32(struct TANG_WORK *, fm->tang);
        
         for ( ; i > 0; i--) 
         { 
@@ -1623,12 +1623,12 @@ void _fmCnkCalcNormal(MASK_WORK* fm)
     NJS_POINT3** nvp;  
     unsigned int vofs; 
 
-    dvp = (float*)&fm->dst->vlist[fm->vtop];
-    dnp = (float*)&fm->dst->vlist[fm->ntop];
+    dvp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->vtop];
+    dnp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->ntop];
     
-    list = fm->vlist;
+    list = P32(struct VLIST_WORK *, fm->vlist);
     
-    nvp = (NJS_POINT3**)fm->nvpt;
+    nvp = (NJS_POINT3**)P32(NJS_POINT3 *, fm->nvpt);
     
     vofs = fm->vofs;
     
@@ -1661,7 +1661,7 @@ void _fmCnkCalcNormal(MASK_WORK* fm)
 // 100% matching!
 void fmCnkCalcFace(MASK_WORK* fm) 
 {
-    if (fm->dst != NULL) 
+    if (P32(NJS_CNK_MODEL *, fm->dst) != NULL) 
     {
         _fmCnkCalcMuscle(fm);
         _fmCnkCalcJaw(fm);
@@ -1683,10 +1683,10 @@ void fmCnkSetMode(MASK_WORK* fm, unsigned int mode)
 
     if ((!(fm->mode & 0x1)) && ((mode & 0x1))) 
     {
-        snp = (float*)&fm->src->vlist[fm->ntop];
-        dnp = (float*)&fm->dst->vlist[fm->ntop];
+        snp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[fm->ntop];
+        dnp = (float*)&P32(int *, P32(NJS_CNK_MODEL *, fm->dst)->vlist)[fm->ntop];
 
-        for (i = fm->src->vlist[1] >> 16; i > 0; i--, snp += 8, dnp += 8)
+        for (i = P32(int *, P32(NJS_CNK_MODEL *, fm->src)->vlist)[1] >> 16; i > 0; i--, snp += 8, dnp += 8)
         {
             *(u_long128*)dnp = *(u_long128*)snp;
         }

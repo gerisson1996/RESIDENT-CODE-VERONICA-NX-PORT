@@ -103,7 +103,7 @@ void em60_init(BH_PWORK* epw)
     
     epw->mtn_no = 0;
     epw->mtn_md = 0x20;
-    epw->mtn_tp = NULL;
+    epw->mtn_tp = S32(NULL);
     
     epw->frm_mode = 0;
     
@@ -111,20 +111,20 @@ void em60_init(BH_PWORK* epw)
 
     if (epw->id == 199) 
     {
-        epw->mlwP->objP += 8;
-        epw->mlwP->owP += 8;
+        P32_ADD(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP ,  8);
+        P32_ADD(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP ,  8);
         
-        epw->mlwP->obj_num -= 8;
+        P32(struct ML_WORK *, epw->mlwP)->obj_num -= 8;
         
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         
-        epw->mlwP->obj_num += 8;
+        P32(struct ML_WORK *, epw->mlwP)->obj_num += 8;
         
-        epw->mlwP->owP -= 8;
-        epw->mlwP->objP -= 8;
+        P32_ADD(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP , -( 8));
+        P32_ADD(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP , -( 8));
     }
 
-    bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 }
 
 // 100% matching!
@@ -168,7 +168,7 @@ void mv00_subpl0(BH_PWORK* epw)
         
         epw->frm_mode = 0;
     case 1:
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         break;
     }
 }
@@ -189,7 +189,7 @@ void mv00_subpl0Ex(BH_PWORK* epw)
         
         epw->frm_mode = 0;
     case 1:
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         break;
     }
 }
@@ -207,7 +207,7 @@ void mv00_subpl1(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate = 0;
         
-        epw->mtn_tp = NULL;
+        epw->mtn_tp = S32(NULL);
         
         epw->frm_mode = 0;
     case 1:
@@ -215,7 +215,7 @@ void mv00_subpl1(BH_PWORK* epw)
         
         epw->spd = 0.01f * (float)epw->ct3;
         
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         
         bhAddSpeed(epw, 0);
         break;
@@ -319,11 +319,11 @@ void mv00_subpl5(BH_PWORK* epw)
         epw->hokan_count = 0;
         
         epw->mtn_add = 65536;
-        epw->mtn_tp = NULL;
+        epw->mtn_tp = S32(NULL);
         
         epw->frm_mode = 0;
     case 1:
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         break;
     }
 }
@@ -344,11 +344,11 @@ void mv00_subpl6(BH_PWORK* epw)
         
         epw->mtn_md |= 0x100;
         
-        epw->mtn_tp = NULL;
+        epw->mtn_tp = S32(NULL);
         
         epw->frm_mode = 0;
     case 1:
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         break;
     }
 }
@@ -367,7 +367,7 @@ void mv00_subpl0_1(BH_PWORK* epw)
         
         epw->frm_mode = 0;
     case 1:
-        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         break;
     }
 }

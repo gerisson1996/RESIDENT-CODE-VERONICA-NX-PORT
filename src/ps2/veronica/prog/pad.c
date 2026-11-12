@@ -51,14 +51,14 @@ void bhSetPad()
     { 
         if (pd_port == -1) 
         {
-            sys->p1per = NULL;
+            sys->p1per = S32(NULL);
         }
         else 
         {
-            sys->p1per = njGetPeripheral(pd_port); 
+            sys->p1per = S32(njGetPeripheral(pd_port)); 
         }
         
-        pon = *(unsigned int*)sys->pdm_pd; 
+        pon = *(unsigned int*)P32(unsigned char *, sys->pdm_pd); 
         
         {
         unsigned int padtbl[18] = { 0x00000000, 0x00000800, 0x00000040, 0x00000100, 0x00001000, 0x00004000, 0x00008000, 0x00002000,
@@ -81,9 +81,9 @@ void bhSetPad()
         }
         }
         
-        sys->pdm_pd += 4; 
+        P32_ADD(unsigned char *, sys->pdm_pd ,  4); 
         
-        if ((pon == -1) || ((sys->p1per != NULL) && ((sys->p1per->on & 0x800)) && (!(sys->cb_flg & 0x2)))) 
+        if ((pon == -1) || ((P32(const PDS_PERIPHERAL *, sys->p1per) != NULL) && ((P32(const PDS_PERIPHERAL *, sys->p1per)->on & 0x800)) && (!(sys->cb_flg & 0x2)))) 
         { 
             if (pon == -1) 
             {
@@ -103,14 +103,14 @@ void bhSetPad()
         
         if (!(sys->cb_flg & 0x2)) 
         { 
-            sys->mes_tp = pdm_mes;
+            sys->mes_tp = S32(pdm_mes);
             
             argb = ((int)(128.0f + (127.0f * njSin((sys->eor_ct & 0xF) * 2048))) << 24) | 0xE0E000; 
             
             bhDispMessageEx(320.0f - (bhMesLen(pdm_mes) / 2.0f), 88.0f, -0.9f, 2, 0, argb, 0);    
             bhDispMessageEx(320.0f - (bhMesLen(pdm_mes) / 2.0f), 88.0f, -0.9f, 2, 0, -2039808, 0); 
             
-            sys->mes_tp = pdm_palmes; 
+            sys->mes_tp = S32(pdm_palmes); 
             
             bhDispMessageEx(320.0f - (bhMesLen(pdm_palmes) / 2.0f), 392.0f, -0.9f, 2, 0, argb, 0); 
         }
@@ -119,14 +119,14 @@ void bhSetPad()
     { 
         if (pd_port == -1) 
         {
-            sys->p1per = NULL; 
+            sys->p1per = S32(NULL); 
         }
         else 
         {
-            sys->p1per = njGetPeripheral(pd_port);
+            sys->p1per = S32(njGetPeripheral(pd_port));
         }
         
-        if (sys->p1per == NULL) 
+        if (P32(const PDS_PERIPHERAL *, sys->p1per) == NULL) 
         { 
             sys->pad_on = sys->pad_oncpy = sys->pad_ps = sys->pad_old = 0; 
             
@@ -134,13 +134,13 @@ void bhSetPad()
             return; 
         }
         
-        pon = sys->p1per->on; 
+        pon = P32(const PDS_PERIPHERAL *, sys->p1per)->on; 
         
-        sys->pad_ar = sys->p1per->r; 
-        sys->pad_al = sys->p1per->l; 
+        sys->pad_ar = P32(const PDS_PERIPHERAL *, sys->p1per)->r; 
+        sys->pad_al = P32(const PDS_PERIPHERAL *, sys->p1per)->l; 
     
-        sys->pad_ax = -sys->p1per->x1;
-        sys->pad_ay = -sys->p1per->y1; 
+        sys->pad_ax = -P32(const PDS_PERIPHERAL *, sys->p1per)->x1;
+        sys->pad_ay = -P32(const PDS_PERIPHERAL *, sys->p1per)->y1; 
     }
     
     sys->pad_old = sys->pad_on; 

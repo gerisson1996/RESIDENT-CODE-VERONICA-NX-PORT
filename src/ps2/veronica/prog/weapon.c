@@ -137,7 +137,7 @@ void bhSetWeapon(O_WRK* op, int wpn_no, int flg)
     
     op->flr_no = plp->flr_no;
     
-    op->mtx = (void*)op->mtxbuf; // cast was likely to a non-void type
+    op->mtx = S32((void*)op->mtxbuf); // cast was likely to a non-void type
     
     if (wpn_no != 0) 
     {
@@ -157,24 +157,24 @@ void bhSetWeapon(O_WRK* op, int wpn_no, int flg)
         op->lkono = 13;
     }
     
-    op->lkwkp = (unsigned char*)plp;
+    op->lkwkp = S32((unsigned char*)plp);
     
     if (plp->wpnr_no < 10) 
     {
-        *(int*)plp->exp0 = 0;
+        *(int*)P32(unsigned char *, plp->exp0) = 0;
     } 
     else 
     {
-        *(int*)plp->exp0 = 1;
+        *(int*)P32(unsigned char *, plp->exp0) = 1;
     }
     
     if (plp->wpnr_no > 1)
     {
         plp->flg |= 0x20000;
         
-        plp->mlwP->owP[7].flg &= ~0x2;
-        plp->mlwP->owP[8].flg &= ~0x2;
-        plp->mlwP->owP[9].flg &= ~0x2;
+        P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg &= ~0x2;
+        P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].flg &= ~0x2;
+        P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].flg &= ~0x2;
     }
     else 
     {
@@ -182,15 +182,15 @@ void bhSetWeapon(O_WRK* op, int wpn_no, int flg)
 
         if (plp->wpnr_no != 1) 
         {
-            plp->mlwP->owP[7].flg &= ~0x2;
-            plp->mlwP->owP[8].flg &= ~0x2;
-            plp->mlwP->owP[9].flg &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].flg &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].flg &= ~0x2;
         }
     }
     
-    plp->mlwP->owP[11].flg &= ~0x2;
-    plp->mlwP->owP[12].flg &= ~0x2;
-    plp->mlwP->owP[13].flg &= ~0x2;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg &= ~0x2;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[12].flg &= ~0x2;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[13].flg &= ~0x2;
 }
 
 // 100% matching!
@@ -222,7 +222,7 @@ void bhActionWeapon(BH_PWORK* op) // should be O_WRK?
     int rr; 
     float nn; 
 
-    obp = &op->mlwP->objP[2];
+    obp = &P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)[2];
     
     switch (op->flg & 0xC80000)
     {
@@ -373,7 +373,7 @@ void bhActionWeapon(BH_PWORK* op) // should be O_WRK?
                 pos.y = 0;
                 pos.z = 1.0f;
                 
-                njCalcPoint(&op->mlwP->owP[2].mtx, &pos, (NJS_POINT3*)&sys->ef.px);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)[2].mtx, &pos, (NJS_POINT3*)&sys->ef.px);
                 
                 sys->ef.id = 2;
                 
@@ -423,11 +423,11 @@ short bhCheckBullet()
     short iw; 
     short bn;
 
-    iw = swork.pip[0];
+    iw = P32(unsigned int *, swork.pip)[0];
     
-    bn = swork.pip[iw];
+    bn = P32(unsigned int *, swork.pip)[iw];
     
-    if ((((swork.pip[iw] >> 16) & 0x800)) || ((plp->at_flg & 0x40000000))
+    if ((((P32(unsigned int *, swork.pip)[iw] >> 16) & 0x800)) || ((plp->at_flg & 0x40000000))
 #ifdef TARGET_PC
         || pc_inf_ammo()   /* F2 cheat: the game's own unlimited-ammo path */
 #endif
@@ -445,11 +445,11 @@ int bhCountBullet()
     short iw;
     short bn; 
 
-    iw = swork.pip[0];
+    iw = P32(unsigned int *, swork.pip)[0];
 	
-    bn = swork.pip[iw];
+    bn = P32(unsigned int *, swork.pip)[iw];
     
-    if ((((swork.pip[iw] >> 16) & 0x800)) || ((plp->at_flg & 0x40000000))
+    if ((((P32(unsigned int *, swork.pip)[iw] >> 16) & 0x800)) || ((plp->at_flg & 0x40000000))
 #ifdef TARGET_PC
         || pc_inf_ammo()
 #endif
@@ -470,8 +470,8 @@ int bhCountBullet()
             sys->gm_flg |= 0x40000;
         }
         
-        swork.pip[iw] &= 0xFFFF0000;
-        swork.pip[iw] |= bn & 0xFFFF;
+        P32(unsigned int *, swork.pip)[iw] &= 0xFFFF0000;
+        P32(unsigned int *, swork.pip)[iw] |= bn & 0xFFFF;
     }
     
     return 1;
@@ -564,7 +564,7 @@ int bhCheckGunAtari(GA_WORK* gap)
         len += 10.0f;
         
         wps = sys->apos;
-        wlp = sys->ahtp;
+        wlp = P32(struct ATR_WORK *, sys->ahtp);
         
         if ((wlp->attr & 0x1000000)) 
         {
@@ -574,7 +574,7 @@ int bhCheckGunAtari(GA_WORK* gap)
             
             bhSetExplosion(&ps);
             
-            op = &sys->obwp[wlp->prm3];
+            op = &P32(struct O_WRK *, sys->obwp)[wlp->prm3];
             
             op->mdflg |= 0x1; 
             
@@ -631,7 +631,7 @@ int bhCheckGunAtari(GA_WORK* gap)
     
     for (i = 0; i < sys->ewk_n; i++, pp++) 
     {
-        if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000)) && (((!(pp->flg & 0x80)) || (!(((O_WRK*)pp->lkwkp)->stflg & 0x1000000))) && (!(pp->flg & 0x4))))
+        if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000)) && (((!(pp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, pp->lkwkp))->stflg & 0x1000000))) && (!(pp->flg & 0x4))))
         {
             ap.x = 0.5f * (pp->watr.c1.x + pp->watr.c2.x);
             ap.y = 0.5f * (pp->watr.c1.y + pp->watr.c2.y);
@@ -772,11 +772,11 @@ label_2:
                                         kno = 0;
                                         knr = 0;
                                         
-                                        for (j = 1; j < (int)pp->mlwP->obj_num; j++) 
+                                        for (j = 1; j < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; j++) 
                                         {
-                                            sca.x = px - pp->mlwP->owP[j].mtx[12];
-                                            sca.y = py - pp->mlwP->owP[j].mtx[13];
-                                            sca.z = pz - pp->mlwP->owP[j].mtx[14];
+                                            sca.x = px - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[12];
+                                            sca.y = py - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[13];
+                                            sca.z = pz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[14];
                                             
                                             ll = njScalor(&sca); 
                                             
@@ -855,11 +855,11 @@ label_2:
             kno = 0; 
             knr = 0;
             
-            for (i = 1; i < (int)pp->mlwP->obj_num; i++) 
+            for (i = 1; i < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; i++) 
             {
-                sca.x = px - pp->mlwP->owP[i].mtx[12];
-                sca.y = py - pp->mlwP->owP[i].mtx[13];
-                sca.z = pz - pp->mlwP->owP[i].mtx[14]; 
+                sca.x = px - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[i].mtx[12];
+                sca.y = py - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[i].mtx[13];
+                sca.z = pz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[i].mtx[14]; 
                 
                 ll = njScalor(&sca);
                 
@@ -904,11 +904,11 @@ label_2:
         
         if ((wp_flg & 0x20000000))
         {
-            ps.x = pp->dpx - pp->mlwP->owP[kno].mtx[12];
-            ps.y = pp->dpy - pp->mlwP->owP[kno].mtx[13];
-            ps.z = pp->dpz - pp->mlwP->owP[kno].mtx[14];
+            ps.x = pp->dpx - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[kno].mtx[12];
+            ps.y = pp->dpy - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[kno].mtx[13];
+            ps.z = pp->dpz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[kno].mtx[14];
             
-            njSetMatrix(NULL, &pp->mlwP->owP[kno].mtx);
+            njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[kno].mtx);
             
             njInvertMatrix(NULL);
             
@@ -1126,7 +1126,7 @@ void bhCheckKnifeAtari(GA_WORK* gap)
     {
         wps = sys->apos; 
         
-        if (bhCheckWallAttrB89(sys->ahtp) != 0) 
+        if (bhCheckWallAttrB89(P32(struct ATR_WORK *, sys->ahtp)) != 0) 
         {
             ps.x = gap->gx - wps.x;
             ps.y = gap->gy - wps.y;
@@ -1150,7 +1150,7 @@ void bhCheckKnifeAtari(GA_WORK* gap)
         
         for (i = 0; i < sys->ewk_n; i++, pp++)
         {
-            if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2)) && (!(pp->stflg & 0x1000000)) && ((!(pp->flg & 0x80)) || (!(((BH_PWORK*)pp->lkwkp)->stflg & 0x1000000))) && (!(pp->flg & 0x4))) && (npCollisionCheckCC(&cap, &pp->watr) != 0))
+            if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2)) && (!(pp->stflg & 0x1000000)) && ((!(pp->flg & 0x80)) || (!(((BH_PWORK*)P32(unsigned char *, pp->lkwkp))->stflg & 0x1000000))) && (!(pp->flg & 0x4))) && (npCollisionCheckCC(&cap, &pp->watr) != 0))
             {
                 if (pp->id != 0)
                 {
@@ -1175,11 +1175,11 @@ void bhCheckKnifeAtari(GA_WORK* gap)
                 
                 pp->wpnr_no = gap->wpn_no;
                 
-                for (j = 1; j < (int)pp->mlwP->obj_num; j++)
+                for (j = 1; j < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; j++)
                 {
-                    sca.x = gap->px - pp->mlwP->owP[j].mtx[12];
-                    sca.y = gap->py - pp->mlwP->owP[j].mtx[13];
-                    sca.z = gap->pz - pp->mlwP->owP[j].mtx[14];
+                    sca.x = gap->px - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[12];
+                    sca.y = gap->py - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[13];
+                    sca.z = gap->pz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[14];
                     
                     ll = njScalor(&sca);
                     
@@ -1224,7 +1224,7 @@ int bhCheckFlyAtari(GA_WORK* gap, int eidx)
     
     for (i = 0; i < sys->ewk_n; i++, pp++)
     {
-        if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2)) && (!(pp->stflg & 0x1000000))) && (eidx != i) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)pp->lkwkp)->stflg & 0x1000000))) && (npCollisionCheckSC(&spr, &pp->watr) != 0)) 
+        if ((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2)) && (!(pp->stflg & 0x1000000))) && (eidx != i) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, pp->lkwkp))->stflg & 0x1000000))) && (npCollisionCheckSC(&spr, &pp->watr) != 0)) 
         {
             npDistanceP2C((NJS_POINT3*)&gap->px, &pp->watr, &ps);
             
@@ -1261,11 +1261,11 @@ int bhCheckFlyAtari(GA_WORK* gap, int eidx)
                 
                 pp->wpnr_no = gap->wpn_no;
                 
-                for (j = 1; j < (int)pp->mlwP->obj_num; j++) 
+                for (j = 1; j < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; j++) 
                 { 
-                    sca.x = gap->px - pp->mlwP->owP[j].mtx[12];
-                    sca.y = gap->py - pp->mlwP->owP[j].mtx[13];
-                    sca.z = gap->pz - pp->mlwP->owP[j].mtx[14];
+                    sca.x = gap->px - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[12];
+                    sca.y = gap->py - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[13];
+                    sca.z = gap->pz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[14];
                     
                     ll = njScalor(&sca);
                     
@@ -1325,7 +1325,7 @@ void bhSetBowDamage()
     
     for (i = 0; i < sys->ewk_n; i++, pp++) 
     {
-        if (((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000)) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)pp->lkwkp)->stflg & 0x1000000)))) && (EneDamFar[pp->id][17] != 0))
+        if (((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000)) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, pp->lkwkp))->stflg & 0x1000000)))) && (EneDamFar[pp->id][17] != 0))
         {
             px = 0.5f * (pp->watr.c1.x + pp->watr.c2.x);
             py = 0.5f * (pp->watr.c1.y + pp->watr.c2.y);
@@ -1349,11 +1349,11 @@ void bhSetBowDamage()
             kno = 0;
             knr = 0;
             
-            for (j = 1; j < (int)pp->mlwP->obj_num; j++)
+            for (j = 1; j < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; j++)
             { 
-                sca.x = px - pp->mlwP->owP[j].mtx[12];
-                sca.y = py - pp->mlwP->owP[j].mtx[13];
-                sca.z = pz - pp->mlwP->owP[j].mtx[14];   
+                sca.x = px - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[12];
+                sca.y = py - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[13];
+                sca.z = pz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[14];   
                 
                 ll = njScalor(&sca); 
                 
@@ -1474,7 +1474,7 @@ void bhCheckBombAtari(NJS_POINT3* pos, float ar, int dmax, int dmin)
     
     for (i = 0; i < sys->ewk_n; i++, pp++) 
     {
-        if (((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000))) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)pp->lkwkp)->stflg & 0x1000000))) && (npCollisionCheckSC(&spr, &pp->watr) != 0)) 
+        if (((((pp->flg & 0x1)) && ((pp->flg & 0x20)) && (!(pp->flg & 0x2))) && (!(pp->stflg & 0x1000000))) && ((!(pp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, pp->lkwkp))->stflg & 0x1000000))) && (npCollisionCheckSC(&spr, &pp->watr) != 0)) 
         {
             npDistanceP2C(pos, &pp->watr, &ps);
          
@@ -1510,11 +1510,11 @@ void bhCheckBombAtari(NJS_POINT3* pos, float ar, int dmax, int dmin)
                 
                 kno = 0;
                 
-                for (j = 1; j < (int)pp->mlwP->obj_num; j++) 
+                for (j = 1; j < (int)P32(struct ML_WORK *, pp->mlwP)->obj_num; j++) 
                 {
-                    sca.x = pp->dpx - pp->mlwP->owP[j].mtx[12];
-                    sca.y = pp->dpy - pp->mlwP->owP[j].mtx[13];
-                    sca.z = pp->dpz - pp->mlwP->owP[j].mtx[14];
+                    sca.x = pp->dpx - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[12];
+                    sca.y = pp->dpy - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[13];
+                    sca.z = pp->dpz - P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[j].mtx[14];
                     
                     ll = njScalor(&sca);
                     
@@ -1565,7 +1565,7 @@ int bhCheckCapCol2Capsule(BH_PWORK* pp, NJS_CAPSULE* cap, NJS_POINT3* hps)
     float len;   
     float nr;     
     
-    cpcl = pp->cpcl;
+    cpcl = P32(struct CPCL *, pp->cpcl);
     
     if (cpcl == NULL)
     {
@@ -1607,7 +1607,7 @@ int bhCheckCapCol2Capsule(BH_PWORK* pp, NJS_CAPSULE* cap, NJS_POINT3* hps)
             ofp.y = 0.1f * cpcl->jnt_b;
             ofp.z = 0.1f * cpcl->cap_r;
             
-            njCalcPoint(&pp->mlwP->owP[jnt_a].mtx, &ofp, (void*)&sp.c); 
+            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_a].mtx, &ofp, (void*)&sp.c); 
             
             sp.r = 0.1f * cap_r;
             
@@ -1637,13 +1637,13 @@ int bhCheckCapCol2Capsule(BH_PWORK* pp, NJS_CAPSULE* cap, NJS_POINT3* hps)
         } 
         else 
         {
-            cp.c1.x = pp->mlwP->owP[jnt_a].mtx[12];
-            cp.c1.y = pp->mlwP->owP[jnt_a].mtx[13];
-            cp.c1.z = pp->mlwP->owP[jnt_a].mtx[14];
+            cp.c1.x = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_a].mtx[12];
+            cp.c1.y = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_a].mtx[13];
+            cp.c1.z = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_a].mtx[14];
             
-            cp.c2.x = pp->mlwP->owP[jnt_b].mtx[12];
-            cp.c2.y = pp->mlwP->owP[jnt_b].mtx[13];
-            cp.c2.z = pp->mlwP->owP[jnt_b].mtx[14];
+            cp.c2.x = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_b].mtx[12];
+            cp.c2.y = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_b].mtx[13];
+            cp.c2.z = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jnt_b].mtx[14];
             
             cp.r = 0.1f * cap_r;
             
@@ -1768,7 +1768,7 @@ void bhSetExplosion(NJS_POINT3* pos)
    
     CallPlayerActionSe(534, 1);
     
-    lp = rom->lgtp;
+    lp = P32(struct LGT_WORK *, rom->lgtp);
     
     lp->flg = 3;
     lp->type = 101;
@@ -1800,7 +1800,7 @@ void bhSetExplosion(NJS_POINT3* pos)
     
     lp->ct0 = 0;
     
-    lp->light = NULL;
+    lp->light = S32(NULL);
     
     pnt.px = pos->x;
     pnt.py = pos->y;

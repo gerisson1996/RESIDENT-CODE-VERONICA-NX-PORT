@@ -399,16 +399,16 @@ void bhEne17(BH_PWORK* epw)
         bhEne17_CameraControl(epw);
     }
 
-    if (((int*)epw->exp0)[3] > 0) {
-        ((int*)epw->exp0)[3] -= 1;
+    if (((int*)P32(unsigned char *, epw->exp0))[3] > 0) {
+        ((int*)P32(unsigned char *, epw->exp0))[3] -= 1;
     }
 
-    if (((int*)epw->exp0)[4] > 0) {
-        ((int*)epw->exp0)[4] -= 1;
+    if (((int*)P32(unsigned char *, epw->exp0))[4] > 0) {
+        ((int*)P32(unsigned char *, epw->exp0))[4] -= 1;
     }
 
-    if (((int*)epw->exp0)[2] & 0x20000000) {
-        owk = &((O_WRK*)epw->exp2)->mlwP->owP[1];
+    if (((int*)P32(unsigned char *, epw->exp0))[2] & 0x20000000) {
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, epw->exp2))->mlwP)->owP)[1];
         ps.x = 0;
         ps.y = 0;
         ps.z = -17.4f;
@@ -419,7 +419,7 @@ void bhEne17(BH_PWORK* epw)
         bhEff_SetPtcl2(epw, &pd, owk->mtx);
         bhEff_SetPtcl2(epw, &pd, owk->mtx);
 
-        ((int*)epw->exp0)[2] &= ~0x20000000;
+        ((int*)P32(unsigned char *, epw->exp0))[2] &= ~0x20000000;
 #ifdef TARGET_PC
         if (!PC_VARIANT(epw))   /* the variant leaves the room's light 2 alone */
 #endif
@@ -434,7 +434,7 @@ void bhEne17_EneToPlyDist(BH_PWORK* epw)
     O_WORK* owk;
     NJS_POINT3 pos;
     
-    owk = plp->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
     pos.x = owk->mtx[12];
     pos.y = epw->py;
     pos.z = owk->mtx[14];
@@ -536,7 +536,7 @@ void bhEne17_DamageAdd(BH_PWORK *epw)
         wp_tbl = &wp_tbl[epw->comb_wep];
         d = &epw->dam[1];
 
-        for (i = 1; i < (int)epw->mlwP->obj_num; i++, d++) {
+        for (i = 1; i < (int)P32(struct ML_WORK *, epw->mlwP)->obj_num; i++, d++) {
             if (*d > 0) {
                 epw->djnt_no = i;
                 if (!(wp_tbl->flg & 4)) {
@@ -595,7 +595,7 @@ int bhEne17_SetMtn(BH_PWORK* epw)
     sfrm_no = epw->frm_no;
     frm = epw->frm_no / 65536;
     
-    if (sys->rmthp != epw->mnwP) {
+    if (P32(struct MN_WORK *, sys->rmthp) != P32(struct MN_WORK *, epw->mnwP)) {
         
         if (epw->type == 0 &&
             (epw->mtn_no == 16 || epw->mtn_no == 15) &&
@@ -604,13 +604,13 @@ int bhEne17_SetMtn(BH_PWORK* epw)
             for(i = 0; i < 7; i++, argb += 0x10000000) {
                 argb = (i << 28) + 0x20FFFFFF;
                 epw->frm_no = sfrm_no - ((7 - i) * 65536);
-                bhSetMotion(epw, 0, epw->mtn_md, epw->mtn_tp);
+                bhSetMotion(epw, 0, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
                 bhCalcModel(epw);
                 
-                armp = (BH_PWORK*)epw->exp2;
+                armp = (BH_PWORK*)P32(unsigned char *, epw->exp2);
                 bhCalcModel(armp);
                 
-                owk = &armp->mlwP->owP[1];
+                owk = &P32(struct O_WORK *, P32(struct ML_WORK *, armp->mlwP)->owP)[1];
                 
                 ofs.x = 0.0f;                       
                 ofs.y = 0.0f;                       
@@ -620,7 +620,7 @@ int bhEne17_SetMtn(BH_PWORK* epw)
             } 
 
             epw->frm_no = sfrm_no + 0xFFFC0000;
-            bhSetMotion(epw, 0, epw->mtn_md, epw->mtn_tp);
+            bhSetMotion(epw, 0, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
             bhCalcModel(epw);
             epw->frm_no = sfrm_no;
         }
@@ -681,7 +681,7 @@ int bhEne17_SetMtn(BH_PWORK* epw)
             O_WORK* owk;
             NJS_POINT3 ps;
             
-            owk = &epw->mlwP->owP[lnk_obj];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[lnk_obj];
             ps.x = owk->mtx[12];
             ps.y = 1.0f;
             ps.z = owk->mtx[14];
@@ -689,10 +689,10 @@ int bhEne17_SetMtn(BH_PWORK* epw)
         }
     }
     
-    ret = bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    ret = bhSetMotion(epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     
     if (EXP0_I(8) & 0x40000000) {
-        obj = epw->mlwP->objP;        
+        obj = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);        
         obj->pos[0] = obj->pos[2] = 0.0f;
         bhEne_GetTranslateMtn(epw, frm, 0);
     }
@@ -718,7 +718,7 @@ void bhEne17_MtnTblPlay(BH_PWORK* epw, int frm)
     NJS_VECTOR vec2 = { 0, -0.8f, -2.5f };
     int i;
 
-    if (sys->rmthp != epw->mnwP) {
+    if (P32(struct MN_WORK *, sys->rmthp) != P32(struct MN_WORK *, epw->mnwP)) {
         if (epw->flg & 0x40000) {
             while(mtbl->no != -1) {
                 if (mtbl->no == epw->mtn_no) {
@@ -782,7 +782,7 @@ void bhEne17_CollCheck(BH_PWORK* epw)
 {
     
     if (!(epw->flg & 2)) {
-        if ((epw->flg & 8) && (((unsigned int*)epw->exp0)[2] & 0x10)) {
+        if ((epw->flg & 8) && (((unsigned int*)P32(unsigned char *, epw->exp0))[2] & 0x10)) {
             bhCheckPlayer(epw);
         }
         bhEne17_CollCheckWall(epw);
@@ -792,9 +792,9 @@ void bhEne17_CollCheck(BH_PWORK* epw)
 // 100% matching!
 void bhEne17_CollCheckWall(BH_PWORK* ewp) 
 {
-    *(ATR_WORK**)((char*)ewp->exp0 + 64) = bhCheckWallType((NJS_POINT3*)&ewp->px, ewp->flg, ewp->ar, ewp->ah);
+    *(ATR_WORK**)((char*)P32(unsigned char *, ewp->exp0) + 64) = bhCheckWallType((NJS_POINT3*)&ewp->px, ewp->flg, ewp->ar, ewp->ah);
     
-    if ((((unsigned int*)(ewp->exp0))[2] & 0xF) == 1 && (ewp->flg & 0x10)) {
+    if ((((unsigned int*)(P32(unsigned char *, ewp->exp0)))[2] & 0xF) == 1 && (ewp->flg & 0x10)) {
         bhCheckDansa(ewp);
         bhCheckWall(ewp);
     }
@@ -806,20 +806,20 @@ void bhEne17_CalcEnemy(BH_PWORK* epw)
     O_WORK* owk;
     
     bhCalcModel(epw);
-    owk = &epw->mlwP->owP[5];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[5];
     epw->cah = epw->ah = owk->mtx[13] - epw->py;
-    owk = &epw->mlwP->owP[5];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[5];
     
     epw->watr.c1.x = owk->mtx[12];
     epw->watr.c1.y = owk->mtx[13] - 5.0f;
     epw->watr.c1.z = owk->mtx[14];
     
-    owk = &epw->mlwP->owP[16];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[16];
     epw->watr.c2.x = owk->mtx[12];
     epw->watr.c2.y = owk->mtx[13];
     epw->watr.c2.z = owk->mtx[14];
     
-    owk = &epw->mlwP->owP[21];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[21];
     epw->watr.c2.x = (epw->watr.c2.x + owk->mtx[12]) / 2.0f;
     epw->watr.c2.y = (epw->watr.c2.y + owk->mtx[13]) / 2.0f;
     epw->watr.c2.z = (epw->watr.c2.z + owk->mtx[14]) / 2.0f;
@@ -852,21 +852,21 @@ void bhEne17_Init(BH_PWORK* epw)
     epw->mtn_no = 0;
     epw->mtn_add = 0;
     epw->frm_no = 0;
-    epw->mtn_tp = (unsigned char*)en17_flipTree;
+    epw->mtn_tp = S32((unsigned char*)en17_flipTree);
     epw->mtn_md = 0;
 
-    addr = epw->exp0;
+    addr = P32(unsigned char *, epw->exp0);
         
     if (addr == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(0x54, 8);
-        epw->exp1 = bhEne_CallocWork(0x270, 8);
+        epw->exp0 = S32(bhEne_CallocWork(0x54, 8));
+        epw->exp1 = S32(bhEne_CallocWork(0x270, 8));
         
         if (!(epw->flg & 0x80)) 
         {
-            epw->exp2 = (unsigned char*)bhEne17_SetLinkWork(epw, 0xD, 4, 0x1F);
+            epw->exp2 = S32((unsigned char*)bhEne17_SetLinkWork(epw, 0xD, 4, 0x1F));
             bhEne_SetCallFunc(bhEne17LArm, 0x1F);
-            epw->exp3 = (unsigned char*)bhEne17_SetLinkWork(epw, 9, 3, 0x20);
+            epw->exp3 = S32((unsigned char*)bhEne17_SetLinkWork(epw, 9, 3, 0x20));
             bhEne_SetCallFunc(bhEne17RArm, 0x20);
         }
     } else {
@@ -900,14 +900,14 @@ void bhEne17_Init(BH_PWORK* epw)
     epw->mode2 = 0;
     epw->mode3 = 0;
     epw->lok_jno = 4;
-    epw->mlwP->objP = *epw->mbp;
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(*epw->mbp);
     epw->mdflg = 0;
-    epw->obj_a = epw->mbp[0];
-    epw->obj_b = epw->mbp[1];
-    epw->cpcl = Ene17CapColTab;
+    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+    epw->cpcl = S32(Ene17CapColTab);
     
     bhEne17_InitType[0](epw);
-    bhSetMotion((BH_PWORK* ) epw, (int)epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion((BH_PWORK* ) epw, (int)epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     bhEne17_CalcEnemy(epw);
 }
 
@@ -928,16 +928,16 @@ BH_PWORK* bhEne17_SetLinkWork(BH_PWORK* epw, int lnk_obj, int mdl_no, int id)
 
     epp = bhSetEnemy(&lnk_tbl, rom->ene_n);
 
-    epp->lkwkp = (unsigned char*)epw;
+    epp->lkwkp = S32((unsigned char*)epw);
     epp->lkono = lnk_obj;
     epp->lox = 0.0f;
     epp->loy = 0.0f;
     epp->loz = 0.0f;
 
     epp->mdl[0] = epw->mdl[mdl_no];
-    epp->mlwP   = &epp->mdl[0];
+    epp->mlwP   = S32(&epp->mdl[0]);
 
-    epp->mnwP = epw->mnwP;
+    epp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
 
     return epp;
 }
@@ -1090,7 +1090,7 @@ void bhEne17_MV01(BH_PWORK *epw)
         epw->mode3++;
 
     case 1:
-        ikou(epw, (NJS_POINT3 *)&epw->exp0[28], 512);
+        ikou(epw, (NJS_POINT3 *)&P32(unsigned char *, epw->exp0)[28], 512);
 
         if (!(plp->flg & 2) && !(plp->flg & 4) &&
             EXP0_F(20) < 22.0f &&
@@ -1166,7 +1166,7 @@ void bhEne17_MV03(BH_PWORK* epw)
             ofs.z = -15.0f;
             bhEne17_SetSmokeEffect(epw, 0, &ofs);
 
-            owk = &epw->mlwP->owP[1];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[1];
             ofs.x = owk->mtx[12];
             ofs.z = owk->mtx[14];
             
@@ -1234,7 +1234,7 @@ void bhEne17_MV04(BH_PWORK* epw)
             bhEne17_PlayerDGCheck(epw, plp);
         }
         
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num) - 1) {
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num) - 1) {
             epw->mode1 = 1;
             epw->mode2 = 6;
             epw->mode3 = 0;
@@ -1279,7 +1279,7 @@ void bhEne17_MV05(BH_PWORK* epw)
             ofs.y = 0.0f;
             ofs.z = -15.0f;
             bhEne17_SetSmokeEffect(epw, 0,  &ofs);
-            owk = &epw->mlwP->owP[1];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[1];
             ofs.x = owk->mtx[12];
             ofs.z = owk->mtx[14];
             ofs.y = 1.0f;
@@ -1328,7 +1328,7 @@ void bhEne17_MV06(BH_PWORK* epw)
             EXP0_I(8) &= ~0x400;
         }
 
-        if ((*(int*)&epw->exp0[8] & 0x400) && (plp->stflg & 0x400)) {
+        if ((*(int*)&P32(unsigned char *, epw->exp0)[8] & 0x400) && (plp->stflg & 0x400)) {
             if (++epw->ct1 > 10) {
                 EXP0_I(8) &= ~0x400;
             }
@@ -1470,12 +1470,12 @@ void bhEne17_PlyDG00(BH_PWORK* pl, BH_PWORK* epw)
         if (epw->mtn_no != 16) {
             pl->spd *= 0.8f;
             bhAddSpeed(pl, pl->axp);
-            owk = &pl->mlwP->owP[17];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[17];
             ps.x = owk->mtx[12];
             ps.y = 1.0f;
             ps.z = owk->mtx[14];
             bhEne17_SetSmokeEffect3(epw, &ps, pl->ayp);
-            owk = &pl->mlwP->owP[21];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[21];
             ps.x = owk->mtx[12];
             ps.z = owk->mtx[14];
             bhEne17_SetSmokeEffect3(epw, &ps, pl->ayp);
@@ -1489,7 +1489,7 @@ void bhEne17_PlyDG00(BH_PWORK* pl, BH_PWORK* epw)
             pl->flg |= 8;
             pl->stflg &= ~0x10000;
             pl->at_flg = 0;
-            pl->mnwP = pl->mnwPb;
+            pl->mnwP = S32(P32(struct MN_WORK *, pl->mnwPb));
             *(int*)&plp->mode0 = 1;
         }
         break;
@@ -1520,7 +1520,7 @@ void bhEne17_PlyDG01(BH_PWORK* pl, BH_PWORK* epw)
         pl->flg |= 0x10000;
         pl->flg |= 0x200000;
 
-        pl->mnwP = epw->mnwP;
+        pl->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
         pl->frm_no = 65536;
         pl->hokan_count = 0;
         pl->hokan_rate = 49152;
@@ -1560,7 +1560,7 @@ void bhEne17_PlyDG01(BH_PWORK* pl, BH_PWORK* epw)
         }
 
         if (frm == 7) {
-            owk = &pl->mlwP->owP[1];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, pl->mlwP)->owP)[1];
             key.x = owk->mtx[12];
             key.z = owk->mtx[14];
             key.y = 1.0f;
@@ -1589,7 +1589,7 @@ void bhEne17_PlyDG01(BH_PWORK* pl, BH_PWORK* epw)
 
     case 2:
         if ((pl->frm_no / 65536) == 0) {
-            obj = pl->mlwP->objP;
+            obj = P32(struct cnkobj *, P32(struct ML_WORK *, pl->mlwP)->objP);
             obj->pos[2] = 0;
             obj->pos[0] = 0;
             pl->flg &= ~0x200000;
@@ -1598,7 +1598,7 @@ void bhEne17_PlyDG01(BH_PWORK* pl, BH_PWORK* epw)
             pl->flg |= 8;
             pl->stflg &= ~0x10000;
             pl->at_flg = 0;
-            pl->mnwP = pl->mnwPb;
+            pl->mnwP = S32(P32(struct MN_WORK *, pl->mnwPb));
             *(unsigned int*)&plp->mode0 = 1;
             pl->flg &= ~4;
         }
@@ -1664,12 +1664,12 @@ int bhEne17_PlayerDGCheck(BH_PWORK* epw, BH_PWORK* pl)
     i = 0;
     j = 0;
     while(i < 5) {
-        cap.c1.x = *(float*)(epw->exp1 + j + 72);
-        cap.c1.y = *(float*)(epw->exp1 + j + 76);
-        cap.c1.z = *(float*)(epw->exp1 + j + 80);
-        cap.c2.x = *(float*)(epw->exp1 + j + 384);
-        cap.c2.y = *(float*)(epw->exp1 + j + 388);
-        cap.c2.z = *(float*)(epw->exp1 + j + 392);
+        cap.c1.x = *(float*)(P32(unsigned char *, epw->exp1) + j + 72);
+        cap.c1.y = *(float*)(P32(unsigned char *, epw->exp1) + j + 76);
+        cap.c1.z = *(float*)(P32(unsigned char *, epw->exp1) + j + 80);
+        cap.c2.x = *(float*)(P32(unsigned char *, epw->exp1) + j + 384);
+        cap.c2.y = *(float*)(P32(unsigned char *, epw->exp1) + j + 388);
+        cap.c2.z = *(float*)(P32(unsigned char *, epw->exp1) + j + 392);
         cap.r = 1.0f;
             
         if (npCollisionCheckCC(&cap, &pl->watr) != 0) {
@@ -1716,7 +1716,7 @@ int bhEne17_PlayerDGCheck(BH_PWORK* epw, BH_PWORK* pl)
             }
     
             
-            owk = &plp->mlwP->owP[3];
+            owk = &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[3];
             ps.x = 0.0f;
             ps.y = 0.0f;
             ps.z = 0.0f;
@@ -1761,7 +1761,7 @@ void bhEne17_SePlay(BH_PWORK* epw, int no)
 // 100% matching!
 int bhEne17_CameraControl(BH_PWORK* epw) 
 {
-    if (((unsigned int*)(epw->exp0))[2] & 0x800) {
+    if (((unsigned int*)(P32(unsigned char *, epw->exp0)))[2] & 0x800) {
         if (!(EXP0_F(24) <= 0.01f)) {
             cam.ofy = (EXP0_F(24) * (-rand() / -2.1474836e9f)) - (EXP0_F(24) / 2.0f);
             EXP0_F(24) *= 0.8f;
@@ -1771,7 +1771,7 @@ int bhEne17_CameraControl(BH_PWORK* epw)
         cam.ofx = 0.0f;
         cam.ofy = 0.0f;
         cam.ofz = 0.0f;
-        ((unsigned int*)epw->exp0)[2] &= ~0x800;
+        ((unsigned int*)P32(unsigned char *, epw->exp0))[2] &= ~0x800;
     }
 }
 
@@ -1801,8 +1801,8 @@ void bhEne17_AfterimageAxEffect(BH_PWORK* epw, NJS_MATRIX* mtx, NJS_POINT3* ofs,
 
     eff[eno].stflg |= 0x20;
     eff[eno].tex_id = 0;
-    eff[eno].mlwP = &epw->mdl[5];
-    eff[eno].txp[0] = eff[eno].mlwP->texP;
+    eff[eno].mlwP = S32(&epw->mdl[5]);
+    eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, eff[eno].mlwP)->texP));
     eff[eno].ax = (int)(10430.381f * atan2f(mtx[0][6], mtx[0][10]));
     eff[eno].ay = (int)(10430.381f * asinf(-mtx[0][2]));
     eff[eno].az = (int)(10430.381f * atan2f(mtx[0][1], mtx[0][0]));
@@ -1828,7 +1828,7 @@ void bhEne17_SetSmokeEffect(BH_PWORK* epw, int lnk_onj, NJS_POINT3* ofs)
     sys->ef.ax = 0;
     sys->ef.ay = epw->ay;
     sys->ef.mdlver = 0;
-    owk = &epw->mlwP->owP[lnk_onj];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[lnk_onj];
     ps.x = ofs->x;
     ps.y = ofs->y;
     ps.z = ofs->z;
@@ -1846,7 +1846,7 @@ void bhEne17_SetSmokeEffect(BH_PWORK* epw, int lnk_onj, NJS_POINT3* ofs)
             
             if (eno != -1) {
                 eff[eno].stflg |= 0x20;
-                eff[eno].txp[0] = epw->mlwP->texP;
+                eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
                 eff[eno].tex_id = 7;
                 eff[eno].xn = 0.4f + (0.2f * (-rand() / -2.1474836e9f));
                 eff[eno].yn = 0.05f;
@@ -1890,7 +1890,7 @@ void bhEne17_SetSmokeEffect2(BH_PWORK* epw, NJS_POINT3* ofs, int rot)
         if (eno != -1) {
             owk = &eff[eno];
             owk->stflg |= 0x20;
-            owk->txp[0] = epw->mlwP->texP;
+            owk->txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
             owk->tex_id = 7;
             owk->xn = 1.2f + (0.2f * (-rand() / -2147483648.0f));
             owk->yn = 0.05f;
@@ -1929,7 +1929,7 @@ void bhEne17_SetSmokeEffect3(BH_PWORK* epw, NJS_POINT3* ofs, int rot)
 
     if (eno != -1) {
         eff[eno].stflg |= 0x20;
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         eff[eno].tex_id = 7;
         eff[eno].xn = 0.1f + (0.2f * (-rand() / -2147483648.0f));
         eff[eno].yn = 0.05f;
@@ -1941,7 +1941,7 @@ void bhEne17_SetSmokeEffect3(BH_PWORK* epw, NJS_POINT3* ofs, int rot)
 // 100% matching!
 void bhEne17_SetLight(BH_PWORK* epw, NJS_POINT3 *ofs) 
 {
-    LGT_WORK* lp = &(rom->lgtp[2]);
+    LGT_WORK* lp = &(P32(struct LGT_WORK *, rom->lgtp)[2]);
 
     lp->flg   = 3;
     lp->aspd  = 8;
@@ -1954,7 +1954,7 @@ void bhEne17_SetLight(BH_PWORK* epw, NJS_POINT3 *ofs)
     lp->nr = 10.0f;
     lp->fr = 80.0f;
 
-    lp->light = NULL;
+    lp->light = S32(NULL);
 
     lp->lkflg = 0;
     lp->lkno  = 0;

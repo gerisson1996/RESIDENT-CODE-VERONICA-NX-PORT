@@ -19,14 +19,14 @@ void syFree(void* ap)
         return;
     }
     
-    for (search_work = Ps2_malloc_p; search_work->pNext_work != NULL; search_work = search_work->pNext_work) 
+    for (search_work = Ps2_malloc_p; P32(struct HM *, search_work->pNext_work) != NULL; search_work = P32(struct HM *, search_work->pNext_work)) 
     {
-        if (ap == (search_work->pNext_work + 1)) 
+        if (ap == (P32(struct HM *, search_work->pNext_work) + 1)) 
         {
-            search_work->Total_size += search_work->pNext_work->Total_size + sizeof(HM);
-            __free_malloc_size += search_work->pNext_work->Use_size + sizeof(HM);
+            search_work->Total_size += P32(struct HM *, search_work->pNext_work)->Total_size + sizeof(HM);
+            __free_malloc_size += P32(struct HM *, search_work->pNext_work)->Use_size + sizeof(HM);
             
-            search_work->pNext_work = search_work->pNext_work->pNext_work;
+            search_work->pNext_work = S32(P32(struct HM *, P32(struct HM *, search_work->pNext_work)->pNext_work));
             return;
         }
     }
@@ -41,7 +41,7 @@ void* syMalloc(unsigned int nbytes) // this function might have actually been ba
 
     search_work = Ps2_malloc_p; 
 
-    while (search_work->pNext_work != NULL) 
+    while (P32(struct HM *, search_work->pNext_work) != NULL) 
     { 
         if ((search_work->Total_size - search_work->Use_size) >= (nbytes + sizeof(HM))) 
         { 
@@ -49,7 +49,7 @@ void* syMalloc(unsigned int nbytes) // this function might have actually been ba
         } 
         else
         {
-            search_work = search_work->pNext_work;
+            search_work = P32(struct HM *, search_work->pNext_work);
         }
     } 
     
@@ -59,25 +59,25 @@ void* syMalloc(unsigned int nbytes) // this function might have actually been ba
     }
 
 label:
-    if (search_work->pNext_work == NULL) 
+    if (P32(struct HM *, search_work->pNext_work) == NULL) 
     { 
-        search_work->pNext_work = (HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4));
+        search_work->pNext_work = S32((HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4)));
         
-        search_work->pNext_work->pNext_work = NULL; 
+        P32(struct HM *, search_work->pNext_work)->pNext_work = S32(NULL); 
     } 
     else 
     { 
         HM* temp; // not from the debugging symbols
 
-        temp = search_work->pNext_work;
+        temp = P32(struct HM *, search_work->pNext_work);
         
-        search_work->pNext_work = (HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4)); 
+        search_work->pNext_work = S32((HM*)PS2_HOST(ALIGN(GET_NEXT_WRK(search_work), 4))); 
         
-        search_work->pNext_work->pNext_work = temp; 
+        P32(struct HM *, search_work->pNext_work)->pNext_work = S32(temp); 
     }
     
-    search_work->pNext_work->Total_size = search_work->Total_size - (search_work->Use_size + sizeof(HM));
-    search_work->pNext_work->Use_size = nbytes; 
+    P32(struct HM *, search_work->pNext_work)->Total_size = search_work->Total_size - (search_work->Use_size + sizeof(HM));
+    P32(struct HM *, search_work->pNext_work)->Use_size = nbytes; 
     
     search_work->Total_size = search_work->Use_size; 
     
@@ -104,7 +104,7 @@ Void syMallocInit(Void *heap, Uint32 size)
     Ps2_malloc_p->Total_size = 13422528;
 #endif
     
-    Ps2_malloc_p->pNext_work = NULL;
+    Ps2_malloc_p->pNext_work = S32(NULL);
     
 #ifdef TARGET_PC
     __free_malloc_size = 13422528 + PC_ARENA_EXTRA + PC_VERTEX_EXTRA;
@@ -120,7 +120,7 @@ Void syMallocStat(Uint32 *wholeFreeSize, Uint32 *biggestFreeBlockSize)
 
     __max_malloc_size = 0;
     
-    for (search_work = Ps2_malloc_p; search_work != NULL; search_work = search_work->pNext_work) 
+    for (search_work = Ps2_malloc_p; search_work != NULL; search_work = P32(struct HM *, search_work->pNext_work)) 
     {
         if (__max_malloc_size < (search_work->Total_size - search_work->Use_size)) 
         {

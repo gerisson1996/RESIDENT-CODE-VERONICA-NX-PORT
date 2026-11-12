@@ -74,13 +74,13 @@ void bhInitMap(enum_2 set_mod)
     
     mwP->status |= (1 << set_mod) & 7;
     
-    mwP->mem_bakP = sys->memp;
+    mwP->mem_bakP = S32(P32(unsigned char *, sys->memp));
     
-    mwP->vew_mtxP = (NJS_MATRIX*)mwP->Vew_Mtx;
-    mwP->rom_mtxP = (NJS_MATRIX*)mwP->Rom_Mtx;
+    mwP->vew_mtxP = S32((NJS_MATRIX*)mwP->Vew_Mtx);
+    mwP->rom_mtxP = S32((NJS_MATRIX*)mwP->Rom_Mtx);
     
-    mwP->cur_mtxP = &mwP->rom_mtxP[1];
-    mwP->tmp_mtxP = &mwP->rom_mtxP[2];
+    mwP->cur_mtxP = S32(&P32(float (*)[16], mwP->rom_mtxP)[1]);
+    mwP->tmp_mtxP = S32(&P32(float (*)[16], mwP->rom_mtxP)[2]);
     
     mwP->ply_stg = sys->stg_no;
     mwP->ply_rom = sys->rom_no + (sys->stg_no * 100);
@@ -120,15 +120,15 @@ void bhInitMap(enum_2 set_mod)
     
     if (!(mwP->status & 0x4)) 
     {
-        mwP->rom_texP = rom->mdl.texP;
+        mwP->rom_texP = S32(P32(NJS_TEXLIST *, rom->mdl.texP));
         
-        if (mwP->rom_texP != NULL) 
+        if (P32(NJS_TEXLIST *, mwP->rom_texP) != NULL) 
         {
-            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
+            sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 31) & ~0x1F)));
             
-            mwP->rom_bakP = sys->memp;
+            mwP->rom_bakP = S32(P32(unsigned char *, sys->memp));
             
-            sys->memp = (unsigned char*)bhCopyTexmem2Mainmem(mwP->rom_texP, (char*)sys->memp);
+            sys->memp = S32((unsigned char*)bhCopyTexmem2Mainmem(P32(NJS_TEXLIST *, mwP->rom_texP), (char*)P32(unsigned char *, sys->memp)));
             
             bhGarbageTexture(NULL, 0);
             
@@ -143,17 +143,17 @@ void bhInitMap(enum_2 set_mod)
     
     texP = (NJS_TEXLIST*)bhGetFreeMemory(8, 4);
     
-    texP->textures  = (NJS_TEXNAME*)bhGetFreeMemory(12, 4);
+    texP->textures  = S32((NJS_TEXNAME*)bhGetFreeMemory(12, 4));
     texP->nbTexture = 1;
     
-    mwP->map_texP = texP;
+    mwP->map_texP = S32(texP);
     
     texP = (NJS_TEXLIST*)bhGetFreeMemory(8, 4);
     
-    texP->textures  = (NJS_TEXNAME*)bhGetFreeMemory(12, 4);
+    texP->textures  = S32((NJS_TEXNAME*)bhGetFreeMemory(12, 4));
     texP->nbTexture = 1;
     
-    mwP->stg_texP = texP;
+    mwP->stg_texP = S32(texP);
     
     MapFuncInit(24);
     
@@ -184,22 +184,22 @@ void bhExitMap()
     
     if ((mwP->status & 0x8)) 
     {
-        njReleaseTexture(mwP->map_texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, mwP->map_texP));
     }
     
     if ((mwP->status & 0x10)) 
     {
-        njReleaseTexture(mwP->stg_texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, mwP->stg_texP));
     }
     
     bhGarbageTexture(NULL, 0);
     
-    if (mwP->rom_texP != NULL) 
+    if (P32(NJS_TEXLIST *, mwP->rom_texP) != NULL) 
     {
-        bhCopyMainmem2Texmem(mwP->rom_texP);
+        bhCopyMainmem2Texmem(P32(NJS_TEXLIST *, mwP->rom_texP));
     }
     
-    bhReleaseFreeMemory(mwP->mem_bakP);
+    bhReleaseFreeMemory(P32(void *, mwP->mem_bakP));
     
     sys->gm_flg &= ~0x80000;
 }
@@ -215,14 +215,14 @@ static int bhReadMapData(char* namP)
     switch (mwP->fil_mode)
     {
     case 0:
-        if (mwP->map_bufP != NULL) 
+        if (P32(void *, mwP->map_bufP) != NULL) 
         {
-            bhReleaseFreeMemory(mwP->map_bufP);
+            bhReleaseFreeMemory(P32(void *, mwP->map_bufP));
         }
         
-        mwP->map_bufP = bhGetFreeMemory(GetInsideFileSize(mwP->prti_no, (unsigned int)PS2_ADDR(namP)), 32);
+        mwP->map_bufP = S32(bhGetFreeMemory(GetInsideFileSize(mwP->prti_no, (unsigned int)PS2_ADDR(namP)), 32));
         
-        if (RequestReadInsideFile(mwP->prti_no, (unsigned int)PS2_ADDR(namP), mwP->map_bufP) == 0) 
+        if (RequestReadInsideFile(mwP->prti_no, (unsigned int)PS2_ADDR(namP), P32(void *, mwP->map_bufP)) == 0) 
         {
             mwP->fil_mode = 2;
             break;
@@ -373,7 +373,7 @@ int bhControlMap()
         mwP->map_mode = MP_MOD_WAIT;
         break;
     case MP_MOD_IDX_ANALYZE:
-        pacP = mwP->map_bufP;
+        pacP = P32(void *, mwP->map_bufP);
         
         if (*pacP++ == 0x4341504D)
         {
@@ -396,7 +396,7 @@ int bhControlMap()
             
             mwP->status |= 0x8;
             
-            bhSetMemPvpTexture(mwP->map_texP, (unsigned char*)pacP, 0);
+            bhSetMemPvpTexture(P32(NJS_TEXLIST *, mwP->map_texP), (unsigned char*)pacP, 0);
             
             if (next != -1) 
             {
@@ -407,7 +407,7 @@ int bhControlMap()
             
             for (i = 0; i < 10; i++) 
             {
-                mwP->mes_bufPP[i] = (unsigned int*)pacP;
+                mwP->mes_bufPP[i] = S32((unsigned int*)pacP);
                 
                 if (next != -1) 
                 {
@@ -417,9 +417,9 @@ int bhControlMap()
                 }
             }
             
-            mwP->map_bufP = pacP;
+            mwP->map_bufP = S32(pacP);
             
-            tmp = MapGetFloorNo(mwP->map_bufP, mwP->ply_rom, plp->py);
+            tmp = MapGetFloorNo(P32(void *, mwP->map_bufP), mwP->ply_rom, plp->py);
             
             mwP->map_no  = tmp / 65536;
             mwP->ply_flr = tmp & 0xFFFF;
@@ -452,7 +452,7 @@ int bhControlMap()
         {
             mwP->status &= ~0x10;
             
-            njReleaseTexture(mwP->stg_texP);
+            njReleaseTexture(P32(NJS_TEXLIST *, mwP->stg_texP));
             
             bhGarbageTexture(NULL, 0);
         }
@@ -466,7 +466,7 @@ int bhControlMap()
         int next;  
         int* pacP; 
         
-        pacP = mwP->map_bufP; 
+        pacP = P32(void *, mwP->map_bufP); 
         
         if (*pacP++ == 0x4341504D)
         {
@@ -474,7 +474,7 @@ int bhControlMap()
             
             next = *pacP++;
             
-            mwP->map_cdeP = (short*)pacP;
+            mwP->map_cdeP = S32((short*)pacP);
             
             if (next != -1) 
             {
@@ -486,13 +486,13 @@ int bhControlMap()
                 
                 MapPurgeTree(&mwP->map_mdl);
                 
-                mwP->map_objP = mwP->map_mdl.objP;
+                mwP->map_objP = S32(P32(struct cnkobj *, mwP->map_mdl.objP));
                 
                 if (next != -1) 
                 {
                     mwP->status |= 0x10;
                     
-                    bhSetMemPvpTexture(mwP->stg_texP, (unsigned char*)PS2_HOST((((int)PS2_ADDR(pacP) + next) + 4)), 0); 
+                    bhSetMemPvpTexture(P32(NJS_TEXLIST *, mwP->stg_texP), (unsigned char*)PS2_HOST((((int)PS2_ADDR(pacP) + next) + 4)), 0); 
                 }
             }
             
@@ -606,7 +606,7 @@ static void MapViewMain()
 {
     NJS_MATRIX* mtxP;
 
-    mtxP = mwP->vew_mtxP;
+    mtxP = P32(float (*)[16], mwP->vew_mtxP);
     
     njUnitMatrix(mtxP);
     
@@ -640,7 +640,7 @@ static void MapLightMain()
     njCnkSetEasyMultiLightVector(-njSin(yaw) * njCos(pitch), njSin(pitch), -njCos(yaw) * njCos(pitch));
     njCnkSetEasyMultiLightColor(1, mwP->pr * scl, mwP->pg * scl, mwP->pb * scl);
     
-    njPushMatrix(mwP->vew_mtxP);
+    njPushMatrix(P32(float (*)[16], mwP->vew_mtxP));
     
     njCnkSetEasyMultiLightMatrices();
     
@@ -728,7 +728,7 @@ static void MapCodeProcess()
     float xx, yy, zz; // not from DWARF
 	static const int SndTbl[1] = { 0x80000247 };
     
-    ocP  = mwP->map_cdeP;
+    ocP  = P32(short *, mwP->map_cdeP);
     stsP = &mwP->status;
     
     njControl3D(0x810);
@@ -748,26 +748,26 @@ static void MapCodeProcess()
         switch (mode & 0xFFF) 
         {
         case 3:
-            objP = mwP->map_objP + *ocP++;
+            objP = P32(struct cnkobj *, mwP->map_objP) + *ocP++;
             
-            mwP->cur_objP = objP;
+            mwP->cur_objP = S32(objP);
             
             njPushMatrixEx();
             
             njTranslate(NULL, objP->pos[0], objP->pos[1], objP->pos[2]);
             njRotateXYZ(NULL, objP->ang[0], objP->ang[1], objP->ang[2]);
             
-            njGetMatrix(mwP->cur_mtxP);
+            njGetMatrix(P32(float (*)[16], mwP->cur_mtxP));
             
             njPopMatrixEx();
             break;
         case 4:
             mode = *ocP++;
             
-            njPushMatrix(mwP->vew_mtxP);
-            njMultiMatrix(NULL, mwP->cur_mtxP);
+            njPushMatrix(P32(float (*)[16], mwP->vew_mtxP));
+            njMultiMatrix(NULL, P32(float (*)[16], mwP->cur_mtxP));
             
-            if (mwP->cur_objP->model != NULL) 
+            if (P32(NJS_CNK_MODEL *, P32(struct cnkobj *, mwP->cur_objP)->model) != NULL) 
             {
                 if (((mwP->status & 0x200)) && (mwP->chk_rom == mwP->bnk_tag_rom))
                 {
@@ -783,7 +783,7 @@ static void MapCodeProcess()
                 
                 njSetConstantMaterial(&mwP->MapPal[mode]);
                 
-                njCnkEasyMultiDrawModel(mwP->cur_objP->model);
+                njCnkEasyMultiDrawModel(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, mwP->cur_objP)->model));
             }
             
             njPopMatrixEx();
@@ -817,7 +817,7 @@ static void MapCodeProcess()
             
             ocP += 3;
             
-            njRotateXYZ(mwP->cur_mtxP, ax, ay, az);
+            njRotateXYZ(P32(float (*)[16], mwP->cur_mtxP), ax, ay, az);
             break;
         }
         case 6:
@@ -830,7 +830,7 @@ static void MapCodeProcess()
             
             ocP += 3;
             
-            njTranslate(mwP->cur_mtxP, tx, ty, tz);
+            njTranslate(P32(float (*)[16], mwP->cur_mtxP), tx, ty, tz);
             break;
         }
         case 11:
@@ -889,7 +889,7 @@ static void MapCodeProcess()
             } 
             else 
             {
-                ocP = &mwP->map_cdeP[*ocP];
+                ocP = &P32(short *, mwP->map_cdeP)[*ocP];
             }
             
             break;
@@ -900,12 +900,12 @@ static void MapCodeProcess()
             } 
             else
             {
-                ocP = &mwP->map_cdeP[*ocP];
+                ocP = &P32(short *, mwP->map_cdeP)[*ocP];
             }
             
             break;
         case 10:
-            ocP = &mwP->map_cdeP[*ocP];
+            ocP = &P32(short *, mwP->map_cdeP)[*ocP];
             break;
         case 14:
 #ifndef TARGET_PC
@@ -935,7 +935,7 @@ static void MapCodeProcess()
                 MapViewMain();
                 
                 scl = 1.0f;
-                scl = (scl * mwP->vew_mtxP[0][14]) / _nj_screen_.dist;
+                scl = (scl * P32(float (*)[16], mwP->vew_mtxP)[0][14]) / _nj_screen_.dist;
                 
                 mwP->vew_min.x = mwP->vew_pos.x - (320.0f * scl);
                 mwP->vew_max.x = mwP->vew_pos.x + (320.0f * scl);
@@ -970,7 +970,7 @@ static void MapCodeProcess()
                 
                 pos.z = scl / 32.0f;
                 
-                MapTagEntry(mwP->cur_mtxP, rom_no, &pos);
+                MapTagEntry(P32(float (*)[16], mwP->cur_mtxP), rom_no, &pos);
             } 
             else 
             {
@@ -1076,9 +1076,9 @@ static void MapDrawMarker(int mrk_no, NJS_POINT3* posP, int pal_no)
         
         njSetConstantMaterial(&mwP->MapPal[pal_no]);
         
-        njPushMatrix(mwP->vew_mtxP);
+        njPushMatrix(P32(float (*)[16], mwP->vew_mtxP));
         
-        njMultiMatrix(NULL, mwP->cur_mtxP);
+        njMultiMatrix(NULL, P32(float (*)[16], mwP->cur_mtxP));
         
         if (mrk_no == 0) 
         {
@@ -1089,7 +1089,7 @@ static void MapDrawMarker(int mrk_no, NJS_POINT3* posP, int pal_no)
                 
                 njScale(NULL, maP->scale, 1.0f, maP->scale);
                 
-                njCnkEasyMultiDrawObject(mwP->MrkMdl[maP->mrk_no].objP);
+                njCnkEasyMultiDrawObject(P32(struct cnkobj *, mwP->MrkMdl[maP->mrk_no].objP));
             }
         } 
         else 
@@ -1098,7 +1098,7 @@ static void MapDrawMarker(int mrk_no, NJS_POINT3* posP, int pal_no)
             
             njScale(NULL, maP->scale, 1.0f, maP->scale);
             
-            njCnkEasyMultiDrawObject(mwP->MrkMdl[maP->mrk_no].objP);
+            njCnkEasyMultiDrawObject(P32(struct cnkobj *, mwP->MrkMdl[maP->mrk_no].objP));
         }
         
         njPopMatrixEx();
@@ -1190,15 +1190,15 @@ static void MapDrawSprite(NJS_POINT3* posP, int col, mp_spr spr_no)
     sprP->p.x = posP->x;
     sprP->p.y = posP->y;
     
-    sprP->tanim = (NJS_TEXANIM*)&TexAnm[spr_no];
+    sprP->tanim = S32((NJS_TEXANIM*)&TexAnm[spr_no]);
     
     if (spr_no < 17) 
     {
-        sprP->tlist = mwP->map_texP;
+        sprP->tlist = S32(P32(NJS_TEXLIST *, mwP->map_texP));
     } 
     else 
     {
-        sprP->tlist = mwP->stg_texP;
+        sprP->tlist = S32(P32(NJS_TEXLIST *, mwP->stg_texP));
     }
     
     mtrP->b = (float)(col & 0xFF) * (1.0 / 255.0);
@@ -1262,7 +1262,7 @@ static void MapPurgeTree(ML_WORK* mlwP)
     NJS_MATRIX* mtxP;    
     int obj_num;         
     
-    objP = mlwP->objP;
+    objP = P32(struct cnkobj *, mlwP->objP);
     mtxP = lcmat;
     
     njPushMatrixEx();
@@ -1271,7 +1271,7 @@ static void MapPurgeTree(ML_WORK* mlwP)
     
     for (obj_num = mlwP->obj_num; obj_num > 0; obj_num--, objP++) 
     {
-        if (objP->sibling != NULL)
+        if (P32(struct cnkobj *, objP->sibling) != NULL)
         {
             njPushMatrixEx();
         }
@@ -1289,13 +1289,13 @@ static void MapPurgeTree(ML_WORK* mlwP)
         objP->pos[1] = mtxP[0][13];
         objP->pos[2] = mtxP[0][14];
         
-        if (objP->child == NULL) 
+        if (P32(struct cnkobj *, objP->child) == NULL) 
         {
             njPopMatrixEx();
         }
         
-        objP->child   = NULL;
-        objP->sibling = NULL;
+        objP->child   = S32(NULL);
+        objP->sibling = S32(NULL);
     } 
     
     njPopMatrixEx();
@@ -1306,19 +1306,19 @@ static void MapFuncInit(int func_num)
 {
     func_wrk_typ* fwP; 
 
-    fwP = mwP->busy_funcP = (func_wrk_typ*)bhGetFreeMemory((func_num + 2) * 64, 4);
+    fwP = P32(struct _func_wrk_typ *, mwP->busy_funcP = S32((func_wrk_typ*)bhGetFreeMemory((func_num + 2) * 64, 4)));
     
-    fwP->nextP = fwP->prevP = fwP;
+    fwP->nextP = S32(P32(struct _func_wrk_typ *, fwP->prevP = S32(fwP)));
     
-    mwP->free_funcP = ++fwP;
+    mwP->free_funcP = S32(++fwP);
     
-    fwP->nextP = fwP->prevP = fwP;
+    fwP->nextP = S32(P32(struct _func_wrk_typ *, fwP->prevP = S32(fwP)));
     
     fwP++; 
     
     for ( ; func_num > 0; func_num--, fwP++) 
     {
-        MapFuncIns(mwP->free_funcP, fwP);
+        MapFuncIns(P32(struct _func_wrk_typ *, mwP->free_funcP), fwP);
     }
 }
 
@@ -1327,12 +1327,12 @@ static func_wrk_typ* MapFuncAlloc(int(*funcP)(func_wrk_typ*), int param0)
 {
     func_wrk_typ* fwP;
     
-    fwP = mwP->free_funcP->nextP;
+    fwP = P32(struct _func_wrk_typ *, P32(struct _func_wrk_typ *, mwP->free_funcP)->nextP);
     
     MapFuncDel(fwP);
-    MapFuncIns(mwP->busy_funcP, fwP);
+    MapFuncIns(P32(struct _func_wrk_typ *, mwP->busy_funcP), fwP);
     
-    fwP->funcP = funcP;
+    fwP->funcP = S32(funcP);
     
     fwP->mode = 0;
     
@@ -1352,24 +1352,24 @@ static func_wrk_typ* MapFuncAlloc(int(*funcP)(func_wrk_typ*), int param0)
 static void MapFuncFree(func_wrk_typ* fwP) 
 {
     MapFuncDel(fwP);
-    MapFuncIns(mwP->free_funcP, fwP);
+    MapFuncIns(P32(struct _func_wrk_typ *, mwP->free_funcP), fwP);
 }
 
 // 100% matching!
 static void MapFuncDel(func_wrk_typ* fwP)
 {
-    fwP->prevP->nextP = fwP->nextP;
-	fwP->nextP->prevP = fwP->prevP;
+    P32(struct _func_wrk_typ *, fwP->prevP)->nextP = S32(P32(struct _func_wrk_typ *, fwP->nextP));
+	P32(struct _func_wrk_typ *, fwP->nextP)->prevP = S32(P32(struct _func_wrk_typ *, fwP->prevP));
 }
 
 // 100% matching!
 static func_wrk_typ* MapFuncIns(func_wrk_typ* bsP, func_wrk_typ* fwP)
 {
-    fwP->nextP = bsP->nextP;
-    fwP->prevP = bsP;
+    fwP->nextP = S32(P32(struct _func_wrk_typ *, bsP->nextP));
+    fwP->prevP = S32(bsP);
     
-    bsP->nextP->prevP = fwP;
-    bsP->nextP        = fwP;
+    P32(struct _func_wrk_typ *, bsP->nextP)->prevP = S32(fwP);
+    bsP->nextP        = S32(fwP);
 }
 
 // 100% matching!
@@ -1377,13 +1377,13 @@ static void MapFuncExec()
 {
     func_wrk_typ* fwP, *nxP;
 
-    for (nxP = mwP->busy_funcP->nextP; nxP != mwP->busy_funcP; nxP = fwP) 
+    for (nxP = P32(struct _func_wrk_typ *, P32(struct _func_wrk_typ *, mwP->busy_funcP)->nextP); nxP != P32(struct _func_wrk_typ *, mwP->busy_funcP); nxP = fwP) 
     {
-        fwP = nxP->nextP;
+        fwP = P32(struct _func_wrk_typ *, nxP->nextP);
         
-        if (nxP->funcP != NULL) 
+        if (P32(int (*)(struct _func_wrk_typ *), nxP->funcP) != NULL) 
         {
-            nxP->funcP(nxP);
+            P32(int (*)(struct _func_wrk_typ *), nxP->funcP)(nxP);
         }
     }
 }
@@ -1395,12 +1395,12 @@ static int FsubMapDraw(func_wrk_typ* fwP)
 
     if (mwP->map_mode == MP_MOD_MAP_READ) 
     {
-        mwP->map_objP = NULL;
-        mwP->map_cdeP = NULL;
+        mwP->map_objP = S32(NULL);
+        mwP->map_cdeP = S32(NULL);
         
         MapFuncFree(fwP);
     } 
-    else if ((mwP->map_objP != NULL) && (mwP->map_cdeP != NULL)) 
+    else if ((P32(struct cnkobj *, mwP->map_objP) != NULL) && (P32(short *, mwP->map_cdeP) != NULL)) 
     {
         MapCodeProcess();
         
@@ -1410,11 +1410,11 @@ static int FsubMapDraw(func_wrk_typ* fwP)
             
             curP = MapTagConnect(mwP->rom_no);
             
-            mwP->cur_tagP = curP;
+            mwP->cur_tagP = S32(curP);
             
             if (curP == NULL) 
             {
-                mwP->cur_tagP = MapTagCenter();
+                mwP->cur_tagP = S32(MapTagCenter());
             }
         }
     }
@@ -1473,7 +1473,7 @@ static int FsprSpriteDraw(FS_WORK* fsP)
     
     fsdP = (FSD_WORK*)&fsP->spr_dsp;
 
-    if (!(fsP->spr_dsp.act_bit & (1 << *(fsP->spr_dsp.act_mdeP)))) 
+    if (!(fsP->spr_dsp.act_bit & (1 << *(P32(enum _mp_mod *, fsP->spr_dsp.act_mdeP))))) 
     {
         MapFuncFree((func_wrk_typ*)fsP);
     } 
@@ -1644,7 +1644,7 @@ static int FsprArrowDraw(FS_WORK* fsP)
                 {
                     MapCnc(cn_d, cn_s, dstP->status);
                     
-                    srcP = srcP->flr_nextP;
+                    srcP = P32(struct _cnc_wrk_typ *, srcP->flr_nextP);
                     
                     cn_s++;
                 } 
@@ -1673,7 +1673,7 @@ static int FsprArrowDraw2(FS_WORK* fsP)
     fsdP = &fsP->spr_dsp;
     fscP = &fsP->spr_cnt; 
     
-    twP = mwP->fcs_tagP;
+    twP = P32(struct _tag_wrk_typ *, mwP->fcs_tagP);
     
     count = fsP->spr_cnt.count;
     
@@ -1706,7 +1706,7 @@ static int FsprArrowDraw2(FS_WORK* fsP)
     fsdP->spr_pos.x = floorf(fsdP->spr_pos.x);
     fsdP->spr_pos.y = floorf(fsdP->spr_pos.y);
     
-    if (twP->tagPP[tab] != NULL) 
+    if (P32(struct _tag_wrk_typ *, twP->tagPP[tab]) != NULL) 
     {
         fsP->mode = 0;
     } 
@@ -1757,9 +1757,9 @@ static FT_WORK* MapEntryTask(int(*tskP)(FTS_WORK*), mp_mod chg_mde, int param0)
 // 100% matching!
 static int FsubTaskMain(FT_WORK* ftP) 
 {
-    if (ftP->tskP(&ftP->tsk_sub) == 0) 
+    if (P32(int (*)(struct FTS_WORK *), ftP->tskP)(&ftP->tsk_sub) == 0) 
     {
-        *ftP->map_mdeP = ftP->chg_mde;
+        *P32(enum _mp_mod *, ftP->map_mdeP) = ftP->chg_mde;
         
         MapFuncFree((func_wrk_typ*)ftP);
     }
@@ -1867,7 +1867,7 @@ static int FtskMapNormal(FTS_WORK* ftsP)
         {
             MapFuncFree((func_wrk_typ*)&ftsP[-1]);
         } 
-        else if (((mwP->pad_ps & 0x100)) && (mwP->cur_tagP != NULL)) 
+        else if (((mwP->pad_ps & 0x100)) && (P32(struct _tag_wrk_typ *, mwP->cur_tagP) != NULL)) 
         {
             bol = 0;
         }
@@ -1893,9 +1893,9 @@ static int FtskMapZoom(FTS_WORK* ftsP)
     case 0:
         CallSystemSe(0, 5);
         
-        twP = mwP->cur_tagP;
+        twP = P32(struct _tag_wrk_typ *, mwP->cur_tagP);
         
-        mwP->fcs_tagP = twP;
+        mwP->fcs_tagP = S32(twP);
         
         mwP->status |= 0x200;
         
@@ -1944,7 +1944,7 @@ static int FtskMapZoom(FTS_WORK* ftsP)
             tag_wrk_typ* twP; 
             int tag;         
 
-            twP = mwP->fcs_tagP;
+            twP = P32(struct _tag_wrk_typ *, mwP->fcs_tagP);
             
             tag = -1;
             
@@ -1967,11 +1967,11 @@ static int FtskMapZoom(FTS_WORK* ftsP)
             
             if (tag != -1) 
             {
-                twP = twP->tagPP[tag];
+                twP = P32(struct _tag_wrk_typ *, twP->tagPP[tag]);
                 
                 if (twP != NULL) 
                 {
-                    mwP->fcs_tagP = twP;
+                    mwP->fcs_tagP = S32(twP);
                     
                     mwP->bnk_tag_rom = twP->rom_no;
                     
@@ -2017,11 +2017,11 @@ static int FsubGaugeDrawZ(FG_WORK* fgP)
     float yy;   // not from DWARF
 	static NJS_POINT2COL p2c;
 
-    dist = (_nj_screen_.dist * (5.0f / mwP->vew_mtxP[0][14])) / 5.0f;
+    dist = (_nj_screen_.dist * (5.0f / P32(float (*)[16], mwP->vew_mtxP)[0][14])) / 5.0f;
     
-    p2c.tex = NULL;
-    p2c.p   = pnt;
-    p2c.col = col;
+    p2c.tex = S32(NULL);
+    p2c.p   = S32(pnt);
+    p2c.col = S32(col);
     p2c.num = 1;
     
     yy = fgP->gge_pos.y - (100.0f * dist);
@@ -2099,11 +2099,11 @@ static int FsubGaugeDrawX(FG_WORK* fgP)
     float dist; // not from DWARF
 	static NJS_POINT2COL p2c;
 
-    dist = 1.174f * ((_nj_screen_.dist * (5.0f / mwP->vew_mtxP[0][14])) / 5.0f);
+    dist = 1.174f * ((_nj_screen_.dist * (5.0f / P32(float (*)[16], mwP->vew_mtxP)[0][14])) / 5.0f);
     
-    p2c.tex = NULL;
-    p2c.p   = pnt;
-    p2c.col = col;
+    p2c.tex = S32(NULL);
+    p2c.p   = S32(pnt);
+    p2c.col = S32(col);
     p2c.num = 1;
     
     dsp = fgP->gge_pos.x;
@@ -2177,7 +2177,7 @@ static int FsubGaugeDraw(FG_WORK* fgP)
     FsubGaugeDrawZ(fgP);
     FsubGaugeDrawX(fgP);
     
-    scl_y = (_nj_screen_.dist * (5.0f / mwP->vew_mtxP[0][14])) / 5.0f;
+    scl_y = (_nj_screen_.dist * (5.0f / P32(float (*)[16], mwP->vew_mtxP)[0][14])) / 5.0f;
     
     p0.x = 2.0f + fgP->gge_pos.x;
     p0.y = 8.0f + (fgP->gge_pos.y - (100.0f * scl_y));
@@ -2209,7 +2209,7 @@ static int FsubGaugeDraw(FG_WORK* fgP)
 static void MapTagInit(int tag_num)
 {
     mwP->tag_num = 0;
-    mwP->tag_wrkP = (tag_wrk_typ*)bhGetFreeMemory(tag_num * 32, 4);
+    mwP->tag_wrkP = S32((tag_wrk_typ*)bhGetFreeMemory(tag_num * 32, 4));
 }
 
 // 100% matching!
@@ -2217,7 +2217,7 @@ static void MapTagEntry(NJS_MATRIX* basP, int rom_no, NJS_POINT3* posP)
 {
     tag_wrk_typ* twP;
 
-    twP = &mwP->tag_wrkP[mwP->tag_num++];
+    twP = &P32(struct _tag_wrk_typ *, mwP->tag_wrkP)[mwP->tag_num++];
     
     twP->rom_no = rom_no;   
     
@@ -2243,16 +2243,16 @@ static tag_wrk_typ* MapTagConnect(int rom_no)
     
     num = mwP->tag_num;
     
-    basP = mwP->tag_wrkP;
+    basP = P32(struct _tag_wrk_typ *, mwP->tag_wrkP);
     rtnP = NULL;
     
     for (i = num; i > 0; i--, basP++) 
     {
-        twP = mwP->tag_wrkP;
+        twP = P32(struct _tag_wrk_typ *, mwP->tag_wrkP);
         
         dst[0] = dst[1] = dst[2] = dst[3] = 999999.0f;
         
-        basP->tagPP[0] = basP->tagPP[1] = basP->tagPP[2] = basP->tagPP[3] = NULL;
+        basP->tagPP[0] = S32(P32(struct _tag_wrk_typ *, basP->tagPP[1] = S32(P32(struct _tag_wrk_typ *, basP->tagPP[2] = S32(P32(struct _tag_wrk_typ *, basP->tagPP[3] = S32(NULL)))))));
         
         for (num = mwP->tag_num; num > 0; num--, twP++)
         {
@@ -2266,7 +2266,7 @@ static tag_wrk_typ* MapTagConnect(int rom_no)
                 {
                     dst[dir] = d;
                     
-                    basP->tagPP[dir] = twP;
+                    basP->tagPP[dir] = S32(twP);
                 }
             }
         }
@@ -2295,7 +2295,7 @@ static tag_wrk_typ* MapTagCenter()
     dx = dz = 0;
 
     num = mwP->tag_num;
-    twP = mwP->tag_wrkP;
+    twP = P32(struct _tag_wrk_typ *, mwP->tag_wrkP);
     
     f_num = 1.0f / num;
 
@@ -2334,7 +2334,9 @@ static void MapDrawLine2(NJS_POINT2* srcP, NJS_POINT2* dstP, float pri, int pal)
 {
     static NJS_COLOR col[2];
     static NJS_POINT2 pnt[2];
-    static NJS_POINT2COL p2c = { pnt, col, NULL, 1 };
+    static NJS_POINT2COL p2c = { 0, 0, 0, 1 };   /* PC: slots, set here (originally { pnt, col, NULL, 1 }) */
+    p2c.p = S32(pnt);
+    p2c.col = S32(col);
 
     pnt[0].x = srcP->x;
     pnt[0].y = srcP->y;
@@ -2352,7 +2354,9 @@ static void MapDrawLine(NJS_POINT2* srcP, NJS_POINT2* dstP, float pri, int pal)
 { 
     static NJS_COLOR col[2];
     static NJS_POINT2 pnt[2];
-    static NJS_POINT2COL p2c = { pnt, col, NULL, 1 };
+    static NJS_POINT2COL p2c = { 0, 0, 0, 1 };   /* PC: slots, set here (originally { pnt, col, NULL, 1 }) */
+    p2c.p = S32(pnt);
+    p2c.col = S32(col);
 
     pnt[0].x = 0.5f + floorf(srcP->x);
     pnt[0].y = 0.5f + floorf(srcP->y);
@@ -2389,9 +2393,10 @@ static void MapDrawFill(NJS_POINT2* srcP, NJS_POINT2* dstP, float pri, int pal)
 static void MapDrawPolyFill(NJS_POINT2* pnt, float pri, int pal) 
 {
     static NJS_COLOR col[4];
-    static NJS_POINT2COL p2c = { NULL, col, NULL, 4 };
+    static NJS_POINT2COL p2c = { 0, 0, 0, 4 };   /* PC: slots, set here (originally { NULL, col, NULL, 4 }) */
+    p2c.col = S32(col);
 
-    p2c.p = pnt;
+    p2c.p = S32(pnt);
     
     col[0].color = col[1].color = col[2].color = col[3].color = pal;
     
@@ -2441,13 +2446,13 @@ static int FsubZoomCursor(FZ_WORK* fzP)
         fzP->pos_b0 = dst_pos0[2];
         fzP->pos_b1 = dst_pos0[3];
         
-        fzP->dstP = dst_pos1;
+        fzP->dstP = S32(dst_pos1);
         
         fzP->mode++;
     case 1:
         if (fzP->time <= 0) 
         {
-            MapDrawMessage(mwP->fcs_tagP->rom_no, 48.0f, 425.0f);
+            MapDrawMessage(P32(struct _tag_wrk_typ *, mwP->fcs_tagP)->rom_no, 48.0f, 425.0f);
         } 
         else
         {
@@ -2456,7 +2461,7 @@ static int FsubZoomCursor(FZ_WORK* fzP)
         
         if (mwP->map_mode != MP_MOD_WAIT_ZOOM) 
         {
-            fzP->dstP = dst_pos2;
+            fzP->dstP = S32(dst_pos2);
             
             fzP->time = 5;
             
@@ -2483,17 +2488,17 @@ static int FsubZoomCursor(FZ_WORK* fzP)
     col2 = MapCnvArgb2Color(&mwP->MapPal[19]);
     MapDrawLine(&fzP->pos_b0, &fzP->pos_b1, -7.0f, col2.color);
     
-    fzP->pos_a0.x += ceilf(0.5f * (fzP->dstP->x - fzP->pos_a0.x));
-    fzP->pos_a0.y += ceilf(0.5f * (fzP->dstP->y - fzP->pos_a0.y));
+    fzP->pos_a0.x += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)->x - fzP->pos_a0.x));
+    fzP->pos_a0.y += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)->y - fzP->pos_a0.y));
     
-    fzP->pos_a1.x += ceilf(0.5f * (fzP->dstP[1].x - fzP->pos_a1.x));
-    fzP->pos_a1.y += ceilf(0.5f * (fzP->dstP[1].y - fzP->pos_a1.y));
+    fzP->pos_a1.x += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[1].x - fzP->pos_a1.x));
+    fzP->pos_a1.y += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[1].y - fzP->pos_a1.y));
     
-    fzP->pos_b0.x += ceilf(0.5f * (fzP->dstP[2].x - fzP->pos_b0.x));
-    fzP->pos_b0.y += ceilf(0.5f * (fzP->dstP[2].y - fzP->pos_b0.y));
+    fzP->pos_b0.x += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[2].x - fzP->pos_b0.x));
+    fzP->pos_b0.y += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[2].y - fzP->pos_b0.y));
     
-    fzP->pos_b1.x += ceilf(0.5f * (fzP->dstP[3].x - fzP->pos_b1.x));
-    fzP->pos_b1.y += ceilf(0.5f * (fzP->dstP[3].y - fzP->pos_b1.y));
+    fzP->pos_b1.x += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[3].x - fzP->pos_b1.x));
+    fzP->pos_b1.y += ceilf(0.5f * (P32(const NJS_POINT2 *, fzP->dstP)[3].y - fzP->pos_b1.y));
     
     return 1;
 }
@@ -2790,8 +2795,8 @@ static int FsubModeMessage(FM_WORK* fmP)
     switch (fmP->mode) 
     {
     case 0:
-        fmP->mdP = NmlMes;
-        mdP      = fmP->mdP;
+        fmP->mdP = S32(NmlMes);
+        mdP      = P32(struct MD_WORK *, fmP->mdP);
         
         if (mdP != NULL)
         {
@@ -2816,7 +2821,7 @@ static void MapCncInit(int map_num, int flr_num)
     
     map_num *= flr_num;
     
-    mwP->cnc_wrkP = (cnc_wrk_typ*)bhGetFreeMemory(map_num * 28, 4);
+    mwP->cnc_wrkP = S32((cnc_wrk_typ*)bhGetFreeMemory(map_num * 28, 4));
     
     for (map_no = 0; map_no < map_num; map_no++)
     {
@@ -2838,7 +2843,7 @@ static cnc_wrk_typ* MapCncGet(int map_no, int flr_no)
     map_no *= mwP->cnc_flr;
     map_no += flr_no;
     
-    return &mwP->cnc_wrkP[map_no];
+    return &P32(struct _cnc_wrk_typ *, mwP->cnc_wrkP)[map_no];
 }
 
 // 68.79% matching
@@ -2887,20 +2892,20 @@ static void MapCnc(mp_no dst, mp_no src, int status)
 	{
         if (dst_map < src_map) 
 		{
-            srcP->flr_prevP = dstP;
+            srcP->flr_prevP = S32(dstP);
         } 
 		else if (dst_map > src_map) 
 		{
-            srcP->flr_nextP = dstP;
+            srcP->flr_nextP = S32(dstP);
         }
     } 
 	else if (dst_flr < src_flr) 
 	{
-        srcP->map_prevP = dstP;
+        srcP->map_prevP = S32(dstP);
     }
 	else 
 	{
-        srcP->map_nextP = dstP;
+        srcP->map_nextP = S32(dstP);
     }
 
     dstP->status = status;
@@ -2953,7 +2958,7 @@ static map_nxt* MapCheckNextMap(map_nxt* mnP)
 
     curP = MapCncGet(mwP->stg_no, mwP->flr_no);
     
-    for (cwP = curP->flr_nextP; cwP != NULL; cwP = cwP->flr_nextP)
+    for (cwP = P32(struct _cnc_wrk_typ *, curP->flr_nextP); cwP != NULL; cwP = P32(struct _cnc_wrk_typ *, cwP->flr_nextP))
     {
         if (cwP->status != 0)
         {
@@ -2971,7 +2976,7 @@ static map_nxt* MapCheckNextMap(map_nxt* mnP)
         mnP->flr_up = cwP->flr_no;
     }
 
-    for (cwP = curP->flr_prevP; cwP != NULL; cwP = cwP->flr_prevP)
+    for (cwP = P32(struct _cnc_wrk_typ *, curP->flr_prevP); cwP != NULL; cwP = P32(struct _cnc_wrk_typ *, cwP->flr_prevP))
     {
         if (cwP->status != 0) 
         {
@@ -2989,7 +2994,7 @@ static map_nxt* MapCheckNextMap(map_nxt* mnP)
         mnP->flr_down = cwP->flr_no;
     }
 
-    for (cwP = curP->map_prevP; cwP != NULL; cwP = cwP->map_prevP)
+    for (cwP = P32(struct _cnc_wrk_typ *, curP->map_prevP); cwP != NULL; cwP = P32(struct _cnc_wrk_typ *, cwP->map_prevP))
     {
         if (cwP->status != 0) 
         {
@@ -3007,7 +3012,7 @@ static map_nxt* MapCheckNextMap(map_nxt* mnP)
         mnP->flr_left = cwP->flr_no;
     }
     
-    for (cwP = curP->map_nextP; cwP != NULL; cwP = cwP->map_nextP)
+    for (cwP = P32(struct _cnc_wrk_typ *, curP->map_nextP); cwP != NULL; cwP = P32(struct _cnc_wrk_typ *, cwP->map_nextP))
     {
         if (cwP->status != 0) 
         {

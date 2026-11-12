@@ -51,16 +51,16 @@ typedef struct ML_WORK
 	// total size: 0x18
     unsigned int flg;     // offset 0x0, size 0x4
     unsigned int obj_num; // offset 0x4, size 0x4
-    void* datP;           // offset 0x8, size 0x4
-	NJS_CNK_OBJECT* objP; // offset 0xC, size 0x4
-	NJS_TEXLIST* texP;    // offset 0x10, size 0x4
-	O_WORK* owP;          // offset 0x14, size 0x4
+    ps2ptr_t datP; /* void* datP */           // offset 0x8, size 0x4
+	ps2ptr_t objP; /* NJS_CNK_OBJECT* objP */ // offset 0xC, size 0x4
+	ps2ptr_t texP; /* NJS_TEXLIST* texP */    // offset 0x10, size 0x4
+	ps2ptr_t owP; /* O_WORK* owP */          // offset 0x14, size 0x4
 } ML_WORK;
 
 typedef struct NJS_MDATA2_MOD
 {
     // total size: 0x8
-    void* p[2]; // offset 0x0, size 0x8
+    ps2ptr_t p[2]; /* void* p[2] */ // offset 0x0, size 0x8
 } NJS_MDATA2_MOD; 
 
 typedef struct MN_WORK
@@ -69,9 +69,9 @@ typedef struct MN_WORK
     unsigned int flg;     // offset 0x0, size 0x4
     unsigned int obj_num; // offset 0x4, size 0x4
     unsigned int frm_num; // offset 0x8, size 0x4
-    void* datP;           // offset 0xC, size 0x4
-	NJS_MDATA2_MOD* md2P; // offset 0x10, size 0x4
-	unsigned short* atrP; // offset 0x14, size 0x4
+    ps2ptr_t datP; /* void* datP */           // offset 0xC, size 0x4
+	ps2ptr_t md2P; /* NJS_MDATA2_MOD* md2P */ // offset 0x10, size 0x4
+	ps2ptr_t atrP; /* unsigned short* atrP */ // offset 0x14, size 0x4
 } MN_WORK;
 
 typedef struct O_WRK
@@ -122,29 +122,29 @@ typedef struct O_WRK
     unsigned int Dummy3;      // offset 0x8C, size 0x4
     int draw_tp;              // offset 0x90, size 0x4
     int mdl_n;                // offset 0x94, size 0x4
-    void* mskp;               // offset 0x98, size 0x4
+    ps2ptr_t mskp; /* void* mskp */               // offset 0x98, size 0x4
     unsigned int Dummy[1];    // offset 0x9C, size 0x4
-    int* skp[16];             // offset 0xA0, size 0x40
-    NJS_CNK_OBJECT* mbp[16];  // offset 0xE0, size 0x40
-    NJS_TEXLIST* txp[16];     // offset 0x120, size 0x40
+    ps2ptr_t skp[16]; /* int* skp[16] */             // offset 0xA0, size 0x40
+    ps2ptr_t mbp[16]; /* NJS_CNK_OBJECT* mbp[16] */  // offset 0xE0, size 0x40
+    ps2ptr_t txp[16]; /* NJS_TEXLIST* txp[16] */     // offset 0x120, size 0x40
     ML_WORK mdl[16];          // offset 0x160, size 0x180
-    ML_WORK* mlwP;            // offset 0x2E0, size 0x4
+    ps2ptr_t mlwP; /* ML_WORK* mlwP */            // offset 0x2E0, size 0x4
     unsigned int mdl_no;      // offset 0x2E4, size 0x4
     int lkono;                // offset 0x2E8, size 0x4
-    unsigned char* lkwkp;     // offset 0x2EC, size 0x4
-    unsigned char* exp0;      // offset 0x2F0, size 0x4
-    unsigned char* exp1;      // offset 0x2F4, size 0x4
-    unsigned char* exp2;      // offset 0x2F8, size 0x4
-    unsigned char* exp3;      // offset 0x2FC, size 0x4
+    ps2ptr_t lkwkp; /* unsigned char* lkwkp */     // offset 0x2EC, size 0x4
+    ps2ptr_t exp0; /* unsigned char* exp0 */      // offset 0x2F0, size 0x4
+    ps2ptr_t exp1; /* unsigned char* exp1 */      // offset 0x2F4, size 0x4
+    ps2ptr_t exp2; /* unsigned char* exp2 */      // offset 0x2F8, size 0x4
+    ps2ptr_t exp3; /* unsigned char* exp3 */      // offset 0x2FC, size 0x4
     unsigned char mtxbuf[64]; // offset 0x300, size 0x40
-    float (*mtx)[16];         // offset 0x340, size 0x4
-    NJS_CNK_OBJECT* obj_a;    // offset 0x344, size 0x4
-    NJS_CNK_OBJECT* obj_b;    // offset 0x348, size 0x4
+    ps2ptr_t mtx; /* float (*mtx)[16] */         // offset 0x340, size 0x4
+    ps2ptr_t obj_a; /* NJS_CNK_OBJECT* obj_a */    // offset 0x344, size 0x4
+    ps2ptr_t obj_b; /* NJS_CNK_OBJECT* obj_b */    // offset 0x348, size 0x4
     float shp_ct;             // offset 0x34C, size 0x4
     char clp_jno[8];          // offset 0x350, size 0x8
     int lok_jno;              // offset 0x358, size 0x4
-    MN_WORK* mnwP;            // offset 0x35C, size 0x4
-    MN_WORK* mnwPb;           // offset 0x360, size 0x4
+    ps2ptr_t mnwP; /* MN_WORK* mnwP */            // offset 0x35C, size 0x4
+    ps2ptr_t mnwPb; /* MN_WORK* mnwPb */           // offset 0x360, size 0x4
     unsigned int mtn_attr;    // offset 0x364, size 0x4
     unsigned int mtn_no;      // offset 0x368, size 0x4
     int frm_no;               // offset 0x36C, size 0x4
@@ -154,7 +154,7 @@ typedef struct O_WRK
     unsigned int hokan_ctbak; // offset 0x37C, size 0x4
     int mtn_add;              // offset 0x380, size 0x4
     unsigned int mtn_md;      // offset 0x384, size 0x4
-    unsigned char* mtn_tp;    // offset 0x388, size 0x4
+    ps2ptr_t mtn_tp; /* unsigned char* mtn_tp */    // offset 0x388, size 0x4
     int axp;                  // offset 0x38C, size 0x4
     int ayp;                  // offset 0x390, size 0x4
     int azp;                  // offset 0x394, size 0x4
@@ -178,11 +178,11 @@ typedef struct O_WRK
     int ct1;                  // offset 0x3D8, size 0x4
     int ct2;                  // offset 0x3DC, size 0x4
     int ct3;                  // offset 0x3E0, size 0x4
-    unsigned char* objbak;    // offset 0x3E4, size 0x4
+    ps2ptr_t objbak; /* unsigned char* objbak */    // offset 0x3E4, size 0x4
     NJS_SPHERE cspr;          // offset 0x3E8, size 0x10
     int pn;                   // offset 0x3F8, size 0x4
-    NJS_POLYGON_VTX* pvp;     // offset 0x3FC, size 0x4
-    NJS_TEXTURE_VTX* tvp;     // offset 0x400, size 0x4
+    ps2ptr_t pvp; /* NJS_POLYGON_VTX* pvp */     // offset 0x3FC, size 0x4
+    ps2ptr_t tvp; /* NJS_TEXTURE_VTX* tvp */     // offset 0x400, size 0x4
     NJS_POLYGON_VTX pv[4];    // offset 0x404, size 0x40
     NJS_TEXTURE_VTX tv[4];    // offset 0x444, size 0x60
     int bl_src;               // offset 0x4A4, size 0x4
@@ -194,7 +194,7 @@ typedef struct O_WRK
     int bank;                 // offset 0x4BC, size 0x4
     char jno[16];             // offset 0x4C0, size 0x10
     char hide[4];             // offset 0x4D0, size 0x4
-    void (*func)(void*);      // offset 0x4D4, size 0x4
+    ps2ptr_t func; /* void (*func)(void*) */      // offset 0x4D4, size 0x4
     int idx;                  // offset 0x4D8, size 0x4
     int Dummy2;               // offset 0x4DC, size 0x4 
 } O_WRK;
@@ -202,7 +202,7 @@ typedef struct O_WRK
 typedef struct TXB_WORK
 {
 	// total size: 0x14
-    unsigned char* adr; // offset 0x0, size 0x4
+    ps2ptr_t adr; /* unsigned char* adr */ // offset 0x0, size 0x4
     unsigned int gidx;  // offset 0x4, size 0x4
     unsigned int attr;  // offset 0x8, size 0x4
     unsigned int w;     // offset 0xC, size 0x4
@@ -283,29 +283,29 @@ typedef struct BH_PWORK
     unsigned int Dummy3;      // offset 0x8C, size 0x4
     int draw_tp;              // offset 0x90, size 0x4
     int mdl_n;                // offset 0x94, size 0x4
-    void* mskp;               // offset 0x98, size 0x4
+    ps2ptr_t mskp; /* void* mskp */               // offset 0x98, size 0x4
     unsigned int Dummy[1];    // offset 0x9C, size 0x4
-    int* skp[16];             // offset 0xA0, size 0x40
-    NJS_CNK_OBJECT* mbp[16];  // offset 0xE0, size 0x40
-	NJS_TEXLIST* txp[16];     // offset 0x120, size 0x40
+    ps2ptr_t skp[16]; /* int* skp[16] */             // offset 0xA0, size 0x40
+    ps2ptr_t mbp[16]; /* NJS_CNK_OBJECT* mbp[16] */  // offset 0xE0, size 0x40
+	ps2ptr_t txp[16]; /* NJS_TEXLIST* txp[16] */     // offset 0x120, size 0x40
 	ML_WORK mdl[16];          // offset 0x160, size 0x180
-	ML_WORK* mlwP;            // offset 0x2E0, size 0x4
+	ps2ptr_t mlwP; /* ML_WORK* mlwP */            // offset 0x2E0, size 0x4
 	unsigned int mdl_no;      // offset 0x2E4, size 0x4
     int lkono;                // offset 0x2E8, size 0x4
-    unsigned char* lkwkp;     // offset 0x2EC, size 0x4
-    unsigned char* exp0;      // offset 0x2F0, size 0x4
-    unsigned char* exp1;      // offset 0x2F4, size 0x4
-    unsigned char* exp2;      // offset 0x2F8, size 0x4
-    unsigned char* exp3;      // offset 0x2FC, size 0x4
+    ps2ptr_t lkwkp; /* unsigned char* lkwkp */     // offset 0x2EC, size 0x4
+    ps2ptr_t exp0; /* unsigned char* exp0 */      // offset 0x2F0, size 0x4
+    ps2ptr_t exp1; /* unsigned char* exp1 */      // offset 0x2F4, size 0x4
+    ps2ptr_t exp2; /* unsigned char* exp2 */      // offset 0x2F8, size 0x4
+    ps2ptr_t exp3; /* unsigned char* exp3 */      // offset 0x2FC, size 0x4
     unsigned char mtxbuf[64]; // offset 0x300, size 0x40
-    float (*mtx)[16];         // offset 0x340, size 0x4
-    NJS_CNK_OBJECT* obj_a;    // offset 0x344, size 0x4
-    NJS_CNK_OBJECT* obj_b;    // offset 0x348, size 0x4
+    ps2ptr_t mtx; /* float (*mtx)[16] */         // offset 0x340, size 0x4
+    ps2ptr_t obj_a; /* NJS_CNK_OBJECT* obj_a */    // offset 0x344, size 0x4
+    ps2ptr_t obj_b; /* NJS_CNK_OBJECT* obj_b */    // offset 0x348, size 0x4
     float shp_ct;             // offset 0x34C, size 0x4
     char clp_jno[8];          // offset 0x350, size 0x8
     int lok_jno;              // offset 0x358, size 0x4
-	MN_WORK* mnwP;            // offset 0x35C, size 0x4
-	MN_WORK* mnwPb;           // offset 0x360, size 0x4
+	ps2ptr_t mnwP; /* MN_WORK* mnwP */            // offset 0x35C, size 0x4
+	ps2ptr_t mnwPb; /* MN_WORK* mnwPb */           // offset 0x360, size 0x4
 	unsigned int mtn_attr;    // offset 0x364, size 0x4
     unsigned int mtn_no;      // offset 0x368, size 0x4
     int frm_no;               // offset 0x36C, size 0x4
@@ -315,7 +315,7 @@ typedef struct BH_PWORK
     unsigned int hokan_ctbak; // offset 0x37C, size 0x4
     int mtn_add;              // offset 0x380, size 0x4
     unsigned int mtn_md;      // offset 0x384, size 0x4
-    unsigned char* mtn_tp;    // offset 0x388, size 0x4
+    ps2ptr_t mtn_tp; /* unsigned char* mtn_tp */    // offset 0x388, size 0x4
     int axp;                  // offset 0x38C, size 0x4
     int ayp;                  // offset 0x390, size 0x4
     int azp;                  // offset 0x394, size 0x4
@@ -343,7 +343,7 @@ typedef struct BH_PWORK
     int wpnl_no;              // offset 0x3E8, size 0x4
     unsigned int at_flg;      // offset 0x3EC, size 0x4
 	NJS_CAPSULE watr;         // offset 0x3F0, size 0x1C
-	CPCL* cpcl;               // offset 0x40C, size 0x4
+	ps2ptr_t cpcl; /* CPCL* cpcl */               // offset 0x40C, size 0x4
 	short wax;                // offset 0x410, size 0x2
     short way;                // offset 0x412, size 0x2
     short waz;                // offset 0x414, size 0x2
@@ -366,9 +366,9 @@ typedef struct BH_PWORK
     int ko_num;               // offset 0x54C, size 0x4
     int footeff;              // offset 0x550, size 0x4
     int src_no;               // offset 0x554, size 0x4
-    unsigned char* kdnp;      // offset 0x558, size 0x4
+    ps2ptr_t kdnp; /* unsigned char* kdnp */      // offset 0x558, size 0x4
     int kdnidx;               // offset 0x55C, size 0x4
-    void* dan_ap;             // offset 0x560, size 0x4
+    ps2ptr_t dan_ap; /* void* dan_ap */             // offset 0x560, size 0x4
     unsigned int comb_flg;    // offset 0x564, size 0x4
     unsigned int comb_wep;    // offset 0x568, size 0x4
     int comb_pnt;             // offset 0x56C, size 0x4
@@ -433,9 +433,9 @@ typedef struct LGT_WORK
     int wax;              // offset 0xC8, size 0x4
     int way;              // offset 0xCC, size 0x4
     int waz;              // offset 0xD0, size 0x4
-    unsigned char* lkwkp; // offset 0xD4, size 0x4
-    unsigned char* exp;   // offset 0xD8, size 0x4
-	NJS_LIGHT_PTR* light; // offset 0xDC, size 0x4
+    ps2ptr_t lkwkp; /* unsigned char* lkwkp */ // offset 0xD4, size 0x4
+    ps2ptr_t exp; /* unsigned char* exp */   // offset 0xD8, size 0x4
+	ps2ptr_t light; /* NJS_LIGHT_PTR* light */ // offset 0xDC, size 0x4
 } LGT_WORK;
 
 typedef struct LGT_WRK
@@ -562,7 +562,7 @@ typedef struct SYS_WORK
     unsigned int typ_flg;            // offset 0x48, size 0x4
     unsigned short typ_md0;          // offset 0x4C, size 0x2
     unsigned short typ_md1;          // offset 0x4E, size 0x2
-    void* typ_exp;                   // offset 0x50, size 0x4
+    ps2ptr_t typ_exp; /* void* typ_exp */                   // offset 0x50, size 0x4
     unsigned int tk_flg;             // offset 0x54, size 0x4
     unsigned int ts_flg;             // offset 0x58, size 0x4
     unsigned int gm_flg;             // offset 0x5C, size 0x4
@@ -609,18 +609,18 @@ typedef struct SYS_WORK
     char pos_nob;                    // offset 0x8B6, size 0x1
     char rcase_b;                    // offset 0x8B7, size 0x1
     unsigned int en_flg[4];          // offset 0x8B8, size 0x10
-	NJS_TEXLIST* et_lp[100][16][16]; // offset 0x8C8, size 0x19000
-	NJS_TEXLIST* ot_lp[1300];        // offset 0x198C8, size 0x1450
-	NJS_TEXLIST* it_lp[200];         // offset 0x1AD18, size 0x320
+	ps2ptr_t et_lp[100][16][16]; /* NJS_TEXLIST* et_lp[100][16][16] */ // offset 0x8C8, size 0x19000
+	ps2ptr_t ot_lp[1300]; /* NJS_TEXLIST* ot_lp[1300] */        // offset 0x198C8, size 0x1450
+	ps2ptr_t it_lp[200]; /* NJS_TEXLIST* it_lp[200] */         // offset 0x1AD18, size 0x320
 	int eft_n;                       // offset 0x1B038, size 0x4
-	NJS_TEXLIST* eft_lp[8];          // offset 0x1B03C, size 0x20
+	ps2ptr_t eft_lp[8]; /* NJS_TEXLIST* eft_lp[8] */          // offset 0x1B03C, size 0x20
 	int loop_ct;                     // offset 0x1B05C, size 0x4
     int loop_now;                    // offset 0x1B060, size 0x4
     int cng_pid;                     // offset 0x1B064, size 0x4
-	const PDS_PERIPHERAL* p1per;     // offset 0x1B068, size 0x4
-	PDS_PERIPHERAL* p2per;           // offset 0x1B06C, size 0x4
-	PDS_PERIPHERAL* kbper;           // offset 0x1B070, size 0x4
-	PDS_PERIPHERAL* msper;           // offset 0x1B074, size 0x4
+	ps2ptr_t p1per; /* const PDS_PERIPHERAL* p1per */     // offset 0x1B068, size 0x4
+	ps2ptr_t p2per; /* PDS_PERIPHERAL* p2per */           // offset 0x1B06C, size 0x4
+	ps2ptr_t kbper; /* PDS_PERIPHERAL* kbper */           // offset 0x1B070, size 0x4
+	ps2ptr_t msper; /* PDS_PERIPHERAL* msper */           // offset 0x1B074, size 0x4
 	PDS_PERIPHERAL ms_per;           // offset 0x1B078, size 0x34
 	int pad_port;                    // offset 0x1B0AC, size 0x4
     unsigned int pad_on;             // offset 0x1B0B0, size 0x4
@@ -657,7 +657,7 @@ typedef struct SYS_WORK
     unsigned int mn_stack[8];        // offset 0x1B100, size 0x20
     unsigned int sdm_flg;            // offset 0x1B120, size 0x4
     unsigned int sdm_mode;           // offset 0x1B124, size 0x4
-    unsigned char* ltc_bp;           // offset 0x1B128, size 0x4
+    ps2ptr_t ltc_bp; /* unsigned char* ltc_bp */           // offset 0x1B128, size 0x4
     unsigned int ltc_tsbak;          // offset 0x1B12C, size 0x4
     int ewk_n;                       // offset 0x1B130, size 0x4
     unsigned int enow;               // offset 0x1B134, size 0x4
@@ -678,45 +678,45 @@ typedef struct SYS_WORK
     unsigned int evt_fcdct;          // offset 0x1B170, size 0x4
     unsigned int fsize;              // offset 0x1B174, size 0x4
     unsigned int rdtsz;              // offset 0x1B178, size 0x4
-    unsigned char* memp;             // offset 0x1B17C, size 0x4
-    unsigned char* mempb;            // offset 0x1B180, size 0x4
-    unsigned char* endp;             // offset 0x1B184, size 0x4
-    unsigned char* rdtp;             // offset 0x1B188, size 0x4
-    unsigned char* plmdlp;           // offset 0x1B18C, size 0x4
-    unsigned char* lmmdlp;           // offset 0x1B190, size 0x4
-    unsigned char* wrmdlp;           // offset 0x1B194, size 0x4
-    unsigned char* wlmdlp;           // offset 0x1B198, size 0x4
-    unsigned char* plmthp;           // offset 0x1B19C, size 0x4
-    unsigned char* plbmtp;           // offset 0x1B1A0, size 0x4
-    unsigned char* plwmtp;           // offset 0x1B1A4, size 0x4
-    unsigned char* plzmtp;           // offset 0x1B1A8, size 0x4
-    unsigned char* plemtp;           // offset 0x1B1AC, size 0x4
-    unsigned char* plexwp;           // offset 0x1B1B0, size 0x4
-    unsigned char* plhdwp;           // offset 0x1B1B4, size 0x4
-    unsigned char* pletcp;           // offset 0x1B1B8, size 0x4
-    unsigned char* subtxp;           // offset 0x1B1BC, size 0x4
-    unsigned char* doordp;           // offset 0x1B1C0, size 0x4
-    unsigned char* sbs_sp;           // offset 0x1B1C4, size 0x4
-	O_WRK* obwp;                     // offset 0x1B1C8, size 0x4
-	O_WRK* itwp;                     // offset 0x1B1CC, size 0x4
-	MN_WORK* emtp[128];              // offset 0x1B1D0, size 0x200
-	MN_WORK* rmthp;                  // offset 0x1B3D0, size 0x4
-	unsigned char* mspp;             // offset 0x1B3D4, size 0x4
-    unsigned char* lspp;             // offset 0x1B3D8, size 0x4
-    unsigned int* mes_ip;            // offset 0x1B3DC, size 0x4
-    unsigned int* mes_sp;            // offset 0x1B3E0, size 0x4
-    void* mes_tp;                    // offset 0x1B3E4, size 0x4
+    ps2ptr_t memp; /* unsigned char* memp */             // offset 0x1B17C, size 0x4
+    ps2ptr_t mempb; /* unsigned char* mempb */            // offset 0x1B180, size 0x4
+    ps2ptr_t endp; /* unsigned char* endp */             // offset 0x1B184, size 0x4
+    ps2ptr_t rdtp; /* unsigned char* rdtp */             // offset 0x1B188, size 0x4
+    ps2ptr_t plmdlp; /* unsigned char* plmdlp */           // offset 0x1B18C, size 0x4
+    ps2ptr_t lmmdlp; /* unsigned char* lmmdlp */           // offset 0x1B190, size 0x4
+    ps2ptr_t wrmdlp; /* unsigned char* wrmdlp */           // offset 0x1B194, size 0x4
+    ps2ptr_t wlmdlp; /* unsigned char* wlmdlp */           // offset 0x1B198, size 0x4
+    ps2ptr_t plmthp; /* unsigned char* plmthp */           // offset 0x1B19C, size 0x4
+    ps2ptr_t plbmtp; /* unsigned char* plbmtp */           // offset 0x1B1A0, size 0x4
+    ps2ptr_t plwmtp; /* unsigned char* plwmtp */           // offset 0x1B1A4, size 0x4
+    ps2ptr_t plzmtp; /* unsigned char* plzmtp */           // offset 0x1B1A8, size 0x4
+    ps2ptr_t plemtp; /* unsigned char* plemtp */           // offset 0x1B1AC, size 0x4
+    ps2ptr_t plexwp; /* unsigned char* plexwp */           // offset 0x1B1B0, size 0x4
+    ps2ptr_t plhdwp; /* unsigned char* plhdwp */           // offset 0x1B1B4, size 0x4
+    ps2ptr_t pletcp; /* unsigned char* pletcp */           // offset 0x1B1B8, size 0x4
+    ps2ptr_t subtxp; /* unsigned char* subtxp */           // offset 0x1B1BC, size 0x4
+    ps2ptr_t doordp; /* unsigned char* doordp */           // offset 0x1B1C0, size 0x4
+    ps2ptr_t sbs_sp; /* unsigned char* sbs_sp */           // offset 0x1B1C4, size 0x4
+	ps2ptr_t obwp; /* O_WRK* obwp */                     // offset 0x1B1C8, size 0x4
+	ps2ptr_t itwp; /* O_WRK* itwp */                     // offset 0x1B1CC, size 0x4
+	ps2ptr_t emtp[128]; /* MN_WORK* emtp[128] */              // offset 0x1B1D0, size 0x200
+	ps2ptr_t rmthp; /* MN_WORK* rmthp */                  // offset 0x1B3D0, size 0x4
+	ps2ptr_t mspp; /* unsigned char* mspp */             // offset 0x1B3D4, size 0x4
+    ps2ptr_t lspp; /* unsigned char* lspp */             // offset 0x1B3D8, size 0x4
+    ps2ptr_t mes_ip; /* unsigned int* mes_ip */            // offset 0x1B3DC, size 0x4
+    ps2ptr_t mes_sp; /* unsigned int* mes_sp */            // offset 0x1B3E0, size 0x4
+    ps2ptr_t mes_tp; /* void* mes_tp */                    // offset 0x1B3E4, size 0x4
     short txr_n;                     // offset 0x1B3E8, size 0x2
     short txr_ct;                    // offset 0x1B3EA, size 0x2
-	NJS_TEXLIST* txlp[256];          // offset 0x1B3EC, size 0x400
-	unsigned char* txdp[256];        // offset 0x1B7EC, size 0x400
+	ps2ptr_t txlp[256]; /* NJS_TEXLIST* txlp[256] */          // offset 0x1B3EC, size 0x400
+	ps2ptr_t txdp[256]; /* unsigned char* txdp[256] */        // offset 0x1B7EC, size 0x400
     short txloff[256];               // offset 0x1BBEC, size 0x200
     short txb_ct;                    // offset 0x1BDEC, size 0x2
     short txb_n;                     // offset 0x1BDEE, size 0x2
     short txb[256];                  // offset 0x1BDF0, size 0x200
-	NJS_TEXLIST* txblp[256];         // offset 0x1BFF0, size 0x400
+	ps2ptr_t txblp[256]; /* NJS_TEXLIST* txblp[256] */         // offset 0x1BFF0, size 0x400
 	TXB_WORK txbp[256];              // offset 0x1C3F0, size 0x1400
-	unsigned char* ef_psp;           // offset 0x1D7F0, size 0x4
+	ps2ptr_t ef_psp; /* unsigned char* ef_psp */           // offset 0x1D7F0, size 0x4
 	NJS_TEXNAME ef_tex[450];         // offset 0x1D7F4, size 0x1518
 	NJS_TEXLIST ef_tlist;            // offset 0x1ED0C, size 0x8
 	EF_WORK ef;                      // offset 0x1ED14, size 0x28
@@ -740,7 +740,7 @@ typedef struct SYS_WORK
     unsigned int thunder;            // offset 0x2226C, size 0x4
     float gas_py;                    // offset 0x22270, size 0x4
     int en_objn;                     // offset 0x22274, size 0x4
-    BH_PWORK* en_obj[16];            // offset 0x22278, size 0x40
+    ps2ptr_t en_obj[16]; /* BH_PWORK* en_obj[16] */            // offset 0x22278, size 0x40
     int ef_poln;                     // offset 0x222B8, size 0x4
     int ef_mdfn;                     // offset 0x222BC, size 0x4
     int ef_linn;                     // offset 0x222C0, size 0x4
@@ -753,24 +753,24 @@ typedef struct SYS_WORK
     int ef_trs2dn;                   // offset 0x222DC, size 0x4
     int ef_pnc2dn;                   // offset 0x222E0, size 0x4
     int ef_fncn;                     // offset 0x222E4, size 0x4
-	O_WRK* ef_pol[512];              // offset 0x222E8, size 0x800
-	O_WRK* ef_mdf[128];              // offset 0x22AE8, size 0x200
-	O_WRK* ef_lin[512];              // offset 0x22CE8, size 0x800
-	O_WRK* ef_ntx[512];              // offset 0x234E8, size 0x800
-	O_WRK* ef_trs[512];              // offset 0x23CE8, size 0x800
-	O_WRK* ef_pnc[512];              // offset 0x244E8, size 0x800
-	O_WRK* ef_opq[512];              // offset 0x24CE8, size 0x800
-	O_WRK* ef_thl[512];              // offset 0x254E8, size 0x800
-	O_WRK* ef_ntx2d[128];            // offset 0x25CE8, size 0x200
-	O_WRK* ef_trs2d[128];            // offset 0x25EE8, size 0x200
-	O_WRK* ef_pnc2d[128];            // offset 0x260E8, size 0x200
-	O_WRK* ef_fnc[512];              // offset 0x262E8, size 0x800
+	ps2ptr_t ef_pol[512]; /* O_WRK* ef_pol[512] */              // offset 0x222E8, size 0x800
+	ps2ptr_t ef_mdf[128]; /* O_WRK* ef_mdf[128] */              // offset 0x22AE8, size 0x200
+	ps2ptr_t ef_lin[512]; /* O_WRK* ef_lin[512] */              // offset 0x22CE8, size 0x800
+	ps2ptr_t ef_ntx[512]; /* O_WRK* ef_ntx[512] */              // offset 0x234E8, size 0x800
+	ps2ptr_t ef_trs[512]; /* O_WRK* ef_trs[512] */              // offset 0x23CE8, size 0x800
+	ps2ptr_t ef_pnc[512]; /* O_WRK* ef_pnc[512] */              // offset 0x244E8, size 0x800
+	ps2ptr_t ef_opq[512]; /* O_WRK* ef_opq[512] */              // offset 0x24CE8, size 0x800
+	ps2ptr_t ef_thl[512]; /* O_WRK* ef_thl[512] */              // offset 0x254E8, size 0x800
+	ps2ptr_t ef_ntx2d[128]; /* O_WRK* ef_ntx2d[128] */            // offset 0x25CE8, size 0x200
+	ps2ptr_t ef_trs2d[128]; /* O_WRK* ef_trs2d[128] */            // offset 0x25EE8, size 0x200
+	ps2ptr_t ef_pnc2d[128]; /* O_WRK* ef_pnc2d[128] */            // offset 0x260E8, size 0x200
+	ps2ptr_t ef_fnc[512]; /* O_WRK* ef_fnc[512] */              // offset 0x262E8, size 0x800
 	int ob_nlgn;                     // offset 0x26AE8, size 0x4
     int ob_hlgn;                     // offset 0x26AEC, size 0x4
     int ob_spcn;                     // offset 0x26AF0, size 0x4
-	O_WRK* ob_nlg[32];               // offset 0x26AF4, size 0x80
-	O_WRK* ob_hlg[32];               // offset 0x26B74, size 0x80
-	O_WRK* ob_spc[32];               // offset 0x26BF4, size 0x80
+	ps2ptr_t ob_nlg[32]; /* O_WRK* ob_nlg[32] */               // offset 0x26AF4, size 0x80
+	ps2ptr_t ob_hlg[32]; /* O_WRK* ob_hlg[32] */               // offset 0x26B74, size 0x80
+	ps2ptr_t ob_spc[32]; /* O_WRK* ob_spc[32] */               // offset 0x26BF4, size 0x80
 	unsigned int ren_gid;            // offset 0x26C74, size 0x4
 	NJS_TEXINFO ren_info;            // offset 0x26C78, size 0x2C
 	NJS_TEXNAME ren_tex[1];          // offset 0x26CA4, size 0xC
@@ -787,11 +787,11 @@ typedef struct SYS_WORK
     int wt_minz;                     // offset 0x288E4, size 0x4
     int wt_maxx;                     // offset 0x288E8, size 0x4
     int wt_maxz;                     // offset 0x288EC, size 0x4
-    unsigned char* wt_wvp;           // offset 0x288F0, size 0x4
+    ps2ptr_t wt_wvp; /* unsigned char* wt_wvp */           // offset 0x288F0, size 0x4
 	NJS_PLANE mr_pl;                 // offset 0x288F4, size 0x18
-	unsigned char* zan_memp;         // offset 0x2890C, size 0x4
-    unsigned char* zanp;             // offset 0x28910, size 0x4
-	LGT_WORK* lgtp;                  // offset 0x28914, size 0x4
+	ps2ptr_t zan_memp; /* unsigned char* zan_memp */         // offset 0x2890C, size 0x4
+    ps2ptr_t zanp; /* unsigned char* zanp */             // offset 0x28910, size 0x4
+	ps2ptr_t lgtp; /* LGT_WORK* lgtp */                  // offset 0x28914, size 0x4
 	float lg_vx;                     // offset 0x28918, size 0x4
     float lg_vy;                     // offset 0x2891C, size 0x4
     float lg_vz;                     // offset 0x28920, size 0x4
@@ -801,7 +801,7 @@ typedef struct SYS_WORK
     int lg_pnt;                      // offset 0x28930, size 0x4
 	LPTB lg_ptb[4];                  // offset 0x28934, size 0x80
 	int mes_idx;                     // offset 0x289B4, size 0x4
-    unsigned int* mes_dp;            // offset 0x289B8, size 0x4
+    ps2ptr_t mes_dp; /* unsigned int* mes_dp */            // offset 0x289B8, size 0x4
     int mes_ct;                      // offset 0x289BC, size 0x4
     int mes_tim;                     // offset 0x289C0, size 0x4
     int mes_fls;                     // offset 0x289C4, size 0x4
@@ -809,17 +809,17 @@ typedef struct SYS_WORK
     int mes_seln;                    // offset 0x289CC, size 0x4
 	NJS_POINT2 mes_sps[16];          // offset 0x289D0, size 0x80
 	int rt_sp;                       // offset 0x28A50, size 0x4
-    unsigned char* rt_wp;            // offset 0x28A54, size 0x4
-    unsigned char* rt_dp;            // offset 0x28A58, size 0x4
-    unsigned char* rt_nw;            // offset 0x28A5C, size 0x4
-    unsigned char* rt_nx;            // offset 0x28A60, size 0x4
-    float* rt_ln;                    // offset 0x28A64, size 0x4
-    BH_PWORK* plp;                   // offset 0x28A68, size 0x4
-	ATR_WORK* pl_htp;                // offset 0x28A6C, size 0x4
+    ps2ptr_t rt_wp; /* unsigned char* rt_wp */            // offset 0x28A54, size 0x4
+    ps2ptr_t rt_dp; /* unsigned char* rt_dp */            // offset 0x28A58, size 0x4
+    ps2ptr_t rt_nw; /* unsigned char* rt_nw */            // offset 0x28A5C, size 0x4
+    ps2ptr_t rt_nx; /* unsigned char* rt_nx */            // offset 0x28A60, size 0x4
+    ps2ptr_t rt_ln; /* float* rt_ln */                    // offset 0x28A64, size 0x4
+    ps2ptr_t plp; /* BH_PWORK* plp */                   // offset 0x28A68, size 0x4
+	ps2ptr_t pl_htp; /* ATR_WORK* pl_htp */                // offset 0x28A6C, size 0x4
 	int costume;                     // offset 0x28A70, size 0x4
 	NJS_POINT3 hd_pos;               // offset 0x28A74, size 0xC
 	NJS_POINT3 apos;                 // offset 0x28A80, size 0xC
-	ATR_WORK* ahtp;                  // offset 0x28A8C, size 0x4
+	ps2ptr_t ahtp; /* ATR_WORK* ahtp */                  // offset 0x28A8C, size 0x4
 	int mwal_n;                      // offset 0x28A90, size 0x4
     int metc_n;                      // offset 0x28A94, size 0x4
     int mflr_n;                      // offset 0x28A98, size 0x4
@@ -827,7 +827,7 @@ typedef struct SYS_WORK
 	ATR_WORK metcp[64];              // offset 0x2939C, size 0x900
 	ATR_WORK mflrp[64];              // offset 0x29C9C, size 0x900
 	int dla_n;                       // offset 0x2A59C, size 0x4
-	ATR_WORK* htp;                   // offset 0x2A5A0, size 0x4
+	ps2ptr_t htp; /* ATR_WORK* htp */                   // offset 0x2A5A0, size 0x4
 	int psh_snd;                     // offset 0x2A5A4, size 0x4
     int fog_cngct;                   // offset 0x2A5A8, size 0x4
     unsigned int fog_col;            // offset 0x2A5AC, size 0x4
@@ -871,10 +871,10 @@ typedef struct SYS_WORK
     int sb_cmd;                      // offset 0x2A66C, size 0x4
     int sb_rdid;                     // offset 0x2A670, size 0x4
     int sb_rdsz;                     // offset 0x2A674, size 0x4
-    void* sb_rdp;                    // offset 0x2A678, size 0x4
-    void* sb_mlb;                    // offset 0x2A67C, size 0x4
-    void* sb_ppp;                    // offset 0x2A680, size 0x4
-	NJS_TEXLIST* sb_tlist;           // offset 0x2A684, size 0x4
+    ps2ptr_t sb_rdp; /* void* sb_rdp */                    // offset 0x2A678, size 0x4
+    ps2ptr_t sb_mlb; /* void* sb_mlb */                    // offset 0x2A67C, size 0x4
+    ps2ptr_t sb_ppp; /* void* sb_ppp */                    // offset 0x2A680, size 0x4
+	ps2ptr_t sb_tlist; /* NJS_TEXLIST* sb_tlist */           // offset 0x2A684, size 0x4
 	int ddmd;                        // offset 0x2A688, size 0x4
 	DOOR_WORK door;                  // offset 0x2A68C, size 0x1C
 	int mpmd;                        // offset 0x2A6A8, size 0x4
@@ -882,12 +882,12 @@ typedef struct SYS_WORK
     unsigned short gov_md0;          // offset 0x2A6BC, size 0x2
     unsigned short gov_md1;          // offset 0x2A6BE, size 0x2
     int gov_ct;                      // offset 0x2A6C0, size 0x4
-    void* gov_exp;                   // offset 0x2A6C4, size 0x4
+    ps2ptr_t gov_exp; /* void* gov_exp */                   // offset 0x2A6C4, size 0x4
     unsigned int com_flg;            // offset 0x2A6C8, size 0x4
     unsigned short com_md0;          // offset 0x2A6CC, size 0x2
     unsigned short com_md1;          // offset 0x2A6CE, size 0x2
     unsigned int com_num;            // offset 0x2A6D0, size 0x4
-    void* com_exp;                   // offset 0x2A6D4, size 0x4
+    ps2ptr_t com_exp; /* void* com_exp */                   // offset 0x2A6D4, size 0x4
     short ond_tnm;                   // offset 0x2A6D8, size 0x2
     short ond_ud;                    // offset 0x2A6DA, size 0x2
     char ond_cx;                     // offset 0x2A6DC, size 0x1
@@ -899,7 +899,7 @@ typedef struct SYS_WORK
 	unsigned int opt_flg;            // offset 0x2A6F0, size 0x4
     unsigned short opt_md0;          // offset 0x2A6F4, size 0x2
     unsigned short opt_md1;          // offset 0x2A6F6, size 0x2
-    void* opt_exp;                   // offset 0x2A6F8, size 0x4
+    ps2ptr_t opt_exp; /* void* opt_exp */                   // offset 0x2A6F8, size 0x4
     unsigned int etc_idx;            // offset 0x2A6FC, size 0x4
     unsigned int flr_idx;            // offset 0x2A700, size 0x4
     int mvi_no;                      // offset 0x2A704, size 0x4
@@ -908,15 +908,15 @@ typedef struct SYS_WORK
     unsigned short mvi_flg;          // offset 0x2A70E, size 0x2
     unsigned int mvi_tsb;            // offset 0x2A710, size 0x4
     unsigned int mvi_spb;            // offset 0x2A714, size 0x4
-    unsigned char* mvi_memp;         // offset 0x2A718, size 0x4
+    ps2ptr_t mvi_memp; /* unsigned char* mvi_memp */         // offset 0x2A718, size 0x4
     unsigned int dcg_tkbak;          // offset 0x2A71C, size 0x4
     unsigned int dcg_tsbak;          // offset 0x2A720, size 0x4
     unsigned int pau_spbak;          // offset 0x2A724, size 0x4
     unsigned int pau_pad_on;         // offset 0x2A728, size 0x4
     unsigned int pau_pad_ps;         // offset 0x2A72C, size 0x4
     unsigned int pau_pad_old;        // offset 0x2A730, size 0x4
-    unsigned char* pdm_dp;           // offset 0x2A734, size 0x4
-    unsigned char* pdm_pd;           // offset 0x2A738, size 0x4
+    ps2ptr_t pdm_dp; /* unsigned char* pdm_dp */           // offset 0x2A734, size 0x4
+    ps2ptr_t pdm_pd; /* unsigned char* pdm_pd */           // offset 0x2A738, size 0x4
     int pdm_keytpb;                  // offset 0x2A73C, size 0x4
     int gat_ct;                      // offset 0x2A740, size 0x4
 	GATC gatc[16];                   // offset 0x2A744, size 0x200
@@ -968,9 +968,9 @@ typedef struct HWS_WORK
 typedef struct EVT_WORK
 {
 	// total size: 0xC
-    unsigned short* scd0; // offset 0x0, size 0x4
-    unsigned short* scd1; // offset 0x4, size 0x4
-    unsigned short* evd;  // offset 0x8, size 0x4
+    ps2ptr_t scd0; /* unsigned short* scd0 */ // offset 0x0, size 0x4
+    ps2ptr_t scd1; /* unsigned short* scd1 */ // offset 0x4, size 0x4
+    ps2ptr_t evd; /* unsigned short* evd */  // offset 0x8, size 0x4
 } EVT_WORK;
 
 typedef struct NJS_POINT4
@@ -1015,8 +1015,8 @@ typedef struct SCISSOR
     // total size: 0x940
 	SCISSOR_NODE triangle;  // offset 0x0, size 0x310
 	SCISSOR_NODE narray[2]; // offset 0x310, size 0x620
-	SCISSOR_NODE* in;       // offset 0x930, size 0x4
-	SCISSOR_NODE* out;      // offset 0x934, size 0x4
+	ps2ptr_t in; /* SCISSOR_NODE* in */       // offset 0x930, size 0x4
+	ps2ptr_t out; /* SCISSOR_NODE* out */      // offset 0x934, size 0x4
 	unsigned int rotflag;   // offset 0x938, size 0x4
     unsigned int flipflag;  // offset 0x93C, size 0x4
 } SCISSOR;
@@ -1104,8 +1104,8 @@ typedef struct CAM_WORK
     int ocut;             // offset 0x90, size 0x4
     unsigned int ocflg;   // offset 0x94, size 0x4
     unsigned int attr;    // offset 0x98, size 0x4
-    float (*mtx)[16];     // offset 0x9C, size 0x4
-    float (*mtxb)[16];    // offset 0xA0, size 0x4
+    ps2ptr_t mtx; /* float (*mtx)[16] */     // offset 0x9C, size 0x4
+    ps2ptr_t mtxb; /* float (*mtxb)[16] */    // offset 0xA0, size 0x4
     int evc_no;           // offset 0xA4, size 0x4
     int hct;              // offset 0xA8, size 0x4
     int ct0;              // offset 0xAC, size 0x4
@@ -1156,7 +1156,7 @@ typedef struct PAD_WRK
 typedef struct MOV_INFO
 {
     // total size: 0x1C
-	unsigned char* mmp;        // offset 0x0, size 0x4
+	ps2ptr_t mmp; /* unsigned char* mmp */        // offset 0x0, size 0x4
     float Vol;                 // offset 0x4, size 0x4
     float VolSpeed;            // offset 0x8, size 0x4
     float Fade;                // offset 0xC, size 0x4
@@ -1198,7 +1198,7 @@ typedef struct CAM_KEYF_WORK
     float prm_2;            // offset 0x70, size 0x4
     float prm_3;            // offset 0x74, size 0x4
     float prm_4;            // offset 0x78, size 0x4
-    unsigned char* recp;    // offset 0x7C, size 0x4
+    ps2ptr_t recp; /* unsigned char* recp */    // offset 0x7C, size 0x4
 } CAM_KEYF_WORK;
 
 typedef struct EVC_WORK
@@ -1273,7 +1273,7 @@ typedef struct CUT_WORK
     unsigned char type;     // offset 0x1, size 0x1
     char flr_no;            // offset 0x2, size 0x1
     unsigned char ctab_n;   // offset 0x3, size 0x1
-	CUT_WRK* cuttp;         // offset 0x4, size 0x4
+	ps2ptr_t cuttp; /* CUT_WRK* cuttp */         // offset 0x4, size 0x4
 	float cx;               // offset 0x8, size 0x4
     float cy;               // offset 0xC, size 0x4
     float cz;               // offset 0x10, size 0x4
@@ -1341,38 +1341,38 @@ typedef struct POS
 typedef struct ROM_WORK
 {
     // total size: 0x3EC
-	CUT_WORK* cutp;       // offset 0x0, size 0x4
-	LGT_WORK* lgtp;       // offset 0x4, size 0x4
-	ETTY_WORK* enep;      // offset 0x8, size 0x4
-	ETTY_WORK* objp;      // offset 0xC, size 0x4
-	ETTY_WORK* itmp;      // offset 0x10, size 0x4
-	EF_WRK* effp;         // offset 0x14, size 0x4
-	ATR_WORK* walp;       // offset 0x18, size 0x4
-	ATR_WORK* etcp;       // offset 0x1C, size 0x4
-	ATR_WORK* flrp;       // offset 0x20, size 0x4
-	POS* posp;            // offset 0x24, size 0x4
-	ATR_WORK* rutp;       // offset 0x28, size 0x4
-	unsigned char* ruttp; // offset 0x2C, size 0x4
-	EVT_WORK* evtp;       // offset 0x30, size 0x4
-	EVC_WORK* evcp;       // offset 0x34, size 0x4
-	unsigned int* mesp;   // offset 0x38, size 0x4
-	LGT_WORK* evlp;       // offset 0x3C, size 0x4
-	unsigned char* dmp00; // offset 0x40, size 0x4
-    unsigned char* dmp01; // offset 0x44, size 0x4
-    unsigned char* dmp02; // offset 0x48, size 0x4
-    unsigned char* dmp03; // offset 0x4C, size 0x4
-    unsigned char* dmp04; // offset 0x50, size 0x4
-    unsigned char* dmp05; // offset 0x54, size 0x4
-    unsigned char* dmp06; // offset 0x58, size 0x4
-    unsigned char* dmp07; // offset 0x5C, size 0x4
-    unsigned char* dmp08; // offset 0x60, size 0x4
-    unsigned char* dmp09; // offset 0x64, size 0x4
-    unsigned char* dmp10; // offset 0x68, size 0x4
-    unsigned char* dmp11; // offset 0x6C, size 0x4
-    unsigned char* dmp12; // offset 0x70, size 0x4
-    unsigned char* dmp13; // offset 0x74, size 0x4
-    unsigned char* dmp14; // offset 0x78, size 0x4
-    unsigned char* dmp15; // offset 0x7C, size 0x4
+	ps2ptr_t cutp; /* CUT_WORK* cutp */       // offset 0x0, size 0x4
+	ps2ptr_t lgtp; /* LGT_WORK* lgtp */       // offset 0x4, size 0x4
+	ps2ptr_t enep; /* ETTY_WORK* enep */      // offset 0x8, size 0x4
+	ps2ptr_t objp; /* ETTY_WORK* objp */      // offset 0xC, size 0x4
+	ps2ptr_t itmp; /* ETTY_WORK* itmp */      // offset 0x10, size 0x4
+	ps2ptr_t effp; /* EF_WRK* effp */         // offset 0x14, size 0x4
+	ps2ptr_t walp; /* ATR_WORK* walp */       // offset 0x18, size 0x4
+	ps2ptr_t etcp; /* ATR_WORK* etcp */       // offset 0x1C, size 0x4
+	ps2ptr_t flrp; /* ATR_WORK* flrp */       // offset 0x20, size 0x4
+	ps2ptr_t posp; /* POS* posp */            // offset 0x24, size 0x4
+	ps2ptr_t rutp; /* ATR_WORK* rutp */       // offset 0x28, size 0x4
+	ps2ptr_t ruttp; /* unsigned char* ruttp */ // offset 0x2C, size 0x4
+	ps2ptr_t evtp; /* EVT_WORK* evtp */       // offset 0x30, size 0x4
+	ps2ptr_t evcp; /* EVC_WORK* evcp */       // offset 0x34, size 0x4
+	ps2ptr_t mesp; /* unsigned int* mesp */   // offset 0x38, size 0x4
+	ps2ptr_t evlp; /* LGT_WORK* evlp */       // offset 0x3C, size 0x4
+	ps2ptr_t dmp00; /* unsigned char* dmp00 */ // offset 0x40, size 0x4
+    ps2ptr_t dmp01; /* unsigned char* dmp01 */ // offset 0x44, size 0x4
+    ps2ptr_t dmp02; /* unsigned char* dmp02 */ // offset 0x48, size 0x4
+    ps2ptr_t dmp03; /* unsigned char* dmp03 */ // offset 0x4C, size 0x4
+    ps2ptr_t dmp04; /* unsigned char* dmp04 */ // offset 0x50, size 0x4
+    ps2ptr_t dmp05; /* unsigned char* dmp05 */ // offset 0x54, size 0x4
+    ps2ptr_t dmp06; /* unsigned char* dmp06 */ // offset 0x58, size 0x4
+    ps2ptr_t dmp07; /* unsigned char* dmp07 */ // offset 0x5C, size 0x4
+    ps2ptr_t dmp08; /* unsigned char* dmp08 */ // offset 0x60, size 0x4
+    ps2ptr_t dmp09; /* unsigned char* dmp09 */ // offset 0x64, size 0x4
+    ps2ptr_t dmp10; /* unsigned char* dmp10 */ // offset 0x68, size 0x4
+    ps2ptr_t dmp11; /* unsigned char* dmp11 */ // offset 0x6C, size 0x4
+    ps2ptr_t dmp12; /* unsigned char* dmp12 */ // offset 0x70, size 0x4
+    ps2ptr_t dmp13; /* unsigned char* dmp13 */ // offset 0x74, size 0x4
+    ps2ptr_t dmp14; /* unsigned char* dmp14 */ // offset 0x78, size 0x4
+    ps2ptr_t dmp15; /* unsigned char* dmp15 */ // offset 0x7C, size 0x4
     int cut_n;            // offset 0x80, size 0x4
     int lgt_n;            // offset 0x84, size 0x4
     int ene_n;            // offset 0x88, size 0x4
@@ -1485,7 +1485,7 @@ typedef struct MEMORYCARDSTATE
     int lSelectFileNumber;       // offset 0x18, size 0x4
     int lOpenMode;               // offset 0x1C, size 0x4
     unsigned short usMcSysState; // offset 0x20, size 0x2
-    void* vpAddr;                // offset 0x24, size 0x4
+    ps2ptr_t vpAddr; /* void* vpAddr */                // offset 0x24, size 0x4
     char cCurrentDir[50];        // offset 0x28, size 0x32
     char cOpenFileName[32];      // offset 0x5A, size 0x20
     char cRetryCount;            // offset 0x7A, size 0x1
@@ -1544,7 +1544,7 @@ typedef struct SELECTFILEWINDOW
 {
     // total size: 0x28
     unsigned int ulFileState;       // offset 0x0, size 0x4
-    SELECTFILEINFO* pRecordTop;     // offset 0x4, size 0x4
+    ps2ptr_t pRecordTop; /* SELECTFILEINFO* pRecordTop */     // offset 0x4, size 0x4
     int lRecordMax;                 // offset 0x8, size 0x4
     short slDispTopNumber;          // offset 0xC, size 0x2
     short slDispRecordNumber;       // offset 0xE, size 0x2
@@ -1583,9 +1583,9 @@ typedef struct ADMIN
     unsigned int gindex; // offset 0x0, size 0x4
     unsigned int size;   // offset 0x4, size 0x4
     unsigned int count;  // offset 0x8, size 0x4
-    void* addr;          // offset 0xC, size 0x4
-    void* before;        // offset 0x10, size 0x4
-    void* after;         // offset 0x14, size 0x4
+    ps2ptr_t addr; /* void* addr */          // offset 0xC, size 0x4
+    ps2ptr_t before; /* void* before */        // offset 0x10, size 0x4
+    ps2ptr_t after; /* void* after */         // offset 0x14, size 0x4
 } ADMIN;
 
 typedef struct TIM2_PICTUREHEADER_EX 
@@ -1687,9 +1687,9 @@ typedef struct COM_EVT_WORK
     short wdx;                 // offset 0x5CA0, size 0x2
     short wdy;                 // offset 0x5CA2, size 0x2
     unsigned char word[2][16]; // offset 0x5CA4, size 0x20
-    unsigned char* mesp;       // offset 0x5CC4, size 0x4
-    unsigned char* scp;        // offset 0x5CC8, size 0x4
-    unsigned char* sclb[32];   // offset 0x5CCC, size 0x80
+    ps2ptr_t mesp; /* unsigned char* mesp */       // offset 0x5CC4, size 0x4
+    ps2ptr_t scp; /* unsigned char* scp */        // offset 0x5CC8, size 0x4
+    ps2ptr_t sclb[32]; /* unsigned char* sclb[32] */   // offset 0x5CCC, size 0x80
     int mes_no;                // offset 0x5D4C, size 0x4
     int mes_ln;                // offset 0x5D50, size 0x4
     int flash;                 // offset 0x5D54, size 0x4
@@ -1848,11 +1848,11 @@ typedef struct VU1_COLOR
 typedef struct CNK_LIGHTING
 {
     // total size: 0x40
-    CNK_LIGHT* pLightTop; // offset 0x0, size 0x4
+    ps2ptr_t pLightTop; /* CNK_LIGHT* pLightTop */ // offset 0x0, size 0x4
     int lLightMax;        // offset 0x4, size 0x4
-    VU1_COLOR* pDiffuse;  // offset 0x8, size 0x4
-    VU1_COLOR* pSpecula;  // offset 0xC, size 0x4
-    VU1_COLOR* pAmbient;  // offset 0x10, size 0x4
+    ps2ptr_t pDiffuse; /* VU1_COLOR* pDiffuse */  // offset 0x8, size 0x4
+    ps2ptr_t pSpecula; /* VU1_COLOR* pSpecula */  // offset 0xC, size 0x4
+    ps2ptr_t pAmbient; /* VU1_COLOR* pAmbient */  // offset 0x10, size 0x4
     unsigned int pad[11]; // offset 0x14, size 0x2C
 } CNK_LIGHTING; 
 
@@ -1954,10 +1954,10 @@ typedef struct BH_SCEWORK
     unsigned char mode3;          // offset 0x3, size 0x1
     unsigned char status;         // offset 0x4, size 0x1
     char loop;                    // offset 0x5, size 0x1
-    BH_PWORK* work;               // offset 0x8, size 0x4
-    unsigned char* data;          // offset 0xC, size 0x4
-    unsigned char* lstack[6];     // offset 0x10, size 0x18
-    unsigned char* lcondition[6]; // offset 0x28, size 0x18
+    ps2ptr_t work; /* BH_PWORK* work */               // offset 0x8, size 0x4
+    ps2ptr_t data; /* unsigned char* data */          // offset 0xC, size 0x4
+    ps2ptr_t lstack[6]; /* unsigned char* lstack[6] */     // offset 0x10, size 0x18
+    ps2ptr_t lcondition[6]; /* unsigned char* lcondition[6] */ // offset 0x28, size 0x18
     int cnt[4];                   // offset 0x40, size 0x10
     float addpx;                  // offset 0x50, size 0x4
     float addpy;                  // offset 0x54, size 0x4
@@ -2048,9 +2048,9 @@ typedef struct FV_WORK
     unsigned char scrol;    // offset 0xBC, size 0x1
     unsigned char scrolcnt; // offset 0xBD, size 0x1
     unsigned char flg;      // offset 0xBE, size 0x1
-    unsigned char* fsp;     // offset 0xC0, size 0x4
-    unsigned char* fspr;    // offset 0xC4, size 0x4
-    unsigned char* fspl;    // offset 0xC8, size 0x4
+    ps2ptr_t fsp; /* unsigned char* fsp */     // offset 0xC0, size 0x4
+    ps2ptr_t fspr; /* unsigned char* fspr */    // offset 0xC4, size 0x4
+    ps2ptr_t fspl; /* unsigned char* fspl */    // offset 0xC8, size 0x4
     unsigned short tex_flg; // offset 0xCC, size 0x2
 } FV_WORK;
 
@@ -2094,10 +2094,10 @@ typedef struct S_WORK
     unsigned short colorflg;      // offset 0x7A, size 0x2
     unsigned char maincsr;        // offset 0x7C, size 0x1
     unsigned char subcsr;         // offset 0x7D, size 0x1
-    unsigned int* pip;            // offset 0x80, size 0x4
-    unsigned int* bxp;            // offset 0x84, size 0x4
-    unsigned int* gb;             // offset 0x88, size 0x4
-    unsigned char* ssp;           // offset 0x8C, size 0x4
+    ps2ptr_t pip; /* unsigned int* pip */            // offset 0x80, size 0x4
+    ps2ptr_t bxp; /* unsigned int* bxp */            // offset 0x84, size 0x4
+    ps2ptr_t gb; /* unsigned int* gb */             // offset 0x88, size 0x4
+    ps2ptr_t ssp; /* unsigned char* ssp */           // offset 0x8C, size 0x4
     char wait_;                   // offset 0x90, size 0x1
     char wait;                    // offset 0x91, size 0x1
     char number;                  // offset 0x92, size 0x1
@@ -2113,7 +2113,7 @@ typedef struct S_WORK
 	NJS_POINT2 clip[2];           // offset 0xB0, size 0x10
 	unsigned char flgchk;         // offset 0xC0, size 0x1
     unsigned char flgtest;        // offset 0xC1, size 0x1
-    unsigned char* sspb;          // offset 0xC4, size 0x4
+    ps2ptr_t sspb; /* unsigned char* sspb */          // offset 0xC4, size 0x4
     unsigned char sprflg;         // offset 0xC8, size 0x1
     char number_;                 // offset 0xC9, size 0x1
     char flag_;                   // offset 0xCA, size 0x1
@@ -2121,15 +2121,15 @@ typedef struct S_WORK
     unsigned short taskloop;      // offset 0xCE, size 0x2
     unsigned short wn;            // offset 0xD0, size 0x2
     unsigned short wn_num;        // offset 0xD2, size 0x2
-    unsigned char* subp;          // offset 0xD4, size 0x4
+    ps2ptr_t subp; /* unsigned char* subp */          // offset 0xD4, size 0x4
 } S_WORK;
 
 typedef struct MW
 {
     // total size: 0x34
 	NJS_POINT3 pos;     // offset 0x0, size 0xC
-	void* tex_p;        // offset 0xC, size 0x4
-    void* mdl_p;        // offset 0x10, size 0x4
+	ps2ptr_t tex_p; /* void* tex_p */        // offset 0xC, size 0x4
+    ps2ptr_t mdl_p; /* void* mdl_p */        // offset 0x10, size 0x4
     int ang[3];         // offset 0x14, size 0xC
     int rdid;           // offset 0x20, size 0x4
     int ax1;            // offset 0x24, size 0x4
@@ -2143,8 +2143,8 @@ typedef struct SITEM
     // total size: 0x54
 	ML_WORK mdl;               // offset 0x0, size 0x18
 	MW mw;                     // offset 0x18, size 0x34
-	unsigned char* keep;       // offset 0x4C, size 0x4
-    unsigned char* keepbackup; // offset 0x50, size 0x4
+	ps2ptr_t keep; /* unsigned char* keep */       // offset 0x4C, size 0x4
+    ps2ptr_t keepbackup; /* unsigned char* keepbackup */ // offset 0x50, size 0x4
 } SITEM;
 
 typedef struct MDSIZE_WORK
@@ -2281,7 +2281,7 @@ typedef struct {
     int isOnCD;		
     int size;
     sceCdlFILE fp;	
-    unsigned char* iopBuf;
+    ps2ptr_t iopBuf; /* unsigned char* iopBuf */
     int fd;		
 } StrFile;
 
@@ -2318,8 +2318,8 @@ typedef struct {
 } VoTag;
 
 typedef struct {
-    VoData *data;	    // data array
-    VoTag *tag;		    // tag array for path3 transfer
+    ps2ptr_t data; /* VoData *data */	    // data array
+    ps2ptr_t tag; /* VoTag *tag */		    // tag array for path3 transfer
     volatile int write;	    // write position
     volatile int count;	    // the number of images in VoBuf
     int size;		    // total number of elements in VoBuf
@@ -2365,8 +2365,8 @@ typedef union {
 #define VIBUF_TS_SIZE (VIBUF_SIZE*2)
 
 typedef struct {
-    __int128 *data;	// data array
-    __int128 *tag;	// tag array
+    ps2ptr_t data; /* __int128 *data */	// data array
+    ps2ptr_t tag; /* __int128 *tag */	// tag array
     int n;		// the number of data/tag element in ViBuf
     int dmaStart;	// DMA area start position
     int dmaN;		// DMA area size
@@ -2377,14 +2377,14 @@ typedef struct {
     int isActive;	// flag to check CSC period
     long totalBytes;	// total bytes of data which sent to ViBuf
 
-    TimeStamp *ts;	// time stamp array
+    ps2ptr_t ts; /* TimeStamp *ts */	// time stamp array
     int n_ts;		// time stamp array size
     int count_ts;	// the number of time stamps in the array
     int wt_ts;		// write position of time stamp array
 } ViBuf;
 
 typedef struct {
-    unsigned int *micro[3][2];
+    ps2ptr_t micro[3][2]; /* unsigned int *micro[3][2] */
 } CscVu1;
 
 /* videodec.h */
@@ -2734,7 +2734,7 @@ typedef struct {
     int hdrCount;
 
     // audio buffer
-    u_char *data;
+    ps2ptr_t data; /* u_char *data */
     int put;
     int count;
     int size;

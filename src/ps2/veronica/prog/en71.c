@@ -38,9 +38,9 @@ void bhEne71(BH_PWORK* epw)
         }
     }
     
-    epw->mlwP = &epw->mdl[epw->mode3];
+    epw->mlwP = S32(&epw->mdl[epw->mode3]);
     
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     
     bhCalcModel(epw);
 }
@@ -48,9 +48,9 @@ void bhEne71(BH_PWORK* epw)
 // 100% matching!
 void bhEne71_Init(BH_PWORK* epw)
 {
-    if (epw->exp0 == NULL) 
+    if (P32(unsigned char *, epw->exp0) == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(4, 8);
+        epw->exp0 = S32(bhEne_CallocWork(4, 8));
     }
     
     epw->flg |= 0x18;

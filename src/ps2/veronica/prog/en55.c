@@ -79,7 +79,7 @@ int bhEne55_SetMtn(BH_PWORK* epw)
 {
 	int ret;
 
-	ret = bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+	ret = bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 
     if (ret != 0)
     {
@@ -108,7 +108,7 @@ void bhEne55_CollCheck(BH_PWORK* epw)
     {
         if ((epp->id == 17) && (epw->mode0 == 1))
         {
-			owk = &((O_WRK*)epp->exp2)->mlwP->owP[1];
+			owk = &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, epp->exp2))->mlwP)->owP)[1];
 
             ps.x = 0;
             ps.y = 0;
@@ -120,7 +120,7 @@ void bhEne55_CollCheck(BH_PWORK* epw)
 
             if (npCollisionCheckSC(&at, &epw->watr) != 0)
             {
-                ((unsigned int*)epp->exp0)[2] |= 0x20000000;
+                ((unsigned int*)P32(unsigned char *, epp->exp0))[2] |= 0x20000000;
 
                 epw->mode0 = 3;
                 epw->mode1 = 0;
@@ -140,17 +140,17 @@ void bhEne55_CalcEnemy(BH_PWORK* epw)
 
     bhCalcModel(epw);
 
-	owk = &epw->mlwP->owP[12];
+	owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[12];
 
     epw->cah = epw->ah = owk->mtx[13] - epw->py;
 
-    owk = &epw->mlwP->owP[12];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[12];
 
     epw->watr.c1.x = owk->mtx[12];
     epw->watr.c1.y = owk->mtx[13];
     epw->watr.c1.z = owk->mtx[14];
 
-	owk = epw->mlwP->owP;
+	owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
 
     epw->watr.c2.x = owk->mtx[12];
     epw->watr.c2.y = owk->mtx[13];
@@ -191,7 +191,7 @@ void bhEne55_Init(BH_PWORK* epw)
 
     epw->frm_no = 0;
 
-    epw->mtn_tp = NULL;
+    epw->mtn_tp = S32(NULL);
     epw->mtn_md = 0;
 
     epw->flg |= 0x8000;
@@ -264,7 +264,7 @@ void bhEne55_DG00(BH_PWORK* epw)
 
         epw->mode3++;
     case 1:
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
             epw->mtn_add = 0;
 

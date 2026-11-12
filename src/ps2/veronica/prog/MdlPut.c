@@ -42,12 +42,12 @@ void bhPutModel(BH_PWORK* ewP)
         pose_trace(ewP);   /* test aid RECVX_POSE_TRACE (pc/glue/pose_trace.c) */
     }
 #endif
-    mlwP = ewP->mlwP;
-    owP = mlwP->owP;
+    mlwP = P32(struct ML_WORK *, ewP->mlwP);
+    owP = P32(struct O_WORK *, mlwP->owP);
     
-    if (mlwP->texP != NULL) 
+    if (P32(NJS_TEXLIST *, mlwP->texP) != NULL) 
     {
-        njSetTexture(mlwP->texP);
+        njSetTexture(P32(NJS_TEXLIST *, mlwP->texP));
     }
     
     draw_tp = ewP->draw_tp;
@@ -59,28 +59,28 @@ void bhPutModel(BH_PWORK* ewP)
     
     if ((mlwP->flg & 0x80))
     {
-        if (ewP->skp[ewP->mdl_no] != NULL) 
+        if (P32(int *, ewP->skp[ewP->mdl_no]) != NULL) 
         {
-            npPushMdlstr(mlwP->objP, mlwP->obj_num);
+            npPushMdlstr(P32(struct cnkobj *, mlwP->objP), mlwP->obj_num);
             
             if ((ewP->mdflg & 0x100))
             {
-                npCalcSkinFM(ewP, mlwP->obj_num, ewP->skp[ewP->mdl_no]);
+                npCalcSkinFM(ewP, mlwP->obj_num, P32(int *, ewP->skp[ewP->mdl_no]));
             } 
             else 
             {
-                npCalcSkin(ewP, mlwP->obj_num, ewP->skp[ewP->mdl_no]);
+                npCalcSkin(ewP, mlwP->obj_num, P32(int *, ewP->skp[ewP->mdl_no]));
             }
             
-            bhJumpCnkDraw[draw_tp](ewP, mlwP->objP, owP, mlwP->obj_num);
+            bhJumpCnkDraw[draw_tp](ewP, P32(struct cnkobj *, mlwP->objP), owP, mlwP->obj_num);
             
             if (((sys->st_flg & 0x100)) && (!(ewP->mdflg & 0x40))) 
             {
-                njSetMatrix(cam.mtxb, cam.mtx);
+                njSetMatrix(P32(float (*)[16], cam.mtxb), P32(float (*)[16], cam.mtx));
                 
-                njMirror(cam.mtx, &sys->mr_pl);
+                njMirror(P32(float (*)[16], cam.mtx), &sys->mr_pl);
                 
-                njSetMatrix(NULL, cam.mtx);
+                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                 
                 njCnkSetEasyMultiLightMatrices();
                 njCnkSetSimpleMultiLightMatrices();
@@ -89,30 +89,30 @@ void bhPutModel(BH_PWORK* ewP)
                 
                 njControl3D(c3df | 0x10000);
                 
-                bhJumpCnkDraw[draw_tp](ewP, mlwP->objP, owP, mlwP->obj_num);
+                bhJumpCnkDraw[draw_tp](ewP, P32(struct cnkobj *, mlwP->objP), owP, mlwP->obj_num);
                 
                 njControl3D(c3df);
                 
-                njSetMatrix(cam.mtx, cam.mtxb);
-                njSetMatrix(NULL, cam.mtx);
+                njSetMatrix(P32(float (*)[16], cam.mtx), P32(float (*)[16], cam.mtxb));
+                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                 
                 njCnkSetEasyMultiLightMatrices();
                 njCnkSetSimpleMultiLightMatrices();
             }
             
-            npPopMdlstr(mlwP->objP, mlwP->obj_num);
+            npPopMdlstr(P32(struct cnkobj *, mlwP->objP), mlwP->obj_num);
         }
         else 
         {
-            bhJumpCnkDraw[draw_tp](ewP, mlwP->objP, owP, mlwP->obj_num);
+            bhJumpCnkDraw[draw_tp](ewP, P32(struct cnkobj *, mlwP->objP), owP, mlwP->obj_num);
             
             if (((sys->st_flg & 0x100)) && (!(ewP->mdflg & 0x40))) 
             {
-                njSetMatrix(cam.mtxb, cam.mtx);
+                njSetMatrix(P32(float (*)[16], cam.mtxb), P32(float (*)[16], cam.mtx));
                 
-                njMirror(cam.mtx, &sys->mr_pl);
+                njMirror(P32(float (*)[16], cam.mtx), &sys->mr_pl);
                 
-                njSetMatrix(NULL, cam.mtx);
+                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                 
                 njCnkSetEasyMultiLightMatrices();
                 njCnkSetSimpleMultiLightMatrices();
@@ -121,12 +121,12 @@ void bhPutModel(BH_PWORK* ewP)
                 
                 njControl3D(c3df | 0x10000);
                 
-                bhJumpCnkDraw[draw_tp](ewP, mlwP->objP, owP, mlwP->obj_num);
+                bhJumpCnkDraw[draw_tp](ewP, P32(struct cnkobj *, mlwP->objP), owP, mlwP->obj_num);
                 
                 njControl3D(c3df);
                 
-                njSetMatrix(cam.mtx, cam.mtxb);
-                njSetMatrix(NULL, cam.mtx);
+                njSetMatrix(P32(float (*)[16], cam.mtx), P32(float (*)[16], cam.mtxb));
+                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                 
                 njCnkSetEasyMultiLightMatrices();
                 njCnkSetSimpleMultiLightMatrices();
@@ -135,7 +135,7 @@ void bhPutModel(BH_PWORK* ewP)
     }
     else 
     {
-        DrawTreeBsc(mlwP->objP, owP, mlwP->obj_num);
+        DrawTreeBsc(P32(struct cnkobj *, mlwP->objP), owP, mlwP->obj_num);
     }
 }
 
@@ -144,12 +144,12 @@ static void DrawTreeBsc(NJS_CNK_OBJECT* objP, O_WORK* owP, int obj_num)
 {
     for ( ; obj_num > 0; obj_num--, objP++, owP++) 
     {
-        njPushMatrix(cam.mtx);
+        njPushMatrix(P32(float (*)[16], cam.mtx));
         njMultiMatrix(NULL, &owP->mtx);
         
-        if ((objP->model != NULL) && (!(objP->evalflags & 0x8))) 
+        if ((P32(NJS_CNK_MODEL *, objP->model) != NULL) && (!(objP->evalflags & 0x8))) 
         {
-            njDrawModel((NJS_MODEL*)objP->model);
+            njDrawModel((NJS_MODEL*)P32(NJS_CNK_MODEL *, objP->model));
         }
         
         njPopMatrixEx();
@@ -161,7 +161,7 @@ static void EasyMultiDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* ow
 {
     for ( ; obj_num > 0; obj_num--, objP++, owP++) 
     {
-        njPushMatrix(cam.mtx);
+        njPushMatrix(P32(float (*)[16], cam.mtx));
         
         if (!(objP->evalflags & 0x80000000))
         {
@@ -172,9 +172,9 @@ static void EasyMultiDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* ow
             njTranslate(NULL, ewP->px, ewP->py, ewP->pz);
         }
         
-        if ((objP->model != NULL) && (!(objP->evalflags & 0x8)))
+        if ((P32(NJS_CNK_MODEL *, objP->model) != NULL) && (!(objP->evalflags & 0x8)))
         {
-            njCnkEasyMultiDrawModel(objP->model);
+            njCnkEasyMultiDrawModel(P32(NJS_CNK_MODEL *, objP->model));
         }
         
         njPopMatrixEx();
@@ -186,7 +186,7 @@ static void SimpleMultiDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* 
 {
     for ( ; obj_num > 0; obj_num--, objP++, owP++) 
     {
-        njPushMatrix(cam.mtx);
+        njPushMatrix(P32(float (*)[16], cam.mtx));
         
         if (!(objP->evalflags & 0x80000000))
         {
@@ -197,9 +197,9 @@ static void SimpleMultiDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* 
             njTranslate(NULL, ewP->px, ewP->py, ewP->pz);
         }
         
-        if ((objP->model != NULL) && (!(objP->evalflags & 0x8)))
+        if ((P32(NJS_CNK_MODEL *, objP->model) != NULL) && (!(objP->evalflags & 0x8)))
         {
-            njCnkSimpleMultiDrawModel(objP->model);
+            njCnkSimpleMultiDrawModel(P32(NJS_CNK_MODEL *, objP->model));
         }
         
         njPopMatrixEx();
@@ -211,7 +211,7 @@ static void EasyDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* owP, in
 {
     for ( ; obj_num > 0; obj_num--, objP++, owP++) 
     {
-        njPushMatrix(cam.mtx);
+        njPushMatrix(P32(float (*)[16], cam.mtx));
         
         if (!(objP->evalflags & 0x80000000))
         {
@@ -222,9 +222,9 @@ static void EasyDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* owP, in
             njTranslate(NULL, ewP->px, ewP->py, ewP->pz);
         }
         
-        if ((objP->model != NULL) && (!(objP->evalflags & 0x8)))
+        if ((P32(NJS_CNK_MODEL *, objP->model) != NULL) && (!(objP->evalflags & 0x8)))
         {
-            njCnkEasyDrawModel(objP->model);
+            njCnkEasyDrawModel(P32(NJS_CNK_MODEL *, objP->model));
         }
         
         njPopMatrixEx();
@@ -236,7 +236,7 @@ static void SimpleDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* owP, 
 {
     for ( ; obj_num > 0; obj_num--, objP++, owP++) 
     {
-        njPushMatrix(cam.mtx);
+        njPushMatrix(P32(float (*)[16], cam.mtx));
         
         if (!(objP->evalflags & 0x80000000))
         {
@@ -247,9 +247,9 @@ static void SimpleDrawTreeCnk(BH_PWORK* ewP, NJS_CNK_OBJECT* objP, O_WORK* owP, 
             njTranslate(NULL, ewP->px, ewP->py, ewP->pz);
         }
         
-        if ((objP->model != NULL) && (!(objP->evalflags & 0x8)))
+        if ((P32(NJS_CNK_MODEL *, objP->model) != NULL) && (!(objP->evalflags & 0x8)))
         {
-            njCnkSimpleDrawModel(objP->model);
+            njCnkSimpleDrawModel(P32(NJS_CNK_MODEL *, objP->model));
         }
         
         njPopMatrixEx();
@@ -261,27 +261,27 @@ void bhCalcModel(BH_PWORK* ewP)
 {
     if ((ewP->flg & 0x80))
     {
-        njSetMatrix(ewP->mtx, &((BH_PWORK*)ewP->lkwkp)->mlwP->owP[ewP->lkono].mtx);
+        njSetMatrix(P32(float (*)[16], ewP->mtx), &P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)P32(unsigned char *, ewP->lkwkp))->mlwP)->owP)[ewP->lkono].mtx);
         
-        njTranslate(ewP->mtx, ewP->lox, ewP->loy, ewP->loz);
+        njTranslate(P32(float (*)[16], ewP->mtx), ewP->lox, ewP->loy, ewP->loz);
         
         if ((ewP->flg & 0x1000)) 
         {
-            njUnitRotPortion(ewP->mtx);
+            njUnitRotPortion(P32(float (*)[16], ewP->mtx));
         }
         
-        njRotateXYZ(ewP->mtx, ewP->ax, ewP->ay, ewP->az);
+        njRotateXYZ(P32(float (*)[16], ewP->mtx), ewP->ax, ewP->ay, ewP->az);
     }
     else if (!(ewP->flg & 0x1000))
     {
-        njUnitMatrix(ewP->mtx);
+        njUnitMatrix(P32(float (*)[16], ewP->mtx));
         
-        njTranslate(ewP->mtx, ewP->px, ewP->py, ewP->pz);
+        njTranslate(P32(float (*)[16], ewP->mtx), ewP->px, ewP->py, ewP->pz);
         
-        njRotateXYZ(ewP->mtx, ewP->ax, ewP->ay, ewP->az);
+        njRotateXYZ(P32(float (*)[16], ewP->mtx), ewP->ax, ewP->ay, ewP->az);
     }
     
-    bhCalcTree(ewP->mtx, ewP->mlwP);
+    bhCalcTree(P32(float (*)[16], ewP->mtx), P32(struct ML_WORK *, ewP->mlwP));
 }
 
 // 100% matching!
@@ -291,8 +291,8 @@ void bhCalcTree(NJS_MATRIX* basP, ML_WORK* mlwP)
     NJS_CNK_OBJECT* objP;
     int obj_num;
 
-    owP = mlwP->owP;
-    objP = mlwP->objP;
+    owP = P32(struct O_WORK *, mlwP->owP);
+    objP = P32(struct cnkobj *, mlwP->objP);
 
     njPushMatrix(basP);
 
@@ -305,7 +305,7 @@ void bhCalcTree(NJS_MATRIX* basP, ML_WORK* mlwP)
 
     for ( ; obj_num > 0; obj_num--, objP++, owP++)
     {
-        if (objP->sibling != NULL)
+        if (P32(struct cnkobj *, objP->sibling) != NULL)
         {
             njPushMatrixEx();
         }
@@ -322,7 +322,7 @@ void bhCalcTree(NJS_MATRIX* basP, ML_WORK* mlwP)
             njSetMatrix(NULL, &owP->mtx);
         }
 
-        if (objP->child == NULL)
+        if (P32(struct cnkobj *, objP->child) == NULL)
         {
             njPopMatrixEx();
         }

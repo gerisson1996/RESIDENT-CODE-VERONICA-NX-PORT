@@ -29,7 +29,7 @@ ATR_WORK* bhCollisionCheckLine(NJS_VECTOR* p1, NJS_VECTOR* p2)
     {
         if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else 
         {
@@ -66,7 +66,7 @@ ATR_WORK* bhCollisionCheckLine2(NJS_POINT3* p1, NJS_POINT3* p2, unsigned int flg
     {
         if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else 
         {
@@ -103,7 +103,7 @@ ATR_WORK* bhCollisionCheckLine3(NJS_POINT3* p1, NJS_POINT3* p2, unsigned int flg
     {
         if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else 
         {
@@ -760,12 +760,12 @@ int bhCollisionCheckL2MDL(NJS_POINT3* p1, NJS_POINT3* p2, NJS_CNK_MODEL* mdl, NJ
         return ret;
     }
 
-    pVtx = mdl->vlist;
-    pPol = mdl->plist;
+    pVtx = P32(int *, mdl->vlist);
+    pPol = P32(short *, mdl->plist);
     
     pnum = ((unsigned char*)pPol)[4];
 
-    pd = (NJS_POINT3*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 31) & ~0x1F));
+    pd = (NJS_POINT3*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 31) & ~0x1F));
     
     pPol += 3;
 

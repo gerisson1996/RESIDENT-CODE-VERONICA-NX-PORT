@@ -72,7 +72,7 @@ void bhEff200(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -142,7 +142,7 @@ void bhEff201(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -283,7 +283,7 @@ void bhEff202(O_WRK* op)
                 
                 if (lNumber != -1) 
                 {
-                    eff[lNumber].exp0 = (unsigned char*)op;
+                    eff[lNumber].exp0 = S32((unsigned char*)op);
                 }
             }
             
@@ -305,7 +305,7 @@ void bhEff203(O_WRK* op)
 		{   0,   0 }, { 128,   0 }, {   0, 128 }, { 128, 128 }
 	};
     
-    opp = (O_WRK*)op->exp0;
+    opp = (O_WRK*)P32(unsigned char *, op->exp0);
     
     if ((opp->stflg & 0x1000000)) 
     {
@@ -377,7 +377,7 @@ void bhEff203(O_WRK* op)
             op->py += Vector.y;
             op->pz += Vector.z;
             
-            op->py += ((O_WRK*)op->exp0)->spd * op->sz;
+            op->py += ((O_WRK*)P32(unsigned char *, op->exp0))->spd * op->sz;
             
             op->ax = (short)((op->ax * (int)(100.0 - (5.0 * op->sz))) / 100);
             op->ay = (short)((op->ay * (int)(100.0 - (5.0 * op->sz))) / 100);
@@ -457,7 +457,7 @@ void bhEff203(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -509,7 +509,7 @@ void bhEff204(O_WRK* op)
     
     if (sys->ef_opqn < 512) 
     {
-        sys->ef_opq[sys->ef_opqn] = op;
+        sys->ef_opq[sys->ef_opqn] = S32(op);
         
         sys->ef_opqn++;
     }
@@ -604,7 +604,7 @@ void bhEff205(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -791,7 +791,7 @@ void bhEff207(O_WRK* op)
     
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -953,7 +953,7 @@ void bhEff209(O_WRK* op)
 
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1029,7 +1029,7 @@ void bhEff210(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1103,7 +1103,7 @@ void bhEff211(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1175,7 +1175,7 @@ void bhEff212(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1246,7 +1246,7 @@ void bhEff213(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1493,7 +1493,7 @@ void bhEff216(O_WRK* op)
         
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             
             sys->ef_trsn++;
         }
@@ -1526,7 +1526,7 @@ void bhEff217(O_WRK* op)
             break;
         }
         
-        op->exp0 = (unsigned char*)pp;
+        op->exp0 = S32((unsigned char*)pp);
         
         p = pp->pos;
         v = pp->vec;
@@ -1566,12 +1566,12 @@ void bhEff217(O_WRK* op)
         
         op->flg |= 0x20000000;
         
-        op->func = (void*)bhEff_E00_DrawParticlePly;
+        op->func = S32((void*)bhEff_E00_DrawParticlePly);
         
         op->mode0++;
         break;
     case 1:
-        pp = (P_WRK*)op->exp0;
+        pp = (P_WRK*)P32(unsigned char *, op->exp0);
         
         p = pp->pos;
         v = pp->vec;
@@ -1596,7 +1596,7 @@ void bhEff217(O_WRK* op)
         
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -1927,7 +1927,7 @@ void bhEff218(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1974,15 +1974,15 @@ void bhEff219(O_WRK* op)
             
             SetEff5SnowRectParticleMax(pSnow, (op->ax * 850) / 32760);
             
-            op->exp0 = (unsigned char*)pSnow;
+            op->exp0 = S32((unsigned char*)pSnow);
             
-            op->func = (void*)DrawEff5SnowRect;
+            op->func = S32((void*)DrawEff5SnowRect);
             
             op->mode0 = 1;
             break;
         }
         
-        pSnow = (EFF5SNOWRECT*)op->exp0;
+        pSnow = (EFF5SNOWRECT*)P32(unsigned char *, op->exp0);
         
         switch (op->type) 
         {                      
@@ -2008,7 +2008,7 @@ void bhEff219(O_WRK* op)
         
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -2122,8 +2122,8 @@ void bhEff221(O_WRK* op)
     case 0:
         op->flg |= 0x6000000;
         
-        op->tvp = (NJS_TEXTURE_VTX*)op->pv;
-        tvp     = (NJS_TEXTUREH_VTX*)op->pvp;
+        op->tvp = S32((NJS_TEXTURE_VTX*)op->pv);
+        tvp     = (NJS_TEXTUREH_VTX*)P32(NJS_POLYGON_VTX *, op->pvp);
         
         tvp[0].x = -1.0f;
         tvp[0].y = -1.0f;
@@ -2237,7 +2237,7 @@ void bhEff221(O_WRK* op)
         
         op->ct0 = op->ani_ct = 0;
         
-        op->func = (void*)bhDrawEff221;
+        op->func = S32((void*)bhDrawEff221);
         
         op->mode0 = 1;
         
@@ -2295,7 +2295,7 @@ void bhEff221(O_WRK* op)
 
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -2330,7 +2330,7 @@ void bhDrawEff221(O_WRK* op)
         pt = 0;
     }
     
-    tvp = (NJS_TEXTUREH_VTX*)op->tvp;
+    tvp = (NJS_TEXTUREH_VTX*)P32(NJS_TEXTURE_VTX *, op->tvp);
         
     tvp[3].ocol = tvp[2].ocol = tvp[1].ocol = tvp[0].ocol = (pt << 0) | ((pt << 8) | ((pt << 24) | (pt << 16)));
     
@@ -2341,7 +2341,7 @@ void bhDrawEff221(O_WRK* op)
     
     if ((op->flr_no & 0x2)) 
     {
-        njSetMatrix(NULL, cam.mtx);
+        njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
         
         njTranslateEx((NJS_VECTOR*)&op->px);
         njRotateEx(&op->ax, 0);
@@ -2349,7 +2349,7 @@ void bhDrawEff221(O_WRK* op)
     }
     else 
     {
-        njSetMatrix(NULL, cam.mtx);
+        njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
         
         njTranslateEx((NJS_VECTOR*)&op->px);
         njUnitRotPortion(NULL);
@@ -2562,7 +2562,7 @@ void bhEff223(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -2729,7 +2729,7 @@ void bhEff225(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -2785,7 +2785,7 @@ void bhEff226(O_WRK* op)
             
             if (lNumber != -1) 
             {
-                eff[lNumber].exp0 = (unsigned char*)op;
+                eff[lNumber].exp0 = S32((unsigned char*)op);
             }
         } 
         
@@ -2819,7 +2819,7 @@ void bhEff227(O_WRK* op)
 		{ 192, 192 }
 	};
     
-    opp = (O_WRK*)op->exp0;
+    opp = (O_WRK*)P32(unsigned char *, op->exp0);
     
     switch (op->mode0) 
     {                      
@@ -2913,7 +2913,7 @@ void bhEff227(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     } 
@@ -3040,9 +3040,9 @@ void bhEff229(O_WRK* op)
     case 0:
         op->tex_id = 3;
         
-        op->func = (void*)bhDrawWeaponEffect2;
+        op->func = S32((void*)bhDrawWeaponEffect2);
         
-        op->tvp->col = -1;
+        P32(NJS_TEXTURE_VTX *, op->tvp)->col = -1;
         
         op->bl_src = 8;
         op->bl_dst = 10;
@@ -3062,7 +3062,7 @@ void bhEff229(O_WRK* op)
             op->spd = 1.0f;
         }
         
-        sys->ef_fnc[sys->ef_fncn++] = op;
+        sys->ef_fnc[sys->ef_fncn++] = S32(op);
         
         op->ct0++;
         
@@ -3126,14 +3126,14 @@ void bhDrawWeaponEffect2(O_WRK* op)
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(sys->ef_tn[op->tex_id] + op->ani_ct);
     
-    njSetMatrix(op->mtx, &((O_WRK*)op->lkwkp)->mlwP->owP[op->lkono].mtx);
+    njSetMatrix(P32(float (*)[16], op->mtx), &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, op->lkwkp))->mlwP)->owP)[op->lkono].mtx);
     
-    njTranslate(op->mtx, op->lox, op->loy, op->loz);
-    njRotateXYZ(op->mtx, op->ax,  op->ay,  op->az);
+    njTranslate(P32(float (*)[16], op->mtx), op->lox, op->loy, op->loz);
+    njRotateXYZ(P32(float (*)[16], op->mtx), op->ax,  op->ay,  op->az);
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
-    njMultiMatrix(NULL, op->mtx);
+    njMultiMatrix(NULL, P32(float (*)[16], op->mtx));
     njScale(NULL, op->sx, op->sx, op->sz);
     
     njColorBlendingMode(0, op->bl_src);
@@ -3141,7 +3141,7 @@ void bhDrawWeaponEffect2(O_WRK* op)
 
     for (i = 0; i < op->pn; i++) 
     {
-        tv[i].col = tvb[i].col = op->tvp->col;
+        tv[i].col = tvb[i].col = P32(NJS_TEXTURE_VTX *, op->tvp)->col;
     }
 
     ani = op->ct0 - 1;
@@ -3413,7 +3413,7 @@ void bhEff230(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3531,7 +3531,7 @@ void bhEff232(O_WRK* op)
 
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3624,7 +3624,7 @@ void bhEff233(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3729,7 +3729,7 @@ void bhEff234(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3819,7 +3819,7 @@ void bhEff235(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3882,7 +3882,7 @@ void bhEff236(O_WRK* op)
     } 
     else 
     {
-        pp = &ene[rom->enep[op->ax % rom->ene_n].wrk_no];
+        pp = &ene[P32(struct ETTY_WORK *, rom->enep)[op->ax % rom->ene_n].wrk_no];
     }
     
     if (pp != NULL) 
@@ -3903,7 +3903,7 @@ void bhEff236(O_WRK* op)
             
             op->tv[0].col = op->tv[1].col = op->tv[2].col = op->tv[3].col = -1;
             
-            op->func = (void*)bhDrawEff236;
+            op->func = S32((void*)bhDrawEff236);
             
             op->ct0 = op->ct1 = 0;
             
@@ -3937,9 +3937,9 @@ void bhEff236(O_WRK* op)
         op->tv[1].y = Tmp.y + op->py;
         op->tv[1].z = Tmp.z + op->pz;
         
-        px = pp->mlwP->owP[1].mtx[12];
-        py = pp->mlwP->owP[1].mtx[13];
-        pz = pp->mlwP->owP[1].mtx[14];
+        px = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[1].mtx[12];
+        py = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[1].mtx[13];
+        pz = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[1].mtx[14];
         
         op->tv[2].x = op->sx - op->sz;
         op->tv[3].x = op->sx + op->sz;
@@ -3980,7 +3980,7 @@ void bhEff236(O_WRK* op)
         
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -4000,7 +4000,7 @@ void bhDrawEff236(O_WRK* op)
     njColorBlendingMode(0, op->bl_src);
     njColorBlendingMode(1, op->bl_dst);
     
-    njDrawTexture3DEx(op->tvp, 4, 1);
+    njDrawTexture3DEx(P32(NJS_TEXTURE_VTX *, op->tvp), 4, 1);
     
     njColorBlendingMode(0, 8);
     njColorBlendingMode(1, 6);
@@ -4098,7 +4098,7 @@ void bhEff237(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -4174,7 +4174,7 @@ void bhEff238(O_WRK* op)
             } 
             else
             {
-                njSetMatrix(NULL, &((O_WRK*)op->lkwkp)->mlwP->owP[op->lkono].mtx);
+                njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, op->lkwkp))->mlwP)->owP)[op->lkono].mtx);
                 
                 njUnitTransPortion(NULL); 
                 
@@ -4304,7 +4304,7 @@ void bhEff239(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -4686,7 +4686,7 @@ void bhEff242(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -4754,7 +4754,7 @@ void bhEff243(O_WRK* op)
         
         op->ct0 = op->ct1 = op->ct2 = 0;
         
-        op->func = (void*)bhDrawEff243;
+        op->func = S32((void*)bhDrawEff243);
         
         op->mode0 = 1;
     case 1:
@@ -4790,7 +4790,7 @@ void bhEff243(O_WRK* op)
     NJS_POINT3 VecY = { 0.0f, 1.0f, 0.0f }; 
     NJS_POINT3 VecZ = { 0.0f, 0.0f, 1.0f }; 
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njRotateY(NULL, op->ay);
     njRotateX(NULL, op->ax);
@@ -4820,7 +4820,7 @@ void bhEff243(O_WRK* op)
     
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -4847,7 +4847,7 @@ void bhDrawEff243(O_WRK* op)
     
     njScaleEx((NJS_VECTOR*)&op->sx);
     
-    njDrawTexture3DEx(op->tvp, 4, 1);
+    njDrawTexture3DEx(P32(NJS_TEXTURE_VTX *, op->tvp), 4, 1);
     
     njPopMatrixEx();
     
@@ -4943,7 +4943,7 @@ void bhEff244(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -5254,7 +5254,7 @@ void bhEff246(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -5306,7 +5306,7 @@ void bhEff247(O_WRK* op)
     
     if (lNumber != -1) 
     {
-        eff[lNumber].exp0 = (unsigned char*)op;
+        eff[lNumber].exp0 = S32((unsigned char*)op);
     }
 }
 
@@ -5326,7 +5326,7 @@ void bhEff248(O_WRK* op)
 		{   0, 168 }, {  56, 168 }, { 112, 168 }, { 168, 168 }
 	};
     
-    opp = (O_WRK*)op->exp0;
+    opp = (O_WRK*)P32(unsigned char *, op->exp0);
     
     if (opp->type == 0) 
     {
@@ -5377,7 +5377,7 @@ void bhEff248(O_WRK* op)
         }  
         else 
         {
-            njSetMatrix(NULL, &((O_WRK*)opp->lkwkp)->mlwP->owP[opp->lkono].mtx);
+            njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, opp->lkwkp))->mlwP)->owP)[opp->lkono].mtx);
         }
         
         njRotateXYZ(NULL, op->ax, op->ay, 0);
@@ -5447,7 +5447,7 @@ void bhEff248(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -5567,7 +5567,7 @@ void bhEff249(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -5615,7 +5615,7 @@ EFF5SNOWRECT* CreateEff5SnowRect(int lSnowMax)
     
     pSnow->lSnowTotalMax = lSnowMax;
     
-    pSnow->pSnowVector = NULL;
+    pSnow->pSnowVector = S32(NULL);
     
     pSnowGrp = (EFF5SNOWGRP*)&pSnow->SnowGrp;
     
@@ -5623,16 +5623,16 @@ EFF5SNOWRECT* CreateEff5SnowRect(int lSnowMax)
     
     for (lSnowRest = lSnowMax; lSnowRest > 0; lSnowRest -= 100) 
     {
-        pSnowGrp->pPointTop = (NJS_POINT3*)bhSetExtraEffectWork();
+        pSnowGrp->pPointTop = S32((NJS_POINT3*)bhSetExtraEffectWork());
         
-        if (pSnowGrp->pPointTop == NULL) 
+        if (P32(NJS_POINT3 *, pSnowGrp->pPointTop) == NULL) 
         {
             DeleteEff5SnowRect(pSnow);
             
             return NULL;
         }
         
-        pSnowGrp->pPointTop = (NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(pSnowGrp->pPointTop) + 4));
+        pSnowGrp->pPointTop = S32((NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(P32(NJS_POINT3 *, pSnowGrp->pPointTop)) + 4)));
         
         if (lSnowRest >= 100) 
         {
@@ -5647,18 +5647,18 @@ EFF5SNOWRECT* CreateEff5SnowRect(int lSnowMax)
         pSnow->lSnowGrpMax++;
     } 
     
-    pSnow->pSnowVector = (NJS_POINT3*)bhSetExtraEffectWork();
+    pSnow->pSnowVector = S32((NJS_POINT3*)bhSetExtraEffectWork());
     
-    if (pSnow->pSnowVector == NULL) 
+    if (P32(NJS_POINT3 *, pSnow->pSnowVector) == NULL) 
     {
         DeleteEff5SnowRect(pSnow);
         
         return NULL;
     }
     
-    pSnow->pSnowVector = (NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(pSnow->pSnowVector) + 4));
+    pSnow->pSnowVector = S32((NJS_POINT3*)PS2_HOST(((int)PS2_ADDR(P32(NJS_POINT3 *, pSnow->pSnowVector)) + 4)));
     
-    pVector = pSnow->pSnowVector; 
+    pVector = P32(NJS_POINT3 *, pSnow->pSnowVector); 
     
     for (lCnt = 100; lCnt != 0; lCnt--)
     {
@@ -5688,14 +5688,14 @@ void DeleteEff5SnowRect(EFF5SNOWRECT* pSnow)
 
     for (lGrpCnt = pSnow->lSnowGrpMax; lGrpCnt != 0; lGrpCnt--) 
 	{
-		pSnowGrp->pPointTop[-1].z = 0;
+		P32(NJS_POINT3 *, pSnowGrp->pPointTop)[-1].z = 0;
 		
 		pSnowGrp++;
     }
 
-    if (pSnow->pSnowVector != NULL) 
+    if (P32(NJS_POINT3 *, pSnow->pSnowVector) != NULL) 
 	{
-        pSnow->pSnowVector[-1].z = 0;
+        P32(NJS_POINT3 *, pSnow->pSnowVector)[-1].z = 0;
     }
 
     pSnow->flg = 0;
@@ -5754,8 +5754,8 @@ void ExecEff5SnowRect(EFF5SNOWRECT* pSnow)
     {
         lDrawMax = (lDrawRest > pSnowGrp->lPointMax) ? pSnowGrp->lPointMax : lDrawRest;
         
-        pVector = pSnow->pSnowVector;
-        pPoint  = pSnowGrp->pPointTop;
+        pVector = P32(NJS_POINT3 *, pSnow->pSnowVector);
+        pPoint  = P32(NJS_POINT3 *, pSnowGrp->pPointTop);
                 
         for (lDrawCnt = lDrawMax; lDrawCnt != 0; lDrawCnt--) 
         {
@@ -5812,9 +5812,9 @@ void DrawEff5SnowRect(O_WRK* op)
     int aAngleZ;             
     NJS_POINT3 Vector;      
 
-    pSnow = (EFF5SNOWRECT*)op->exp0;
+    pSnow = (EFF5SNOWRECT*)P32(unsigned char *, op->exp0);
     
-    njSetTexture(pSnow->pSnowTexList);
+    njSetTexture(P32(NJS_TEXLIST *, pSnow->pSnowTexList));
     njSetTextureNum(pSnow->ulSnowTexNum);
     
     njTextureFilterMode(0);
@@ -5843,7 +5843,7 @@ void DrawEff5SnowRect(O_WRK* op)
         {
             lDrawMax = MIN(pSnowGrp->lPointMax, lDrawRest);
             
-            pPoint = pSnowGrp->pPointTop;
+            pPoint = P32(NJS_POINT3 *, pSnowGrp->pPointTop);
             
             for (lDrawCnt = lDrawMax; lDrawCnt != 0; lDrawCnt--)
             {
@@ -5880,7 +5880,7 @@ void DrawEff5SnowRect(O_WRK* op)
         {
             lDrawMax = MIN(pSnowGrp->lPointMax, lDrawRest);
             
-            pPoint = pSnowGrp->pPointTop;
+            pPoint = P32(NJS_POINT3 *, pSnowGrp->pPointTop);
             
             for (lDrawCnt = lDrawMax; lDrawCnt != 0; lDrawCnt--) 
             {
@@ -5985,7 +5985,7 @@ void ArrangeEff5SnowRectParticle(EFF5SNOWRECT* pSnow)
 	
 	for (lGrpCnt = pSnow->lSnowGrpMax; lGrpCnt != 0; lGrpCnt--, pSnowGrp++)
 	{
-		pPoint = pSnowGrp->pPointTop;
+		pPoint = P32(NJS_POINT3 *, pSnowGrp->pPointTop);
 		
 		for (lCnt = pSnowGrp->lPointMax; lCnt != 0; lCnt--, pPoint++)
 		{
@@ -6001,7 +6001,7 @@ void SetEff5SnowRectParticleTexture(EFF5SNOWRECT* pSnow, NJS_TEXLIST* pTexList, 
 {
 	NJS_TEXTURE_VTX* pTex;
 
-	pSnow->pSnowTexList = pTexList;
+	pSnow->pSnowTexList = S32(pTexList);
 	
 	pSnow->ulSnowTexNum = ulTexNum;
 

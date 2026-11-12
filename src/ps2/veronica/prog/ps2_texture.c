@@ -5,7 +5,7 @@
 
 static NJS_TEXINFO info;
 PS2_TEX_SAVE Ps2_tex_save[2];
-static NJS_TEXLIST tlist = { NULL, 1 }; 
+static NJS_TEXLIST tlist = { 0, 1 }; 
 /*char fname[128];
 char BIO_CURRENT[0];
 _anon23 tbuf[0];
@@ -112,7 +112,7 @@ int bhSetMemPvpTexture(NJS_TEXLIST* tlp, unsigned char* datp, int offset)
     
     dp = datp; 
     
-    tnp = &tlp->textures[offset]; 
+    tnp = &P32(NJS_TEXNAME *, tlp->textures)[offset]; 
     
     while (end != 0) 
     {
@@ -177,7 +177,7 @@ int bhSetMemPvpTexture(NJS_TEXLIST* tlp, unsigned char* datp, int offset)
                 njSetTextureInfo(&info, (unsigned short*)ap, attr, w, h); 
                 njSetTextureName(tnp, &info.texaddr, gidx, 0x40800000); 
                 
-                tlist.textures = tnp;
+                tlist.textures = S32(tnp);
                 
                 tlist.nbTexture = 1; 
                 
@@ -279,7 +279,7 @@ int bhSetMemPvpTexture(NJS_TEXLIST* tlp, unsigned char* datp, int offset)
                             njSetTextureName(tnp, &info.texaddr, gidx, 0x41010000);
                         }
 
-                        tlist.textures = tnp; 
+                        tlist.textures = S32(tnp); 
                         
                         tlist.nbTexture = 1; 
                         
@@ -313,56 +313,56 @@ void bhReleaseMainTexture()
     spawn_release();   /* textures of enemies the F2 spawner brought in */
 #endif
 
-    if (rom->mdl.texP != NULL)
+    if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)
     {
-        njReleaseTexture(rom->mdl.texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
 
     for (i = 0; i < rom->ene_n; i++)
     {
-        pp = &ene[rom->enep[i].wrk_no];
+        pp = &ene[P32(struct ETTY_WORK *, rom->enep)[i].wrk_no];
 
         if ((pp->flg & 0x1)) 
         {
             for (j = 0; j < pp->mdl_n; j++)
             {
-                if ((pp->mdl[j].texP != NULL) && ((pp->mdl[j].flg & 0x200))) 
+                if ((P32(NJS_TEXLIST *, pp->mdl[j].texP) != NULL) && ((pp->mdl[j].flg & 0x200))) 
                 {
-                    njReleaseTexture(pp->mdl[j].texP);
+                    njReleaseTexture(P32(NJS_TEXLIST *, pp->mdl[j].texP));
                 }
             }
         }
     }
 
-    op = &sys->obwp[4];
+    op = &P32(struct O_WRK *, sys->obwp)[4];
     
     for (i = 4; i < rom->obj_n; i++, op++)
     {
-        if (((op->flg & 0x1)) && ((op->mdl->texP != NULL) && ((op->mdl->flg & 0x200))))
+        if (((op->flg & 0x1)) && ((P32(NJS_TEXLIST *, op->mdl->texP) != NULL) && ((op->mdl->flg & 0x200))))
         {
-            njReleaseTexture(op->mdl->texP);
+            njReleaseTexture(P32(NJS_TEXLIST *, op->mdl->texP));
         }
     }
 
-    op = sys->itwp;
+    op = P32(struct O_WRK *, sys->itwp);
     
     for (i = 0; i < rom->itm_n; i++, op++)
     {
-        if (((op->flg & 0x1)) && ((op->mdl->texP != NULL) && ((op->mdl->flg & 0x200)))) 
+        if (((op->flg & 0x1)) && ((P32(NJS_TEXLIST *, op->mdl->texP) != NULL) && ((op->mdl->flg & 0x200)))) 
         {
-            njReleaseTexture(op->mdl->texP);
+            njReleaseTexture(P32(NJS_TEXLIST *, op->mdl->texP));
         }
     }
 
     if (sys->ef_extn != 0)
     {
-        sys->ef_tlist.textures = (NJS_TEXNAME*)&sys->ef_tex[sys->ef_ctb].filename;
+        sys->ef_tlist.textures = S32((NJS_TEXNAME*)&sys->ef_tex[sys->ef_ctb].filename);
         
         sys->ef_tlist.nbTexture = sys->ef_extn;
         
         njReleaseTexture(&sys->ef_tlist);
         
-        sys->ef_tlist.textures = (NJS_TEXNAME*)&sys->ef_tex[0].filename;
+        sys->ef_tlist.textures = S32((NJS_TEXNAME*)&sys->ef_tex[0].filename);
         
         sys->ef_tlist.nbTexture = sys->ef_ctb;
     }
@@ -420,13 +420,13 @@ char* bhCopyTexmem2MainmemSub(NJS_TEXLIST* tlp, char* adr)
     
     for (i = 0; i < num; i++) 
     {
-        tmp = (NJS_TEXMEMLIST*)PS2_HOST(tlp->textures[i].texaddr); 
+        tmp = (NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, tlp->textures)[i].texaddr); 
         
         Ps2_tex_save->tmem[i] = *tmp; 
         
-        Ps2_tex_save->addr[i] = adr; 
+        Ps2_tex_save->addr[i] = S32(adr); 
         
-        Ps2MemCopy4(adr, tmp->texinfo.texsurface.pSurface, tmp->texinfo.texsurface.TextureSize / 4); 
+        Ps2MemCopy4(adr, P32(unsigned int *, tmp->texinfo.texsurface.pSurface), tmp->texinfo.texsurface.TextureSize / 4); 
         
         adr += tmp->texinfo.texsurface.TextureSize; 
     } 
@@ -461,15 +461,15 @@ void bhCopyMainmem2Texmem(NJS_TEXLIST* tlp)
         { 
             addr[no].count++; 
             
-            ((TIM2_PICTUREHEADER_EX*)addr[no].texinfo.texsurface.pSurface)->admin.count++; 
+            ((TIM2_PICTUREHEADER_EX*)P32(unsigned int *, addr[no].texinfo.texsurface.pSurface))->admin.count++; 
             
-            tlp->textures[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
+            P32(NJS_TEXNAME *, tlp->textures)[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
         } 
         else 
         { 
             if ((no = SearchNullNumber()) >= 0) 
             { 
-                tlp->textures[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
+                P32(NJS_TEXNAME *, tlp->textures)[i].texaddr = (unsigned int)PS2_ADDR(&addr[no]); 
             } 
             else
             { 
@@ -480,7 +480,7 @@ void bhCopyMainmem2Texmem(NJS_TEXLIST* tlp)
             
             addr[no].count = 1; 
             
-            addr[no].texinfo.texaddr = Ps2_tex_save->addr[i]; 
+            addr[no].texinfo.texaddr = S32(P32(void *, Ps2_tex_save->addr[i])); 
             
             if (Ps2TextureMalloc(&addr[no]) < 0)
             { 

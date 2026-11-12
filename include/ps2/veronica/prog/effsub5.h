@@ -43,7 +43,7 @@ typedef struct EFF5UVWHUC
 typedef struct EFF5SNOWGRP 
 {
     // total size: 0x8
-    NJS_POINT3* pPointTop; // offset 0x0, size 0x4
+    ps2ptr_t pPointTop; /* NJS_POINT3* pPointTop */ // offset 0x0, size 0x4
     int lPointMax;         // offset 0x4, size 0x4
 } EFF5SNOWGRP;
 
@@ -65,13 +65,13 @@ typedef struct EFF5SNOWRECT
     int lSnowTotalMax;            // offset 0x38, size 0x4
     EFF5SNOWGRP SnowGrp[20];      // offset 0x3C, size 0xA0
     int lSnowGrpMax;              // offset 0xDC, size 0x4
-    NJS_VECTOR* pSnowVector;      // offset 0xE0, size 0x4
+    ps2ptr_t pSnowVector; /* NJS_VECTOR* pSnowVector */      // offset 0xE0, size 0x4
     int lSnowExistPrev;           // offset 0xE4, size 0x4
     int lSnowExistCrnt;           // offset 0xE8, size 0x4
     int lSnowExistNext;           // offset 0xEC, size 0x4
     int lSnowTimerCnt;            // offset 0xF0, size 0x4
     int lSnowTimerMax;            // offset 0xF4, size 0x4
-    NJS_TEXLIST* pSnowTexList;    // offset 0xF8, size 0x4
+    ps2ptr_t pSnowTexList; /* NJS_TEXLIST* pSnowTexList */    // offset 0xF8, size 0x4
     unsigned int ulSnowTexNum;    // offset 0xFC, size 0x4
     NJS_TEXTURE_VTX SnowModel[4]; // offset 0x100, size 0x60
 } EFF5SNOWRECT;

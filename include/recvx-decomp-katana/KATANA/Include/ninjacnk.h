@@ -429,8 +429,8 @@
  * NJS_CNK_MODEL
  */
 typedef struct {
-    Sint32            *vlist;   /* vertex list                  */
-    Sint16            *plist;   /* polygon list                 */
+    ps2ptr_t vlist; /* Sint32 *vlist */   /* vertex list                  */
+    ps2ptr_t plist; /* Sint16 *plist */   /* polygon list                 */
     NJS_POINT3        center;   /* model center                 */
     Float                  r;   /* radius                       */
 } NJS_CNK_MODEL;
@@ -440,12 +440,12 @@ typedef struct {
  */
 typedef struct cnkobj {
     Uint32          evalflags;  /* evalation flags              */
-    NJS_CNK_MODEL   *model;     /* model data pointer           */
+    ps2ptr_t model; /* NJS_CNK_MODEL *model */     /* model data pointer           */
     Float           pos[3];     /* translation                  */
     Angle           ang[3];     /* rotation                     */
     Float           scl[3];     /* scaling                      */
-    struct cnkobj   *child;     /* child object                 */
-    struct cnkobj   *sibling;   /* sibling object               */
+    ps2ptr_t child; /* struct cnkobj *child */     /* child object                 */
+    ps2ptr_t sibling; /* struct cnkobj *sibling */   /* sibling object               */
 } NJS_CNK_OBJECT;
 
 

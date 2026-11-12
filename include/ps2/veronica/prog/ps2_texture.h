@@ -9,7 +9,7 @@ typedef struct PS2_TEX_SAVE
 	// total size: 0x4804
 	unsigned int num;         // offset 0x0, size 0x4
 	NJS_TEXMEMLIST tmem[256]; // offset 0x4, size 0x4400
-	void* addr[256];          // offset 0x4404, size 0x400
+	ps2ptr_t addr[256]; /* void* addr[256] */          // offset 0x4404, size 0x400
 } PS2_TEX_SAVE;
 
 void ClutCopy(void* data, void* org_data);

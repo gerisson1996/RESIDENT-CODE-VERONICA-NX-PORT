@@ -20,9 +20,9 @@ typedef struct ADV_WORK
     unsigned int PalNo;               // offset 0x2C, size 0x4
     unsigned int PalMode;             // offset 0x30, size 0x4
     unsigned int FontBaseColor;       // offset 0x34, size 0x4
-    unsigned char* SysMemPtr;         // offset 0x38, size 0x4
-    unsigned char* MsgPtr;            // offset 0x3C, size 0x4
-    unsigned char* ptr[8];            // offset 0x40, size 0x20
+    ps2ptr_t SysMemPtr; /* unsigned char* SysMemPtr */         // offset 0x38, size 0x4
+    ps2ptr_t MsgPtr; /* unsigned char* MsgPtr */            // offset 0x3C, size 0x4
+    ps2ptr_t ptr[8]; /* unsigned char* ptr[8] */            // offset 0x40, size 0x20
     float Timer;                      // offset 0x60, size 0x4
     float FadeRate;                   // offset 0x64, size 0x4
     float FadeSpeed;                  // offset 0x68, size 0x4

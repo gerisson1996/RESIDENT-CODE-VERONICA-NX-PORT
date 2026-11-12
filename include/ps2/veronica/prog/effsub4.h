@@ -20,9 +20,9 @@ typedef struct D_WORK
     // total size: 0x14
     unsigned int flg;    // offset 0x0, size 0x4
     unsigned int num;    // offset 0x4, size 0x4
-    unsigned char* exp0; // offset 0x8, size 0x4
-    unsigned char* exp1; // offset 0xC, size 0x4
-    unsigned char* exp2; // offset 0x10, size 0x4
+    ps2ptr_t exp0; /* unsigned char* exp0 */ // offset 0x8, size 0x4
+    ps2ptr_t exp1; /* unsigned char* exp1 */ // offset 0xC, size 0x4
+    ps2ptr_t exp2; /* unsigned char* exp2 */ // offset 0x10, size 0x4
 } D_WORK;
 
 typedef struct EFFSUB365_WORK 

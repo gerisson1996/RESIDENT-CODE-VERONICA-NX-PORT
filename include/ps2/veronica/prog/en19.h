@@ -118,16 +118,16 @@ typedef struct PAW_WORK
     int p_status;                     // offset 0x0, size 0x4
     int p_mode;                       // offset 0x4, size 0x4
     int p_act_flg;                    // offset 0x8, size 0x4
-    void (*p_prgP)(BH_PWORK*, void*); // offset 0xC, size 0x4
-    void* p_paramP;                   // offset 0x10, size 0x4
+    ps2ptr_t p_prgP; /* void (*p_prgP)(BH_PWORK*, void*) */ // offset 0xC, size 0x4
+    ps2ptr_t p_paramP; /* void* p_paramP */                   // offset 0x10, size 0x4
     int p_act_frm;                    // offset 0x14, size 0x4
     int p_chg_frm;                    // offset 0x18, size 0x4
     int p_mtn_rte;                    // offset 0x1C, size 0x4
     int p_act_jmp;                    // offset 0x20, size 0x4
     int p_frm_num;                    // offset 0x24, size 0x4
     int p_act_now;                    // offset 0x28, size 0x4
-    MN_WORK* ene_mnwP;                // offset 0x2C, size 0x4
-    ACT_TBL_WORK* act_tblP;           // offset 0x30, size 0x4
+    ps2ptr_t ene_mnwP; /* MN_WORK* ene_mnwP */                // offset 0x2C, size 0x4
+    ps2ptr_t act_tblP; /* ACT_TBL_WORK* act_tblP */           // offset 0x30, size 0x4
     int tbl_num;                      // offset 0x34, size 0x4
 } PAW_WORK;
 
@@ -137,7 +137,7 @@ typedef struct FW_WORK
     NJS_MATRIX mtx_bak;                             // offset 0x0, size 0x40
     int status;                                     // offset 0x40, size 0x4
     int act_flg;                                    // offset 0x44, size 0x4
-    void (*prgP)(BH_PWORK*, en19_freework*, int);   // offset 0x48, size 0x4
+    ps2ptr_t prgP; /* void (*prgP)(BH_PWORK*, en19_freework*, int) */   // offset 0x48, size 0x4
     int act_frm;                                    // offset 0x4C, size 0x4
     int act_now;                                    // offset 0x50, size 0x4
     int mtn_rte;                                    // offset 0x54, size 0x4
@@ -145,7 +145,7 @@ typedef struct FW_WORK
     int act_cnt;                                    // offset 0x5C, size 0x4
     int b_status;                                   // offset 0x60, size 0x4
     int b_act_flg;                                  // offset 0x64, size 0x4
-    void (*b_prgP)(BH_PWORK*, en19_freework*, int); // offset 0x68, size 0x4
+    ps2ptr_t b_prgP; /* void (*b_prgP)(BH_PWORK*, en19_freework*, int) */ // offset 0x68, size 0x4
     int b_act_frm;                                  // offset 0x6C, size 0x4
     int b_act_now;                                  // offset 0x70, size 0x4
     int b_mtn_rte;                                  // offset 0x74, size 0x4
@@ -154,7 +154,7 @@ typedef struct FW_WORK
     int b_mtn_md;                                   // offset 0x80, size 0x4
     int dummy;                                      // offset 0x84, size 0x4
     PAW_WORK ply_act;                               // offset 0x88, size 0x38
-    BH_PWORK* ewP;                                  // offset 0xC0, size 0x4
+    ps2ptr_t ewP; /* BH_PWORK* ewP */                                  // offset 0xC0, size 0x4
     TY_BR_MODE0 br_mde0;                            // offset 0xC4, size 0x4
     TY_BR_MODE1 br_mde1;                            // offset 0xC8, size 0x4
     TY_BR_MODE2 br_mde2;                            // offset 0xCC, size 0x4
@@ -196,12 +196,12 @@ typedef struct FW_WORK
     int ang_tmp[3];                                 // offset 0x1B8, size 0xC
     NJS_VECTOR vct_tmp;                             // offset 0x1C4, size 0xC
     int cnt_tmp;                                    // offset 0x1D0, size 0x4
-    PMA_WORK* e0aP;                                 // offset 0x1D4, size 0x4
+    ps2ptr_t e0aP; /* PMA_WORK* e0aP */                                 // offset 0x1D4, size 0x4
     int eff_tim;                                    // offset 0x1D8, size 0x4
-    R0_WK* clw0P;                                   // offset 0x1DC, size 0x4
-    R0_WK* clw2P;                                   // offset 0x1E0, size 0x4
+    ps2ptr_t clw0P; /* R0_WK* clw0P */                                   // offset 0x1DC, size 0x4
+    ps2ptr_t clw2P; /* R0_WK* clw2P */                                   // offset 0x1E0, size 0x4
     TY_PRG_MODE0 mode0_bak;                         // offset 0x1E4, size 0x4
-    R0A_WORK* cam_clrP;                             // offset 0x1E8, size 0x4
+    ps2ptr_t cam_clrP; /* R0A_WORK* cam_clrP */                             // offset 0x1E8, size 0x4
     TY_BR_MODE0 br_mde0_bak;                        // offset 0x1EC, size 0x4
     TY_BR_MODE1 br_mde1_bak;                        // offset 0x1F0, size 0x4
     TY_BR_MODE2 br_mde2_bak;                        // offset 0x1F4, size 0x4
@@ -225,8 +225,8 @@ typedef struct EA_WORK
 typedef struct EB_WORK 
 {
     // total size: 0xC
-    BH_PWORK* ewP; // offset 0x0, size 0x4
-    FW_WORK* fwP;  // offset 0x4, size 0x4
+    ps2ptr_t ewP; /* BH_PWORK* ewP */ // offset 0x0, size 0x4
+    ps2ptr_t fwP; /* FW_WORK* fwP */  // offset 0x4, size 0x4
     int time;      // offset 0x8, size 0x4
 } EB_WORK;
 

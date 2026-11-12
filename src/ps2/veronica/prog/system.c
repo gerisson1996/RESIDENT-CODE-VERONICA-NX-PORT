@@ -119,7 +119,7 @@ void bhChangeHWSetting()
 
     mwPlySetDispMode(hws->mode, hws->frame, hws->count, (hws->vtx_opq_a < 0) ? 2 : (hws->vtx_opq_b < 0) ? 2 : (hws->vtx_trs_a < 0) ? 2 : (hws->vtx_trs_b < 0) ? 2 : (hws->vtx_punch < 0) ? 2 : 3); 
     
-    sys->endp = njpmemp; 
+    sys->endp = S32(njpmemp); 
 } 
 
 // 99.93% matching
@@ -134,18 +134,18 @@ void bhInitSystem()
     
     npSetMemory((unsigned char*)&sys->tk_flg, 175260, 0); 
     
-    sys->memp = freemem; 
-    sys->endp = njpmemp;
+    sys->memp = S32(freemem); 
+    sys->endp = S32(njpmemp);
     
-    sys->memp += (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version);
+    P32_ADD(unsigned char *, sys->memp ,  (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version));
     
     TypewriterKeepMemory();
     
-    keepmem = sys->mempb = sys->memp; 
+    keepmem = P32(unsigned char *, sys->mempb = S32(P32(unsigned char *, sys->memp))); 
     
     sys->loop_ct = 1; 
     
-    sys->p1per = NULL; 
+    sys->p1per = S32(NULL); 
         
     sys->pt_flg |= ~0x0; 
     
@@ -155,7 +155,7 @@ void bhInitSystem()
     
     plp = &ply; 
     
-    sys->plp = plp; 
+    sys->plp = S32(plp); 
     
     sys->ef_pbnk = 32; 
     
@@ -217,7 +217,7 @@ void bhInitRoomChangeSystem()
         {
             for (k = 0; k < 16; k++) 
             {
-                sys->et_lp[i][j][k] = NULL;
+                sys->et_lp[i][j][k] = S32(NULL);
             }
         }
     } 
@@ -227,12 +227,12 @@ void bhInitRoomChangeSystem()
     
     for (i = 0; i < 1300; i++)
     {
-        sys->ot_lp[i] = NULL;
+        sys->ot_lp[i] = S32(NULL);
     } 
     
     for (i = 0; i < 200; i++)
     {
-        sys->it_lp[i] = NULL;
+        sys->it_lp[i] = S32(NULL);
     } 
     
     for (i = sys->ef_ctb; i < 450; i++) 
@@ -461,12 +461,12 @@ void bhFirstGameStart()
     
     njSetAspect(BHD_ASPECT_X, BHD_ASPECT_Y);
     
-    sys->memp = keepmem;
+    sys->memp = S32(keepmem);
     
-    sys->obwp = (O_WRK*)bhGetFreeMemory(39936, 32);
-    sys->itwp = (O_WRK*)bhGetFreeMemory(39936, 32);
+    sys->obwp = S32((O_WRK*)bhGetFreeMemory(39936, 32));
+    sys->itwp = S32((O_WRK*)bhGetFreeMemory(39936, 32));
     
-    sys->mempb = sys->memp;
+    sys->mempb = S32(P32(unsigned char *, sys->memp));
     
     sys->tk_flg |= 0x73DFC0;
     
@@ -1138,8 +1138,8 @@ void bhSysCallMovie()
             sys->mvi_flg = 0;
         }
         
-        sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
-        sys->mvi_memp = sys->memp;
+        sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 63) & ~0x3F)));
+        sys->mvi_memp = S32(P32(unsigned char *, sys->memp));
         
         sys->mvi_md++;
         break;
@@ -1150,11 +1150,11 @@ void bhSysCallMovie()
             
             njSetBackColor(0x00000000, 0x00000000, 0x00000000);  
             
-            if (rom->mdl.texP != NULL) 
+            if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
             {
-                sys->memp = (unsigned char*)bhCopyTexmem2MainmemSub((NJS_TEXLIST*)rom->mdl.texP, (char*)sys->memp);
+                sys->memp = S32((unsigned char*)bhCopyTexmem2MainmemSub((NJS_TEXLIST*)P32(NJS_TEXLIST *, rom->mdl.texP), (char*)P32(unsigned char *, sys->memp)));
                
-                njReleaseTexture((NJS_TEXLIST*)rom->mdl.texP);
+                njReleaseTexture((NJS_TEXLIST*)P32(NJS_TEXLIST *, rom->mdl.texP));
                 
                 bhGarbageTexture(tbuf, 256);
                
@@ -1242,12 +1242,12 @@ void bhSysCallMovie()
         
         njSetBackColor(0x00000000, 0x00000000, 0x00000000);  
         
-        if ((sys->mvi_flg != 0) && (rom->mdl.texP != NULL))
+        if ((sys->mvi_flg != 0) && (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL))
         {
-            bhCopyMainmem2Texmem((NJS_TEXLIST*)rom->mdl.texP);
+            bhCopyMainmem2Texmem((NJS_TEXLIST*)P32(NJS_TEXLIST *, rom->mdl.texP));
         }
         
-        sys->memp = sys->mvi_memp;
+        sys->memp = S32(P32(unsigned char *, sys->mvi_memp));
         
         sys->mvi_md++;
         break;
@@ -1419,7 +1419,7 @@ void bhSysCallMonitor()
 
             pc_load_from = "the game start";
 #endif
-            sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+            sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
             
             sys->sdm_flg = 0xE;
             
@@ -1438,13 +1438,13 @@ void bhSysCallMonitor()
             
             if (sz != 0) 
             {
-                RequestReadIsoFile("sysmes.ald", sys->memp); 
+                RequestReadIsoFile("sysmes.ald", P32(unsigned char *, sys->memp)); 
                 
-                sys->mes_ip = (unsigned int*)sys->memp;
+                sys->mes_ip = S32((unsigned int*)P32(unsigned char *, sys->memp));
                 
-                sys->memp += sz;
+                P32_ADD(unsigned char *, sys->memp ,  sz);
                 
-                sys->doordp = bhGetFreeMemory(172032, 32);
+                sys->doordp = S32(bhGetFreeMemory(172032, 32));
                 
                 sys->mn_md1 = 2;
             }
@@ -1453,17 +1453,17 @@ void bhSysCallMonitor()
         case 2:
             if (GetReadFileStatus() == 0) 
             {
-                datp = (unsigned char*)sys->mes_ip; 
+                datp = (unsigned char*)P32(unsigned int *, sys->mes_ip); 
                 
-                dt = *sys->mes_ip; 
+                dt = *P32(unsigned int *, sys->mes_ip); 
                 
                 datp += 4; 
                 
-                sys->mes_ip = (unsigned int*)datp; 
+                sys->mes_ip = S32((unsigned int*)datp); 
                 
                 datp += dt; 
                 
-                sys->mes_sp = (unsigned int*)(datp + 4);
+                sys->mes_sp = S32((unsigned int*)(datp + 4));
                 
                 sys->mn_md1 = 3; 
             }
@@ -1472,9 +1472,9 @@ void bhSysCallMonitor()
         case 3:
             if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0)) 
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
+                RequestReadInsideFile(sys->sys_partid, 1, P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 4;
             }
@@ -1510,9 +1510,9 @@ void bhSysCallMonitor()
         case 6:
             if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4)) != 0)) 
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), sys->memp);
+                RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 7;
             }
@@ -1530,9 +1530,9 @@ void bhSysCallMonitor()
         case 8:
             if (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0) 
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
+                RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 9;
             }
@@ -1582,11 +1582,11 @@ void bhSysCallMonitor()
             
             if (sz != 0) 
             {
-                RequestReadInsideFile(sys->sys_partid, i, sys->memp);
+                RequestReadInsideFile(sys->sys_partid, i, P32(unsigned char *, sys->memp));
                 
-                sys->pdm_dp = sys->memp;
+                sys->pdm_dp = S32(P32(unsigned char *, sys->memp));
                 
-                sys->memp += sz;
+                P32_ADD(unsigned char *, sys->memp ,  sz);
                 
                 sys->mn_md1 = 21;
             }
@@ -1597,9 +1597,9 @@ void bhSysCallMonitor()
             {
                 sz = (int)PS2_ADDR(&sys->save_end) - (int)PS2_ADDR(&sys->version);
                 
-                njMemCopy(&sys->version, sys->pdm_dp, sz);
+                njMemCopy(&sys->version, P32(unsigned char *, sys->pdm_dp), sz);
                 
-                sys->pdm_pd = &sys->pdm_dp[sz];
+                sys->pdm_pd = S32(&P32(unsigned char *, sys->pdm_dp)[sz]);
                 
                 sys->mn_md1 = 1;
             }
@@ -1612,7 +1612,7 @@ void bhSysCallMonitor()
         switch (sys->mn_md1) 
         {
         case 0:
-            sys->memp = sys->mempb;
+            sys->memp = S32(P32(unsigned char *, sys->mempb));
             
             sys->sdm_flg = 0;
             
@@ -1660,9 +1660,9 @@ void bhSysCallMonitor()
         case 0:
             if ((GetReadFileStatus() != 1) && (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0)) 
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
+                RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 1;
             }
@@ -1720,14 +1720,14 @@ void bhSysCallMonitor()
                     {
                         bhInitReadRDT();
                         
-                        sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)); 
-                        sys->rdtp = (unsigned char*)PS2_HOST(ALIGN_DOWN((int)PS2_ADDR(sys->endp) - sz, 64)); 
+                        sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64))); 
+                        sys->rdtp = S32((unsigned char*)PS2_HOST(ALIGN_DOWN((int)PS2_ADDR(sys->endp) - sz, 64))); 
 #ifdef TARGET_PC
-                        if (sys->rdtp < sys->memp)   /* the PS2 read it over the persistent data below */
-                            host_fatal("%s: packed room file (%d KB) does not fit the room arena (%d KB free)", sys->mes, sz >> 10, (int)(sys->endp - sys->memp) >> 10);
+                        if (P32(unsigned char *, sys->rdtp) < P32(unsigned char *, sys->memp))   /* the PS2 read it over the persistent data below */
+                            host_fatal("%s: packed room file (%d KB) does not fit the room arena (%d KB free)", sys->mes, sz >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10);
 #endif
                         
-                        RequestReadIsoFile(sys->mes, sys->rdtp);
+                        RequestReadIsoFile(sys->mes, P32(unsigned char *, sys->rdtp));
                         
                         sys->mn_md1 = 1;
                         
@@ -1784,23 +1784,23 @@ void bhSysCallMonitor()
                 {
                     FlushCache(0);
                     
-                    sys->rdtsz = Expand((char*)sys->rdtp, sys->memp);
+                    sys->rdtsz = Expand((char*)P32(unsigned char *, sys->rdtp), P32(unsigned char *, sys->memp));
 #ifdef TARGET_PC
                     /* the expansion grows towards the packed copy at the top (the PS2's RM_9350 overlaps
                        it harmlessly); past endp it has overwritten the vertex buffers */
-                    if ((int)sys->rdtsz > sys->endp - sys->memp)
-                        host_fatal("RM_%d%02d%d: expanded room file (%d KB) exceeds the room arena (%d KB free)", sys->stg_no, sys->rom_no, sys->rcase, (int)sys->rdtsz >> 10, (int)(sys->endp - sys->memp) >> 10);
-                    host_log("room: RM_%d%02d%d %d KB expanded, %d KB of the room arena left\n", sys->stg_no, sys->rom_no, sys->rcase, (int)sys->rdtsz >> 10, (int)(sys->endp - sys->memp - (int)sys->rdtsz) >> 10);
+                    if ((int)sys->rdtsz > P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp))
+                        host_fatal("RM_%d%02d%d: expanded room file (%d KB) exceeds the room arena (%d KB free)", sys->stg_no, sys->rom_no, sys->rcase, (int)sys->rdtsz >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp)) >> 10);
+                    host_log("room: RM_%d%02d%d %d KB expanded, %d KB of the room arena left\n", sys->stg_no, sys->rom_no, sys->rcase, (int)sys->rdtsz >> 10, (int)(P32(unsigned char *, sys->endp) - P32(unsigned char *, sys->memp) - (int)sys->rdtsz) >> 10);
 #endif
                     
-                    sys->rdtp = sys->memp;
+                    sys->rdtp = S32(P32(unsigned char *, sys->memp));
                     
                     sys->mn_md1 = 2;
                 }
                
                 break;
             case 2:
-                sys->memp += sys->rdtsz;
+                P32_ADD(unsigned char *, sys->memp ,  sys->rdtsz);
                 
                 bhSetRDT();
                 
@@ -1819,14 +1819,14 @@ void bhSysCallMonitor()
                 /* "Fast loading": all but the last list now, the last one and bhFinishRoom as before */
                 while ((pc_fast_load() != 0) && (sys->txr_n > (sys->txr_ct + 1)))
                 {
-                    bhSetMemPvpTexture(sys->txlp[sys->txr_ct], sys->txdp[sys->txr_ct], sys->txloff[sys->txr_ct]);
+                    bhSetMemPvpTexture(P32(NJS_TEXLIST *, sys->txlp[sys->txr_ct]), P32(unsigned char *, sys->txdp[sys->txr_ct]), sys->txloff[sys->txr_ct]);
 
                     sys->txr_ct++;
                 }
 #endif
                 if (sys->txr_n > sys->txr_ct)
                 {
-                    bhSetMemPvpTexture(sys->txlp[sys->txr_ct], sys->txdp[sys->txr_ct], sys->txloff[sys->txr_ct]);
+                    bhSetMemPvpTexture(P32(NJS_TEXLIST *, sys->txlp[sys->txr_ct]), P32(unsigned char *, sys->txdp[sys->txr_ct]), sys->txloff[sys->txr_ct]);
                     
                     sys->txr_ct++;
                 } 
@@ -1848,18 +1848,18 @@ void bhSysCallMonitor()
 #endif
                         for (i = 0; i < plp->mdl_n; i++)
                         {
-                            if (plp->mdl[i].texP != NULL) 
+                            if (P32(NJS_TEXLIST *, plp->mdl[i].texP) != NULL) 
                             {
-                                njReleaseTexture(plp->mdl[i].texP);
+                                njReleaseTexture(P32(NJS_TEXLIST *, plp->mdl[i].texP));
                             }
                         }
                         
                         bhGarbageTexture(NULL, 0);
                         
-                        sys->obwp[0].flg = 0;
-                        sys->obwp[1].flg = 0; 
-                        sys->obwp[2].flg = 0; 
-                        sys->obwp[3].flg = 0;
+                        P32(struct O_WRK *, sys->obwp)[0].flg = 0;
+                        P32(struct O_WRK *, sys->obwp)[1].flg = 0; 
+                        P32(struct O_WRK *, sys->obwp)[2].flg = 0; 
+                        P32(struct O_WRK *, sys->obwp)[3].flg = 0;
                         
                         sys->ply_wno[sys->ply_id] = plp->wpnr_no;
                         sys->ply_hp[sys->ply_id] = plp->hp;
@@ -1878,9 +1878,9 @@ void bhSysCallMonitor()
             case 4:
                 if ((GetReadFileStatus() != 1) && (GetInsideFileSize(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4)) != 0)) 
                 {
-                    sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                    sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                     
-                    RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), sys->memp);
+                    RequestReadInsideFile(sys->sys_partid, sys->ply_id + 10 + (sys->costume * 4), P32(unsigned char *, sys->memp));
                     
                     sys->mn_md1 = 5;
                 }
@@ -1906,9 +1906,9 @@ void bhSysCallMonitor()
                 
                 if (GetInsideFileSize(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20)) != 0) 
                 {
-                    sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                    sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                     
-                    RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), sys->memp);
+                    RequestReadInsideFile(sys->sys_partid, plp->wpnr_no + ((sys->ply_id * 30) + 20), P32(unsigned char *, sys->memp));
                     
                     sys->mn_md1 = 7;
                 }
@@ -1957,7 +1957,7 @@ void bhSysCallMonitor()
                 {
                     if (((!(sys->ss_flg & 0x2)) && ((rom->flg & 0x1))) || (((sys->ss_flg & 0x2)) && (!(rom->flg & 0x1)))) 
                     {
-                        sys->ltc_bp = sys->memp;
+                        sys->ltc_bp = S32(P32(unsigned char *, sys->memp));
                         
                         bhPushAllTexture();
                         
@@ -1970,7 +1970,7 @@ void bhSysCallMonitor()
                     } 
                     else 
                     {
-                        sys->ltc_bp = NULL;
+                        sys->ltc_bp = S32(NULL);
                         
                         sys->mn_md1 = 16;
                     }
@@ -1991,7 +1991,7 @@ void bhSysCallMonitor()
                 
                 bhPopAllTexture();
                 
-                sys->memp = sys->ltc_bp;
+                sys->memp = S32(P32(unsigned char *, sys->ltc_bp));
                 
                 sys->ts_flg = sys->ltc_tsbak;
                 
@@ -2052,7 +2052,7 @@ void bhSysCallMonitor()
             case 20: 
                 sys->error &= ~0x1;
                 
-                rh = (RDT_WORK*)sys->rdtp; 
+                rh = (RDT_WORK*)P32(unsigned char *, sys->rdtp); 
                 
                 sprintf(sys->mes, "RDT version error."); 
         
@@ -2074,7 +2074,7 @@ void bhSysCallMonitor()
                 
                 njPrintC(0x10000D, "Press start button."); 
                 
-                if ((sys->p1per->press & 0x800)) 
+                if ((P32(const PDS_PERIPHERAL *, sys->p1per)->press & 0x800)) 
                 {
                     sys->stg_no = sys->stg_nob;
                     sys->rom_no = sys->rom_nob;
@@ -2096,13 +2096,13 @@ void bhSysCallMonitor()
         case 0:
             if (GetReadFileStatus() != 1) 
             {
-                sys->sbs_sp = sys->memp;
+                sys->sbs_sp = S32(P32(unsigned char *, sys->memp));
                 
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                if (rom->mdl.texP != NULL) 
+                if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
                 {
-                    sys->memp = (unsigned char*)bhCopyTexmem2MainmemSub(rom->mdl.texP, (char*)sys->memp);
+                    sys->memp = S32((unsigned char*)bhCopyTexmem2MainmemSub(P32(NJS_TEXLIST *, rom->mdl.texP), (char*)P32(unsigned char *, sys->memp)));
                 }
                 
                 bhGarbageTexture(NULL, 0);
@@ -2114,11 +2114,11 @@ void bhSysCallMonitor()
         case 1:
             if (GetInsideFileSize(sys->itm_partid, 145) != 0)
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->itm_partid, 145, sys->memp);
+                RequestReadInsideFile(sys->itm_partid, 145, P32(unsigned char *, sys->memp));
                 
-                sys->subtxp = sys->memp;
+                sys->subtxp = S32(P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 2;
             }
@@ -2134,9 +2134,9 @@ void bhSysCallMonitor()
 
             if ((GetReadFileStatus() == 0) && (!(sys->cb_flg & 0x2))) 
             {
-                if (rom->mdl.texP != NULL) 
+                if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
                 {
-                    njReleaseTexture(rom->mdl.texP);
+                    njReleaseTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
                    
                     bhGarbageTexture((NJS_TEXMEMLIST*)&tbuf, 256);
                     
@@ -2177,7 +2177,7 @@ void bhSysCallMonitor()
                 {
                     sys->sb_rdsz = sz;
                     
-                    RequestReadInsideFile(sys->itm_partid, sys->sb_rdid - 1, (unsigned char*)sys->sb_rdp);
+                    RequestReadInsideFile(sys->itm_partid, sys->sb_rdid - 1, (unsigned char*)P32(void *, sys->sb_rdp));
                     
                     sys->mn_md1 = 1;
                     
@@ -2194,13 +2194,13 @@ void bhSysCallMonitor()
             
             if ((GetReadFileStatus() == 0) && (FileWait == 0)) 
             {
-                datp = sys->sb_rdp; 
+                datp = P32(void *, sys->sb_rdp); 
                 
                 dt = *(int*)datp; 
                 
                 datp += 4; 
                 
-                sys->sb_mlb = datp; 
+                sys->sb_mlb = S32(datp); 
                 
                 datp += dt; 
                 
@@ -2213,7 +2213,7 @@ void bhSysCallMonitor()
                     datp += 4; 
                 }
                 
-                sys->sb_ppp = datp; 
+                sys->sb_ppp = S32(datp); 
                 
                 SET_SYS_MN_MD(0, 0, 0, 0);
             }
@@ -2229,13 +2229,13 @@ void bhSysCallMonitor()
                 break;
             }
 
-            sys->sbs_sp = sys->memp;
+            sys->sbs_sp = S32(P32(unsigned char *, sys->memp));
             
-            sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+            sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
             
-            if (rom->mdl.texP != NULL)
+            if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL)
             {
-                sys->memp = (unsigned char*)bhCopyTexmem2MainmemSub(rom->mdl.texP, (char*)sys->memp);
+                sys->memp = S32((unsigned char*)bhCopyTexmem2MainmemSub(P32(NJS_TEXLIST *, rom->mdl.texP), (char*)P32(unsigned char *, sys->memp)));
             }
             
             bhGarbageTexture(NULL, 0);
@@ -2244,11 +2244,11 @@ void bhSysCallMonitor()
         case 1: 
             if (GetInsideFileSize(sys->sys_partid, 2) != 0) 
             {
-                sys->memp = (unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64));
+                sys->memp = S32((unsigned char*)PS2_HOST(ALIGN_UP((int)PS2_ADDR(sys->memp), 64)));
                 
-                RequestReadInsideFile(sys->sys_partid, 2, sys->memp);
+                RequestReadInsideFile(sys->sys_partid, 2, P32(unsigned char *, sys->memp));
                 
-                sys->subtxp = sys->memp;
+                sys->subtxp = S32(P32(unsigned char *, sys->memp));
                 
                 sys->mn_md1 = 2;
             }
@@ -2269,9 +2269,9 @@ void bhSysCallMonitor()
             
             break;
         case 3:
-            if (rom->mdl.texP != NULL) 
+            if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
             {
-                njReleaseTexture(rom->mdl.texP);
+                njReleaseTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
                 
                 bhGarbageTexture((NJS_TEXMEMLIST*)&tbuf, 256);
                 
@@ -2312,7 +2312,7 @@ void bhSysCallMonitor()
     }
 
 #ifdef TARGET_PC   /* "Now loading..." (message 491) left out with fast loading: the loads are short */
-    if ((NowLoadDisp != 0) && (sys->mes_sp != NULL) && (!pc_fast_load()))
+    if ((NowLoadDisp != 0) && (P32(unsigned int *, sys->mes_sp) != NULL) && (!pc_fast_load()))
 #else
     if ((NowLoadDisp != 0) && (sys->mes_sp != NULL))
 #endif
@@ -2467,9 +2467,9 @@ void bhSysCallScreenSaver()
     switch (sys->ssv_md0) 
     {                        
     case 0:
-        if (sys->p1per != NULL)
+        if (P32(const PDS_PERIPHERAL *, sys->p1per) != NULL)
         {
-            if ((sys->p1per->on != 0) || ((sys->p1per->x1 > 48) || (sys->p1per->x1 < -48) || (sys->p1per->y1 > 48) || (sys->p1per->y1 < -48)) || (((sys->cb_flg & 0x4)) && (!(sys->cb_flg & 0x40))) || ((plp->stflg & 0x40000)))
+            if ((P32(const PDS_PERIPHERAL *, sys->p1per)->on != 0) || ((P32(const PDS_PERIPHERAL *, sys->p1per)->x1 > 48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->x1 < -48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->y1 > 48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->y1 < -48)) || (((sys->cb_flg & 0x4)) && (!(sys->cb_flg & 0x40))) || ((plp->stflg & 0x40000)))
             {
                 sys->ssv_tim = 0;
             }
@@ -2492,7 +2492,7 @@ void bhSysCallScreenSaver()
     case 1:
         bhControlScreenSaver();
     case 2:
-        if ((sys->p1per != NULL) && ((sys->p1per->on != 0) || ((sys->p1per->x1 > 48) || (sys->p1per->x1 < -48) || (sys->p1per->y1 > 48) || (sys->p1per->y1 < -48))))
+        if ((P32(const PDS_PERIPHERAL *, sys->p1per) != NULL) && ((P32(const PDS_PERIPHERAL *, sys->p1per)->on != 0) || ((P32(const PDS_PERIPHERAL *, sys->p1per)->x1 > 48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->x1 < -48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->y1 > 48) || (P32(const PDS_PERIPHERAL *, sys->p1per)->y1 < -48))))
         {
             bhInitScreenSaver();
         }
@@ -2501,7 +2501,7 @@ void bhSysCallScreenSaver()
     case 10:
         sys->ssv_an = 64.0f;
         
-        sys->mes_tp = pause_mes;
+        sys->mes_tp = S32(pause_mes);
         
         bhDispMessage(280.0f, 188.0f, -0.9f, 2, 0, 0, 0);
         
@@ -2674,8 +2674,8 @@ void EasyDispMessage(float PosY, unsigned int MessageNo)
     int SearchFlag;
     float SizeX;
     
-    smp = (unsigned char*)sys->mes_sp; 
-    smp = (unsigned char*)(smp + sys->mes_sp[MessageNo + 1]); 
+    smp = (unsigned char*)P32(unsigned int *, sys->mes_sp); 
+    smp = (unsigned char*)(smp + P32(unsigned int *, sys->mes_sp)[MessageNo + 1]); 
     
     dmp = syMalloc(1024); 
     
@@ -2713,7 +2713,7 @@ void EasyDispMessage(float PosY, unsigned int MessageNo)
             } 
         } 
         
-        sys->mes_tp = nmp; 
+        sys->mes_tp = S32(nmp); 
         
         bhDispMessage(320.0f - (SizeX / 2.0f), PosY, -1.0f, 2, 0, 0, 0);    
         

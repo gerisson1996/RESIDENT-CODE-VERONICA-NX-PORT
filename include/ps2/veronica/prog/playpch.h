@@ -7,8 +7,8 @@
 typedef struct _search
 {
     // total size: 0x14
-    struct _search* nextP; // offset 0x0, size 0x4
-    BH_PWORK* ewP;         // offset 0x4, size 0x4
+    ps2ptr_t nextP; /* struct _search* nextP */ // offset 0x0, size 0x4
+    ps2ptr_t ewP; /* BH_PWORK* ewP */         // offset 0x4, size 0x4
     int idx;               // offset 0x8, size 0x4
     float dst;             // offset 0xC, size 0x4
     int dir;               // offset 0x10, size 0x4
@@ -27,8 +27,8 @@ typedef struct PP_WORK
     int arm_dr;           // offset 0x84, size 0x4
     int arm_al;           // offset 0x88, size 0x4
     int arm_ar;           // offset 0x8C, size 0x4
-    BH_PWORK** endPP;     // offset 0x90, size 0x4
-    BH_PWORK* LckTbl[64]; // offset 0x94, size 0x100
+    ps2ptr_t endPP; /* BH_PWORK** endPP */     // offset 0x90, size 0x4
+    ps2ptr_t LckTbl[64]; /* BH_PWORK* LckTbl[64] */ // offset 0x94, size 0x100
     search sch_hed;       // offset 0x194, size 0x14
     search SchLst[64];    // offset 0x1A8, size 0x500
     int hed_rate;         // offset 0x6A8, size 0x4

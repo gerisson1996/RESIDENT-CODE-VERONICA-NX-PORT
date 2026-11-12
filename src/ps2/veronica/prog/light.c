@@ -175,7 +175,7 @@ void bhInitLight()
     LGT_WORK* lp;
     int i;
 
-    lp = rom->lgtp;
+    lp = P32(struct LGT_WORK *, rom->lgtp);
     
     for (i = 0; i < rom->lgt_n; i++, lp++) 
     {
@@ -188,7 +188,7 @@ void bhInitLight()
         
         lp->ct0 = lp->ct1 = lp->ct2 = lp->ct3 = 0;
         
-        lp->light = NULL;
+        lp->light = S32(NULL);
     }
 }
 
@@ -197,7 +197,7 @@ void bhSetLightTab(LGT_WK* lt, int lno)
 { 
     LGT_WORK* lp;
 
-    lp = &rom->lgtp[lno];
+    lp = &P32(struct LGT_WORK *, rom->lgtp)[lno];
 
     lp->flg =  lt->flg;
     
@@ -268,9 +268,9 @@ void bhSetLightTab(LGT_WK* lt, int lno)
     lp->way = lp->ay;
     lp->waz = lp->az;
     
-    lp->lkwkp =  NULL;
+    lp->lkwkp =  S32(NULL);
     
-    lp->light = NULL;
+    lp->light = S32(NULL);
     
     bhGetLightVector(lt->ax, lt->ay, lt->az, (NJS_VECTOR*)&lp->vx);
 }
@@ -281,7 +281,7 @@ void bhSetEasyDirLight(float it)
     LGT_WORK* lp;
     float fl;
     
-    lp = rom->lgtp;
+    lp = P32(struct LGT_WORK *, rom->lgtp);
     
     fl = it;
     
@@ -351,13 +351,13 @@ void bhControlLight()
     
     if ((cam.flg & 0x2))
     {
-        sys->lgtp = rom->evlp;
+        sys->lgtp = S32(P32(struct LGT_WORK *, rom->evlp));
         
         sys->st_flg |= 0x1000000;
     } 
     else 
     {
-        sys->lgtp = rom->lgtp;
+        sys->lgtp = S32(P32(struct LGT_WORK *, rom->lgtp));
         
         sys->st_flg &= ~0x1000000;
     }
@@ -373,7 +373,7 @@ void bhControlLight()
     lptb = sys->lg_ptb;
     
     // this line matches on GC
-    ci = (CAM_KEYF_WORK*)&rom->cutp[cam.ncut].cam[cam.camver];
+    ci = (CAM_KEYF_WORK*)&P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver];
 
     dirf = 0;
     
@@ -394,16 +394,16 @@ void bhControlLight()
         {
             if (i < 4) 
             {
-                lp = &rom->lgtp[i];
+                lp = &P32(struct LGT_WORK *, rom->lgtp)[i];
             } 
             else
             {
-                lp = &rom->evlp[i - 4];
+                lp = &P32(struct LGT_WORK *, rom->evlp)[i - 4];
             }
         } 
         else 
         {
-            lp = &rom->lgtp[i];
+            lp = &P32(struct LGT_WORK *, rom->lgtp)[i];
         }
         
         if (((lp->flg & 0x1)) && ((lp->flg & 0x2))) 
@@ -729,16 +729,16 @@ void bhControlLight()
                 /* lkno is the enemy's slot (en22.c, pwksub.c: idx_ct), read as a record: slot k
                    is record k for the room's records; beyond them (an enemy the F2 spawner or the
                    enemy options added) the slot itself */
-                pwp = lp->lkno < rom->ene_n ? &ene[rom->enep[lp->lkno].wrk_no] : &ene[lp->lkno & 127];
+                pwp = lp->lkno < rom->ene_n ? &ene[P32(struct ETTY_WORK *, rom->enep)[lp->lkno].wrk_no] : &ene[lp->lkno & 127];
 #else
                 pwp = &ene[rom->enep[lp->lkno].wrk_no];
 #endif
                 break;
             case 3:                             
-                pwp = (BH_PWORK*)&sys->obwp[lp->lkno];
+                pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[lp->lkno];
                 break;
             case 4:                             
-                pwp = (BH_PWORK*)&sys->itwp[lp->lkno];
+                pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[lp->lkno];
                 break;
             case 5:                             
                 pwp = (BH_PWORK*)&eff[sys->efid[lp->lkno]];
@@ -759,11 +759,11 @@ void bhControlLight()
                 {
                     if (lp->lkono == 0) 
                     {
-                        njCalcPoint(pwp->mtx, (NJS_POINT3*)&lp->lx, (NJS_POINT3*)&lp->px);
+                        njCalcPoint(P32(float (*)[16], pwp->mtx), (NJS_POINT3*)&lp->lx, (NJS_POINT3*)&lp->px);
                     } 
                     else 
                     {
-                        njCalcPoint(&pwp->mlwP->owP[lp->lkono].mtx, (NJS_POINT3*)&lp->lx, (NJS_POINT3*)&lp->px);
+                        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[lp->lkono].mtx, (NJS_POINT3*)&lp->lx, (NJS_POINT3*)&lp->px);
                     }
                     
                     px = lp->px;
@@ -805,7 +805,7 @@ label:
                                
                                 clp = 2.0f * (unsigned char)ci->frame;
                                 
-                                njProjectScreen(cam.mtx, &npos, &lpos);
+                                njProjectScreen(P32(float (*)[16], cam.mtx), &npos, &lpos);
                                 
                                 if (!((lpos.x >= ((-clp + fNaViwOffsetX) - 320.0f)) && (lpos.x <= (((640.0f + clp) + fNaViwOffsetX) - 320.0f)) && (lpos.y >= ((-clp + fNaViwOffsetY) - 240.0f)) && (lpos.y <= (((480.0f + clp) + fNaViwOffsetY) - 240.0f))))
                                 {
@@ -864,7 +864,7 @@ label:
         }
     } 
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     if (dirf == 0) 
     {
@@ -904,7 +904,7 @@ label:
         njCnkSetSimpleMultiLightVector(sys->lg_vx, sys->lg_vy, sys->lg_vz);
         njCnkSetSimpleMultiLightSwitch(1, 1);
         
-        njCalcVector(cam.mtx, (NJS_POINT3*)&sys->lg_vx, &vec);
+        njCalcVector(P32(float (*)[16], cam.mtx), (NJS_POINT3*)&sys->lg_vx, &vec);
         
         njCnkSetEasyLightColor(sys->lg_r, sys->lg_g, sys->lg_b);
         njCnkSetEasyLightIntensity(1.0f, 0);
@@ -970,7 +970,7 @@ void bhSetLight()
         njCnkSetSimpleMultiLightVector(sys->lg_vx, sys->lg_vy, sys->lg_vz);
         njCnkSetSimpleMultiLightSwitch(1, 1);
         
-        njCalcVector(cam.mtx, (NJS_VECTOR*)&sys->lg_vx, &vec);
+        njCalcVector(P32(float (*)[16], cam.mtx), (NJS_VECTOR*)&sys->lg_vx, &vec);
         
         njCnkSetEasyLightColor(sys->lg_r, sys->lg_g, sys->lg_b);
         njCnkSetEasyLightIntensity(1.0f, 0);
@@ -989,7 +989,7 @@ void bhSetLight()
         njCnkSetSimpleMultiLightColor(i + 2, lptb->cr, lptb->cg, lptb->cb);
     }
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njCnkSetEasyMultiLightMatrices();
     njCnkSetSimpleMultiLightMatrices();
@@ -1041,7 +1041,7 @@ void bhSetHalfLight()
         njCnkSetSimpleMultiLightVector(sys->lg_vx, sys->lg_vy, sys->lg_vz);
         njCnkSetSimpleMultiLightSwitch(1, 1);
         
-        njCalcVector(cam.mtx, (NJS_VECTOR*)&sys->lg_vx, &vec);
+        njCalcVector(P32(float (*)[16], cam.mtx), (NJS_VECTOR*)&sys->lg_vx, &vec);
         
         njCnkSetEasyLightColor(r, g, b);
         njCnkSetEasyLightIntensity(1.0f,  0);
@@ -1064,7 +1064,7 @@ void bhSetHalfLight()
         njCnkSetSimpleMultiLightColor(i + 2, r, g, b);
     }
 
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njCnkSetEasyMultiLightMatrices();
     njCnkSetSimpleMultiLightMatrices();

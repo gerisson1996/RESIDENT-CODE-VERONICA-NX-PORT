@@ -99,7 +99,7 @@ void bhCheckCut(int flg)
                     
                     bhSetCut(cam.ncut, 1);
                     
-                    cam.ocflg = rom->cutp[cam.ncut].cam[cam.camver].flg;
+                    cam.ocflg = P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver].flg;
                 } 
                 else
                 {
@@ -109,8 +109,8 @@ void bhCheckCut(int flg)
                     {
                         if (((plp->stflg & 0x30)) || (plp->mode0 == 7))
                         {
-                            gpx = plp->mlwP->owP->mtx[12];
-                            gpz = plp->mlwP->owP->mtx[14];
+                            gpx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+                            gpz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
                         } 
                         else 
                         {
@@ -127,7 +127,7 @@ void bhCheckCut(int flg)
                         {
                             cam.ocut = cam.ncut;
                             
-                            cam.ocflg = rom->cutp[cam.ocut].cam[cam.camver].flg;
+                            cam.ocflg = P32(struct CUT_WORK *, rom->cutp)[cam.ocut].cam[cam.camver].flg;
                             
                             cam.ncut = pp;
                             
@@ -168,13 +168,13 @@ int bhCheckCutArea(float px, float pz, char flr_no)
     int i;
     int j;
     
-    cp = rom->cutp;
+    cp = P32(struct CUT_WORK *, rom->cutp);
     
     for (i = 0; i < rom->cut_n; i++, cp++)
     {
         if ((cp->flg & 0x1)) 
         {
-            ct = cp->cuttp;
+            ct = P32(struct CUT_WRK *, cp->cuttp);
             
             for (j = 0; j < cp->ctab_n; j++, ct++)
             {
@@ -265,13 +265,13 @@ unsigned int bhCheckCutAttribute(float px, float pz, int flr_no)
     int i;
     int j;
 
-    cp = rom->cutp;
+    cp = P32(struct CUT_WORK *, rom->cutp);
 
     for (i = 0; i < rom->cut_n; i++, cp++)
     {
         if ((cam.ncut == i) && ((cp->flg & 0x1))) 
         {
-            ct = cp->cuttp;
+            ct = P32(struct CUT_WRK *, cp->cuttp);
             
             for (j = 0; j < cp->ctab_n; j++, ct++) 
             {
@@ -322,13 +322,13 @@ void bhSetCut(int cno, int flg)
         }
     }
 
-    ci = (CAM_WRK*)&rom->cutp[cno].cam[cam.camver];
+    ci = (CAM_WRK*)&P32(struct CUT_WORK *, rom->cutp)[cno].cam[cam.camver];
     
     for (i = 0; i < (int)rom->mdl.obj_num; i++)
     {
-        obj = &rom->mdl.objP[i];
+        obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
 
-        if (obj->model != NULL) 
+        if (P32(NJS_CNK_MODEL *, obj->model) != NULL) 
         {
             if (HIDE_BIT(ci->hidobj, i) != 0)
             {
@@ -341,7 +341,7 @@ void bhSetCut(int cno, int flg)
         }
     }
 
-    lp = (LGT_WORK*)&rom->lgtp[4];
+    lp = (LGT_WORK*)&P32(struct LGT_WORK *, rom->lgtp)[4];
     
     for (i = 4; i < rom->lgt_n; i++, lp++)
     {
@@ -465,7 +465,7 @@ void bhSetFixedCut(int cno)
     
     sys->st_flg |= 0x1;
     
-    ci = (CAM_WRK*)&rom->cutp[cno].cam[cam.camver];
+    ci = (CAM_WRK*)&P32(struct CUT_WORK *, rom->cutp)[cno].cam[cam.camver];
     
     bhSetHideObjLgt(cno);
     
@@ -554,7 +554,7 @@ void bhSetRenderCut(int cno)
 {
     CAM_WRK* ci;
 
-    ci = (CAM_WRK*)&rom->cutp[cno].cam;
+    ci = (CAM_WRK*)&P32(struct CUT_WORK *, rom->cutp)[cno].cam;
     
     cam.ncut = cno;
     
@@ -583,13 +583,13 @@ void bhSetHideObjLgt(int cno)
     NJS_CNK_OBJECT* obj;
     int i;
 
-    ci = (CAM_WRK*)&rom->cutp[cno].cam[cam.camver];
+    ci = (CAM_WRK*)&P32(struct CUT_WORK *, rom->cutp)[cno].cam[cam.camver];
 
     for (i = 0; i < (int)rom->mdl.obj_num; i++)
     {
-        obj = &rom->mdl.objP[i];
+        obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
         
-        if (obj->model != NULL)
+        if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
         {
             if (HIDE_BIT(ci->hidobj, i) != 0)
             {
@@ -602,7 +602,7 @@ void bhSetHideObjLgt(int cno)
         }
     }
 
-    lp = (LGT_WORK*)&rom->lgtp[4];
+    lp = (LGT_WORK*)&P32(struct LGT_WORK *, rom->lgtp)[4];
     
     for (i = 4; i < rom->lgt_n; i++, lp++)
     {
@@ -626,13 +626,13 @@ void bhSetHideObject(int offset)
 
     if (((sys->st_flg & 0x1)) && ((cam.flg & 0x2)))
     {
-        flg = &rom->evcp[cam.evc_no].keyf[cam.keyf_no].hidobj[offset]; 
+        flg = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no].keyf[cam.keyf_no].hidobj[offset]; 
         
         for (i = 0; i < (int)rom->mdl.obj_num; i++)
         {
-            obj = &rom->mdl.objP[i];
+            obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
 
-            if (obj->model != NULL)
+            if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
             {
                 if (HIDE_BIT(flg, i) != 0)
                 {
@@ -647,13 +647,13 @@ void bhSetHideObject(int offset)
     }
     else 
     {
-        flg = &rom->cutp[cam.ncut].cam[cam.camver].hidobj[offset]; 
+        flg = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver].hidobj[offset]; 
       
         for (i = 0; i < (int)rom->mdl.obj_num; i++)
         {
-            obj = &rom->mdl.objP[i];
+            obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
     
-            if (obj->model != NULL)
+            if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
             {
                 if (HIDE_BIT(flg, i) != 0)
                 {
@@ -683,13 +683,13 @@ void bhInitActiveCamera(int flg)
     float inn; // not from DWARF
     float len; // not from DWARF
     
-    cp = &rom->cutp[cam.ncut];
+    cp = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut];
     
     ci = &cp->cam[cam.camver]; 
     
-    cam.plx = ((float*)plp->exp0)[24] = plp->gpx;
-    cam.ply = ((float*)plp->exp0)[25] = plp->gpy + ci->h;
-    cam.plz = ((float*)plp->exp0)[26] = plp->gpz;
+    cam.plx = ((float*)P32(unsigned char *, plp->exp0))[24] = plp->gpx;
+    cam.ply = ((float*)P32(unsigned char *, plp->exp0))[25] = plp->gpy + ci->h;
+    cam.plz = ((float*)P32(unsigned char *, plp->exp0))[26] = plp->gpz;
     
     attr = bhCheckCutAttribute(plp->gpx, plp->gpz, plp->flr_no);
     
@@ -1113,7 +1113,7 @@ void bhCheckNearAttrOffCutRange(CUT_WORK* cp, unsigned int sft, float* px, float
     float ln; 
     float nr;
     
-    ct = cp->cuttp;
+    ct = P32(struct CUT_WRK *, cp->cuttp);
     
     nr = 10000.0f;
 
@@ -1200,34 +1200,34 @@ void bhControlActiveCamera()
     short axn, ayn, azn; // not from DWARF
     short pers, ppers;   // not from DWARF
  
-    cp = &rom->cutp[cam.ncut];
+    cp = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut];
     ci = &cp->cam[cam.camver];
     
     if (((plp->mode0 == 1) && (plp->mode1 == 0) && (plp->mode2 != 13)) || (((plp->flg & 0x200000)) && (plp->mode0 != 7)))
     {
         if ((plp->stflg & 0x30))
         {
-            cam.plx = plp->mlwP->owP->mtx[12];
-            cam.ply = plp->mlwP->owP->mtx[13] + ci->h;
-            cam.plz = plp->mlwP->owP->mtx[14];
+            cam.plx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+            cam.ply = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13] + ci->h;
+            cam.plz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         } 
         else 
         {
-            cam.plx += 0.5f * (((float*)plp->exp0)[24] - cam.plx);
+            cam.plx += 0.5f * (((float*)P32(unsigned char *, plp->exp0))[24] - cam.plx);
 #ifdef TARGET_PC
             if ((rom->flg & PC_ROOM_SLOPES))   /* the player may stand on a slope: its own y (hitchk.c pc_slope_ground) */
                 cam.ply = plp->py + ci->h;
             else
 #endif
             cam.ply = rom->grand[plp->flr_no + 2] + ci->h;
-            cam.plz += 0.5f * (((float*)plp->exp0)[26] - cam.plz); 
+            cam.plz += 0.5f * (((float*)P32(unsigned char *, plp->exp0))[26] - cam.plz); 
         }
     }
     else if (plp->mode0 == 7) 
     {
-        cam.plx = plp->mlwP->owP->mtx[12];
-        cam.ply = plp->mlwP->owP->mtx[13] + ci->h;
-        cam.plz = plp->mlwP->owP->mtx[14];
+        cam.plx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+        cam.ply = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13] + ci->h;
+        cam.plz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
     }
  
     attr = bhCheckCutAttribute(cam.plx, cam.plz, plp->flr_no);
@@ -1672,7 +1672,7 @@ void bhSetEventCamera(int evc_no, int key_no)
     
     cam.keyf_no = key_no;
     
-    kfp = &rom->evcp[evc_no].keyf[key_no];
+    kfp = &P32(struct EVC_WORK *, rom->evcp)[evc_no].keyf[key_no];
     
     cam.plx = plp->px;
     cam.plz = plp->pz;
@@ -1754,7 +1754,7 @@ void bhSetEventFixedCut(int cno, int kno)
     
     cam.keyf_no = kno;
     
-    kfp = &rom->evcp[cno].keyf[kno];
+    kfp = &P32(struct EVC_WORK *, rom->evcp)[cno].keyf[kno];
     
     cam.plx = plp->px;
     cam.plz = plp->pz;
@@ -1821,13 +1821,13 @@ void bhSetEventHideObjLgt(int cno, int kno)
     LGT_WORK* lp;
     int i; 
 
-    kfp = &rom->evcp[cno].keyf[kno];
+    kfp = &P32(struct EVC_WORK *, rom->evcp)[cno].keyf[kno];
 
     for (i = 0; i < (int)rom->mdl.obj_num; i++)
     {
-        obj = &rom->mdl.objP[i];
+        obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
 
-        if (obj->model != NULL)
+        if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
         {
             if (HIDE_BIT(kfp->hidobj, i) != 0)
             {
@@ -1840,7 +1840,7 @@ void bhSetEventHideObjLgt(int cno, int kno)
         }
     }
 
-    lp = rom->evlp;
+    lp = P32(struct LGT_WORK *, rom->evlp);
     
     for (i = 0; i < rom->evl_n; i++, lp++)
     {
@@ -1869,11 +1869,11 @@ void bhInitEventCamera()
     short ay0, ay1;
     short az0, az1;
     
-    ecp = &rom->evcp[cam.evc_no];
+    ecp = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no];
     
     if (cam.evc_no == (ecp->nxt_no - 1))
     {
-        jecp = &rom->evcp[ecp->nxt_no - 1];
+        jecp = &P32(struct EVC_WORK *, rom->evcp)[ecp->nxt_no - 1];
         
         kfp = &jecp->keyf[jecp->keyf_n - 1];
         jkfp = jecp->keyf;
@@ -1884,7 +1884,7 @@ void bhInitEventCamera()
         
         if (ecp->nxt_no != 0) 
         {
-            jecp = &rom->evcp[ecp->nxt_no - 1];
+            jecp = &P32(struct EVC_WORK *, rom->evcp)[ecp->nxt_no - 1];
             
             jkfp = jecp->keyf;
         }
@@ -2033,7 +2033,7 @@ void bhControlEventCamera()
         
         bhSetEventHideObjLgt(cam.evc_no, cam.keyf_no);
     case 1:
-        ecp = &rom->evcp[cam.evc_no];
+        ecp = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no];
         
         kfp = &ecp->keyf[cam.keyf_no];
         
@@ -2156,7 +2156,7 @@ void bhControlEventCamera()
         {
             sys->st_flg &= ~0x10;
             
-            kfp = &rom->evcp[cam.evc_no].keyf[cam.keyf_no];
+            kfp = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no].keyf[cam.keyf_no];
             
             bhCheckEvtCamLockPosition();
             
@@ -2257,11 +2257,11 @@ void bhCheckEvtCamLockPosition()
     static short ay;    
     static short az;    
 
-    ecp = &rom->evcp[cam.evc_no];
+    ecp = &P32(struct EVC_WORK *, rom->evcp)[cam.evc_no];
     
     if (cam.evc_no == (ecp->nxt_no - 1))
     {
-        jecp = &rom->evcp[ecp->nxt_no - 1];
+        jecp = &P32(struct EVC_WORK *, rom->evcp)[ecp->nxt_no - 1];
         
         kfp = &jecp->keyf[jecp->keyf_n - 1];
         jkfp = jecp->keyf;
@@ -2272,7 +2272,7 @@ void bhCheckEvtCamLockPosition()
         
         if (ecp->nxt_no != 0) 
         {
-            jecp = &rom->evcp[ecp->nxt_no - 1];
+            jecp = &P32(struct EVC_WORK *, rom->evcp)[ecp->nxt_no - 1];
             
             jkfp = jecp->keyf;
         }
@@ -2428,7 +2428,7 @@ void bhGetEvtCamLockPosition(CAM_KEYF_WORK* kfp, NJS_POINT3* pos)
             kfp->lkno = 0;
         }
         
-        pwp = (BH_PWORK*)&sys->obwp[kfp->lkno];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[kfp->lkno];
         break;
     case 4:
         if (rom->itm_n <= kfp->lkno) 
@@ -2436,7 +2436,7 @@ void bhGetEvtCamLockPosition(CAM_KEYF_WORK* kfp, NJS_POINT3* pos)
             kfp->lkno = 0;
         } 
         
-        pwp = (BH_PWORK*)&sys->itwp[kfp->lkno];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[kfp->lkno];
         break;
     case 5:
         if (rom->eff_n <= kfp->lkno) 
@@ -2454,7 +2454,7 @@ void bhGetEvtCamLockPosition(CAM_KEYF_WORK* kfp, NJS_POINT3* pos)
             kfp->lkno = 0;
         }
         
-        psp = &rom->posp[kfp->lkno];
+        psp = &P32(struct POS *, rom->posp)[kfp->lkno];
         
         pos->x = psp->px + kfp->lx;
         pos->y = psp->py + kfp->ly;
@@ -2464,18 +2464,18 @@ void bhGetEvtCamLockPosition(CAM_KEYF_WORK* kfp, NJS_POINT3* pos)
     
     if (kfp->lkflg < 6) 
     {
-        if (pwp->mlwP->obj_num <= kfp->lkono)
+        if (P32(struct ML_WORK *, pwp->mlwP)->obj_num <= kfp->lkono)
         {
             kfp->lkono = 0;
         }
         
         if (kfp->lkono == 0) 
         {
-            njCalcPoint(pwp->mtx, (NJS_POINT3*)&kfp->lx, pos);
+            njCalcPoint(P32(float (*)[16], pwp->mtx), (NJS_POINT3*)&kfp->lx, pos);
         }
         else 
         {
-            njCalcPoint(&pwp->mlwP->owP[(short)kfp->lkono].mtx, (NJS_POINT3*)&kfp->lx, pos);
+            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[(short)kfp->lkono].mtx, (NJS_POINT3*)&kfp->lx, pos);
         }
     }
 }
@@ -2491,7 +2491,7 @@ void bhControlPlEyeCamera(unsigned int attr)
     short ax, ay;  
     short ahkn; 
 
-    ci = &rom->cutp[cam.ncut].cam[cam.camver];
+    ci = &P32(struct CUT_WORK *, rom->cutp)[cam.ncut].cam[cam.camver];
     
     hkn = 1.0f / (ci->spd + 1);
     ahkn = ci->spd + 1;
@@ -2501,9 +2501,9 @@ void bhControlPlEyeCamera(unsigned int attr)
     switch (cam.mode0) 
     {                         
     case 0:
-        cam.pxp = plp->mlwP->owP[5].mtx[12];
-        cam.pyp = plp->mlwP->owP[5].mtx[13];
-        cam.pzp = plp->mlwP->owP[5].mtx[14];
+        cam.pxp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+        cam.pyp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+        cam.pzp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
         
         cam.axp = 0;
         cam.ayp = -plp->ay;
@@ -2529,9 +2529,9 @@ void bhControlPlEyeCamera(unsigned int attr)
         
         if (cam.ct0 >= ahkn) 
         {
-            cam.px = plp->mlwP->owP[5].mtx[12];
-            cam.py = plp->mlwP->owP[5].mtx[13];
-            cam.pz = plp->mlwP->owP[5].mtx[14];
+            cam.px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+            cam.py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+            cam.pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
             
             cam.ax = 0;
             cam.ay = -plp->ay;
@@ -2563,9 +2563,9 @@ void bhControlPlEyeCamera(unsigned int attr)
         
         cam.ln = -2.2f;
         
-        cam.px = plp->mlwP->owP[5].mtx[12];
-        cam.py = plp->mlwP->owP[5].mtx[13];
-        cam.pz = plp->mlwP->owP[5].mtx[14];
+        cam.px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+        cam.py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+        cam.pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
         
         cam.ax = (short)((short)cam.ax + ((short)(((short)cam.axp - (short)cam.ax) / 4)));
         cam.ay = -plp->ay;
@@ -2659,9 +2659,9 @@ void bhInitPlEyeCamera()
     sys->gm_flg |= 0x20;
     sys->gm_flg |= 0xC0;
     
-    cam.px = cam.plx = cam.pxp = plp->mlwP->owP[5].mtx[12];
-    cam.py = cam.pyp = plp->mlwP->owP[5].mtx[13];
-    cam.pz = cam.plz = cam.pzp = plp->mlwP->owP[5].mtx[14];
+    cam.px = cam.plx = cam.pxp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+    cam.py = cam.pyp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+    cam.pz = cam.plz = cam.pzp = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
     
     cam.ax = cam.axp = cam.pe_ax;
     cam.ay = cam.ayp = plp->ay;
@@ -2678,15 +2678,15 @@ void bhInitPlEyeCamera()
     
     for (i = 0; i < (int)rom->mdl.obj_num; i++)
     {
-        obj = &rom->mdl.objP[i];
+        obj = &P32(struct cnkobj *, rom->mdl.objP)[i];
         
-        if (obj->model != NULL)
+        if (P32(NJS_CNK_MODEL *, obj->model) != NULL)
         {
             obj->evalflags &= ~0x8;
         }
     }
 
-    lp = (LGT_WORK*)&rom->lgtp[4];
+    lp = (LGT_WORK*)&P32(struct LGT_WORK *, rom->lgtp)[4];
     
     for (i = 4; i < rom->lgt_n; i++, lp++)
     {
@@ -2744,7 +2744,7 @@ void bhSetPlEyeCamera()
         pos.y = 1.5f;
         pos.z = -1.0f;
         
-        njCalcPoint(&plp->mlwP->owP[5].mtx, &pos, (NJS_POINT3*)&cam.px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx, &pos, (NJS_POINT3*)&cam.px);
         
         cam.ax = -plp->wax;
         cam.ay = -plp->ay;
@@ -2790,7 +2790,7 @@ void bhSetPlEyeCamera()
         pos.y = 1.5f;
         pos.z = -1.0f;
         
-        njCalcPoint(&plp->mlwP->owP[5].mtx, &pos, (NJS_POINT3*)&cam.px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx, &pos, (NJS_POINT3*)&cam.px);
         
         axn = cam.ax;
         ay = (cam.axp + ay) - axn;

@@ -67,19 +67,19 @@ void	njInitTexture(NJS_TEXMEMLIST *addr,Uint32 n)
     
     Ps2_tm_list_1st.admin.size = 0;                  
     
-    Ps2_tm_list_1st.admin.addr = Ps2_tex_buff;      
+    Ps2_tm_list_1st.admin.addr = S32(Ps2_tex_buff);      
     
-    Ps2_tm_list_1st.admin.before = (void*)-1;
-    Ps2_tm_list_1st.admin.after = &Ps2_tm_list_last;   
+    Ps2_tm_list_1st.admin.before = S32((void*)-1);
+    Ps2_tm_list_1st.admin.after = S32(&Ps2_tm_list_last);   
     
     Ps2_tm_list_last.admin.gindex = -1;                
     
     Ps2_tm_list_last.admin.size = 0;               
     
-    Ps2_tm_list_last.admin.addr = (void*)-1;           
+    Ps2_tm_list_last.admin.addr = S32((void*)-1);           
     
-    Ps2_tm_list_last.admin.before = &Ps2_tm_list_1st;  
-    Ps2_tm_list_last.admin.after = (void*)-1;
+    Ps2_tm_list_last.admin.before = S32(&Ps2_tm_list_1st);  
+    Ps2_tm_list_last.admin.after = S32((void*)-1);
     
     Ps2_tex_info = addr;  
     
@@ -87,13 +87,13 @@ void	njInitTexture(NJS_TEXMEMLIST *addr,Uint32 n)
     
     Ps2_1st_tmlist.texinfo.texsurface.TextureSize = 0;                  
     
-    Ps2_1st_tmlist.texinfo.texsurface.pSurface = Ps2_tex_buff;       
-    Ps2_1st_tmlist.texinfo.texsurface.pVirtual = (unsigned int*)-1;    
-    Ps2_1st_tmlist.texinfo.texsurface.pPhysical = (unsigned int*)&Ps2_last_tmlist;      
+    Ps2_1st_tmlist.texinfo.texsurface.pSurface = S32(Ps2_tex_buff);       
+    Ps2_1st_tmlist.texinfo.texsurface.pVirtual = S32((unsigned int*)-1);    
+    Ps2_1st_tmlist.texinfo.texsurface.pPhysical = S32((unsigned int*)&Ps2_last_tmlist);      
     
-    Ps2_last_tmlist.texinfo.texsurface.pSurface = (unsigned int*)-1;             
-    Ps2_last_tmlist.texinfo.texsurface.pVirtual = (unsigned int*)&Ps2_1st_tmlist;      
-    Ps2_last_tmlist.texinfo.texsurface.pPhysical = (unsigned int*)-1;  
+    Ps2_last_tmlist.texinfo.texsurface.pSurface = S32((unsigned int*)-1);             
+    Ps2_last_tmlist.texinfo.texsurface.pVirtual = S32((unsigned int*)&Ps2_1st_tmlist);      
+    Ps2_last_tmlist.texinfo.texsurface.pPhysical = S32((unsigned int*)-1);  
     
     Ps2_now_free = Ps2_tex_buff;               
     
@@ -122,7 +122,7 @@ void	njInitTexture(NJS_TEXMEMLIST *addr,Uint32 n)
         
         addr[i].texaddr = 0;
         
-        addr[i].texinfo.texaddr = NULL;
+        addr[i].texinfo.texaddr = S32(NULL);
         
         addr[i].texinfo.texsurface.Type = 0;
         
@@ -137,9 +137,9 @@ void	njInitTexture(NJS_TEXMEMLIST *addr,Uint32 n)
         
         addr[i].texinfo.texsurface.fSurfaceFlags = 0;
         
-        addr[i].texinfo.texsurface.pSurface = NULL;
-        addr[i].texinfo.texsurface.pVirtual = NULL;
-        addr[i].texinfo.texsurface.pPhysical = NULL;
+        addr[i].texinfo.texsurface.pSurface = S32(NULL);
+        addr[i].texinfo.texsurface.pVirtual = S32(NULL);
+        addr[i].texinfo.texsurface.pPhysical = S32(NULL);
         
         addr[i].count = 0;
         
@@ -228,7 +228,7 @@ Sint32	njLoadTexture(NJS_TEXLIST *texlist)
     
     for (j = 0; j < tex_num; j++) 
     {
-        attr = texlist->textures[j].attr;
+        attr = P32(NJS_TEXNAME *, texlist->textures)[j].attr;
         
         cont_no = -1;
         
@@ -236,38 +236,38 @@ Sint32	njLoadTexture(NJS_TEXLIST *texlist)
         {
             if ((attr & 0x800000))
             {
-                g_index = texlist->textures[j].texaddr;
+                g_index = P32(NJS_TEXNAME *, texlist->textures)[j].texaddr;
             } 
             else if ((attr & 0x1000000)) 
             {
                 if ((attr & 0x10000)) 
                 {
-                    bank = texlist->textures[j].texaddr >> 26;
+                    bank = P32(NJS_TEXNAME *, texlist->textures)[j].texaddr >> 26;
                     
                     if ((cont_no = SearchNullNumber()) >= 0)
                     {
-                        texlist->textures[j].texaddr = (unsigned int)PS2_ADDR(&addr[cont_no]);
+                        P32(NJS_TEXNAME *, texlist->textures)[j].texaddr = (unsigned int)PS2_ADDR(&addr[cont_no]);
                     }
                     else 
                     {
                         exit(0);
                     }
 
-                    addr[cont_no] = *(NJS_TEXMEMLIST*)PS2_HOST(texlist->textures[j - 1].texaddr);
+                    addr[cont_no] = *(NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, texlist->textures)[j - 1].texaddr);
                     
                     addr[cont_no].count = 1;
                     
                     addr[cont_no].bank = bank;
                     
-                    ((TIM2_PICTUREHEADER_EX*)addr[no].texinfo.texsurface.pSurface)->admin.count++;
+                    ((TIM2_PICTUREHEADER_EX*)P32(unsigned int *, addr[no].texinfo.texsurface.pSurface))->admin.count++;
                     
                     continue;
                 }
                 else
                 {
-                    g_index = texlist->textures[j].texaddr;
+                    g_index = P32(NJS_TEXNAME *, texlist->textures)[j].texaddr;
                     
-                    cont_no = texlist->textures[j].texaddr >> 26;
+                    cont_no = P32(NJS_TEXNAME *, texlist->textures)[j].texaddr >> 26;
                     
                     g_index &= 0x3FFFFFF;
                 }
@@ -277,15 +277,15 @@ Sint32	njLoadTexture(NJS_TEXLIST *texlist)
             {
                 addr[no].count++;
                 
-                ((TIM2_PICTUREHEADER_EX*)addr[no].texinfo.texsurface.pSurface)->admin.count++;
+                ((TIM2_PICTUREHEADER_EX*)P32(unsigned int *, addr[no].texinfo.texsurface.pSurface))->admin.count++;
                 
-                texlist->textures[j].texaddr = (unsigned int)PS2_ADDR(&addr[no]);
+                P32(NJS_TEXNAME *, texlist->textures)[j].texaddr = (unsigned int)PS2_ADDR(&addr[no]);
             } 
             else 
             {
                 if ((no = SearchNullNumber()) >= 0) 
                 {
-                    texlist->textures[j].texaddr = (unsigned int)PS2_ADDR(&addr[no]);
+                    P32(NJS_TEXNAME *, texlist->textures)[j].texaddr = (unsigned int)PS2_ADDR(&addr[no]);
                 } 
                 else
                 {
@@ -303,24 +303,24 @@ Sint32	njLoadTexture(NJS_TEXLIST *texlist)
                 
                 addr[no].texaddr = 2;
                 
-                addr[no].texinfo.texaddr = ((NJS_TEXINFO*)texlist->textures[j].filename)->texaddr;
+                addr[no].texinfo.texaddr = S32(P32(void *, ((NJS_TEXINFO*)P32(void *, P32(NJS_TEXNAME *, texlist->textures)[j].filename))->texaddr));
                
-                addr[no].texinfo.texsurface.Type = ((NJS_TEXINFO*)texlist->textures[j].filename)->texsurface.Type;
+                addr[no].texinfo.texsurface.Type = ((NJS_TEXINFO*)P32(void *, P32(NJS_TEXNAME *, texlist->textures)[j].filename))->texsurface.Type;
                
                 addr[no].texinfo.texsurface.BitDepth = 0;
               
                 addr[no].texinfo.texsurface.PixelFormat = 0;
                
-                addr[no].texinfo.texsurface.nWidth = ((NJS_TEXINFO*)texlist->textures[j].filename)->texsurface.nWidth;
-                addr[no].texinfo.texsurface.nHeight = ((NJS_TEXINFO*)texlist->textures[j].filename)->texsurface.nHeight;
+                addr[no].texinfo.texsurface.nWidth = ((NJS_TEXINFO*)P32(void *, P32(NJS_TEXNAME *, texlist->textures)[j].filename))->texsurface.nWidth;
+                addr[no].texinfo.texsurface.nHeight = ((NJS_TEXINFO*)P32(void *, P32(NJS_TEXNAME *, texlist->textures)[j].filename))->texsurface.nHeight;
              
                 addr[no].texinfo.texsurface.TextureSize = 0;
                 
                 addr[no].texinfo.texsurface.fSurfaceFlags = 0;
                 
-                addr[no].texinfo.texsurface.pSurface = NULL;
-                addr[no].texinfo.texsurface.pVirtual = NULL;
-                addr[no].texinfo.texsurface.pPhysical = NULL;
+                addr[no].texinfo.texsurface.pSurface = S32(NULL);
+                addr[no].texinfo.texsurface.pVirtual = S32(NULL);
+                addr[no].texinfo.texsurface.pPhysical = S32(NULL);
                 
                 if (Ps2TextureMalloc(&addr[no]) < 0) 
                 {
@@ -360,9 +360,9 @@ Sint32	njSetTextureNum(Uint32 n)
     
     Ps2_current_texno = n;
     
-    Ps2_current_texmemlist = (NJS_TEXMEMLIST*)PS2_HOST(Ps2_current_texlist->textures[n].texaddr);
+    Ps2_current_texmemlist = (NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[n].texaddr);
     
-    Ps2_current_gindex = ((TIM2_PICTUREHEADER_EX*)(Ps2_current_texmemlist->texinfo.texsurface.pSurface))->Gindex; 
+    Ps2_current_gindex = ((TIM2_PICTUREHEADER_EX*)(P32(unsigned int *, Ps2_current_texmemlist->texinfo.texsurface.pSurface)))->Gindex; 
     
     Ps2TexLoad(Ps2_current_texmemlist);
 }
@@ -392,7 +392,7 @@ Sint32	njSetTextureNumG(Uint32 globalIndex)
 // 100% matching!
 int njSetTextureNumSys(unsigned int n)
 {
-    Ps2TexLoad((NJS_TEXMEMLIST*)PS2_HOST(Ps2_current_texlist->textures[n].texaddr));
+    Ps2TexLoad((NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[n].texaddr));
 }
 
 // 100% matching!
@@ -418,13 +418,13 @@ Sint32	njReleaseTexture(NJS_TEXLIST *texlist)
     
     for (i = 0; i < tex_num; i++)
     {
-        p = (NJS_TEXMEMLIST*)PS2_HOST(texlist->textures[i].texaddr);
+        p = (NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, texlist->textures)[i].texaddr);
         
         if (p->globalIndex != -1)
         {
             p->count--;
             
-            ((TIM2_PICTUREHEADER_EX*)p->texinfo.texsurface.pSurface)->admin.count--;
+            ((TIM2_PICTUREHEADER_EX*)P32(unsigned int *, p->texinfo.texsurface.pSurface))->admin.count--;
             
             if (p->count == 0) 
             {
@@ -439,7 +439,7 @@ Sint32	njReleaseTexture(NJS_TEXLIST *texlist)
                 
                 p->texaddr = 0;
                 
-                p->texinfo.texaddr = NULL;
+                p->texinfo.texaddr = S32(NULL);
                 
                 p->texinfo.texsurface.Type = 0;
                 
@@ -471,7 +471,7 @@ Uint32	njCalcTexture(Uint32 flag)
 // 100% matching!
 void	njSetTextureInfo(NJS_TEXINFO *info,Uint16 *tex,Sint32 Type,Sint32 nWidth,Sint32 nHeight) 
 {
-    info->texaddr = tex;
+    info->texaddr = S32(tex);
     
     info->texsurface.Type = Type << 16;
     
@@ -482,7 +482,7 @@ void	njSetTextureInfo(NJS_TEXINFO *info,Uint16 *tex,Sint32 Type,Sint32 nWidth,Si
 // 100% matching!
 void	njSetTextureName(NJS_TEXNAME *texname,void *addr,Uint32 globalIndex,Uint32 attr) 
 {
-    texname->filename = addr;
+    texname->filename = S32(addr);
     
     texname->attr = attr;
     
@@ -492,7 +492,7 @@ void	njSetTextureName(NJS_TEXNAME *texname,void *addr,Uint32 globalIndex,Uint32 
 // 100% matching!
 void	njRenderTextureNum(Uint32 n)
 {
-    StoreRenderTex(((NJS_TEXMEMLIST*)PS2_HOST(Ps2_current_texlist->textures[Ps2_current_texno].texaddr))->texinfo.texsurface.pSurface);
+    StoreRenderTex(P32(unsigned int *, ((NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[Ps2_current_texno].texaddr))->texinfo.texsurface.pSurface));
 }
 
 // 100% matching!
@@ -504,7 +504,7 @@ void	njRenderTextureNumG(Uint32 globalIndex)
     
     if (no >= 0) 
     {
-        StoreRenderTex(Ps2_tex_info[no].texinfo.texsurface.pSurface);
+        StoreRenderTex(P32(unsigned int *, Ps2_tex_info[no].texinfo.texsurface.pSurface));
     }
     else 
     {
@@ -523,7 +523,7 @@ void	njSetRenderWidth(Uint32 nWidth)
 // 100% matching!
 void 	njSetPaletteBankNum(Uint32 n,Sint32 bank)
 {
-    ((NJS_TEXMEMLIST*)PS2_HOST(Ps2_current_texlist->textures[n].texaddr))->bank = bank;
+    ((NJS_TEXMEMLIST*)PS2_HOST(P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[n].texaddr))->bank = bank;
 }
 
 // 100% matching!
@@ -574,24 +574,24 @@ int Ps2TextureMalloc(NJS_TEXMEMLIST* p)
         
         StoreRenderTex(Ps2_now_free);
         
-        timp = p->texinfo.texaddr = Ps2_now_free;
+        timp = P32(void *, p->texinfo.texaddr = S32(Ps2_now_free));
         
         timp->admin.size = p->texinfo.texsurface.TextureSize = size;
         
         timp->admin.gindex = p->globalIndex;
         
-        last2 = Ps2_tm_list_last.admin.before;
+        last2 = P32(void *, Ps2_tm_list_last.admin.before);
         
-        timp->admin.before = Ps2_tm_list_last.admin.before;
-        timp->admin.after = &Ps2_tm_list_last;
+        timp->admin.before = S32(P32(void *, Ps2_tm_list_last.admin.before));
+        timp->admin.after = S32(&Ps2_tm_list_last);
         
-        last2->admin.after = Ps2_now_free;
+        last2->admin.after = S32(Ps2_now_free);
         
-        Ps2_tm_list_last.admin.before = Ps2_now_free;
+        Ps2_tm_list_last.admin.before = S32(Ps2_now_free);
         
         timp->admin.count = 1;
         
-        timp->admin.addr = p->texinfo.texsurface.pSurface = Ps2_now_free;
+        timp->admin.addr = S32(P32(unsigned int *, p->texinfo.texsurface.pSurface = S32(Ps2_now_free)));
         
         Ps2_render_p = Ps2_now_free;
         
@@ -604,7 +604,7 @@ int Ps2TextureMalloc(NJS_TEXMEMLIST* p)
         return 1;
     }
     
-    timp = p->texinfo.texaddr;
+    timp = P32(void *, p->texinfo.texaddr);
     
     size = Ps2GetTim2Size(timp);
     
@@ -617,20 +617,20 @@ int Ps2TextureMalloc(NJS_TEXMEMLIST* p)
     
     timp->admin.gindex = p->globalIndex;
     
-    last2 = Ps2_tm_list_last.admin.before;
+    last2 = P32(void *, Ps2_tm_list_last.admin.before);
     
-    timp->admin.before = last2;
-    timp->admin.after = &Ps2_tm_list_last;
+    timp->admin.before = S32(last2);
+    timp->admin.after = S32(&Ps2_tm_list_last);
     
-    last2->admin.after = Ps2_now_free;
+    last2->admin.after = S32(Ps2_now_free);
     
-    Ps2_tm_list_last.admin.before = Ps2_now_free;
+    Ps2_tm_list_last.admin.before = S32(Ps2_now_free);
     
     timp->admin.count = 1;
     
-    timp->admin.addr = p->texinfo.texsurface.pSurface = Ps2_now_free;
+    timp->admin.addr = S32(P32(unsigned int *, p->texinfo.texsurface.pSurface = S32(Ps2_now_free)));
     
-    Ps2MemCopy4(Ps2_now_free, p->texinfo.texaddr, size >> 2);
+    Ps2MemCopy4(Ps2_now_free, P32(void *, p->texinfo.texaddr), size >> 2);
     
     p->tspparambuffer = Ps2CheckTextureAlpha(Ps2_now_free);
     
@@ -657,7 +657,7 @@ int Ps2TextureFree(NJS_TEXMEMLIST* p)
     
     ring_check();
     
-    temp = p->texinfo.texsurface.pSurface;
+    temp = P32(unsigned int *, p->texinfo.texsurface.pSurface);
     
     timp = (TIM2_PICTUREHEADER_EX*)temp;
     
@@ -667,11 +667,11 @@ int Ps2TextureFree(NJS_TEXMEMLIST* p)
     
     if (*temp2 == 0) 
     {
-        before = timp->admin.before;
-        after = timp->admin.after;
+        before = P32(void *, timp->admin.before);
+        after = P32(void *, timp->admin.after);
         
-        before->admin.after = after;
-        after->admin.before = before;
+        before->admin.after = S32(after);
+        after->admin.before = S32(before);
         
         timp->admin.gindex = 0;
         
@@ -679,14 +679,14 @@ int Ps2TextureFree(NJS_TEXMEMLIST* p)
         
         *temp2 = 0;
         
-        timp->admin.addr = NULL;
+        timp->admin.addr = S32(NULL);
         
-        timp->admin.before = NULL;
-        timp->admin.after = NULL;
+        timp->admin.before = S32(NULL);
+        timp->admin.after = S32(NULL);
         
         p->texinfo.texsurface.TextureSize = 0;
         
-        p->texinfo.texsurface.pSurface = NULL;
+        p->texinfo.texsurface.pSurface = S32(NULL);
         
         Ps2_free_texmemsize += size;
     }
@@ -716,7 +716,7 @@ int Ps2ReplaceTexAddr(unsigned int gindex, void* rep_addr)
         {
             count++;
             
-            addr->texinfo.texsurface.pSurface = rep_addr;
+            addr->texinfo.texsurface.pSurface = S32(rep_addr);
         }
     } 
 
@@ -734,26 +734,26 @@ int Ps2TextureGarbageCollectionAll()
     
     ring_check();
     
-    for (p = &Ps2_tm_list_1st; p->admin.after != &Ps2_tm_list_last; p = (TIM2_PICTUREHEADER_EX*)real_p)
+    for (p = &Ps2_tm_list_1st; P32(void *, p->admin.after) != &Ps2_tm_list_last; p = (TIM2_PICTUREHEADER_EX*)real_p)
     {
         if (0) // FAKE
         {
             &p != NULL;
         }
         
-        temp = p->admin.after; 
+        temp = P32(void *, p->admin.after); 
         
-        after2 = temp->admin.after; 
+        after2 = P32(void *, temp->admin.after); 
 
-        real_p = (unsigned char*)PS2_HOST(((int)PS2_ADDR(p->admin.addr) + p->admin.size)); 
+        real_p = (unsigned char*)PS2_HOST(((int)PS2_ADDR(P32(void *, p->admin.addr)) + p->admin.size)); 
 
         if (((TIM2_PICTUREHEADER_EX*)real_p != temp) && (temp != &Ps2_tm_list_last))
         {
-            after2->admin.before = real_p; 
+            after2->admin.before = S32(real_p); 
             
-            temp->admin.addr = real_p;  
+            temp->admin.addr = S32(real_p);  
             
-            p->admin.after = real_p;
+            p->admin.after = S32(real_p);
 
             after2 = (TIM2_PICTUREHEADER_EX*)real_p;
 
@@ -767,11 +767,11 @@ int Ps2TextureGarbageCollectionAll()
 
     ring_check();
 
-    p = Ps2_tm_list_last.admin.before;
+    p = P32(void *, Ps2_tm_list_last.admin.before);
     
     size = p->admin.size;
     
-    Ps2_now_free = (void*)PS2_HOST(((int)PS2_ADDR(p->admin.addr) + size));
+    Ps2_now_free = (void*)PS2_HOST(((int)PS2_ADDR(P32(void *, p->admin.addr)) + size));
 
     return 1;
 }
@@ -786,7 +786,7 @@ int ring_check()
   
     do 
     {
-        p = p->admin.after;
+        p = P32(void *, p->admin.after);
         
         if (p == &Ps2_tm_list_last) 
         {
@@ -796,5 +796,5 @@ int ring_check()
 
     after = p;
     
-    return printf("RING ERROR %x\n", after->admin.addr);
+    return printf("RING ERROR %x\n", P32(void *, after->admin.addr));
 }

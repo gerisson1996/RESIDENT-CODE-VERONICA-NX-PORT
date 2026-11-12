@@ -177,8 +177,8 @@ void FileViewInit()
         
         break;
     case 2:
-        fv->fstx_list.textures = fv->fstx;
-        fv->fstx_list.nbTexture = bhSetMemPvpTexture(&fv->fstx_list, fv->fsp, 0);
+        fv->fstx_list.textures = S32(fv->fstx);
+        fv->fstx_list.nbTexture = bhSetMemPvpTexture(&fv->fstx_list, P32(unsigned char *, fv->fsp), 0);
         
         njSetTexture(&fv->fstx_list);
         
@@ -251,7 +251,7 @@ void FileExit01()
     st = &swork;
     fv = &fvwork;
 
-    sys->memp = st->sspb;
+    sys->memp = S32(P32(unsigned char *, st->sspb));
     
     if (st->itemid != 85) 
     {
@@ -381,7 +381,7 @@ void SelectFile()
     
     si = &sitem;
     
-    si->mdl.objP->pos[1] = 0.5f;
+    P32(struct cnkobj *, si->mdl.objP)->pos[1] = 0.5f;
     
     if ((!(swork.statusflg & 0x40)) && ((fv->mode_02 == 0) && (fv->z == 0))) 
     {
@@ -502,17 +502,17 @@ void SelectFile()
     case 1:                                         
         if ((short)fv->koma[fv->j] != 0) 
         {
-            si->mdl.objP->child->ang[1] += fv->koma[fv->j];
-            si->mdl.objP->child->sibling->ang[1] += fv->koma[fv->j];
-            si->mdl.objP->child->sibling->sibling->ang[1] += fv->koma[fv->j];
+            P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] += fv->koma[fv->j];
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] += fv->koma[fv->j];
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] += fv->koma[fv->j];
             
             fv->j++;
             break;
         }
         
-        si->mdl.objP->child->ang[1] = (short)((fv->filecsr * 21845) - 32768);
-        si->mdl.objP->child->sibling->ang[1] = (short)((fv->filecsr * 21845) - 32768); 
-        si->mdl.objP->child->sibling->sibling->ang[1] = (short)((fv->filecsr * 21845) - 32768);
+        P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] = (short)((fv->filecsr * 21845) - 32768);
+        P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] = (short)((fv->filecsr * 21845) - 32768); 
+        P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] = (short)((fv->filecsr * 21845) - 32768);
         
         fv->roll = 0;
         
@@ -531,16 +531,16 @@ void SelectFile()
             switch (fv->filecsr) 
             {               
             case 0:                                 
-                si->mdl.objP->child->sibling->ang[1] += fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->sibling->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] -= fv->koma2[fv->j];
                 break;
             case 1:                                 
-                si->mdl.objP->child->ang[1] += fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] -= fv->koma2[fv->j];
                 break;
             case 2:                                 
-                si->mdl.objP->child->ang[1] -= fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->sibling->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] += fv->koma2[fv->j];
                 break;
             }
             
@@ -753,16 +753,16 @@ void SelectTag()
             switch (fv->filecsr) 
             {       
             case 0:                         
-                si->mdl.objP->child->sibling->ang[1] -= fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->sibling->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] += fv->koma2[fv->j];
                 break;
             case 1:                         
-                si->mdl.objP->child->ang[1] -= fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1] += fv->koma2[fv->j];
                 break;
             case 2:                         
-                si->mdl.objP->child->ang[1] += fv->koma2[fv->j];
-                si->mdl.objP->child->sibling->sibling->ang[1] -= fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1] += fv->koma2[fv->j];
+                P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1] -= fv->koma2[fv->j];
                 break;
             }
             
@@ -1329,12 +1329,12 @@ void ReadFstx()
         
         if (!(fvwork.afsmode & 0x80)) 
         {
-            fv->fsp = bhGetFreeMemory(fv->rdsz, 32);
+            fv->fsp = S32(bhGetFreeMemory(fv->rdsz, 32));
             
             fvwork.afsmode |= 0x80;
         }
         
-        RequestReadInsideFile(fv->part_id, num, fv->fsp);
+        RequestReadInsideFile(fv->part_id, num, P32(unsigned char *, fv->fsp));
         
         fv->mode_02 = 2;
         break;
@@ -1391,22 +1391,22 @@ void ReadFstx()
         {
             sz = GetInsideFileSize(sys->itm_partid, 145);
             
-            st->ssp = bhGetFreeMemory(sz, 32);
+            st->ssp = S32(bhGetFreeMemory(sz, 32));
             
             fvwork.afsmode |= 0x400;
         }
         
-        RequestReadInsideFile(sys->itm_partid, 145, st->ssp);
+        RequestReadInsideFile(sys->itm_partid, 145, P32(unsigned char *, st->ssp));
         
         fv->mode_02 = 8;
         break;
     case 8:
         if (GetReadFileStatus() == 0) 
         {
-            st->subtx_list.textures = st->subtx;
+            st->subtx_list.textures = S32(st->subtx);
             st->subtx_list.nbTexture = 5;
             
-            bhSetMemPvpTexture(&st->subtx_list, st->ssp, 0);
+            bhSetMemPvpTexture(&st->subtx_list, P32(unsigned char *, st->ssp), 0);
             
             fv->tex_flg = 0;
             
@@ -1421,7 +1421,7 @@ void ReadFstx()
             
             fvwork.afsmode &= ~0x400;
             
-            sys->memp = st->sspb;
+            sys->memp = S32(P32(unsigned char *, st->sspb));
             
             if (st->itemid != 85) 
             {

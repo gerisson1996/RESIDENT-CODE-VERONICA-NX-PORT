@@ -370,11 +370,11 @@ BH_PWORK* bhSetEnemy(EGG_WORK* etp, int unused) // second parameter is not prese
             epp->ct1 = 0;
             epp->ct0 = 0;
             
-            epp->lkwkp = NULL;
+            epp->lkwkp = S32(NULL);
             
-            epp->exp0 = NULL;
-            epp->exp1 = NULL;
-            epp->exp2 = NULL;
+            epp->exp0 = S32(NULL);
+            epp->exp1 = S32(NULL);
+            epp->exp2 = S32(NULL);
             
             epp->idx_ct = i;
 #ifdef TARGET_PC
@@ -391,12 +391,12 @@ BH_PWORK* bhSetEnemy(EGG_WORK* etp, int unused) // second parameter is not prese
             epp->szb = 1.0f;
             epp->sz = 1.0f;
             
-            epp->obj_a = NULL;
-            epp->obj_b = NULL;
+            epp->obj_a = S32(NULL);
+            epp->obj_b = S32(NULL);
             
             epp->shp_ct = 0;
             
-            epp->mtx = (float(*)[16])epp->mtxbuf;
+            epp->mtx = S32((float(*)[16])epp->mtxbuf);
             
             epp->frm_no = 0;
             epp->mtn_no = 0;
@@ -410,7 +410,7 @@ BH_PWORK* bhSetEnemy(EGG_WORK* etp, int unused) // second parameter is not prese
             epp->mtn_no = 0;
             epp->mtn_add = 65536;
             epp->mtn_md = 0;
-            epp->mtn_tp = NULL;
+            epp->mtn_tp = S32(NULL);
             
             epp->at_flg = 0;
             
@@ -474,7 +474,7 @@ void bhControlEnemy()
         {
             sys->enow = i;
             
-            if ((!(ep->stflg & 0x41000000)) && (((!(ep->flg & 0x80)) || (!(((BH_PWORK*)ep->lkwkp)->stflg & 0x1000000))) && ((ep->flg & 0x1))))
+            if ((!(ep->stflg & 0x41000000)) && (((!(ep->flg & 0x80)) || (!(((BH_PWORK*)P32(unsigned char *, ep->lkwkp))->stflg & 0x1000000))) && ((ep->flg & 0x1))))
             {
                 ep->pxb = ep->px;
                 ep->pyb = ep->py;
@@ -519,7 +519,7 @@ void bhControlEnemy()
                 
                 if ((ep->flg & 0x80000000)) 
                 {
-                    sys->en_obj[sys->en_objn++] = ep;
+                    sys->en_obj[sys->en_objn++] = S32(ep);
                 }
             }
         }
@@ -557,7 +557,7 @@ void bhEne00(BH_PWORK* ep)
         
         ep->hp = 0;
         
-        ep->cpcl = En00CapColTab;
+        ep->cpcl = S32(En00CapColTab);
         
         if (!(ep->flg2 & 0x80000000)) 
         {
@@ -642,7 +642,7 @@ void bhEne00(BH_PWORK* ep)
    
     if ((ep->flg & 0x4)) 
     {
-        for (i = 0; i < ep->mlwP->obj_num; i++) 
+        for (i = 0; i < P32(struct ML_WORK *, ep->mlwP)->obj_num; i++) 
         {
             ep->dam[i] = 0;
         }
@@ -667,9 +667,9 @@ void bhEne00(BH_PWORK* ep)
     
     bhCalcModel(ep);
     
-    ep->watr.c1.x = ep->mlwP->owP->mtx[12];
-    ep->watr.c1.y = ep->mlwP->owP->mtx[13];
-    ep->watr.c1.z = ep->mlwP->owP->mtx[14];
+    ep->watr.c1.x = P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)->mtx[12];
+    ep->watr.c1.y = P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)->mtx[13];
+    ep->watr.c1.z = P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)->mtx[14];
     
     ep->watr.c2.x = ep->watr.c1.x;
     ep->watr.c2.y = 15.0f + ep->watr.c1.y;
@@ -691,11 +691,11 @@ void bhEne56(BH_PWORK* ep)
     case 0:
         ep->mdflg |= 0x20;
         
-        ep->mnwP = sys->rmthp;
+        ep->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
         
         ep->mtn_no = 0;
         ep->mtn_md = 0; 
-        ep->mtn_tp = 0;
+        ep->mtn_tp = S32(0);
         
         ep->hokan_rate = 32768;
         ep->hokan_count = 0;
@@ -728,7 +728,7 @@ void bhEne56(BH_PWORK* ep)
         
         if (bhCkFlg(sys->ev_flg, 0x3B) != 0) 
         {
-            op = &sys->obwp[sys->ufo_oidx];
+            op = &P32(struct O_WRK *, sys->obwp)[sys->ufo_oidx];
             
             op->flg |= 0x80;
             
@@ -738,7 +738,7 @@ void bhEne56(BH_PWORK* ep)
             op->loy = 42.0f;
             op->loz = 0;
             
-            op->lkwkp = (unsigned char*)ep;
+            op->lkwkp = S32((unsigned char*)ep);
             
             ep->mode0 = 2;
             break;
@@ -781,7 +781,7 @@ void bhEne56(BH_PWORK* ep)
             
             break;
         case 2:
-            pos = *(NJS_POINT3*)&ep->mlwP->owP[3].mtx[12];
+            pos = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[3].mtx[12];
             
             pos.x -= 0.6f;
             pos.y -= 10.0f;
@@ -792,7 +792,7 @@ void bhEne56(BH_PWORK* ep)
                 break;
             }
             
-            pos = *(NJS_POINT3*)&ep->mlwP->owP[5].mtx[12];
+            pos = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[5].mtx[12];
             
             pos.x -= 0.6f;
             pos.y -= 10.0f;
@@ -803,7 +803,7 @@ void bhEne56(BH_PWORK* ep)
                 break;
             }
             
-            pos = *(NJS_POINT3*)&ep->mlwP->owP[7].mtx[12];
+            pos = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[7].mtx[12];
             
             pos.x += 0.6f;
             pos.y -= 10.0f;
@@ -814,7 +814,7 @@ void bhEne56(BH_PWORK* ep)
                 break;
             }
             
-            pos = *(NJS_POINT3*)&ep->mlwP->owP[9].mtx[12];
+            pos = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[9].mtx[12];
             
             pos.x += 0.6f;
             pos.y -= 10.0f;
@@ -835,14 +835,14 @@ void bhEne56(BH_PWORK* ep)
                 ep->mtn_add = 0;
             }
             
-            if ((sys->ufo_flg != 0) && ((sys->obwp[sys->ufo_oidx].px - ep->mlwP->owP[7].mtx[12]) < 9.0f)) 
+            if ((sys->ufo_flg != 0) && ((P32(struct O_WRK *, sys->obwp)[sys->ufo_oidx].px - P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[7].mtx[12]) < 9.0f)) 
             {
-                sys->obwp[sys->ufo_oidx].px = ep->mlwP->owP[7].mtx[12] + 9.0f;
+                P32(struct O_WRK *, sys->obwp)[sys->ufo_oidx].px = P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP)[7].mtx[12] + 9.0f;
             }
             
             break;
         case 5:
-            op = &sys->obwp[sys->ufo_oidx];
+            op = &P32(struct O_WRK *, sys->obwp)[sys->ufo_oidx];
             
             if (sys->ufo_flg != 0)
             {
@@ -856,16 +856,16 @@ void bhEne56(BH_PWORK* ep)
                     op->loy = op->py - ep->py;
                     op->loz = op->pz - ep->pz;
                     
-                    op->lkwkp = (unsigned char*)ep;
+                    op->lkwkp = S32((unsigned char*)ep);
                 }
                 
                 if ((sys->ufo_flg == 1) && (ep->py >= -35.0f)) 
                 {
                     op->flg &= ~0x80;
                     
-                    op->px = op->mlwP->owP->mtx[12];
-                    op->py = op->mlwP->owP->mtx[13];
-                    op->pz = op->mlwP->owP->mtx[14];
+                    op->px = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12];
+                    op->py = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13];
+                    op->pz = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14];
                     
                     op->mode1 = 0;
                     
@@ -877,7 +877,7 @@ void bhEne56(BH_PWORK* ep)
             
             break;
         case 6:
-            op = &sys->obwp[sys->ufo_oidx];
+            op = &P32(struct O_WRK *, sys->obwp)[sys->ufo_oidx];
             
             switch (op->mode1) 
             {
@@ -945,19 +945,19 @@ void bhDrawEnemy()
     {
 #ifdef TARGET_PC   /* a work without a model (an enemy's helper, e.g. the moths' leader) is never drawn: flags made it
                       drawable (a co-op snapshot of another enemy type) and bhCalcModel crashed on its NULL mlwP */
-        if (ep->mlwP == NULL)
+        if (P32(struct ML_WORK *, ep->mlwP) == NULL)
         {
             continue;
         }
 #endif
-        if ((((ep->flg & 0x1)) && (!(ep->flg & 0x80000000))) && (!(ep->stflg & 0x41000000)) && (((sys->st_flg & 0x20)) || (!(ep->mdflg & 0x200))) && ((!(ep->flg & 0x80)) || (!(((BH_PWORK*)ep->lkwkp)->stflg & 0x1000000))))
+        if ((((ep->flg & 0x1)) && (!(ep->flg & 0x80000000))) && (!(ep->stflg & 0x41000000)) && (((sys->st_flg & 0x20)) || (!(ep->mdflg & 0x200))) && ((!(ep->flg & 0x80)) || (!(((BH_PWORK*)P32(unsigned char *, ep->lkwkp))->stflg & 0x1000000))))
         {
             if ((ep->mdflg & 0x4)) 
             {
                 bhCalcModel(ep);
             }
             
-            if ((((ep->mdflg & 0x20)) || (bhCheckClipModel(ep) == 0)) && (!(ep->mdflg & 0x1)) && (ep->mlwP->objP != NULL)) 
+            if ((((ep->mdflg & 0x20)) || (bhCheckClipModel(ep) == 0)) && (!(ep->mdflg & 0x1)) && (P32(struct cnkobj *, P32(struct ML_WORK *, ep->mlwP)->objP) != NULL)) 
             {
                 if ((sys->st_flg & 0x20))
                 {
@@ -973,7 +973,7 @@ void bhDrawEnemy()
                     {
                         if ((ep->mdflg & 0x400))
                         {
-                            argb = npGetMatColor(ep->mlwP->objP, ep->mlwP->obj_num) & 0xFF;
+                            argb = npGetMatColor(P32(struct cnkobj *, P32(struct ML_WORK *, ep->mlwP)->objP), P32(struct ML_WORK *, ep->mlwP)->obj_num) & 0xFF;
                             
                             if (argb >= 0)
                             {
@@ -998,15 +998,15 @@ void bhDrawEnemy()
 #endif
                     if ((ep->mdflg & 0x2))
                     {
-                        npPushMdlstr2(ep->obj_a, ep->mlwP->obj_num);
+                        npPushMdlstr2(P32(struct cnkobj *, ep->obj_a), P32(struct ML_WORK *, ep->mlwP)->obj_num);
                         
-                        npCalcMorphing(ep->obj_a, ep->obj_b, ep->shp_ct, ep->mlwP->obj_num);
+                        npCalcMorphing(P32(struct cnkobj *, ep->obj_a), P32(struct cnkobj *, ep->obj_b), ep->shp_ct, P32(struct ML_WORK *, ep->mlwP)->obj_num);
                         
-                        ep->mlwP->objP = ep->obj_a;
+                        P32(struct ML_WORK *, ep->mlwP)->objP = S32(P32(struct cnkobj *, ep->obj_a));
                         
                         bhPutModel(ep);
                         
-                        npPopMdlstr2(ep->obj_a, ep->mlwP->obj_num);
+                        npPopMdlstr2(P32(struct cnkobj *, ep->obj_a), P32(struct ML_WORK *, ep->mlwP)->obj_num);
                     } 
                     else 
                     {
@@ -1029,7 +1029,7 @@ void bhDrawEneObject()
 	
     for (i = 0; i < sys->en_objn; i++) 
     {
-        ep = sys->en_obj[i];
+        ep = P32(BH_PWORK *, sys->en_obj[i]);
         
         if (((ep->flg & 0x1)) && (!(ep->stflg & 0x41000000)))
         {
@@ -1038,19 +1038,19 @@ void bhDrawEneObject()
                 bhCalcModel(ep);
             }
             
-            if ((((ep->mdflg & 0x20)) || (bhCheckClipModel(ep) == 0)) && (ep->mlwP->objP != NULL) && (!(ep->mdflg & 0x1)))
+            if ((((ep->mdflg & 0x20)) || (bhCheckClipModel(ep) == 0)) && (P32(struct cnkobj *, P32(struct ML_WORK *, ep->mlwP)->objP) != NULL) && (!(ep->mdflg & 0x1)))
             {
                 if ((ep->mdflg & 0x2)) 
                 {
-                    npPushMdlstr2(ep->obj_a, ep->mlwP->obj_num);
+                    npPushMdlstr2(P32(struct cnkobj *, ep->obj_a), P32(struct ML_WORK *, ep->mlwP)->obj_num);
                     
-                    npCalcMorphing(ep->obj_a, ep->obj_b, ep->shp_ct, ep->mlwP->obj_num);
+                    npCalcMorphing(P32(struct cnkobj *, ep->obj_a), P32(struct cnkobj *, ep->obj_b), ep->shp_ct, P32(struct ML_WORK *, ep->mlwP)->obj_num);
                     
-                    ep->mlwP->objP = ep->obj_a;
+                    P32(struct ML_WORK *, ep->mlwP)->objP = S32(P32(struct cnkobj *, ep->obj_a));
                     
                     bhPutModel(ep);
                     
-                    npPopMdlstr2(ep->obj_a, ep->mlwP->obj_num);
+                    npPopMdlstr2(P32(struct cnkobj *, ep->obj_a), P32(struct ML_WORK *, ep->mlwP)->obj_num);
                 }
                 else 
                 {
@@ -1068,7 +1068,7 @@ void* bhEne_CallocWork(int size, int param) // second parameter not present on D
     unsigned char* addr;     
 
 #ifdef TARGET_PC
-    if ((&sys->memp[size] - sys->mempb) > 0xC40000 + PC_ARENA_EXTRA)   /* the arena's growth, as bhGetFreeMemory */
+    if ((&P32(unsigned char *, sys->memp)[size] - P32(unsigned char *, sys->mempb)) > 0xC40000 + PC_ARENA_EXTRA)   /* the arena's growth, as bhGetFreeMemory */
 #else
     if ((&sys->memp[size] - sys->mempb) > 0xC40000)
 #endif
@@ -1076,13 +1076,13 @@ void* bhEne_CallocWork(int size, int param) // second parameter not present on D
         return NULL;
     }
     
-    sys->memp = (unsigned char*)PS2_HOST((((unsigned int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
+    sys->memp = S32((unsigned char*)PS2_HOST((((unsigned int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 63) & ~0x3F)));
     
-    ret_addr = sys->memp;
+    ret_addr = P32(unsigned char *, sys->memp);
 
     addr = ret_addr; 
     
-    sys->memp = &ret_addr[size];
+    sys->memp = S32(&ret_addr[size]);
     
     while (size-- != 0) 
     {

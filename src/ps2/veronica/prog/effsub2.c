@@ -228,7 +228,7 @@ void bhEff_E00_Mince(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -239,7 +239,7 @@ void bhEff_E00_DrawParticleSpr(O_WRK* op)
 {
    	P_WRK* pp;
 
-    pp = (P_WRK*)op->exp0;
+    pp = (P_WRK*)P32(unsigned char *, op->exp0);
     
     if (!(op->stflg & 0x20)) 
     {
@@ -247,7 +247,7 @@ void bhEff_E00_DrawParticleSpr(O_WRK* op)
     }
     else
     {
-        njSetTexture(op->txp[0]);
+        njSetTexture(P32(NJS_TEXLIST *, op->txp[0]));
     }
     
     if ((op->flg & 0x20000000)) 
@@ -262,7 +262,7 @@ void bhEff_E00_DrawParticleSpr(O_WRK* op)
     njColorBlendingMode(0, op->bl_src);
     njColorBlendingMode(1, op->bl_dst);
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njPtclSpriteStart(op->tex_id, pp->col, 1);
     njPtclDrawSprite(pp->pos, pp->num, pp->sx, pp->sy);
@@ -277,9 +277,9 @@ void bhEff_E00_DrawParticlePly(O_WRK* op)
 {
     P_WRK* pp;
 
-    pp = (P_WRK*)op->exp0;
+    pp = (P_WRK*)P32(unsigned char *, op->exp0);
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njPtclPolygonStart(pp->col);
     njPtclDrawPolygon(pp->pos, pp->num, pp->sx);
@@ -381,7 +381,7 @@ void bhEff_E00_DropBlood(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -441,7 +441,7 @@ void bhEff_E00_Fire(O_WRK* op)
         BH_UVTAB2
     };
 
-    pp = (BH_PWORK*)op->lkwkp;
+    pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
     
     if ((pp != NULL) && ((pp->stflg & 0x1000000))) 
     {
@@ -523,7 +523,7 @@ void bhEff_E00_Fire(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -610,7 +610,7 @@ void bhEff_E00_Acid(O_WRK* op)
 
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             
             sys->ef_trsn++;
         }
@@ -625,7 +625,7 @@ void bhEff_E00_AcidGenerator(O_WRK* op)
     UV_WORK* uvp;
     O_WRK* owp; // not from DWARF
     
-    owp = (O_WRK*)op->lkwkp;
+    owp = (O_WRK*)P32(unsigned char *, op->lkwkp);
     
     if ((owp == NULL) || (!(owp->stflg & 0x1000000)))
     {
@@ -751,7 +751,7 @@ void bhEff_E00_BloodBurst(O_WRK* op)
         type6
     };
 
-    pp = (BH_PWORK*)op->lkwkp;
+    pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
     
     if ((pp != NULL) && ((pp->stflg & 0x1000000))) 
     {
@@ -775,7 +775,7 @@ void bhEff_E00_BloodBurst(O_WRK* op)
 			{
 				if (p->spd > 0)
 				{
-					bhSetEffParticleMk2((BH_PWORK*)op->lkwkp, op->lkono, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->xn, BloodCol[op->mdlver][0], BloodCol[op->mdlver][1], p->type1);
+					bhSetEffParticleMk2((BH_PWORK*)P32(unsigned char *, op->lkwkp), op->lkono, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->xn, BloodCol[op->mdlver][0], BloodCol[op->mdlver][1], p->type1);
 				} 
 				else
 				{
@@ -783,7 +783,7 @@ void bhEff_E00_BloodBurst(O_WRK* op)
 					v.y = -op->yn;
 					v.z = -op->zn;
 					
-					bhSetEffParticleMk2((BH_PWORK*)op->lkwkp, op->lkono, (NJS_POINT3*)&op->lox, &v, BloodCol[op->mdlver][0], BloodCol[op->mdlver][1], p->type1);
+					bhSetEffParticleMk2((BH_PWORK*)P32(unsigned char *, op->lkwkp), op->lkono, (NJS_POINT3*)&op->lox, &v, BloodCol[op->mdlver][0], BloodCol[op->mdlver][1], p->type1);
 				}
 			}
 
@@ -803,9 +803,9 @@ void bhEff_E00_BloodBurst(O_WRK* op)
 				
 				sys->ef.mdlver = op->mdlver;
 
-				owp = (O_WRK*)op->lkwkp;
+				owp = (O_WRK*)P32(unsigned char *, op->lkwkp);
 				
-				njCalcPoint(&owp->mlwP->owP[op->lkono].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&sys->ef.px);
+				njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, owp->mlwP)->owP)[op->lkono].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&sys->ef.px);
 
 				eno = bhSetEffectTb(&sys->ef, NULL, NULL, 0);
 				
@@ -961,7 +961,7 @@ void bhEff_E00_Blood(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1048,7 +1048,7 @@ void bhEff_E00_Dust(O_WRK* op)
         
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             
             sys->ef_trsn++;
         }
@@ -1224,7 +1224,7 @@ void bhEff_E02_SandDust(O_WRK* op)
         
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             
             sys->ef_trsn++;
         }
@@ -1258,7 +1258,7 @@ void bhEff_E02_SandParticle(O_WRK* op)
             return;
         }
         
-        op->exp0 = (unsigned char*)pp;
+        op->exp0 = S32((unsigned char*)pp);
         
         p = pp->pos;
         v = pp->vec;
@@ -1295,12 +1295,12 @@ void bhEff_E02_SandParticle(O_WRK* op)
         
         op->flg |= 0x20000000;
         
-        op->func = (void*)bhEff_E00_DrawParticlePly;
+        op->func = S32((void*)bhEff_E00_DrawParticlePly);
         
         op->mode0++;
         break;
     case 1:
-        pp = (P_WRK*)op->exp0;
+        pp = (P_WRK*)P32(unsigned char *, op->exp0);
         
         p = pp->pos;
         v = pp->vec;
@@ -1325,7 +1325,7 @@ void bhEff_E02_SandParticle(O_WRK* op)
         
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -1707,7 +1707,7 @@ void bhEff_E03_Acid(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -1719,7 +1719,7 @@ void bhEff_E03_Shadow(O_WRK* op)
     BH_PWORK* pp;
     O_WRK* owp; // not from DWARF
     
-    owp = (O_WRK*)op->lkwkp;
+    owp = (O_WRK*)P32(unsigned char *, op->lkwkp);
     
     switch (op->mode0) 
     {                             
@@ -1746,7 +1746,7 @@ void bhEff_E03_Shadow(O_WRK* op)
         
         op->flg &= ~0x1000000;
         
-        sys->ef_mdf[sys->ef_mdfn++] = op;
+        sys->ef_mdf[sys->ef_mdfn++] = S32(op);
         break;
     }
 }
@@ -1828,7 +1828,7 @@ void bhEff_E05_Blood(O_WRK* op)
         
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             
             sys->ef_trsn++;
         }
@@ -1860,7 +1860,7 @@ void bhEff_E06_Rinpun(O_WRK* op)
             return;
         }
         
-        op->exp0 = (unsigned char*)pp;
+        op->exp0 = S32((unsigned char*)pp);
         
         p = pp->pos;
         v = pp->vec;
@@ -1903,12 +1903,12 @@ void bhEff_E06_Rinpun(O_WRK* op)
         op->bl_src = 8;
         op->bl_dst = 3;
         
-        op->func = (void*)bhEff_E00_DrawParticleSpr;
+        op->func = S32((void*)bhEff_E00_DrawParticleSpr);
         
         op->mode0++;
         break;
     case 1:
-        pp = (P_WRK*)op->exp0;
+        pp = (P_WRK*)P32(unsigned char *, op->exp0);
         
         p = pp->pos;
         v = pp->vec;
@@ -2003,7 +2003,7 @@ void bhEff_E06_Rinpun(O_WRK* op)
         
         if (sys->ef_fncn < 128)
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -2022,16 +2022,16 @@ void bhEff_E11_SearchLight(O_WRK* op)
         
         op->ax   = 0;
         
-        op->func = (void*)bhEff_E11_SearchLightDraw;
+        op->func = S32((void*)bhEff_E11_SearchLightDraw);
         
         op->mode0 = 0xFF;
         
-        if (op->exp0 != NULL) 
+        if (P32(unsigned char *, op->exp0) != NULL) 
         {
             return;
         }
         
-        op->exp0 = (unsigned char*)bhSetExtraEffectWork();
+        op->exp0 = S32((unsigned char*)bhSetExtraEffectWork());
         return;
     case 1:
         if (++op->ct0 >= 32) 
@@ -2082,7 +2082,7 @@ void bhEff_E11_SearchLight(O_WRK* op)
 
     if (sys->ef_fncn < 128)
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -2101,13 +2101,13 @@ void bhEff_E11_SearchLightDraw(O_WRK* op)
     NJS_POINT3 area[3];  
     NJS_POINT3COL p3c;    
 
-    mtx = &((O_WRK*)op->lkwkp)->mlwP->owP[4].mtx;
+    mtx = &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, op->lkwkp))->mlwP)->owP)[4].mtx;
     
     p1.x = (*mtx)[12];
     p1.y = (*mtx)[13]; 
     p1.z = (*mtx)[14];
     
-    p = pt = (NJS_POINT3*)&op->exp0[4];
+    p = pt = (NJS_POINT3*)&P32(unsigned char *, op->exp0)[4];
     
     for (i = 0; i < 16; i++, p++) 
     {
@@ -2122,7 +2122,7 @@ void bhEff_E11_SearchLightDraw(O_WRK* op)
         njUnitVector(&n);
         
         njCalcVector(mtx, &n, &n);
-        njCalcVector(cam.mtx, &n, &n);
+        njCalcVector(P32(float (*)[16], cam.mtx), &n, &n);
         
         if (n.z > 0) 
         {
@@ -2179,12 +2179,12 @@ void bhEff_E11_SearchLightDraw(O_WRK* op)
     
     njFogDisable();
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     {
-    p3c.p   = area;
-    p3c.col = c;
-    p3c.tex = NULL;
+    p3c.p   = S32(area);
+    p3c.col = S32(c);
+    p3c.tex = S32(NULL);
     p3c.num = 3;
         
     if (op->ct2 != 0) 
@@ -2245,9 +2245,9 @@ void bhEff_E11_SearchLightDraw(O_WRK* op)
     int id1, id2;           
     float rate;        
     
-    p3c.p   = p;
-    p3c.col = c;
-    p3c.tex = NULL;
+    p3c.p   = S32(p);
+    p3c.col = S32(c);
+    p3c.tex = S32(NULL);
     p3c.num = 2;
    
     id1 = (op->ct1 / 16) & 0xF;
@@ -2304,17 +2304,17 @@ int bhEff_E11_CheckCollisionPlayer(NJS_POINT3* p1, NJS_POINT3* p2)
 
     ret  = -1;
     
-    mtn  = plp->mlwP->owP;
+    mtn  = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
     
-    num  = plp->mlwP->obj_num;
+    num  = P32(struct ML_WORK *, plp->mlwP)->obj_num;
     
-    pObj = plp->mdl[3].objP;
+    pObj = P32(struct cnkobj *, plp->mdl[3].objP);
 
     if (pObj != NULL) 
     {
         for (i = 0; i < num; pObj++, mtn++, i++) 
         {
-            if ((pObj->model != NULL) && (bhCollisionCheckL2MDL(p1, p2, pObj->model, &mtn->mtx) != 0))
+            if ((P32(NJS_CNK_MODEL *, pObj->model) != NULL) && (bhCollisionCheckL2MDL(p1, p2, P32(NJS_CNK_MODEL *, pObj->model), &mtn->mtx) != 0))
             {
                 ret = i;
             }
@@ -2327,17 +2327,17 @@ int bhEff_E11_CheckCollisionPlayer(NJS_POINT3* p1, NJS_POINT3* p2)
     {
         if (((ep->flg & 0x1)) && (((ep->id >= 41) && (ep->id <= 43)) || ((ep->id >= 91) && (ep->id <= 93)))) 
         { 
-            mtn = ep->mlwP->owP;
+            mtn = P32(struct O_WORK *, P32(struct ML_WORK *, ep->mlwP)->owP);
             
-            num = ep->mlwP->obj_num;
+            num = P32(struct ML_WORK *, ep->mlwP)->obj_num;
             
-            pObj = ep->mdl[1].objP;
+            pObj = P32(struct cnkobj *, ep->mdl[1].objP);
     
             if (pObj != NULL) 
             { 
                 for (i = 0; i < num; pObj++, mtn++, i++) 
                 {
-                    if ((pObj->model != NULL) && (bhCollisionCheckL2MDL(p1, p2, pObj->model, &mtn->mtx) != 0)) 
+                    if ((P32(NJS_CNK_MODEL *, pObj->model) != NULL) && (bhCollisionCheckL2MDL(p1, p2, P32(NJS_CNK_MODEL *, pObj->model), &mtn->mtx) != 0)) 
                     {
                         ret = i;
                     }
@@ -2354,7 +2354,7 @@ void bhEff_E16_LaserSight(O_WRK* op)
 {
     O_WRK* opp; // not from DWARF
 
-    opp = (O_WRK*)op->lkwkp;
+    opp = (O_WRK*)P32(unsigned char *, op->lkwkp);
     
     if ((opp->flg != 0) ^ 1) 
     {
@@ -2365,7 +2365,7 @@ void bhEff_E16_LaserSight(O_WRK* op)
     switch (op->mode0) 
     {                             
     case 0:
-        op->func = (void*)bhEff_E16_LaserSightDraw;
+        op->func = S32((void*)bhEff_E16_LaserSightDraw);
 
         op->mode0++;
         break;
@@ -2374,7 +2374,7 @@ void bhEff_E16_LaserSight(O_WRK* op)
         {
             if (sys->ef_fncn < 128)
             {
-                sys->ef_fnc[sys->ef_fncn] = op;
+                sys->ef_fnc[sys->ef_fncn] = S32(op);
                 
                 sys->ef_fncn++;
             }
@@ -2400,7 +2400,7 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
     NJS_POINT4* p;       
     NJS_COLOR c[2];      
  
-    mtx = &((O_WRK*)op->lkwkp)->mlwP->owP[op->lkono].mtx;
+    mtx = &P32(struct O_WORK *, P32(struct ML_WORK *, ((O_WRK*)P32(unsigned char *, op->lkwkp))->mlwP)->owP)[op->lkono].mtx;
     
     p1.x = (*mtx)[12];
     p1.y = (*mtx)[13];
@@ -2414,7 +2414,7 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
     
     if ((sys->sp_flg & 0x8)) 
     {
-        op->exp0 = (unsigned char*)bhCollisionCheckLine2((NJS_POINT3*)&p1, (NJS_POINT3*)&pos, 0x4400, -1);
+        op->exp0 = S32((unsigned char*)bhCollisionCheckLine2((NJS_POINT3*)&p1, (NJS_POINT3*)&pos, 0x4400, -1));
         
         op->lox = pos.x;
         op->loy = pos.y;
@@ -2426,7 +2426,7 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
         op->gpy = pos.y;
         op->gpz = pos.z;
         
-        bhEne16_AddEffPos((BH_PWORK*)op->lkwkp, (NJS_POINT3*)&pos);
+        bhEne16_AddEffPos((BH_PWORK*)P32(unsigned char *, op->lkwkp), (NJS_POINT3*)&pos);
     }
     else 
     {
@@ -2454,7 +2454,7 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
         njUnitVector((NJS_VECTOR*)&n[i]);
         
         njCalcVector(mtx,     (NJS_VECTOR*)&n[i], (NJS_VECTOR*)&n[i]);
-        njCalcVector(cam.mtx, (NJS_VECTOR*)&n[i], (NJS_VECTOR*)&n[i]);
+        njCalcVector(P32(float (*)[16], cam.mtx), (NJS_VECTOR*)&n[i], (NJS_VECTOR*)&n[i]);
         
         if (n[i].z > 0)
         {
@@ -2487,15 +2487,15 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
     
     njFogDisable();
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     {
     NJS_POINT3COL p3c; 
     NJS_POINT3 p[2];  
         
-    p3c.p   = p;
-    p3c.col = c;
-    p3c.tex = 0;
+    p3c.p   = S32(p);
+    p3c.col = S32(c);
+    p3c.tex = S32(0);
     p3c.num = 2;
         
     p[0].x = p1.x;
@@ -2518,7 +2518,7 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
         
     njDrawLine3DEx(&p3c, 1, 0x40);
     
-    ep = (BH_PWORK*)op->lkwkp;
+    ep = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
         
     if (ep->type != 0) 
     { 
@@ -2543,9 +2543,9 @@ void bhEff_E16_LaserSightDraw(O_WRK* op)
     NJS_POINT3COL p3c; 
     NJS_COLOR c[3];    
         
-    p3c.p   = area;
-    p3c.col = c;
-    p3c.tex = NULL;
+    p3c.p   = S32(area);
+    p3c.col = S32(c);
+    p3c.tex = S32(NULL);
     p3c.num = 3;
         
     c[0].argb.a = 0; 
@@ -2683,7 +2683,7 @@ void bhEff_E12_Fire(O_WRK* op)
         
         if (op->type == 1) 
         {
-            fireman = (O_WRK*)rom->lgtp;
+            fireman = (O_WRK*)P32(struct LGT_WORK *, rom->lgtp);
             
             lp = (LGT_WORK*)&fireman->mbp;
             
@@ -2729,7 +2729,7 @@ void bhEff_E12_Fire(O_WRK* op)
         op->mode0++;
         op->mode1 = 0;
         
-        op->func = (void*)bhEff_Draw3DSprite;
+        op->func = S32((void*)bhEff_Draw3DSprite);
         
         if (op->type == 0)
         {
@@ -2891,30 +2891,30 @@ void bhEff_E12_Fire(O_WRK* op)
     
     if (op->aoy == 0) 
     {
-        njCalcVector(cam.mtx, (NJS_VECTOR*)&op->aox, &v);
+        njCalcVector(P32(float (*)[16], cam.mtx), (NJS_VECTOR*)&op->aox, &v);
         
         op->sx *= 0.5f + fabsf(0.5f * v.z);
     }
     
     if (op->type != 0) 
     {
-        op->ay = bhArcTan2(cam.mtx[0][8], cam.mtx[0][10]);
+        op->ay = bhArcTan2(P32(float (*)[16], cam.mtx)[0][8], P32(float (*)[16], cam.mtx)[0][10]);
     }
     
     if (op->type == 0)
     {
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         } 
     } 
     else 
     {
-        temp = (O_WRK*)op->exp1;
+        temp = (O_WRK*)P32(unsigned char *, op->exp1);
         
-        exp0 = (char*)temp->exp0;
+        exp0 = (char*)P32(unsigned char *, temp->exp0);
         
         if (temp->ct0 < 300) 
         {
@@ -3034,7 +3034,7 @@ void bhEff_E12_FrameLiquid(O_WRK* op)
                     eff[eno].aoy  = op->aoy;
                     eff[eno].aoz  = op->aoz;
                     
-                    eff[eno].exp1 = op->exp1;
+                    eff[eno].exp1 = S32(P32(unsigned char *, op->exp1));
                 }
                 
                 op->mode0++;
@@ -3082,7 +3082,7 @@ void bhEff_E12_FrameLiquid(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3185,7 +3185,7 @@ void bhEff_E12_FloorBlood2(O_WRK* op)
         
         op->loz = tmp;
         
-        op->lkwkp = (unsigned char*)plp;
+        op->lkwkp = S32((unsigned char*)plp);
         op->lkono = 3;
         
         op->sxb = 2.5f;
@@ -3219,7 +3219,7 @@ void bhEff_E12_FloorBlood2(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3249,7 +3249,7 @@ void bhEff_E12_FireSpark(O_WRK* op)
             return;
         }
         
-        op->exp0 = (unsigned char*)pp;
+        op->exp0 = S32((unsigned char*)pp);
         
         p = pp->pos;
         v = pp->vec;
@@ -3282,12 +3282,12 @@ void bhEff_E12_FireSpark(O_WRK* op)
         op->bl_src = 8;
         op->bl_dst = 10;
         
-        op->func = (void*)bhEff_E00_DrawParticleSpr;
+        op->func = S32((void*)bhEff_E00_DrawParticleSpr);
 
         op->mode0++;
         break;
     case 1:
-        pp = (P_WRK*)op->exp0;
+        pp = (P_WRK*)P32(unsigned char *, op->exp0);
         
         p = pp->pos;
         v = pp->vec;
@@ -3326,7 +3326,7 @@ void bhEff_E12_FireSpark(O_WRK* op)
         
         if (sys->ef_fncn < 128) 
         {
-            sys->ef_fnc[sys->ef_fncn] = op;
+            sys->ef_fnc[sys->ef_fncn] = S32(op);
             
             sys->ef_fncn++;
         }
@@ -3339,9 +3339,9 @@ void bhEff_E12_FireManager(O_WRK* op)
     switch (op->mode0) 
     {                           
     case 0:
-        if (op->exp0 == NULL) 
+        if (P32(unsigned char *, op->exp0) == NULL) 
         {
-            op->exp0 = (unsigned char*)bhSetExtraEffectWork();
+            op->exp0 = S32((unsigned char*)bhSetExtraEffectWork());
         }
         
         op->tex_id = 80;
@@ -3351,7 +3351,7 @@ void bhEff_E12_FireManager(O_WRK* op)
         op->bl_src = 8;
         op->bl_dst = 3;
         
-        op->func = (void*)bhEff_E12_FireBurstDraw;
+        op->func = S32((void*)bhEff_E12_FireBurstDraw);
         
         op->mode0++;
         break;
@@ -3362,7 +3362,7 @@ void bhEff_E12_FireManager(O_WRK* op)
     
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -3376,7 +3376,7 @@ void bhEff_E12_FireBurstDraw(O_WRK* owp)
     int num; // modified original position from DWARF
     char atr[192];
 
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njTextureFilterMode(0);
     
@@ -3390,7 +3390,7 @@ void bhEff_E12_FireBurstDraw(O_WRK* owp)
     
     njFogDisable();
 
-    opp = (O_WRK**)&owp->exp0[4];
+    opp = (O_WRK**)&P32(unsigned char *, owp->exp0)[4];
     
     for (num = owp->ct0; num != 0; )
     {
@@ -3406,11 +3406,11 @@ void bhEff_E12_FireBurstDraw(O_WRK* owp)
         njTranslateEx((NJS_VECTOR*)&op->px);
         njRotateEx((Angle*)&op->ax, 0);
         
-        njGetMatrix(op->mtx);
+        njGetMatrix(P32(float (*)[16], op->mtx));
         
         njPopMatrixEx();
         
-        njMultiMatrix(NULL, op->mtx);
+        njMultiMatrix(NULL, P32(float (*)[16], op->mtx));
 
         if ((op->flg & 0x100000)) 
         {
@@ -3419,7 +3419,7 @@ void bhEff_E12_FireBurstDraw(O_WRK* owp)
 
         njScaleEx((NJS_VECTOR*)&op->sx);
         
-        njDrawTexture3DEx(op->tvp, op->pn, 1);
+        njDrawTexture3DEx(P32(NJS_TEXTURE_VTX *, op->tvp), op->pn, 1);
         
         njPopMatrixEx();
     } 
@@ -3482,7 +3482,7 @@ void bhEff_E12_Fire2(O_WRK* op)
         
         op->ct3 = 0xFF;
         
-        op->func = (void*)bhEff_Draw3DSprite;
+        op->func = S32((void*)bhEff_Draw3DSprite);
         
         op->mode0++;
     case 1:
@@ -3534,7 +3534,7 @@ void bhEff_E12_Fire2(O_WRK* op)
     
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -3597,7 +3597,7 @@ void bhEff_E12_Fire3(O_WRK* op)
         
         op->ct3 = 0xFF;
         
-        op->func = (void*)bhEff_Draw3DSprite;
+        op->func = S32((void*)bhEff_Draw3DSprite);
         
         op->mode0++;
         break;
@@ -3648,7 +3648,7 @@ void bhEff_E12_Fire3(O_WRK* op)
     
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -3659,7 +3659,7 @@ void bhEff_E12_BintaEffControl(O_WRK* op)
 {
     BH_PWORK* ep;
 
-    ep = (BH_PWORK*)op->lkwkp;
+    ep = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
     
     switch (op->mode0) 
     {                             
@@ -3871,7 +3871,7 @@ void bhEff_E13_Fluid(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -4031,7 +4031,7 @@ void bhEff_E14_Fire(O_WRK* op)
 
         if (op->type == 1) 
         {
-            lp = &rom->lgtp[1];
+            lp = &P32(struct LGT_WORK *, rom->lgtp)[1];
 
             if (!(lp->flg & 0x1)) 
             {
@@ -4074,7 +4074,7 @@ void bhEff_E14_Fire(O_WRK* op)
         
         op->mode1  = 0;
         
-        op->func   = (void*)bhEff_Draw3DSprite;
+        op->func   = S32((void*)bhEff_Draw3DSprite);
 
         px = plp->px - op->px;
         pz = plp->pz - op->pz;
@@ -4200,11 +4200,11 @@ void bhEff_E14_Fire(O_WRK* op)
     op->sx *= op->aw;
     op->sy *= op->ah;
     
-    op->ay = bhArcTan2(cam.mtx[0][8], cam.mtx[0][10]);
+    op->ay = bhArcTan2(P32(float (*)[16], cam.mtx)[0][8], P32(float (*)[16], cam.mtx)[0][10]);
 
     if (sys->ef_fncn < 128)
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -4263,7 +4263,7 @@ void bhEff_E14_Fire2(O_WRK* op)
         
         op->loz    = loz;
         
-        op->lkwkp  = (unsigned char*)plp;
+        op->lkwkp  = S32((unsigned char*)plp);
         op->lkono  = 3;
         
         op->sxb    = 2.0f;
@@ -4301,7 +4301,7 @@ void bhEff_E14_Fire2(O_WRK* op)
 
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -4396,12 +4396,12 @@ void bhEff_E14_Mucus(O_WRK* op)
         {
             if (((ep->flg & 0x1)) && (ep->id == 14))
             {
-                op->lkwkp = (unsigned char*)ep;
+                op->lkwkp = S32((unsigned char*)ep);
                 break;
             }
         }
 
-        op->func   = (void*)bhEff_E14_MucusDraw;
+        op->func   = S32((void*)bhEff_E14_MucusDraw);
         
         op->mode0++;
     case 1:
@@ -4430,7 +4430,7 @@ void bhEff_E14_Mucus(O_WRK* op)
         return;
     }
 
-    if (op->lkwkp == NULL) 
+    if (P32(unsigned char *, op->lkwkp) == NULL) 
     {
         return;
     }
@@ -4457,9 +4457,9 @@ void bhEff_E14_Mucus(O_WRK* op)
     op->tv[3].z = op->pz - v.z;
     }
 
-    opp = (O_WRK*)op->lkwkp;
+    opp = (O_WRK*)P32(unsigned char *, op->lkwkp);
     
-    njSetMatrix(NULL, &opp->mlwP->owP[op->lkono].mtx);
+    njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, opp->mlwP)->owP)[op->lkono].mtx);
 
     njTranslate(NULL, op->sx, op->sy, 0);
     njRotateZ(NULL, op->ax);
@@ -4484,7 +4484,7 @@ void bhEff_E14_Mucus(O_WRK* op)
 
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -4499,7 +4499,7 @@ void bhEff_E14_MucusDraw(O_WRK* op)
     } 
     else
     {
-        njSetMatrix(NULL, cam.mtx);
+        njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
         
         njTextureFilterMode(1);
         
@@ -4509,7 +4509,7 @@ void bhEff_E14_MucusDraw(O_WRK* op)
         njColorBlendingMode(0, op->bl_src);
         njColorBlendingMode(1, op->bl_dst);
         
-        njDrawTexture3DEx(op->tvp, op->pn, 1);
+        njDrawTexture3DEx(P32(NJS_TEXTURE_VTX *, op->tvp), op->pn, 1);
         
         njColorBlendingMode(0, 8);
         njColorBlendingMode(1, 6);
@@ -4522,7 +4522,7 @@ void bhEff_DamagePoint(O_WRK* op)
     switch (op->mode0) 
     {                            
     case 0:
-        op->func = (void*)bhEff_DamagePointDraw;
+        op->func = S32((void*)bhEff_DamagePointDraw);
         
         op->ct0 = 5;
         
@@ -4564,7 +4564,7 @@ void bhEff_DamagePoint(O_WRK* op)
     
     if (sys->ef_fncn < 128) 
     {
-        sys->ef_fnc[sys->ef_fncn] = op;
+        sys->ef_fnc[sys->ef_fncn] = S32(op);
         
         sys->ef_fncn++;
     }
@@ -4575,7 +4575,7 @@ void bhEff_DamagePointDraw(O_WRK* op)
 {
     NJS_POINT2 pos;
 
-    njProjectScreen(cam.mtx, (NJS_POINT3*)&op->px, &pos);
+    njProjectScreen(P32(float (*)[16], cam.mtx), (NJS_POINT3*)&op->px, &pos);
 }
 
 // 100% matching!
@@ -4587,7 +4587,7 @@ void bhEff_Draw3DSprite(O_WRK* op)
 
     njPushMatrixEx();
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njFogDisable();
 
@@ -4607,7 +4607,7 @@ void bhEff_Draw3DSprite(O_WRK* op)
     }
     else 
     {
-        njSetTexture(op->txp[0]);
+        njSetTexture(P32(NJS_TEXLIST *, op->txp[0]));
         njSetTextureNum(op->tex_id + op->ani_ct);
     }
 
@@ -4620,21 +4620,21 @@ void bhEff_Draw3DSprite(O_WRK* op)
         njTranslateEx((NJS_POINT3*)&op->px);
         njRotateEx((Angle*)&op->ax, 0);
         
-        njGetMatrix(op->mtx);
+        njGetMatrix(P32(float (*)[16], op->mtx));
     }
     else
     {
-        opp = (O_WRK*)op->lkwkp;
+        opp = (O_WRK*)P32(unsigned char *, op->lkwkp);
         
-        njSetMatrix(op->mtx, &opp->mlwP->owP[op->lkono].mtx);
+        njSetMatrix(P32(float (*)[16], op->mtx), &P32(struct O_WORK *, P32(struct ML_WORK *, opp->mlwP)->owP)[op->lkono].mtx);
         
-        njTranslate(op->mtx, op->lox, op->loy, op->loz);
-        njRotateXYZ(op->mtx, op->ax, op->ay, op->az);
+        njTranslate(P32(float (*)[16], op->mtx), op->lox, op->loy, op->loz);
+        njRotateXYZ(P32(float (*)[16], op->mtx), op->ax, op->ay, op->az);
     }
 
     njPopMatrixEx();
     
-    njMultiMatrix(NULL, op->mtx);
+    njMultiMatrix(NULL, P32(float (*)[16], op->mtx));
 
     if ((op->flg & 0x100000))
     {
@@ -4659,13 +4659,13 @@ void bhEff_Draw3DSprite(O_WRK* op)
 
     if ((op->flg & 0x20000)) 
     {
-        njCalcPoint(NULL, (NJS_POINT3*)&op->tvp[0].x, &pa);
-        njCalcPoint(NULL, (NJS_POINT3*)&op->tvp[1].x, &pb);
-        njCalcPoint(NULL, (NJS_POINT3*)&op->tvp[2].x, &pc);
+        njCalcPoint(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[0].x, &pa);
+        njCalcPoint(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[1].x, &pb);
+        njCalcPoint(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[2].x, &pc);
         
-        njProjectScreen(NULL, (NJS_POINT3*)&op->tvp[0].x, (NJS_POINT2*)&pa);
-        njProjectScreen(NULL, (NJS_POINT3*)&op->tvp[1].x, (NJS_POINT2*)&pb);
-        njProjectScreen(NULL, (NJS_POINT3*)&op->tvp[2].x, (NJS_POINT2*)&pc);
+        njProjectScreen(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[0].x, (NJS_POINT2*)&pa);
+        njProjectScreen(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[1].x, (NJS_POINT2*)&pb);
+        njProjectScreen(NULL, (NJS_POINT3*)&P32(NJS_TEXTURE_VTX *, op->tvp)[2].x, (NJS_POINT2*)&pc);
         
         njGetPlaneNormal2(&pa, &pb, &pc, &vec);
         
@@ -4685,7 +4685,7 @@ void bhEff_Draw3DSprite(O_WRK* op)
     njColorBlendingMode(0, op->bl_src);
     njColorBlendingMode(1, op->bl_dst);
     
-    njDrawTexture3DEx(op->tvp, op->pn, 1);
+    njDrawTexture3DEx(P32(NJS_TEXTURE_VTX *, op->tvp), op->pn, 1);
     
     njColorBlendingMode(0, 8);
     njColorBlendingMode(1, 6);
@@ -4815,7 +4815,7 @@ void bhClrEff_YG()
                 break;
             case 254:
             case 260:
-                *(int*)opp->exp0 = 0;
+                *(int*)P32(unsigned char *, opp->exp0) = 0;
                 
                 opp->flg = 0;
                 break;

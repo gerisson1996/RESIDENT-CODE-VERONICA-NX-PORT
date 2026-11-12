@@ -37,26 +37,26 @@ void bhEne13B(BH_PWORK* epw)
 
     bhEne13B_Mode0[epw->mode0](epw);
 
-    if ((((BH_PWORK*)epw->lkwkp)->stflg & 0x1000000))
+    if ((((BH_PWORK*)P32(unsigned char *, epw->lkwkp))->stflg & 0x1000000))
     {
         int i;
 
         epw->stflg |= 0x1000000;
 
-        for (i = 0; i < epw->mlwP->obj_num; i++)
+        for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++)
         {
-            EXP0_ATR(i)->flg = 0;
+            P32(ATR_WORK*, EXP0_ATR(i))->flg = 0;
         }
     }
 
-	owk = epw->mlwP->owP;
+	owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
 
-    for (i = 0; i < epw->mlwP->obj_num; i++, owk++)
+    for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++, owk++)
     {
         *EXP0_P3(i) = *(NJS_POINT3*)&owk->mtx[12];
     }
 
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 
     bhCalcModel(epw);
 
@@ -95,33 +95,33 @@ void bhEne13B_Init(BH_PWORK* epw)
 
     epw->frm_no = 0;
 
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 
     bhCalcModel(epw);
 
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(520, 8);
+        epw->exp0 = S32(bhEne_CallocWork(520, 8));
 
-        for (i = 0; i < epw->mlwP->obj_num; i++)
+        for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++)
         {
-            EXP0_ATR(i) = &sys->mwalp[sys->mwal_n];
+            EXP0_ATR(i) = S32(&sys->mwalp[sys->mwal_n]);
 
             sys->mwal_n++;
 
-            EXP0_ATR(i)->flg = 0;
+            P32(ATR_WORK*, EXP0_ATR(i))->flg = 0;
 
-            EXP0_ATR(i)->type = 3;
+            P32(ATR_WORK*, EXP0_ATR(i))->type = 3;
 
-            EXP0_ATR(i)->w = 2.0f;
-            EXP0_ATR(i)->h = 1.0f;
-            EXP0_ATR(i)->d = 0;
+            P32(ATR_WORK*, EXP0_ATR(i))->w = 2.0f;
+            P32(ATR_WORK*, EXP0_ATR(i))->h = 1.0f;
+            P32(ATR_WORK*, EXP0_ATR(i))->d = 0;
 
-            EXP0_ATR(i)->attr = 0;
+            P32(ATR_WORK*, EXP0_ATR(i))->attr = 0;
 
-            EXP0_ATR(i)->px = epw->mlwP->owP->mtx[12];
-            EXP0_ATR(i)->py = epw->mlwP->owP->mtx[13];
-            EXP0_ATR(i)->pz = epw->mlwP->owP->mtx[14];
+            P32(ATR_WORK*, EXP0_ATR(i))->px = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12];
+            P32(ATR_WORK*, EXP0_ATR(i))->py = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
+            P32(ATR_WORK*, EXP0_ATR(i))->pz = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[14];
         }
     }
 }
@@ -170,14 +170,14 @@ void bhEne13B_MV01(BH_PWORK* epw)
     case 1:
         if (((epw->mtn_no == 5) && (epw->frm_no == 3276800)) || ((epw->mtn_no == 7) && (epw->frm_no == 3801088)) || ((epw->mtn_no == 9) && (epw->frm_no == 3276800)))
         {
-            bhEne13_SetCamera((BH_PWORK*)epw->lkwkp, 3.2f);
+            bhEne13_SetCamera((BH_PWORK*)P32(unsigned char *, epw->lkwkp), 3.2f);
 
-            bhEne_CallSE(epw, (NJS_POINT3*)&epw->mlwP->owP[18].mtx[12], 74512);
+            bhEne_CallSE(epw, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[18].mtx[12], 74512);
         }
 
         if (((epw->mtn_no == 4) && (epw->frm_no == 1507328)) || ((epw->mtn_no == 6) && (epw->frm_no == 1507328)) || ((epw->mtn_no == 8) && (epw->frm_no == 1507328)))
         {
-            bhEne_CallSE(epw, (NJS_POINT3*)&epw->mlwP->owP[18].mtx[12], 74511);
+            bhEne_CallSE(epw, (NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[18].mtx[12], 74511);
         }
 
         switch (epw->mtn_no)
@@ -282,19 +282,19 @@ void bhEne13B_MV01(BH_PWORK* epw)
 
         if (epw->ct0 != 0)
         {
-			owk = &epw->mlwP->owP[epw->mlwP->obj_num] - 1;
+			owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[P32(struct ML_WORK *, epw->mlwP)->obj_num] - 1;
 
-            for (i = epw->mlwP->obj_num - 1; i > 0; i--, owk--)
+            for (i = P32(struct ML_WORK *, epw->mlwP)->obj_num - 1; i > 0; i--, owk--)
             {
                 if ((epw->ct0 != 0) && ((plp->mode0 != 3) && (plp->mode0 != 4) && (plp->mode0 != 6)) && (bhEne_AttackHitCheck(plp, (NJS_POINT3*)&owk->mtx[12], 4.0f)))
                 {
-                    p1.x = epw->mlwP->owP->mtx[12];
-                    p1.y = epw->mlwP->owP->mtx[13];
-                    p1.z = epw->mlwP->owP->mtx[14];
+                    p1.x = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[12];
+                    p1.y = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[13];
+                    p1.z = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)->mtx[14];
 
-					x = epw->mlwP->owP[i].mtx[12];
-					y = epw->mlwP->owP[i].mtx[13];
-					z = epw->mlwP->owP[i].mtx[14];
+					x = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[i].mtx[12];
+					y = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[i].mtx[13];
+					z = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[i].mtx[14];
 
 					plp->dvx = EXP0_P3(i)->x - x;
 					plp->dvy = EXP0_P3(i)->y - y;
@@ -363,12 +363,12 @@ void bhEne13B_MV01(BH_PWORK* epw)
                         plp->mode3 = 0;
                     }
 
-                    bhEne13_PlayerControl((BH_PWORK*)epw->lkwkp);
+                    bhEne13_PlayerControl((BH_PWORK*)P32(unsigned char *, epw->lkwkp));
 
                     epw->ct0 = 0;
                 }
 
-                ep = bhEne13_GetChild((BH_PWORK*)epw->lkwkp, &num);
+                ep = bhEne13_GetChild((BH_PWORK*)P32(unsigned char *, epw->lkwkp), &num);
 
                 for (j = 0; j < num; j++, ep++)
                 {
@@ -416,9 +416,9 @@ void bhEne13B_Die(BH_PWORK* epw)
     epw->stflg |= 0x1000000;
     epw->flg   |= 0x2;
 
-    for (i = 0; i < epw->mlwP->obj_num; i++)
+    for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++)
     {
-        EXP0_ATR(i)->flg = 0;
+        P32(ATR_WORK*, EXP0_ATR(i))->flg = 0;
     }
 
     epw->flg &= ~0x80000;
@@ -439,22 +439,22 @@ void bhEne13B_SetHittab(BH_PWORK* epw)
             EXP0_I(516) = 15;
         }
 
-        owk = epw->mlwP->owP;
+        owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
 
         for (i = 0; i < EXP0_I(516); i++, owk++)
         {
-            EXP0_ATR(i)->flg = 1;
+            P32(ATR_WORK*, EXP0_ATR(i))->flg = 1;
 
-            EXP0_ATR(i)->px = owk->mtx[12];
-            EXP0_ATR(i)->py = owk->mtx[13];
-            EXP0_ATR(i)->pz = owk->mtx[14];
+            P32(ATR_WORK*, EXP0_ATR(i))->px = owk->mtx[12];
+            P32(ATR_WORK*, EXP0_ATR(i))->py = owk->mtx[13];
+            P32(ATR_WORK*, EXP0_ATR(i))->pz = owk->mtx[14];
         }
     }
     else
     {
-        for (i = 0; i < epw->mlwP->obj_num; i++)
+        for (i = 0; i < P32(struct ML_WORK *, epw->mlwP)->obj_num; i++)
         {
-            EXP0_ATR(i)->flg = 0;
+            P32(ATR_WORK*, EXP0_ATR(i))->flg = 0;
         }
 
         EXP0_I(516) = 0;

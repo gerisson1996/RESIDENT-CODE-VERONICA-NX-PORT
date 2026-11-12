@@ -36,7 +36,7 @@ MoveMode2_proc bhEne08_MoveMode2[3] =
 void bhEne08(BH_PWORK* epw)
 {
     bhEne08_Mode0[epw->mode0](epw);
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     epw->ar = 5.0f;
     bhEne03_Collision(epw);
     bhEne_CheckEnemiesBall(epw);

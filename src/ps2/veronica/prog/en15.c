@@ -289,7 +289,7 @@ static float target_distance(BH_PWORK* epw)
     NJS_POINT3 epos;
     O_WORK* owk;
 
-    owk = epw->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
     epos.x = owk[1].mtx[12];
     epos.y = 0;
     epos.z = owk[1].mtx[14];
@@ -388,7 +388,7 @@ void bhEne15(BH_PWORK* epw)
     if (epw->mode0 == 5)
     {
         Mode_func[epw->mode0](epw);
-        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+        bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
         return;
     }
     
@@ -404,14 +404,14 @@ void bhEne15(BH_PWORK* epw)
             Mode_func[epw->mode0](epw);
         }
         
-        owk = epw->mlwP->owP;
+        owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
         epw->watr.c1 = *(NJS_POINT3*)&owk[4].mtx[12];
         epw->watr.c1.y -= 1.0f;
         
-        owk = epw->mlwP->owP;
+        owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
         epw->watr.c2 = *(NJS_POINT3*)&owk[20].mtx[12];
         
-        njAddVector(&epw->watr.c2, (NJS_VECTOR*)&(epw->mlwP->owP[23].mtx[12]));
+        njAddVector(&epw->watr.c2, (NJS_VECTOR*)&(P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[23].mtx[12]));
         epw->watr.c2.x /= 2.0f;
         epw->watr.c2.y /= 2.0f;
         epw->watr.c2.z /= 2.0f;
@@ -430,17 +430,17 @@ static void Init(BH_PWORK* epw)
 {   
     int i;
     
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhGetFreeMemory(100, 32);
-        if (epw->exp0 == NULL)
+        epw->exp0 = S32(bhGetFreeMemory(100, 32));
+        if (P32(unsigned char *, epw->exp0) == NULL)
         {
             sprintf(dbgout_buf, "Can't Get WorkMemory!\n");
             write(1, dbgout_buf, sizeof(dbgout_buf));
         }
     }
     
-    if (epw->exp0 != NULL)
+    if (P32(unsigned char *, epw->exp0) != NULL)
     {
         EXP0_S(0x58) = -1;
         EXP0_S(0x5C) = 0;
@@ -459,7 +459,7 @@ static void Init(BH_PWORK* epw)
     epw->ad = 0.0f;
     epw->car = 2.5f;
     epw->cah = 20.0f;
-    epw->cpcl = CapColTab;
+    epw->cpcl = S32(CapColTab);
     for (i = 0; i < 64; i++)
     {
         epw->dam[i] = 0;
@@ -478,9 +478,9 @@ static void Init(BH_PWORK* epw)
     epw->ct1 = 0;
     epw->ct2 = 0;
     epw->ct0 = 0;
-    epw->mlwP->objP = epw->mbp[0];
-    epw->obj_a = epw->mbp[0];
-    epw->obj_b = epw->mbp[0];
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
     epw->mdflg &= ~2;
     epw->shp_ct = 0.0f;
     if (!(epw->flg & 0x800))
@@ -498,7 +498,7 @@ static void Init(BH_PWORK* epw)
     epw->lok_jno = 4;
     epw->mtn_md = 0;
     epw->mtn_no = -1;
-    epw->mtn_tp = flip_tree;
+    epw->mtn_tp = S32(flip_tree);
     epw->mtn_add = 65536;
     epw->ct2 = 0;
     epw->mode0 = 1;
@@ -511,7 +511,7 @@ static void Init(BH_PWORK* epw)
     epw->mtn_add = 65536;
     epw->mtn_no = EXP0_S(0x58);
     
-    if (bhSetMotion(epw, 0, epw->mtn_md, epw->mtn_tp) != 0)
+    if (bhSetMotion(epw, 0, epw->mtn_md, P32(unsigned char *, epw->mtn_tp)) != 0)
     {
         epw->flg |= 0x2000000;
     } else {
@@ -977,7 +977,7 @@ static void Attack(BH_PWORK* epw)
                     _p.y = 0;
                     _p.z = 0;
                     
-                    njCalcPoint(&epw->mlwP->owP[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, &col.cap.c1);
+                    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, &col.cap.c1);
                     
                     if (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1] != -1) 
                     {
@@ -987,13 +987,13 @@ static void Attack(BH_PWORK* epw)
                         _p.y = 0;
                         _p.z = 0;
                         
-                        njCalcPoint(&epw->mlwP->owP[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1]].mtx, &_p, &col.cap.c2);
+                        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1]].mtx, &_p, &col.cap.c2);
                     } 
                     else 
                     {
                         NJS_POINT3 _p = { 0, 8.0f, 0 }; 
                         
-                        njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, &col.cap.c2);
+                        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, &col.cap.c2);
                     }
                 } 
                 else
@@ -1017,7 +1017,7 @@ static void Attack(BH_PWORK* epw)
                         f_idx = left_idx;
                     }
 
-                    col.box.v[b_idx[0]] = col.box.v[b_idx[1]] = *((NJS_POINT3*)epw->exp0 + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 5));
+                    col.box.v[b_idx[0]] = col.box.v[b_idx[1]] = *((NJS_POINT3*)P32(unsigned char *, epw->exp0) + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 5));
                     
                     col.box.v[b_idx[0]].y += attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
                     col.box.v[b_idx[1]].y -= attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
@@ -1029,7 +1029,7 @@ static void Attack(BH_PWORK* epw)
                         _p.y = 0;
                         _p.z = 0;
                         
-                        njCalcPoint(&epw->mlwP->owP[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, &col.box.v[b_idx[3]]);
+                        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, &col.box.v[b_idx[3]]);
                     }
                     
                     col.box.v[b_idx[2]] = col.box.v[b_idx[3]];
@@ -1039,7 +1039,7 @@ static void Attack(BH_PWORK* epw)
 
                     if (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1] != -1)
                     {
-                        col.box.v[f_idx[0]] = col.box.v[f_idx[1]] = *((NJS_POINT3*)epw->exp0 + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1] - 5));
+                        col.box.v[f_idx[0]] = col.box.v[f_idx[1]] = *((NJS_POINT3*)P32(unsigned char *, epw->exp0) + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1] - 5));
                         
                         col.box.v[f_idx[0]].y += attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
                         col.box.v[f_idx[1]].y -= attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
@@ -1051,7 +1051,7 @@ static void Attack(BH_PWORK* epw)
                             _p.y = 0;
                             _p.z = 0;
                             
-                            njCalcPoint(&epw->mlwP->owP[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1]].mtx, &_p, &col.box.v[f_idx[3]]);
+                            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i + 1]].mtx, &_p, &col.box.v[f_idx[3]]);
                         }
 
                         col.box.v[f_idx[2]] = col.box.v[f_idx[3]];
@@ -1062,7 +1062,7 @@ static void Attack(BH_PWORK* epw)
                     else 
                     {
                         
-                        col.box.v[f_idx[0]] = col.box.v[f_idx[1]] = *((NJS_POINT3*)epw->exp0 + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 4));
+                        col.box.v[f_idx[0]] = col.box.v[f_idx[1]] = *((NJS_POINT3*)P32(unsigned char *, epw->exp0) + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 4));
 
                         col.box.v[f_idx[0]].y += attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
                         col.box.v[f_idx[1]].y -= attack_col_tab[MTN_NO_CHECK(epw)].volume / 2.0f;
@@ -1072,7 +1072,7 @@ static void Attack(BH_PWORK* epw)
                             
                             _p.x = vane_width;
                             
-                            njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, &col.box.v[f_idx[3]]);
+                            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, &col.box.v[f_idx[3]]);
                         }
 
                         col.box.v[f_idx[2]] = col.box.v[f_idx[3]];
@@ -1145,7 +1145,7 @@ static void Attack(BH_PWORK* epw)
                     {
                         plp->day += 32768;
                         
-                        plp->mnwP = epw->mnwP;
+                        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                         
                         EXP0_S(90) |= 0x1;
                         
@@ -1167,7 +1167,7 @@ static void Attack(BH_PWORK* epw)
                     } 
                     else
                     {
-                        plp->mnwP = epw->mnwP;
+                        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                         
                         EXP0_S(90) |= 0x1;
                         
@@ -1200,8 +1200,8 @@ static void Attack(BH_PWORK* epw)
             
             _p.x = 0; 
             
-            njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, &splash_v);
-            njSubVector(&splash_v, (NJS_VECTOR*)epw->exp0 + 6);
+            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, &splash_v);
+            njSubVector(&splash_v, (NJS_VECTOR*)P32(unsigned char *, epw->exp0) + 6);
             
             SpecialAttack(epw, &splash_v);
         }
@@ -1216,7 +1216,7 @@ static void Attack(BH_PWORK* epw)
                 _p.y = 0;
                 _p.z = 0;
                 
-                njCalcPoint(&epw->mlwP->owP[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, (NJS_POINT3*)epw->exp0 + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 5));
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i]].mtx, &_p, (NJS_POINT3*)P32(unsigned char *, epw->exp0) + (attack_col_tab[MTN_NO_CHECK(epw)].obj_no[i] - 5));
             }
             
             {
@@ -1224,11 +1224,11 @@ static void Attack(BH_PWORK* epw)
                 
                 _p.x = 0; 
                 
-                njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, (NJS_POINT3*)epw->exp0 + 6);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, (NJS_POINT3*)P32(unsigned char *, epw->exp0) + 6);
             }
         }
 
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1)) 
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1)) 
         {
             epw->ct0 = (rand() % 150) + 30;
             
@@ -1286,7 +1286,7 @@ static void Throw(BH_PWORK* epw)
                 {
                     if (bhCdirCheck(plp->ay, epw->ay) != 0)
                     {
-                        plp->mnwP = epw->mnwP;
+                        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                         
                         EXP0_S(90) |= 0x1;
                         
@@ -1308,7 +1308,7 @@ static void Throw(BH_PWORK* epw)
                     } 
                     else
                     {
-                        plp->mnwP = epw->mnwP;
+                        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
                         
                         EXP0_S(90) |= 0x1;
                         
@@ -1348,7 +1348,7 @@ static void Throw(BH_PWORK* epw)
             {
 	            NJS_POINT3 pos, _p  = { 0.0f, 8.0f, 0.0f }; 
 
-                njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, &pos);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, &pos);
                 
                 if (bhEne_AttackHitCheck(plp, &pos, 3.0f))
                 {
@@ -1411,7 +1411,7 @@ static void Throw(BH_PWORK* epw)
                 epw->flg |= 0x40;
             }
             
-            if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+            if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
             {
                 epw->ct2 = ((rand() % 10) * 20) + 15;
                 
@@ -1439,13 +1439,13 @@ static void Damage(BH_PWORK* epw)
 
         if (epw->mtn_no == 10)
         {
-            if (((epw->frm_no / 65536) >= 29) && ((epw->frm_no / 65536) < epw->mnwP[epw->mtn_no].frm_num))
+            if (((epw->frm_no / 65536) >= 29) && ((epw->frm_no / 65536) < P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num))
             {
                 bhEne15_RotChar(epw, EXP0_I(0x54), 910);
             }
         }
         
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
             epw->mode0 = 1;
             epw->mode1 = 3;
@@ -1464,7 +1464,7 @@ static void Die(BH_PWORK* epw)
     if (epw->mtn_no == 11)
     {
         vec = *(NJS_VECTOR*)&epw->px;
-        njSubVector(&vec, (NJS_VECTOR*)&epw->mlwP->owP[4].mtx[12]);
+        njSubVector(&vec, (NJS_VECTOR*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[4].mtx[12]);
         vec.y = 0.0f;
         if (njScalor(&vec) > 3.8f)
         {
@@ -1475,7 +1475,7 @@ static void Die(BH_PWORK* epw)
             epw->ar = 3.8f;
         }
         
-        if ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1))
+        if ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))
         {
             epw->flg &= ~0x40;
             epw->flg |= 2;
@@ -1514,7 +1514,7 @@ static int NearestCapsule(BH_PWORK* epw, NJS_VECTOR* pos, NJS_CAPSULE* dest, sho
 	short _jnt;
 	NJS_POINT3 p;
    
-    ctab = epw->cpcl;
+    ctab = P32(struct CPCL *, epw->cpcl);
     notop = 1;
 
     while ((ctab->jnt_a != 0) && (ctab->jnt_b != 0) && (ctab->cap_r != 0))
@@ -1522,14 +1522,14 @@ static int NearestCapsule(BH_PWORK* epw, NJS_VECTOR* pos, NJS_CAPSULE* dest, sho
         if (ctab->jnt_a != ctab->jnt_b)
         {
             _jnt = ctab->jnt_a;
-            cap.c1 = *(NJS_POINT3*)&epw->mlwP->owP[ctab->jnt_a].mtx[12];
-            cap.c2 = *(NJS_POINT3*)&epw->mlwP->owP[ctab->jnt_b].mtx[12];
+            cap.c1 = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[ctab->jnt_a].mtx[12];
+            cap.c2 = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[ctab->jnt_b].mtx[12];
             cap.r = 0.1f * ctab->cap_r;
         } 
         else
         {
             _jnt = ctab->jnt_a;
-            cap.c1 = *(NJS_POINT3*)&epw->mlwP->owP[ctab->jnt_a].mtx[12];
+            cap.c1 = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[ctab->jnt_a].mtx[12];
             cap.r = 0.1f * ctab->cap_r;
             ctab++;
             cap.c2.x = 0.1f * ctab->jnt_a;
@@ -1590,7 +1590,7 @@ static void CheckDamage(BH_PWORK* epw)
         ofs.y = 0.1f * CapColTab[1].jnt_b;
         ofs.z = 0.1f * CapColTab[1].cap_r;
         
-        njCalcPoint(&epw->mlwP->owP[3].mtx, &ofs, &pos);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[3].mtx, &ofs, &pos);
         njSubVector(&pos, (NJS_VECTOR*)&epw->dpx);
         
         if (njScalor(&pos) < (3.0f + (0.1f * CapColTab[0].cap_r))) 
@@ -1643,7 +1643,7 @@ static void CheckDamage(BH_PWORK* epw)
         
         npDistanceP2C((NJS_POINT3*)&epw->dpx, &cap, &ofp);
         
-        njSubVector(&ofp, (NJS_VECTOR*)&epw->mlwP->owP[jnt].mtx[12]);
+        njSubVector(&ofp, (NJS_VECTOR*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[jnt].mtx[12]);
          
         bhEne_SetFireEffect(epw, jnt, &ofp, 2.0f, 90);
     }
@@ -1873,7 +1873,7 @@ static int GetRelay(BH_PWORK* epw, MTN_RELAY** ret)
     {
         if ((epw->mtn_no == mtn_relay[i].old_mtn_no) && (EXP0_S(88) == mtn_relay[i].next_mtn_no))
         { 
-            if (((epw->frm_no / 65536) == mtn_relay[i].from) || ((mtn_relay[i].from == -1) && ((epw->frm_no / 65536) == (epw->mnwP[epw->mtn_no].frm_num - 1))))
+            if (((epw->frm_no / 65536) == mtn_relay[i].from) || ((mtn_relay[i].from == -1) && ((epw->frm_no / 65536) == (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))))
             {
                 *ret = &mtn_relay[i];
                 
@@ -1888,7 +1888,7 @@ static int GetRelay(BH_PWORK* epw, MTN_RELAY** ret)
     {
         if ((epw->mtn_no == mtn_relay_relay[i].old_mtn_no) && (EXP0_S(88) == mtn_relay_relay[i].next_mtn_no))
         {
-            if (((epw->frm_no / 65536) == mtn_relay_relay[i].relay->from) || ((mtn_relay_relay[i].relay->from == -1) && ((epw->frm_no / 65536) >= (epw->mnwP[epw->mtn_no].frm_num - 1))))
+            if (((epw->frm_no / 65536) == mtn_relay_relay[i].relay->from) || ((mtn_relay_relay[i].relay->from == -1) && ((epw->frm_no / 65536) >= (P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1))))
             {
                 *ret = mtn_relay_relay[i].relay;
                 
@@ -1921,7 +1921,7 @@ static void SetMtn(BH_PWORK* epw)
                 epw->mtn_add = 65536;
                 epw->mtn_no  = relay->next_mtn_no;
 
-                if (bhSetMotion(epw, 0, epw->mtn_md, epw->mtn_tp) != 0)
+                if (bhSetMotion(epw, 0, epw->mtn_md, P32(unsigned char *, epw->mtn_tp)) != 0)
                 {
                     epw->flg |=  0x2000000;
                 }
@@ -1948,7 +1948,7 @@ static void SetMtn(BH_PWORK* epw)
             epw->mtn_add = 65536;
             epw->mtn_no  = EXP0_S(88);
 
-            if (bhSetMotion(epw, 0, epw->mtn_md, epw->mtn_tp) != 0)
+            if (bhSetMotion(epw, 0, epw->mtn_md, P32(unsigned char *, epw->mtn_tp)) != 0)
             {
                 epw->flg |=  0x2000000;
             }
@@ -1962,7 +1962,7 @@ static void SetMtn(BH_PWORK* epw)
         }
     }
 
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
 }
 
 // 100% matching!
@@ -1980,7 +1980,7 @@ static void SetPlyMtn(unsigned int mtn_no)
     plp->mtn_add = 65536;
     plp->mtn_no = mtn_no;
     
-    if (bhSetMotion(plp, 0, plp->mtn_md, plp->mtn_tp) != 0)
+    if (bhSetMotion(plp, 0, plp->mtn_md, P32(unsigned char *, plp->mtn_tp)) != 0)
     {
         plp->flg |= 0x2000000;
     } 
@@ -2080,11 +2080,11 @@ int bhEne15_AttackPlayerCC(NJS_CAPSULE* cap, NJS_VECTOR* attack_v, int damage)
         hit_p.y = (cap->c1.y + cap->c2.y) / 2.0f;
         hit_p.z = (cap->c1.z + cap->c2.z) / 2.0f;
 
-        for (j = 0; j < plp->mlwP->obj_num; j++)
+        for (j = 0; j < P32(struct ML_WORK *, plp->mlwP)->obj_num; j++)
         {
-            tar_p.x = plp->mlwP->owP[j].mtx[12];
-            tar_p.y = plp->mlwP->owP[j].mtx[13];
-            tar_p.z = plp->mlwP->owP[j].mtx[14];
+            tar_p.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[12];
+            tar_p.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[13];
+            tar_p.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[14];
             if (j == 0) 
             {
                 latest = njDistanceP2P(&hit_p, &tar_p);
@@ -2135,11 +2135,11 @@ int bhEne15_AttackPlayerBC(NJS_BOX* box, NJS_VECTOR* attack_v, int damage)
         hit_p.y = (box->v[6].y + (box->v[5].y + (box->v[1].y + box->v[2].y))) / 4.0f;
         hit_p.z = (box->v[6].z + (box->v[5].z + (box->v[1].z + box->v[2].z))) / 4.0f;
 
-        for (j = 0; j < plp->mlwP->obj_num; j++)
+        for (j = 0; j < P32(struct ML_WORK *, plp->mlwP)->obj_num; j++)
         {
-            tar_p.x = plp->mlwP->owP[j].mtx[12];
-            tar_p.y = plp->mlwP->owP[j].mtx[13];
-            tar_p.z = plp->mlwP->owP[j].mtx[14];
+            tar_p.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[12];
+            tar_p.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[13];
+            tar_p.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[j].mtx[14];
             if (j == 0) 
             {
                 latest = njDistanceP2P(&hit_p, &tar_p);
@@ -2179,9 +2179,9 @@ int bhEne15_AttackPlayerSS(NJS_SPHERE* spr, NJS_VECTOR* attack_v, int damage)
 {
     NJS_SPHERE plcol;
     
-    plcol.c.x = plp->mlwP->owP[5].mtx[12];
-    plcol.c.y = plp->mlwP->owP[5].mtx[13];
-    plcol.c.z = plp->mlwP->owP[5].mtx[14];
+    plcol.c.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+    plcol.c.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+    plcol.c.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
     plcol.r = 2.0f;
 
     if (njCollisionCheckSS(&plcol, spr) != 0)
@@ -2341,7 +2341,7 @@ static void SpecialAttack(BH_PWORK* epw, NJS_VECTOR* splash_v)
         sys->ef.flg = 1;
         {
             NJS_POINT3 _p = { 0.0f, 8.0f, 0.0f };
-            njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, (NJS_POINT3*)&sys->ef.px);
+            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, (NJS_POINT3*)&sys->ef.px);
         }
 
         sys->ef.ay = 0;
@@ -2353,10 +2353,10 @@ static void SpecialAttack(BH_PWORK* epw, NJS_VECTOR* splash_v)
         if (eno != -1)
         {
             eff[eno].stflg |= 0x20;
-            eff[eno].txp[0] = epw->mlwP->texP;
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
             eff[eno].tex_id = eff_info[sys->ef.type].texid;
             eff[eno].mode3 = 0;
-            eff[eno].exp0 = (unsigned char*)epw;            
+            eff[eno].exp0 = S32((unsigned char*)epw);            
             *(NJS_POINT3*)&eff[eno].xn = *splash_v;        
         }
     }
@@ -2380,9 +2380,9 @@ static void _bhEne_SetPoison(BH_PWORK* epw, NJS_VECTOR* ofp, short ry)
     if (eno != -1)
     {
         eff[eno].stflg |= 0x20;
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         eff[eno].tex_id = eff_info[sys->ef.type].texid;
-        eff[eno].exp0 = (unsigned char*)epw;
+        eff[eno].exp0 = S32((unsigned char*)epw);
         eff[eno].xn = eff[eno].yn = eff[eno].zn = 0.0f;
     }
 
@@ -2399,10 +2399,10 @@ static void _bhEne_SetPoison(BH_PWORK* epw, NJS_VECTOR* ofp, short ry)
     if (eno != -1)
     {
         eff[eno].stflg |= 0x20;
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         eff[eno].tex_id = eff_info[sys->ef.type].texid;
         eff[eno].mode3 = 0;
-        eff[eno].exp0 = (unsigned char*)epw;
+        eff[eno].exp0 = S32((unsigned char*)epw);
         eff[eno].tv[0].x = 2.0f;
         eff[eno].tv[0].y = -1.0f;
         eff[eno].tv[1].x = 0.0f;
@@ -2426,9 +2426,9 @@ static void _bhEne_SetPoison(BH_PWORK* epw, NJS_VECTOR* ofp, short ry)
     if (eno != -1)
     {
         eff[eno].stflg |= 0x20;
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         eff[eno].tex_id = eff_info[sys->ef.type].texid;
-        eff[eno].exp0 = (unsigned char*)epw;
+        eff[eno].exp0 = S32((unsigned char*)epw);
         eff[eno].tv[0].x = 2.0f;
         eff[eno].tv[0].y = -1.0f;
         eff[eno].tv[1].x = 0.0f;
@@ -2474,9 +2474,9 @@ static void _bhEne_SetPoison2(O_WRK* op, int type, NJS_VECTOR* ofp, int param) /
     if (eno != -1)
     {
         eff[eno].stflg |= 0x20;
-        eff[eno].txp[0] = op->txp[0];
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, op->txp[0]));
         eff[eno].tex_id = eff_info[type].texid;
-        eff[eno].exp0 = op->exp0;
+        eff[eno].exp0 = S32(P32(unsigned char *, op->exp0));
         *(NJS_VECTOR*)&eff[eno].xn = *(NJS_VECTOR*)&op->xn;
     }
 }
@@ -2496,7 +2496,7 @@ void bhEne_SetPoison(BH_PWORK* epw, BT_WORK* bt)
     if (poison_eff_wait == 0)
     {
         poison_eff_wait = 15;
-        owk = &epw->mlwP->owP[epw->djnt_no];
+        owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no];
         if ((bt == NULL) || (epw->wpnr_no == 13) || (epw->wpnr_no == 10))
         {
             ps.x = epw->dpx - owk->mtx[12];
@@ -2555,7 +2555,7 @@ static void PoisonAttack(O_WRK* op)
 
     njSubVector(&attack_v, &col.c);
 
-    if (*(short*)(*(unsigned char**)(op->exp0 + 0x2F0) + 0x5A) & 1)
+    if (*(short*)(*(unsigned char**)(P32(unsigned char *, op->exp0) + 0x2F0) + 0x5A) & 1)
     {
         return;
     }
@@ -2571,7 +2571,7 @@ static void PoisonAttack(O_WRK* op)
     } 
     else
     {
-        if (*(short *)PS2_HOST((*(int *)(op->exp0 + 0x2F0) + 0x5C)) > 5)
+        if (*(short *)PS2_HOST((*(int *)(P32(unsigned char *, op->exp0) + 0x2F0) + 0x5C)) > 5)
         {
             if (njRandom() < 0.6)
             {
@@ -2580,7 +2580,7 @@ static void PoisonAttack(O_WRK* op)
         }
         else
         {
-            (*(short *)PS2_HOST((*(int *)(op->exp0 + 0x2F0) + 0x5C)))++;
+            (*(short *)PS2_HOST((*(int *)(P32(unsigned char *, op->exp0) + 0x2F0) + 0x5C)))++;
         }
 
         plp->flg |= 4;
@@ -2662,7 +2662,7 @@ void bhEff_E15_Poison(O_WRK* op)
 
         if ((op->type == 1) || (op->type == 2))
         {
-            RequestEnemySe(GetLocalEneNo((BH_PWORK*)op->exp0), (NJS_POINT3*)&op->px, 74505);
+            RequestEnemySe(GetLocalEneNo((BH_PWORK*)P32(unsigned char *, op->exp0)), (NJS_POINT3*)&op->px, 74505);
         }
 
         op->mode0++;
@@ -2785,7 +2785,7 @@ void bhEff_E15_Poison(O_WRK* op)
 
         if (sys->ef_trsn < 512) 
         {
-            sys->ef_trs[sys->ef_trsn] = op;
+            sys->ef_trs[sys->ef_trsn] = S32(op);
             sys->ef_trsn++;
         }
 
@@ -2872,10 +2872,10 @@ static int AbleToFall(BH_PWORK* pp)
 {
     O_WORK* owk;
 
-    owk = &pp->mlwP->owP[1];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[1];
 
-    if (((owk->mtx[12] <= rom->posp[1].px) || (owk->mtx[12] >= rom->posp[4].px))
-      || (owk->mtx[14] <= rom->posp[2].pz) || (owk->mtx[14] >= rom->posp[3].pz))
+    if (((owk->mtx[12] <= P32(struct POS *, rom->posp)[1].px) || (owk->mtx[12] >= P32(struct POS *, rom->posp)[4].px))
+      || (owk->mtx[14] <= P32(struct POS *, rom->posp)[2].pz) || (owk->mtx[14] >= P32(struct POS *, rom->posp)[3].pz))
         return 1;
 
     return 0;
@@ -2892,7 +2892,7 @@ static int _DrivePlayer(BH_PWORK* epw) // signature different from DWARF
 
     ans = 0;
 
-    ofs = plp->mlwP->owP[1].mtx[13] - plp->py;
+    ofs = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[1].mtx[13] - plp->py;
     njAddVector((NJS_VECTOR*)&plp->px, (NJS_VECTOR*)&plp->dvx);
 
     if (plp->py + ofs < 0.0f)
@@ -2972,7 +2972,7 @@ static void DrivePlayer(BH_PWORK* epw)
             break;
         }
         
-        plp->mnwP = epw->mnwP;
+        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
         EXP0_S(0x5A) |= 1;
         epw->mode3 = 3;
         plp->spd = plp->spd;
@@ -3022,7 +3022,7 @@ static void DrivePlayer(BH_PWORK* epw)
         break;
     }
 
-    if ((plp->frm_no / 65536) == plp->mnwP[plp->mtn_no].frm_num - 1) 
+    if ((plp->frm_no / 65536) == P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) 
     {
         plp->mtn_add = 0;
     }
@@ -3041,7 +3041,7 @@ static void FallingPlayer(BH_PWORK* epw)
     if (plp->py < -90.0f)
     {
         plp->hp = -1;
-        plp->mnwP = epw->mnwP;
+        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
         EXP0_S(0x5A) |= 1;
         epw->mode3 = 4;
         plp->spd = plp->spd;
@@ -3055,7 +3055,7 @@ static void FallingPlayer(BH_PWORK* epw)
         plp->stflg |= 0x50000;
     }
     
-    if ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num - 1))
+    if ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
     {
         plp->mtn_add = 0;
     }
@@ -3085,7 +3085,7 @@ static void SlidePlayer(BH_PWORK* epw)
             break;
         }
         
-        plp->mnwP = epw->mnwP;
+        plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
         
         EXP0_S(90) |= 0x1;
         
@@ -3111,7 +3111,7 @@ static void SlidePlayer(BH_PWORK* epw)
     
     bhAddSpeed(plp, 0);
 
-    if ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num - 1))
+    if ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
     {
         plp->mtn_add = 0;
     }
@@ -3149,7 +3149,7 @@ static void SlidePlayer(BH_PWORK* epw)
                 break;
             }
             
-            plp->mnwP = epw->mnwP;
+            plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
             
             EXP0_S(90) |= 0x1;
             
@@ -3211,7 +3211,7 @@ static void StandupPlayer(BH_PWORK* epw)
         plp->flg |= 0xC0000;
     }
     
-    if ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num - 1))
+    if ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
     {
         if (plp->mtn_no == 22)
         {
@@ -3223,7 +3223,7 @@ static void StandupPlayer(BH_PWORK* epw)
         } 
         else
         {
-            plp->mnwP = plp->mnwPb;
+            plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
             plp->mode0 = 1;
             plp->mode3 = 0;
             plp->mode2 = 0;
@@ -3270,7 +3270,7 @@ static void HoldPlayer(BH_PWORK* epw)
         _v.x *= 2.0f;
         _v.z *= 2.0f;
         
-        owk = epw->mlwP->owP;
+        owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
         pos.x = owk[1].mtx[12];
         pos.y = 0.0f;
         pos.z = owk[1].mtx[14];
@@ -3289,9 +3289,9 @@ static void FlyingPlayer(BH_PWORK* epw)
 	O_WORK* owk;
     NJS_POINT3 _p = { 0.0f, 8.0f, 0.0f };
 
-    njCalcPoint(&epw->mlwP->owP[10].mtx, &_p, &pos1);
+    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[10].mtx, &_p, &pos1);
     
-    owk = plp->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
     pos2.x = owk[1].mtx[12];
     pos2.y = owk[1].mtx[13];
     pos2.z = owk[1].mtx[14];
@@ -3310,7 +3310,7 @@ static void FallDiePlayer(BH_PWORK* epw)
     switch (plp->mode1)
     {
     case 0:
-        plp->mnwP = plp->mnwPb;
+        plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
         plp->flg &= ~0x310004;
         plp->flg &= ~0x118;
         plp->stflg &= ~0x10480;
@@ -3343,7 +3343,7 @@ static void DiePlayer(BH_PWORK* epw)
         plp->mode1++;
     }
     
-    if ((plp->frm_no / 65536) == (plp->mnwP[plp->mtn_no].frm_num - 1))
+    if ((plp->frm_no / 65536) == (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
     {
         EXP0_S(0x5A) &= ~1;
         plp->flg |= 2;
@@ -3434,7 +3434,7 @@ static void SetMince(BH_PWORK* epw, int type, int num)
         if (eno != -1)
         {
             eff[eno].stflg |= 0x20;
-            eff[eno].txp[0] = epw->txp[0];
+            eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, epw->txp[0]));
             eff[eno].tex_id = 1;
             *(NJS_POINT3*)&eff[eno].xn = *(NJS_POINT3*)&epw->dvx;
         }
@@ -3457,18 +3457,18 @@ static void CoreInit(BH_PWORK* epw)
     epw->shp_ct = 0.0f;
     epw->mtn_md = 0;
     epw->mtn_no = 0;
-    epw->mtn_tp = NULL;
+    epw->mtn_tp = S32(NULL);
     epw->mtn_add = 0;
     epw->hokan_rate = 0;
     epw->hokan_count = 0;
     epw->frm_no = 0;
     epw->mtn_add = 0;
-    ChangeAmbient(epw->mbp[0]->child->model->plist, 178);
-    ChangeAmbient(epw->mbp[1]->child->model->plist, 178);
-    ChangeAmbient(epw->mbp[2]->child->model->plist, 178);
-    epw->mlwP->objP = epw->mbp[0];
-    epw->obj_a = epw->mbp[0];
-    epw->obj_b = epw->mbp[1];
+    ChangeAmbient(P32(short *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(NJS_CNK_OBJECT *, epw->mbp[0])->child)->model)->plist), 178);
+    ChangeAmbient(P32(short *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(NJS_CNK_OBJECT *, epw->mbp[1])->child)->model)->plist), 178);
+    ChangeAmbient(P32(short *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(NJS_CNK_OBJECT *, epw->mbp[2])->child)->model)->plist), 178);
+    P32(struct ML_WORK *, epw->mlwP)->objP = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
     epw->shp_ct = 0.0f;
     epw->mode0++;
     epw->mode1 = 0;
@@ -3485,8 +3485,8 @@ static void CoreMove(BH_PWORK* epw)
             if (1000.0f < epw->shp_ct)
             {
                 epw->mode1 = 1;
-                epw->obj_a = epw->mbp[1];
-                epw->obj_b = epw->mbp[2];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[2]));
                 epw->ct0 = 0;
                 break;
             }
@@ -3506,8 +3506,8 @@ static void CoreMove(BH_PWORK* epw)
         case 2:
             if (epw->ct0++ == 3) {
                 epw->mode1 = 3;
-                epw->obj_a = epw->mbp[2];
-                epw->obj_b = epw->mbp[1];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[2]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
                 epw->shp_ct = 0.0f;
                 break;
             }
@@ -3517,8 +3517,8 @@ static void CoreMove(BH_PWORK* epw)
             if (1000.0f < epw->shp_ct)
             {
                 epw->mode1 = 4;
-                epw->obj_a = epw->mbp[1];
-                epw->obj_b = epw->mbp[0];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
                 epw->shp_ct = 0.0f;
                 break;
             }
@@ -3529,8 +3529,8 @@ static void CoreMove(BH_PWORK* epw)
             if (1000.0f < epw->shp_ct) 
             {
                 epw->mode1 = 0;
-                epw->obj_a = epw->mbp[0];
-                epw->obj_b = epw->mbp[1];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
                 epw->shp_ct = 0.0f;
                 break;
             }
@@ -3561,8 +3561,8 @@ static void CoreDie(BH_PWORK* epw)
             if (1000.0f < epw->shp_ct)
             {
                 epw->mode1 = 1;
-                epw->obj_a = epw->mbp[1];
-                epw->obj_b = epw->mbp[2];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[2]));
                 break;
             }
             epw->shp_ct += (400.0f / (epw->ct1 + 2));
@@ -3591,8 +3591,8 @@ static void CoreDie(BH_PWORK* epw)
             if (epw->ct0++ == 3)
             {
                 epw->mode1 = 3;
-                epw->obj_a = epw->mbp[2];
-                epw->obj_b = epw->mbp[1];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[2]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
                 epw->shp_ct = 0.0f;
             }
             break;
@@ -3601,8 +3601,8 @@ static void CoreDie(BH_PWORK* epw)
             if (1000.f < epw->shp_ct)
             {
                 epw->mode1 = 4;
-                epw->obj_a = epw->mbp[1];
-                epw->obj_b = epw->mbp[0];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
                 epw->shp_ct = 0.0f;
                 break;
             }
@@ -3612,8 +3612,8 @@ static void CoreDie(BH_PWORK* epw)
         case 4:
             if (1000.f < epw->shp_ct)
             {
-                epw->obj_a = epw->mbp[0];
-                epw->obj_b = epw->mbp[1];
+                epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+                epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
                 epw->shp_ct = 0.0f;
                 epw->mode1 = 0;
                 break;
@@ -3634,8 +3634,8 @@ static void CoreDie(BH_PWORK* epw)
                 }
                 epw->mode3++;
             }
-            ChangeAmbient(epw->obj_a->child->model->plist, epw->ct2);
-            ChangeAmbient(epw->obj_b->child->model->plist, epw->ct2);
+            ChangeAmbient(P32(short *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct cnkobj *, epw->obj_a)->child)->model)->plist), epw->ct2);
+            ChangeAmbient(P32(short *, P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct cnkobj *, epw->obj_b)->child)->model)->plist), epw->ct2);
 
             if (0 < epw->ct2 - 4)
             {
@@ -3652,8 +3652,8 @@ static void CoreDie(BH_PWORK* epw)
                 if (1000.f < epw->shp_ct)
                 {
                     epw->mode1 = 1;
-                    epw->obj_a = epw->mbp[1];
-                    epw->obj_b = epw->mbp[2];
+                    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[2]));
                     epw->ct0 = 0;
                     break;
                 }
@@ -3681,8 +3681,8 @@ static void CoreDie(BH_PWORK* epw)
                 if (1000.f < epw->shp_ct)
                 {
                     epw->mode1 = 4;
-                    epw->obj_a = epw->mbp[1];
-                    epw->obj_b = epw->mbp[0];
+                    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
+                    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
                     epw->shp_ct = 0.0f;
                     break;
                 }
@@ -3693,8 +3693,8 @@ static void CoreDie(BH_PWORK* epw)
                 if (1000.f < epw->shp_ct)
                 {
                     epw->mode1 = 0;
-                    epw->obj_a = epw->mbp[0];
-                    epw->obj_b = epw->mbp[1];
+                    epw->obj_a = S32(P32(NJS_CNK_OBJECT *, epw->mbp[0]));
+                    epw->obj_b = S32(P32(NJS_CNK_OBJECT *, epw->mbp[1]));
                     epw->shp_ct = 0.0f;
                     break;
                 }
@@ -3705,7 +3705,7 @@ static void CoreDie(BH_PWORK* epw)
                 epw->mdflg |= 1;
                 epw->id = 15;
                 epw->djnt_no = 1;
-                *(NJS_POINT3*)&epw->dpx = *(NJS_POINT3*)&epw->mlwP->owP[epw->djnt_no].mtx[12];
+                *(NJS_POINT3*)&epw->dpx = *(NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no].mtx[12];
                 epw->dvx = 2.0f * njSin(epw->ay);
                 epw->dvz = 2.0f * njCos(epw->ay);
                 epw->dvy = 0.0f;

@@ -199,12 +199,12 @@ void bhEff151(O_WRK* op)
         switch (op->type)
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_mokuhen;
+            op->exp0 = S32((unsigned char*)&uvinfo_mokuhen);
             
             op->ani_ct = op->type = 1;
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_koisi;
+            op->exp0 = S32((unsigned char*)&uvinfo_koisi);
             
             op->ani_ct = op->type = 0;
             break;
@@ -220,12 +220,12 @@ void bhEff151(O_WRK* op)
         switch (op->type) 
         { 
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_mokuhen;
+            op->exp0 = S32((unsigned char*)&uvinfo_mokuhen);
             
             op->ani_ct = 1;
             break;
         default: 
-            op->exp0 = (unsigned char*)&uvinfo_koisi;
+            op->exp0 = S32((unsigned char*)&uvinfo_koisi);
             
             op->ani_ct = op->type = 0;
             break;
@@ -239,7 +239,7 @@ void bhEff151(O_WRK* op)
     
     op->py += op->yn;
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f)
     {
@@ -251,7 +251,7 @@ void bhEff151(O_WRK* op)
     
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -359,7 +359,7 @@ void bhEff153(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)&uvinfo_geki[op->type];
+        op->exp0 = S32((unsigned char*)&uvinfo_geki[op->type]);
         
         op->mode0 = 1;
         break;
@@ -371,7 +371,7 @@ void bhEff153(O_WRK* op)
         return;
     }
     
-    effset(op, (UV_WORK*)op->exp0, 0);
+    effset(op, (UV_WORK*)P32(unsigned char *, op->exp0), 0);
     
     if (op->flr_no >= 20) 
     {
@@ -384,7 +384,7 @@ void bhEff153(O_WRK* op)
     
     op->tv[0].col = op->tv[1].col = op->tv[2].col = op->tv[3].col = (argb << 24) + 0xFFFFFF;
     
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -502,20 +502,20 @@ void bhEff155(O_WRK* op)
         switch (op->type)
         { 
         case 1:
-            op->exp0 = (unsigned char*)uvinfo_hibana_1;
+            op->exp0 = S32((unsigned char*)uvinfo_hibana_1);
             break;
         case 2:
-            op->exp0 = (unsigned char*)uvinfo_hibana_2;
+            op->exp0 = S32((unsigned char*)uvinfo_hibana_2);
             break;
         default:
-            op->exp0 = (unsigned char*)uvinfo_hibana_0;
+            op->exp0 = S32((unsigned char*)uvinfo_hibana_0);
             break;
         }
         
         op->mode0 = 1;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -527,7 +527,7 @@ void bhEff155(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -594,7 +594,7 @@ void bhEff157(O_WRK* op)
         op->yn = vd.y;
         op->zn = vd.z;
         
-        op->exp0 = (unsigned char*)&uvinfo_mos;
+        op->exp0 = S32((unsigned char*)&uvinfo_mos);
         
         op->mode0 = 1;
         break;
@@ -604,7 +604,7 @@ void bhEff157(O_WRK* op)
     op->py += op->yn;
     op->pz += op->zn;
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -616,7 +616,7 @@ void bhEff157(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -731,10 +731,10 @@ void bhEff159(O_WRK* op)
         switch (op->type) 
         {
         case 1:
-            op->exp0 = (unsigned char*)uvinfo_exp_1;
+            op->exp0 = S32((unsigned char*)uvinfo_exp_1);
             break;
         case 2:
-            op->exp0 = (unsigned char*)uvinfo_exp_0;
+            op->exp0 = S32((unsigned char*)uvinfo_exp_0);
             
             op->type -= 2;
             
@@ -743,7 +743,7 @@ void bhEff159(O_WRK* op)
             op->zn = (op->sz * ((-rand() / -2.1474836E9f) - 0.5f)) / 8.0f;
             break;
         default:
-            op->exp0 = (unsigned char*)uvinfo_exp_0;
+            op->exp0 = S32((unsigned char*)uvinfo_exp_0);
             
             op->type = 0;
             break;
@@ -752,7 +752,7 @@ void bhEff159(O_WRK* op)
         op->mode0 = 1;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
         
     if (uvp->u == -1.0f) 
     {
@@ -778,7 +778,7 @@ void bhEff159(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -878,17 +878,17 @@ void bhEff161(O_WRK* op)
         switch (op->type % 10)
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_sw_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_sw_1);
             
             op->ani_ct = 1;
             break;
         case 2:
-            op->exp0 = (unsigned char*)&uvinfo_sw_2;
+            op->exp0 = S32((unsigned char*)&uvinfo_sw_2);
             
             op->ani_ct = 1;
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_sw_0;
+            op->exp0 = S32((unsigned char*)&uvinfo_sw_0);
             break;
         }
         
@@ -900,7 +900,7 @@ void bhEff161(O_WRK* op)
         break;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -920,7 +920,7 @@ void bhEff161(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -998,7 +998,7 @@ void bhEff163(O_WRK* op)
         switch (op->type)
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_bub_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_bub_1);
             
             njUnitMatrix(NULL);
             
@@ -1007,7 +1007,7 @@ void bhEff163(O_WRK* op)
             getuv(0, op);
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_bub_0;
+            op->exp0 = S32((unsigned char*)&uvinfo_bub_0);
             
             op->type = 0;
             
@@ -1038,7 +1038,7 @@ void bhEff163(O_WRK* op)
         op->pz += op->zn;
     }
 
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
 
     if (uvp->u == -1.0f)
     {
@@ -1066,11 +1066,11 @@ void bhEff163(O_WRK* op)
         return;
     }
 
-    effset(op, (UV_WORK*)op->exp0 + op->ct0, 0);
+    effset(op, (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0, 0);
     
     op->ct0++;
     
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -1272,13 +1272,13 @@ void bhEff167(O_WRK* op)
         
         getuv(0, op);
         
-        op->exp0 = (unsigned char*)&uvinfo_e29;
+        op->exp0 = S32((unsigned char*)&uvinfo_e29);
         
         op->mode0 = 1;
         break;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -1290,7 +1290,7 @@ void bhEff167(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -1365,17 +1365,17 @@ void bhEff169(O_WRK* op)
         switch (op->type) 
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_e23_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_e23_1);
             
             getuv(0, op);
             break;
         case 2:
-            op->exp0 = (unsigned char*)&uvinfo_e23_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_e23_1);
             
             getuv(1, op);
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_e23_0;
+            op->exp0 = S32((unsigned char*)&uvinfo_e23_0);
             
             op->type = 0;
             
@@ -1386,7 +1386,7 @@ void bhEff169(O_WRK* op)
         op->mode0 = 1;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -1398,7 +1398,7 @@ void bhEff169(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -1546,7 +1546,7 @@ void bhEff171(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)&uvinfo_sw_0;
+        op->exp0 = S32((unsigned char*)&uvinfo_sw_0);
         
         op->ct1 = op->type;
         
@@ -1554,7 +1554,7 @@ void bhEff171(O_WRK* op)
         break;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -1564,7 +1564,7 @@ void bhEff171(O_WRK* op)
         {
             op->ct0 = 0;
             
-            uvp = (UV_WORK*)op->exp0 + op->ct0;
+            uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
         }
         else
         {
@@ -1577,7 +1577,7 @@ void bhEff171(O_WRK* op)
         
     op->ct0++;
         
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -1621,7 +1621,7 @@ void bhEff173(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)&uvinfo_e23_0;
+        op->exp0 = S32((unsigned char*)&uvinfo_e23_0);
         
         op->mode0 = 1;
         break;
@@ -1633,20 +1633,20 @@ void bhEff173(O_WRK* op)
     op->sxb = 1.0f;
     op->syb = 1.0f;
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
         op->ct0 = 0;
         
-        uvp = (UV_WORK*)op->exp0 + op->ct0;
+        uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     }
     
     effset(op, uvp, 0);
         
     op->ct0++;
         
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -1690,15 +1690,15 @@ void bhEff176(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)&uvinfo_moon;
+        op->exp0 = S32((unsigned char*)&uvinfo_moon);
         
         op->mode0 = 1;
         break;
     }
     
-    effset(op, (UV_WORK*)op->exp0 + op->ct0, 0);
+    effset(op, (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0, 0);
         
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -1765,7 +1765,7 @@ void bhEff178(O_WRK* op)
         op->ct0 = type;
         op->ct1 = 0;
         
-        op->exp0 = (unsigned char*)&uvinfo_hiko;
+        op->exp0 = S32((unsigned char*)&uvinfo_hiko);
         
         op->mode0 = 1;
     }
@@ -1792,20 +1792,20 @@ void bhEff178(O_WRK* op)
         op->py += vd.y;
         op->pz += vd.z;
         
-        uvp = (UV_WORK*)op->exp0 + op->ct0;
+        uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
         
         if (uvp->u == -1.0f) 
         {
             op->ct0 = 0;
             
-            uvp = (UV_WORK*)op->exp0 + op->ct0;
+            uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
         }
         
         effset(op, uvp, 0);
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -1883,12 +1883,12 @@ void bhEff180(O_WRK* op)
         switch (op->type)
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_hiba2_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_hiba2_1);
             
             op->ani_ct = 1;
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_hiba2_0;
+            op->exp0 = S32((unsigned char*)&uvinfo_hiba2_0);
             break;
         }
         
@@ -1896,7 +1896,7 @@ void bhEff180(O_WRK* op)
         break;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -1908,7 +1908,7 @@ void bhEff180(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -2195,7 +2195,7 @@ void bhEff182(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)uvinfo_kemu[kcolor];
+        op->exp0 = S32((unsigned char*)uvinfo_kemu[kcolor]);
         
         op->mode0 = 1;
         break;
@@ -2214,7 +2214,7 @@ void bhEff182(O_WRK* op)
     op->py += vd.y;
     op->pz += vd.z;
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
         
     if (uvp->u == -1.0f) 
     {
@@ -2226,7 +2226,7 @@ void bhEff182(O_WRK* op)
     
     op->ct0++;
     
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching!
@@ -2279,7 +2279,7 @@ void bhEff184(O_WRK* op)
         
         effinit(op);
         
-        op->exp0 = (unsigned char*)uvinfo_mizu_0;
+        op->exp0 = S32((unsigned char*)uvinfo_mizu_0);
             
         vs.y = 0;
         vs.x = 0;
@@ -2323,7 +2323,7 @@ void bhEff184(O_WRK* op)
         op->syb *= 4.0f;
     }
 
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1)
     {
@@ -2351,11 +2351,11 @@ void bhEff184(O_WRK* op)
         return;
     }
 
-    effset(op, (UV_WORK*)op->exp0 + op->ct0, 0);
+    effset(op, (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0, 0);
     
     op->ct0++;
     
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
 }
 
 // 100% matching! 
@@ -2433,28 +2433,28 @@ void bhEff185(O_WRK* op)
     switch (op->type)
     {
     case 1:
-        op->exp0 = (unsigned char*)uvinfo_button0;
+        op->exp0 = S32((unsigned char*)uvinfo_button0);
         break;
     case 2:
-        op->exp0 = (unsigned char*)uvinfo_button1;
+        op->exp0 = S32((unsigned char*)uvinfo_button1);
         break;
     case 3:
-        op->exp0 = (unsigned char*)uvinfo_button2;
+        op->exp0 = S32((unsigned char*)uvinfo_button2);
         break;
     case 4:
-        op->exp0 = (unsigned char*)uvinfo_button3;
+        op->exp0 = S32((unsigned char*)uvinfo_button3);
         break;
     case 5:
-        op->exp0 = (unsigned char*)uvinfo_button4;
+        op->exp0 = S32((unsigned char*)uvinfo_button4);
         break;
     case 6:
-        op->exp0 = (unsigned char*)uvinfo_button5;
+        op->exp0 = S32((unsigned char*)uvinfo_button5);
         break;
     default:
         return;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
 
     op->tv[3].col = op->tv[2].col = op->tv[1].col = op->tv[0].col = 0xFFFFFFFF;
     
@@ -2470,7 +2470,7 @@ void bhEff185(O_WRK* op)
     op->tv[3].u = uvp->u + uvp->xs;
     op->tv[3].v = uvp->v + uvp->ys;
 
-    sys->ef_trs[sys->ef_trsn++] = op;
+    sys->ef_trs[sys->ef_trsn++] = S32(op);
     
     if (op->ct0 == 3)
     {
@@ -2564,13 +2564,13 @@ void bhEff186(O_WRK* op)
         
         njRotateXYZ(NULL, 0, op->ay, -op->ax);
         
-        op->exp0 = (unsigned char*)uvinfo_button[op->type];
+        op->exp0 = S32((unsigned char*)uvinfo_button[op->type]);
         
         op->mode0 = 1;
         break;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f)
     {
@@ -2578,7 +2578,7 @@ void bhEff186(O_WRK* op)
     }
     else 
     {
-        njSetMatrix(NULL, cam.mtx);
+        njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
         
         njRotateXYZ(NULL, op->ax, op->ay, 0);
         
@@ -2588,7 +2588,7 @@ void bhEff186(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -2691,17 +2691,17 @@ void bhEff188(O_WRK* op)
         switch (op->type)
         {
         case 1:
-            op->exp0 = (unsigned char*)&uvinfo_houden_1;
+            op->exp0 = S32((unsigned char*)&uvinfo_houden_1);
             break;
         default:
-            op->exp0 = (unsigned char*)&uvinfo_houden_0;
+            op->exp0 = S32((unsigned char*)&uvinfo_houden_0);
             break;
         }
         
         op->mode0 = 1;
     }
     
-    uvp = (UV_WORK*)op->exp0 + op->ct0;
+    uvp = (UV_WORK*)P32(unsigned char *, op->exp0) + op->ct0;
     
     if (uvp->u == -1.0f) 
     {
@@ -2713,7 +2713,7 @@ void bhEff188(O_WRK* op)
         
         op->ct0++;
         
-        sys->ef_trs[sys->ef_trsn++] = op;
+        sys->ef_trs[sys->ef_trsn++] = S32(op);
     }
 }
 
@@ -2842,7 +2842,7 @@ void bhEff189(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3001,7 +3001,7 @@ void bhEff191(O_WRK* op)
     
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3166,7 +3166,7 @@ void bhEff193(O_WRK* op)
     
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3337,7 +3337,7 @@ void bhEff195(O_WRK* op)
     
     if (sys->ef_trsn < 512) 
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3431,7 +3431,7 @@ void bhEff196(O_WRK* op)
     
     if (sys->ef_trsn < 512)
     {
-        sys->ef_trs[sys->ef_trsn] = op;
+        sys->ef_trs[sys->ef_trsn] = S32(op);
         
         sys->ef_trsn++;
     }
@@ -3469,7 +3469,7 @@ void bhEff198(O_WRK* op)
         
         op->mode0 = 1;
     case 1:
-        sys->ef_opq[sys->ef_opqn++] = op;
+        sys->ef_opq[sys->ef_opqn++] = S32(op);
         break;
     }
 }
@@ -3492,7 +3492,7 @@ void bhEff199()
         {    0.0f,  0.0f,   0.0f }
     };
     
-    njSetMatrix(NULL, cam.mtx);
+    njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
     
     njPtclPolygonStart(0xFFAFAFFF);
     

@@ -32,7 +32,7 @@ void bhEne05s(BH_PWORK* epw)
     v.x = 0.0f;
     v.y = 1.0f;
     v.z = 0.0f;
-    njCalcVector(epw->mtx, &v, &v);
+    njCalcVector(P32(float (*)[16], epw->mtx), &v, &v);
     epw->px += v.x;
     epw->py += v.y;
     epw->pz += v.z;
@@ -53,9 +53,9 @@ void bhEne05s_Init(BH_PWORK* epw)
     epw->mode2 = 0;
     epw->mode3 = 0;
     
-    if (epw->exp0 == NULL) 
+    if (P32(unsigned char *, epw->exp0) == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(0x60, 8);
+        epw->exp0 = S32(bhEne_CallocWork(0x60, 8));
     }
 }
 
@@ -82,11 +82,11 @@ void bhEne05s_MV01(BH_PWORK* epw)
     switch (epw->mode3)
     {
         case 0:
-            epw->px = epw->pxb = epw->mtx[0][0xC];
-            epw->py = epw->pyb = epw->mtx[0][0xD];
-            epw->pz = epw->pzb = epw->mtx[0][0xE];
+            epw->px = epw->pxb = P32(float (*)[16], epw->mtx)[0][0xC];
+            epw->py = epw->pyb = P32(float (*)[16], epw->mtx)[0][0xD];
+            epw->pz = epw->pzb = P32(float (*)[16], epw->mtx)[0][0xE];
             
-            ep = (BH_PWORK*)epw->lkwkp;
+            ep = (BH_PWORK*)P32(unsigned char *, epw->lkwkp);
             ang = (int)((ep->ay + (3640.0f * (-rand() / -2.1474836e9f))) - 1820.0f);
 
             EXP0_F(0x44) = -1.2f * njSin(ang);
@@ -108,8 +108,8 @@ void bhEne05s_MV01(BH_PWORK* epw)
                 epw->py += EXP0_F(0x48);
                 epw->pz += EXP0_F(0x4C);
                 
-                njRotateY(epw->mtx, 0x4FA);
-                njRotateZ(epw->mtx, 0xC16);
+                njRotateY(P32(float (*)[16], epw->mtx), 0x4FA);
+                njRotateZ(P32(float (*)[16], epw->mtx), 0xC16);
             }
             else if (epw->ct0 != 0) 
             {
@@ -126,9 +126,9 @@ void bhEne05s_MV01(BH_PWORK* epw)
                 epw->mode3 += 1;
             }
             
-            epw->mtx[0][0xC] = epw->px;
-            epw->mtx[0][0xD] = epw->py;
-            epw->mtx[0][0xE] = epw->pz;
+            P32(float (*)[16], epw->mtx)[0][0xC] = epw->px;
+            P32(float (*)[16], epw->mtx)[0][0xD] = epw->py;
+            P32(float (*)[16], epw->mtx)[0][0xE] = epw->pz;
         
             /* fallthrough */
         case 2:
@@ -143,9 +143,9 @@ void bhEne05s_MV01(BH_PWORK* epw)
                     epw->ct1 = (int)(5.0f * (-rand() / -2.1474836e9f));
                 }
                 
-                vec.x = -epw->mtx[0][4];
-                vec.y = -epw->mtx[0][5];
-                vec.z = -epw->mtx[0][6];
+                vec.x = -P32(float (*)[16], epw->mtx)[0][4];
+                vec.y = -P32(float (*)[16], epw->mtx)[0][5];
+                vec.z = -P32(float (*)[16], epw->mtx)[0][6];
                 
                 bhEne_SetBloodEffect4((NJS_VECTOR* ) &epw->px, (NJS_VECTOR* ) &vec, 0, 9, 2);
             }
@@ -159,13 +159,13 @@ void bhEne05s_MV02(BH_PWORK* epw)
     NJS_VECTOR pos;
     NJS_VECTOR vec;
 
-    owk = &((BH_PWORK*)epw->lkwkp)->mlwP->owP[epw->ct3];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)P32(unsigned char *, epw->lkwkp))->mlwP)->owP)[epw->ct3];
     
     switch (epw->mode3)
     {
         case 0:
-            njUnitMatrix((NJS_MATRIX *) epw->exp0);
-            njRotateX((NJS_MATRIX *) epw->exp0, -0x4000);
+            njUnitMatrix((NJS_MATRIX *) P32(unsigned char *, epw->exp0));
+            njRotateX((NJS_MATRIX *) P32(unsigned char *, epw->exp0), -0x4000);
             epw->ct0 = (int)(25.0f * (-rand() / -2.1474836e9f)) + 0x19;
             epw->ct1 = (int)(15.0f * (-rand() / -2.1474836e9f)) + 5;
             epw->mode3 += 1;
@@ -173,8 +173,8 @@ void bhEne05s_MV02(BH_PWORK* epw)
             /* fallthrough */
         case 1:
             njSetMatrix(NULL, &owk->mtx);
-            njMultiMatrix(NULL, (NJS_MATRIX *) epw->exp0);
-            njGetMatrix(epw->mtx);
+            njMultiMatrix(NULL, (NJS_MATRIX *) P32(unsigned char *, epw->exp0));
+            njGetMatrix(P32(float (*)[16], epw->mtx));
             
             pos.x = 2.0f;
             pos.y = -1.0f;
@@ -182,9 +182,9 @@ void bhEne05s_MV02(BH_PWORK* epw)
             
             njCalcPoint(&owk->mtx, (NJS_VECTOR* ) &pos, (NJS_VECTOR* ) &pos);
             
-            epw->mtx[0][0xC] = pos.x;
-            epw->mtx[0][0xD] = pos.y;
-            epw->mtx[0][0xE] = pos.z;
+            P32(float (*)[16], epw->mtx)[0][0xC] = pos.x;
+            P32(float (*)[16], epw->mtx)[0][0xD] = pos.y;
+            P32(float (*)[16], epw->mtx)[0][0xE] = pos.z;
             
             if (epw->ct1-- == 0) 
             {
@@ -208,8 +208,8 @@ void bhEne05s_FloorCollision(BH_PWORK* epw)
 
     if ((EXP0_US(0x40) & 1) && (bhCollisionCheckLine((NJS_VECTOR* ) &epw->pxb, (NJS_VECTOR* ) &epw->px) != NULL)) 
     {
-        bhGetHitCollisionNormal((NJS_VECTOR* ) (epw->exp0 + 0x50));
-        njUnitVector((NJS_VECTOR* ) (epw->exp0 + 0x50));
+        bhGetHitCollisionNormal((NJS_VECTOR* ) (P32(unsigned char *, epw->exp0) + 0x50));
+        njUnitVector((NJS_VECTOR* ) (P32(unsigned char *, epw->exp0) + 0x50));
         
         if (!(EXP0_F(0x54) <= 0.9f))
         {

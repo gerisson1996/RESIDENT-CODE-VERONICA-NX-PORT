@@ -11,7 +11,7 @@ struct HM
 	unsigned int Use_size;    // offset 0x0, size 0x4
     unsigned int Total_size;  // offset 0x4, size 0x4
     unsigned int dummy;       // offset 0x8, size 0x4
-	HM* pNext_work;           // offset 0xC, size 0x4
+	ps2ptr_t pNext_work; /* HM* pNext_work */           // offset 0xC, size 0x4
 	unsigned int dummy64[12]; // offset 0x10, size 0x30
 };
 

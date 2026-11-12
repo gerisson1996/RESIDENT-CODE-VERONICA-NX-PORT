@@ -102,15 +102,15 @@ void bhMainSequence()
             {
                 sys->gm_flg |= 0x4000;
                 
-                njSetMatrix(cam.mtxb, cam.mtx);
+                njSetMatrix(P32(float (*)[16], cam.mtxb), P32(float (*)[16], cam.mtx));
                 
-                njMirror(cam.mtx, &sys->mr_pl);
+                njMirror(P32(float (*)[16], cam.mtx), &sys->mr_pl);
                 
                 bhSetLight();
                 
                 bhEtcMirrorDrawModel();
                 
-                njSetMatrix(cam.mtx, cam.mtxb);
+                njSetMatrix(P32(float (*)[16], cam.mtx), P32(float (*)[16], cam.mtxb));
                 
                 sys->gm_flg &= ~0x4000;
             }
@@ -241,7 +241,7 @@ void bhMainSequence()
             {
                 sys->pt_flg &= ~0x1;
                 
-                rom->lgtp[1].flg &= ~0x2;
+                P32(struct LGT_WORK *, rom->lgtp)[1].flg &= ~0x2;
             }
             
             if ((sys->exm_attr & 0x4))
@@ -358,15 +358,15 @@ void bhAllDrawModel()
     njSetCheapShadowMode(0x80);
     njCnkSetEasyMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
     njCnkSetSimpleMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
-    if ((rom->mdl.texP != 0) && !(sys->error & 2)) {
-        njSetTexture(rom->mdl.texP);
+    if ((P32(NJS_TEXLIST *, rom->mdl.texP) != 0) && !(sys->error & 2)) {
+        njSetTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
-    njSetMatrix(0, cam.mtx);
-    if ((rom->mdl.objP != 0) && (sys->pt_flg & 0x20)) {
+    njSetMatrix(0, P32(float (*)[16], cam.mtx));
+    if ((P32(struct cnkobj *, rom->mdl.objP) != 0) && (sys->pt_flg & 0x20)) {
         if (sys->gm_flg & 0x80) {
-            njCnkEasyDrawObject(rom->mdl.objP);
+            njCnkEasyDrawObject(P32(struct cnkobj *, rom->mdl.objP));
         } else {
-            njCnkEasyMultiDrawObject(rom->mdl.objP);
+            njCnkEasyMultiDrawObject(P32(struct cnkobj *, rom->mdl.objP));
         }
     }
     njControl3D(0x2400);
@@ -417,10 +417,10 @@ void bhAllDrawModel()
 #ifdef TARGET_PC
     pose_trace_mark = 0;
 #endif
-    if ((rom->mdl.texP != 0) && !(sys->error & 2)) {
-        njSetTexture(rom->mdl.texP);
+    if ((P32(NJS_TEXLIST *, rom->mdl.texP) != 0) && !(sys->error & 2)) {
+        njSetTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
-    njSetMatrix(0, cam.mtx);
+    njSetMatrix(0, P32(float (*)[16], cam.mtx));
     njControl3D(0x2400);
     bhDrawGeneralPurposeWater();
     njControl3D(0);
@@ -433,15 +433,15 @@ void bhAllEasyDrawModel()
     njSetCnkBlendMode(0);
     njCnkSetEasyMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
     njCnkSetSimpleMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
-    if ((rom->mdl.texP != 0) && !(sys->error & 2)) {
-        njSetTexture(rom->mdl.texP);
+    if ((P32(NJS_TEXLIST *, rom->mdl.texP) != 0) && !(sys->error & 2)) {
+        njSetTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
-    njSetMatrix(0, cam.mtx);
-    if ((rom->mdl.objP != 0) && (sys->pt_flg & 0x20)) {
+    njSetMatrix(0, P32(float (*)[16], cam.mtx));
+    if ((P32(struct cnkobj *, rom->mdl.objP) != 0) && (sys->pt_flg & 0x20)) {
         if (sys->gm_flg & 0x80) {
-            njCnkEasyDrawObject(rom->mdl.objP);
+            njCnkEasyDrawObject(P32(struct cnkobj *, rom->mdl.objP));
         } else {
-            njCnkEasyMultiDrawObject(rom->mdl.objP); 
+            njCnkEasyMultiDrawObject(P32(struct cnkobj *, rom->mdl.objP)); 
         }
     }
     bhDrawObjItm();
@@ -459,15 +459,15 @@ void bhEtcMirrorDrawModel()
     njSetCheapShadowMode(0x80);
     njCnkSetEasyMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
     njCnkSetSimpleMultiAmbient(rom->amb_r[rom->amb_rom], rom->amb_g[rom->amb_rom], rom->amb_b[rom->amb_rom]);
-    if ((rom->mdl.texP != 0) && !(sys->error & 2)) {
-        njSetTexture(rom->mdl.texP);
+    if ((P32(NJS_TEXLIST *, rom->mdl.texP) != 0) && !(sys->error & 2)) {
+        njSetTexture(P32(NJS_TEXLIST *, rom->mdl.texP));
     }
-    njSetMatrix(0, cam.mtx);
-    if ((rom->mdl.objP != 0) && (sys->pt_flg & 0x20)) {
+    njSetMatrix(0, P32(float (*)[16], cam.mtx));
+    if ((P32(struct cnkobj *, rom->mdl.objP) != 0) && (sys->pt_flg & 0x20)) {
         if (sys->gm_flg & 0x80) {
-            njCnkEasyDrawObject(rom->mdl.objP);
+            njCnkEasyDrawObject(P32(struct cnkobj *, rom->mdl.objP));
         } else {
-            njCnkEasyMultiDrawObject(rom->mdl.objP); 
+            njCnkEasyMultiDrawObject(P32(struct cnkobj *, rom->mdl.objP)); 
         }
     }
     bhSetHideObject(0);

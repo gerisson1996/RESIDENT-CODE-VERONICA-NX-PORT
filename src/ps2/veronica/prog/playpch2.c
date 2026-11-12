@@ -36,7 +36,7 @@ void bhCPM2_act_scp()
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         plp->ct0 = 0;
         
@@ -98,7 +98,7 @@ void bhCPM2_act_scp()
                     return;
                 }
                 
-                njCalcPoint(&plp->mlwP->owP[9].mtx, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, &pos);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, &pos);
                 
                 CallPlayerWeaponSeEx(&pos, 260, 0);
             }
@@ -111,7 +111,7 @@ void bhCPM2_act_scp()
                 plp->at_flg &= ~0x10;
                 plp->at_flg |=  0x40;
                 
-                ((EXP_WORK*)plp->exp0)->scp_ct = 0;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct = 0;
                 return;
             }
         }
@@ -136,9 +136,9 @@ void bhCPM2_act_scp()
             case 18: 
                 sys->ef_flg |= 0x2;
                 
-                eft->px = plp->mlwP->owP[5].mtx[12];
-                eft->py = plp->mlwP->owP[5].mtx[13];
-                eft->pz = plp->mlwP->owP[5].mtx[14];
+                eft->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+                eft->py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+                eft->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
                 
                 njUnitMatrix(NULL);
                 
@@ -184,13 +184,13 @@ void bhCPM2_act_scp()
             plp->way = plp->ay;
             plp->waz = 0;
             
-            njSetMatrix(NULL, &plp->mlwP->owP[5].mtx);
+            njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx);
             
             ps.x =  0;
             ps.y =  1.5f;
             ps.z = -1.0f;
             
-            njCalcPoint(&plp->mlwP->owP[5].mtx, &ps, (NJS_POINT3*)&gap.px);
+            njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx, &ps, (NJS_POINT3*)&gap.px);
             
             gap.gx = gap.px;
             gap.gy = gap.py;
@@ -218,17 +218,17 @@ void bhCPM2_act_scp()
         
         if (WpnTab[plp->wpnr_no].seno0 != 0)
         {
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], (unsigned short)WpnTab[plp->wpnr_no].seno0, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], (unsigned short)WpnTab[plp->wpnr_no].seno0, 0);
             
             plp->stflg |= 0x100;
         }
     case 3:
-        if ((((EXP_WORK*)plp->exp0)->scp_ct == WpnTab[plp->wpnr_no].ef_yct) && (WpnEffTab[plp->wpnr_no][3].flg != 0)) 
+        if ((((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct == WpnTab[plp->wpnr_no].ef_yct) && (WpnEffTab[plp->wpnr_no][3].flg != 0)) 
         {
             bhSetYakkyou(plp, plp->wpnr_no, 9, 0, plp->ay);
         }
         
-        if (((EXP_WORK*)plp->exp0)->scp_ct >= 30) 
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct >= 30) 
         {
             plp->at_flg |= 0x10;
             
@@ -254,9 +254,9 @@ void bhCPM2_act_scp()
                 plp->at_flg &= ~0x40;
             }
             
-            plp->wax = (short)plp->ct3 + ((2048 - (((EXP_WORK*)plp->exp0)->scp_ct * 64)) * njSin((((EXP_WORK*)plp->exp0)->scp_ct * 1911) + 8192));
+            plp->wax = (short)plp->ct3 + ((2048 - (((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct * 64)) * njSin((((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct * 1911) + 8192));
             
-            ((EXP_WORK*)plp->exp0)->scp_ct++;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->scp_ct++;
         }
     }
 

@@ -84,7 +84,7 @@ void DeletePartition(unsigned int PartitionId)
 {
     if (AfsInfo[PartitionId].Flag != 0)
     {
-        syFree(AfsInfo[PartitionId].pInfoPart);
+        syFree(P32(unsigned char *, AfsInfo[PartitionId].pInfoPart));
         
         AfsInfo[PartitionId].Flag = 0;
     }
@@ -213,11 +213,11 @@ int OpenAfsInsideFile(unsigned int PartitionId, unsigned int FileId)
     
     ADXPS2_Lock();
     
-    AdxFInfo[SlotNo].Handle = ADXF_OpenAfs(PartitionId, FileId);
+    AdxFInfo[SlotNo].Handle = S32(ADXF_OpenAfs(PartitionId, FileId));
     
     ADXPS2_Unlock();
     
-    if (AdxFInfo[SlotNo].Handle == NULL) 
+    if (P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle) == NULL) 
     {
         return -1;
     }
@@ -256,7 +256,7 @@ int OpenAfsIsoFile(char* FileName)
         
 #ifdef TARGET_PC
         /* a room file in the mods folder replaces the disc's, or adds a room the table lacks */
-        if ((AdxFInfo[SlotNo].Handle = pc_mod_open(chg_FileName)) != NULL) 
+        if ((P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle = S32(pc_mod_open(chg_FileName)))) != NULL) 
         {
             AdxFInfo[SlotNo].Mode = -1;
             
@@ -286,11 +286,11 @@ int OpenAfsIsoFile(char* FileName)
         
         ADXPS2_Lock();
         
-        AdxFInfo[SlotNo].Handle = ADXF_OpenAfs(17, i);
+        AdxFInfo[SlotNo].Handle = S32(ADXF_OpenAfs(17, i));
         
         ADXPS2_Unlock();
         
-        if (AdxFInfo[SlotNo].Handle == NULL) 
+        if (P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle) == NULL) 
         {
             return -1;
         }
@@ -306,11 +306,11 @@ int OpenAfsIsoFile(char* FileName)
     
     ADXPS2_Lock();
     
-    AdxFInfo[SlotNo].Handle = ADXF_Open(chg_FileName, NULL);
+    AdxFInfo[SlotNo].Handle = S32(ADXF_Open(chg_FileName, NULL));
     
     ADXPS2_Unlock();
     
-    if (AdxFInfo[SlotNo].Handle == NULL) 
+    if (P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle) == NULL) 
     {
         return -1;
     }
@@ -327,7 +327,7 @@ int GetAfsInsideFileSize(int SlotNo)
 {
     if (AdxFInfo[SlotNo].Flag != 0) 
     {
-        return ADXF_GetFsizeByte(AdxFInfo[SlotNo].Handle);
+        return ADXF_GetFsizeByte(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle));
     }
     
     return 0;
@@ -342,7 +342,7 @@ void RequestReadAfsInsideFile(int SlotNo, unsigned char* Address)
         
         ADXPS2_Lock();
         
-        ADXF_ReadNw32(AdxFInfo[SlotNo].Handle, ADXF_GetFsizeSct(AdxFInfo[SlotNo].Handle), Address);
+        ADXF_ReadNw32(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle), ADXF_GetFsizeSct(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle)), Address);
         
         ADXPS2_Unlock();
         
@@ -353,7 +353,7 @@ void RequestReadAfsInsideFile(int SlotNo, unsigned char* Address)
 // 100% matching!
 int CheckReadEndAfsInsideFile(int SlotNo)
 {
-    if ((AdxFInfo[SlotNo].Flag != 0) && (ADXF_GetStat(AdxFInfo[SlotNo].Handle) == 3)) 
+    if ((AdxFInfo[SlotNo].Flag != 0) && (ADXF_GetStat(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle)) == 3)) 
     {
         if (AdxFInfo[SlotNo].Mode == 0) 
         {
@@ -373,7 +373,7 @@ void CloseAfsInsideFile(int SlotNo)
     {
         ADXPS2_Lock();
         
-        ADXF_Close(AdxFInfo[SlotNo].Handle);
+        ADXF_Close(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle));
         
         ADXPS2_Unlock();
         
@@ -388,7 +388,7 @@ void StopAfsInsideFile(int SlotNo)
     {
         ADXPS2_Lock();
         
-        ADXF_Stop(AdxFInfo[SlotNo].Handle);
+        ADXF_Stop(P32(struct _adx_fs *, AdxFInfo[SlotNo].Handle));
         
         ADXPS2_Unlock();
         
@@ -415,22 +415,22 @@ void RegistAdxStreamEx(int MaxStream, int DummyStream, ADX_WORK* pAdx)
         
         tp->WorkSize = ADXT_CALC_WORK(pAdx->MaxChannel, 1, DummyStream, pAdx->MaxSampleRate);
         
-        tp->pAdxTWork = (unsigned char*)&ADX_STREAM_BUFFER[ADX_STREAM_BUFF_OFFSET[i]];
+        tp->pAdxTWork = S32((unsigned char*)&ADX_STREAM_BUFFER[ADX_STREAM_BUFF_OFFSET[i]]);
 
         ADXPS2_Lock();
 
-        tp->Handle = ADXT_Create(pAdx->MaxChannel, tp->pAdxTWork, tp->WorkSize);
+        tp->Handle = S32(ADXT_Create(pAdx->MaxChannel, P32(unsigned char *, tp->pAdxTWork), tp->WorkSize));
 
         ADXPS2_Unlock();
 
         if (pAdx->RecoverType != -1)
         {
-            ADXT_SetAutoRcvr(tp->Handle, pAdx->RecoverType);
+            ADXT_SetAutoRcvr(P32(struct _adx_talk *, tp->Handle), pAdx->RecoverType);
         }
 
         if (pAdx->ReloadSector >= 0)
         {
-            ADXT_SetReloadSct(tp->Handle, pAdx->ReloadSector);
+            ADXT_SetReloadSct(P32(struct _adx_talk *, tp->Handle), pAdx->ReloadSector);
         }
 
         tp->FadeFunc = 0;
@@ -452,22 +452,22 @@ void FreeAdxStream()
     {
         if (AdxStreamSleepFlag == 0) 
         {
-            ADXT_SetOutVol(AdxTInfo[i].Handle, -999);
+            ADXT_SetOutVol(P32(struct _adx_talk *, AdxTInfo[i].Handle), -999);
             
             ADXPS2_Lock();
             
-            ADXT_Stop(AdxTInfo[i].Handle);
+            ADXT_Stop(P32(struct _adx_talk *, AdxTInfo[i].Handle));
             
             ADXPS2_Unlock();
             
             ADXPS2_Lock();
             
-            ADXT_Destroy(AdxTInfo[i].Handle);
+            ADXT_Destroy(P32(struct _adx_talk *, AdxTInfo[i].Handle));
             
             ADXPS2_Unlock();
         }
         
-        syFree(AdxTInfo[i].pAdxTWork);
+        syFree(P32(unsigned char *, AdxTInfo[i].pAdxTWork));
     } 
     
     MaxAdxStreamCnt = 0;
@@ -484,19 +484,19 @@ void SleepAdxStream()
         {
             ADXPS2_Lock();
             
-            ADXT_SetOutVol(AdxTInfo[i].Handle, -999);
+            ADXT_SetOutVol(P32(struct _adx_talk *, AdxTInfo[i].Handle), -999);
             
             ADXPS2_Unlock();
             
             ADXPS2_Lock();
             
-            ADXT_Stop(AdxTInfo[i].Handle);
+            ADXT_Stop(P32(struct _adx_talk *, AdxTInfo[i].Handle));
             
             ADXPS2_Unlock();
             
             ADXPS2_Lock();
             
-            ADXT_Destroy(AdxTInfo[i].Handle);
+            ADXT_Destroy(P32(struct _adx_talk *, AdxTInfo[i].Handle));
             
             ADXPS2_Unlock();
         }
@@ -519,18 +519,18 @@ void WakeupAdxStream(ADX_WORK* pAdx)
             
             ADXPS2_Lock();
             
-            tp->Handle = ADXT_Create(pAdx->MaxChannel, tp->pAdxTWork, tp->WorkSize);
+            tp->Handle = S32(ADXT_Create(pAdx->MaxChannel, P32(unsigned char *, tp->pAdxTWork), tp->WorkSize));
             
             ADXPS2_Unlock();
             
             if (pAdx->RecoverType != -1) 
             {
-                ADXT_SetAutoRcvr(tp->Handle, pAdx->RecoverType);
+                ADXT_SetAutoRcvr(P32(struct _adx_talk *, tp->Handle), pAdx->RecoverType);
             }
             
             if (pAdx->ReloadSector >= 0) 
             {
-                ADXT_SetReloadSct(tp->Handle, pAdx->ReloadSector);
+                ADXT_SetReloadSct(P32(struct _adx_talk *, tp->Handle), pAdx->ReloadSector);
             }
             
             tp->FadeFunc = 0;
@@ -552,9 +552,9 @@ void PlayAdxEx(unsigned int SlotNo, unsigned int PartitionId, unsigned int FileI
     
     ADXPS2_Lock();
     
-    ADXT_SetSvrFreq(AdxTInfo[SlotNo].Handle, 12);
+    ADXT_SetSvrFreq(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), 12);
     
-    ADXT_StartAfs(AdxTInfo[SlotNo].Handle, PartitionId, FileId);
+    ADXT_StartAfs(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), PartitionId, FileId);
     
     ADXPS2_Unlock();
     
@@ -574,7 +574,7 @@ void StopAdx(unsigned int SlotNo)
     {
         ADXPS2_Lock();
         
-        ADXT_Stop(AdxTInfo[SlotNo].Handle);
+        ADXT_Stop(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle));
         
         ADXPS2_Unlock();
     }
@@ -587,7 +587,7 @@ void PauseAdx(unsigned int SlotNo)
 {
     ADXPS2_Lock();
     
-    ADXT_Pause(AdxTInfo[SlotNo].Handle, 1);
+    ADXT_Pause(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), 1);
     
     ADXPS2_Unlock();
 }
@@ -597,7 +597,7 @@ void ContinueAdx(unsigned int SlotNo)
 {
     ADXPS2_Lock();
     
-    ADXT_Pause(AdxTInfo[SlotNo].Handle, 0);
+    ADXT_Pause(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), 0);
     
     ADXPS2_Unlock();
 }
@@ -608,7 +608,7 @@ int GetAdxStatus(unsigned int SlotNo)
 #ifndef TARGET_PC
     ADXT_GetStat(AdxTInfo[SlotNo].Handle);
 #else
-    return ADXT_GetStat(AdxTInfo[SlotNo].Handle);   /* retail tail call: v0 = ADXT_GetStat() */
+    return ADXT_GetStat(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle));   /* retail tail call: v0 = ADXT_GetStat() */
 #endif
 }
 
@@ -638,11 +638,11 @@ void SetVolumeAdxEx(unsigned int SlotNo, float Volume, float MaxVolume)
 // 100% matching!
 void SetVolumeAdx2(unsigned int SlotNo, float Volume)
 {
-    if (AdxTInfo[SlotNo].Handle->used != 0) 
+    if (P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle)->used != 0) 
     {
         ADXPS2_Lock();
         
-        ADXT_SetOutVol(AdxTInfo[SlotNo].Handle, AdxVolTbl[(int)-Volume]);
+        ADXT_SetOutVol(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), AdxVolTbl[(int)-Volume]);
         
         ADXPS2_Unlock();
     }
@@ -670,7 +670,7 @@ int GetAdxPlayTime(unsigned int SlotNo)
     
     ADXPS2_Lock();
     
-    ADXT_GetTime(AdxTInfo[SlotNo].Handle, &SampleCount, &SamplingRate);
+    ADXT_GetTime(P32(struct _adx_talk *, AdxTInfo[SlotNo].Handle), &SampleCount, &SamplingRate);
     
     ADXPS2_Unlock();
     

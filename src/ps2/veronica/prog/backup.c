@@ -38,7 +38,7 @@ static void ClearInfo(Sint32 drive)
     
 	info->IsFormat = FALSE;
     
-	info->Work = NULL;
+	info->Work = S32(NULL);
     
 	memset(&info->DiskInfo, 0, sizeof(BUS_DISKINFO));
 }
@@ -77,9 +77,9 @@ static Sint32 BupComplete(Sint32 drive, Sint32 op, Sint32 stat, Uint32 param)
         
         break;
     case BUD_OP_UNMOUNT:
-        if ((info->Work != NULL) && (info->MemMode == 0)) 
+        if ((P32(void *, info->Work) != NULL) && (info->MemMode == 0)) 
         { 
-            syFree(info->Work); 
+            syFree(P32(void *, info->Work)); 
         }
         
         ClearInfo(drive);

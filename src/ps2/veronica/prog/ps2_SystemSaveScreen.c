@@ -31,19 +31,19 @@ SYSSAVE_SCREEN* CreateSysSaveScreen(SYSSAVE_SCREEN* pSysSave, void* vpWorkPtrSys
     
     pSysSave->cMesFlag = 0;
     
-    pSysSave->pConfigFile = mcCreateConfigInit(&ConfigFile);
-    pSysSave->pSaveFile = mcCreateSaveFileInit(&SaveFile);
+    pSysSave->pConfigFile = S32(mcCreateConfigInit(&ConfigFile));
+    pSysSave->pSaveFile = S32(mcCreateSaveFileInit(&SaveFile));
     
-    pSysSave->pMcState = CreateMemoryCard(&McState);
+    pSysSave->pMcState = S32(CreateMemoryCard(&McState));
     
-    pSysSave->pIconInfo = mcCreateIconInit(&IconInfo, cpNameList, 1);
+    pSysSave->pIconInfo = S32(mcCreateIconInit(&IconInfo, cpNameList, 1));
     
-    pSysSave->pSelectFileInfo = mcSelectFileInfoInit(SelectFileInfo);
-    pSysSave->pSelectFileWindow = mcCreateFileSelectWindow(&SelectFileWindow, pSysSave->pSelectFileInfo, 15);
+    pSysSave->pSelectFileInfo = S32(mcSelectFileInfoInit(SelectFileInfo));
+    pSysSave->pSelectFileWindow = S32(mcCreateFileSelectWindow(&SelectFileWindow, P32(struct SELECTFILEINFO *, pSysSave->pSelectFileInfo), 15));
     
-    pSysSave->vpReadBuffer = vpWorkPtrSys;
+    pSysSave->vpReadBuffer = S32(vpWorkPtrSys);
     
-    CheckMemoryCardChangeConnectTypeAll(pSysSave->pMcState);
+    CheckMemoryCardChangeConnectTypeAll(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
     
     return pSysSave;
 }
@@ -124,7 +124,7 @@ int ExecuteSysSaveScreen(SYSSAVE_SCREEN* pSysSave)
     }
     
 #endif
-    pSysSave->lCardState = ExecuteMemoryCard(pSysSave->pMcState);
+    pSysSave->lCardState = ExecuteMemoryCard(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
     
     switch (pSysSave->ulState)
     {                          
@@ -206,7 +206,7 @@ void SetStateSysSaveAwarenessCard(SYSSAVE_SCREEN* pSysSave)
 {   
     pSysSave->ulState = 0;
     
-    SetMemoryCardCurrentPort(pSysSave->pMcState, 0);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
     
     RecoveryMemoryCardError((MEMORYCARDSTATE*)pSysSave);
 }
@@ -222,12 +222,12 @@ void ExecuteStateSysSaveAwarenessCard(SYSSAVE_SCREEN* pSysSave)
     {
     case 100:
     case 101:
-        lPort0State = GetMemoryCardSelectPortState(pSysSave->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pSysSave->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
         
         if (lPort0State == 2)
         {
-            lResult = CheckMemoryCardFormatStatus(pSysSave->pMcState);
+            lResult = CheckMemoryCardFormatStatus(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             if (lResult == 1)
             {
@@ -290,8 +290,8 @@ void ExecuteStateSysSaveErrUnPS2MemCard(SYSSAVE_SCREEN* pSysSave)
     {
     case 100:
     case 101:
-        lPort0State = GetMemoryCardSelectPortState(pSysSave->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pSysSave->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
         
         if (lPort0State == 2)
         {
@@ -339,8 +339,8 @@ void ExecuteStateSysSaveErrLostCard(SYSSAVE_SCREEN* pSysSave)
     {
     case 100:
     case 101:
-        lPort0State = GetMemoryCardSelectPortState(pSysSave->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pSysSave->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
         
         if (lPort0State == 2)
         {
@@ -391,8 +391,8 @@ void SetStateSysSaveDirCheck(SYSSAVE_SCREEN* pSysSave)
     pSysSave->ulState = 10;
     pSysSave->ulSubState = 0;
     
-    SetMemoryCardCurrentPort(pSysSave->pMcState, 0);
-    SetCheckMcFlag(pSysSave->pMcState, 1);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
 }
 
 // 100% matching!
@@ -403,7 +403,7 @@ void ExecuteStateSysSaveDirCheck(SYSSAVE_SCREEN* pSysSave)
     switch (pSysSave->ulSubState)
     {
     case 0:
-        lResult = CheckMemoryCardExistSubDirectory(pSysSave->pMcState);
+        lResult = CheckMemoryCardExistSubDirectory(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == 1)
         {
@@ -411,24 +411,24 @@ void ExecuteStateSysSaveDirCheck(SYSSAVE_SCREEN* pSysSave)
         }
         else if (lResult < 0)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 2;
         }
         
         break;
     case 1:
-        lResult = CheckMemoryCardExistFileList(pSysSave->pMcState, cpNameList, 18);
+        lResult = CheckMemoryCardExistFileList(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), cpNameList, 18);
         
         if (lResult < 0)
         {
             pSysSave->ulSubState = 3;
             
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         }
         else if (lResult == 1)
         {
@@ -482,7 +482,7 @@ void ExecuteStateSysSaveFreeCapacity(SYSSAVE_SCREEN* pSysSave)
 {
     int lResult;
 
-    lResult = GetMemoryCardFreeCapacity(pSysSave->pMcState);
+    lResult = GetMemoryCardFreeCapacity(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
     
     if (lResult < mcGetFreeCapacitySize())
     {
@@ -591,7 +591,7 @@ void SetStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
     
     pSysSave->sSelectCur = 1;
     
-    SetCheckMcFlag(pSysSave->pMcState, 1);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
 }
 
 // 100% matching!
@@ -602,24 +602,24 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
     switch (pSysSave->ulSubState)
     {
     case 0:
-        lResult = CreateMemoryCardSubDirectory(pSysSave->pMcState);
+        lResult = CreateMemoryCardSubDirectory(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
-        else if ((lResult == 1) && (mcNewCreateIcon(pSysSave->pIconInfo, pSysSave->pMcState, cpNameList, 0) == 1))
+        else if ((lResult == 1) && (mcNewCreateIcon(P32(struct ICONINFORMATION *, pSysSave->pIconInfo), P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), cpNameList, 0) == 1))
         {
             pSysSave->ulSubState = 1;
         }
         
         break;
     case 1:
-        lResult = RecoveryMemoryCardWriteEnd(pSysSave->pMcState);
+        lResult = RecoveryMemoryCardWriteEnd(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == 1)
         {
@@ -627,28 +627,28 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         }
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
         
         break;
     case 2:
-        pSysSave->ulFileSize = mcReadIconData(pSysSave->vpReadBuffer, cpNameList, 1);
+        pSysSave->ulFileSize = mcReadIconData(P32(void *, pSysSave->vpReadBuffer), cpNameList, 1);
         
         if (pSysSave->ulFileSize == 0)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
         else
         {
-            lResult = mcWriteIconData(pSysSave->pMcState, pSysSave->vpReadBuffer, pSysSave->ulFileSize, cpNameList, 1);
+            lResult = mcWriteIconData(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(void *, pSysSave->vpReadBuffer), pSysSave->ulFileSize, cpNameList, 1);
             
             if (lResult == 1)
             {
@@ -658,13 +658,13 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         
         break;
     case 3:
-        lResult = RecoveryMemoryCardWriteEnd(pSysSave->pMcState);
+        lResult = RecoveryMemoryCardWriteEnd(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
@@ -672,7 +672,7 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         {
             if (lResult == 1)
             {
-                lResult = mcNewCreateConfigFile(pSysSave->pMcState, pSysSave->pConfigFile);
+                lResult = mcNewCreateConfigFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(struct CONFIGFILE *, pSysSave->pConfigFile));
 
                 if (lResult == 1)
                 {
@@ -683,7 +683,7 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         
         break;
     case 4:
-        lResult = RecoveryMemoryCardWriteEnd(pSysSave->pMcState);
+        lResult = RecoveryMemoryCardWriteEnd(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == 1)
         {
@@ -691,16 +691,16 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         }
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
         
         break;
     case 5:
-        lResult = mcNewCreateSaveFile(pSysSave->pMcState, pSysSave->pSaveFile, cpNameList, pSysSave->usLoopCount);
+        lResult = mcNewCreateSaveFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(struct SAVEFILE *, pSysSave->pSaveFile), cpNameList, pSysSave->usLoopCount);
         
         if (lResult != 0)
         {
@@ -709,7 +709,7 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         
         break;
     case 6:
-        lResult = RecoveryMemoryCardWriteEnd(pSysSave->pMcState);
+        lResult = RecoveryMemoryCardWriteEnd(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (lResult == 1)
         {
@@ -721,7 +721,7 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
                 
                 pSysSave->cMesFlag = 20;
                 
-                SetCheckMcFlag(pSysSave->pMcState, 0);
+                SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             }
             else
             {
@@ -730,9 +730,9 @@ void ExecuteStateSysSaveWriteSysData(SYSSAVE_SCREEN* pSysSave)
         }
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 8;
         }
@@ -764,7 +764,7 @@ void SetStateSysSaveSuccessWriteSysData(SYSSAVE_SCREEN* pSysSave)
     
     pSysSave->ulMemCheckCountTimer = 15;
     
-    SetCheckMcFlag(pSysSave->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
 }
 
 // 100% matching!
@@ -888,9 +888,9 @@ void SetStateWriteRankingData(SYSSAVE_SCREEN* pSysSave)
     pSysSave->ulState = 20;
     pSysSave->ulSubState = 0;
     
-    SetCheckMcFlag(pSysSave->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
     
-    RecoveryMemoryCardError(pSysSave->pMcState);
+    RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
 }
 
 // 100% matching!
@@ -903,14 +903,14 @@ void ExecuteStateWriteRankingData(SYSSAVE_SCREEN* pSysSave)
     switch (pSysSave->ulSubState)
     {
     case 0:
-        if (mcReadStartConfigFile(pSysSave->pMcState, pSysSave->pConfigFile) == 1)
+        if (mcReadStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(struct CONFIGFILE *, pSysSave->pConfigFile)) == 1)
         {
             pSysSave->ulSubState = 1;
         }
         
         break;
     case 1:
-        ulSaveResult = mcCheckReadStartConfigFile(pSysSave->pMcState, pSysSave->pConfigFile);
+        ulSaveResult = mcCheckReadStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(struct CONFIGFILE *, pSysSave->pConfigFile));
         
         if (ulSaveResult > 0)
         {
@@ -918,22 +918,22 @@ void ExecuteStateWriteRankingData(SYSSAVE_SCREEN* pSysSave)
             {
                 pRankingData = mcCreateConfigInit(&RankingData);
                 
-                memcpy(pRankingData, pSysSave->pConfigFile, ulSaveResult);
+                memcpy(pRankingData, P32(struct CONFIGFILE *, pSysSave->pConfigFile), ulSaveResult);
                 
                 SysSaveHikaku(pRankingData);
             }
             else
             {
-                memcpy(sys, pSysSave->pConfigFile, ulSaveResult);
+                memcpy(sys, P32(struct CONFIGFILE *, pSysSave->pConfigFile), ulSaveResult);
             }
             
             SetStateSysSave(pSysSave);
         }
         else if (ulSaveResult < 0)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 2;
         }
@@ -957,7 +957,7 @@ void SetStateSysSave(SYSSAVE_SCREEN* pSysSave)
     
     pSysSave->cMesFlag = 11;
     
-    SetCheckMcFlag(pSysSave->pMcState, 1);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
 }
 
 // 100% matching!
@@ -968,18 +968,18 @@ void ExecuteStateSysSave(SYSSAVE_SCREEN* pSysSave)
     switch (pSysSave->ulSubState)
     {
     case 0:
-        if (mcWriteStartConfigFile(pSysSave->pMcState, pSysSave->pConfigFile) == 1)
+        if (mcWriteStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), P32(struct CONFIGFILE *, pSysSave->pConfigFile)) == 1)
         {
             pSysSave->ulSubState = 1;
         }
         
         break;
     case 1:
-        ulSaveResult = mcCheckWriteStartConfigFile(pSysSave->pMcState);
+        ulSaveResult = mcCheckWriteStartConfigFile(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
         
         if (ulSaveResult == 1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
             pSysSave->usExitFlag = 2;
             
@@ -987,9 +987,9 @@ void ExecuteStateSysSave(SYSSAVE_SCREEN* pSysSave)
         }
         else if (ulSaveResult < 0)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 2;
         }
@@ -1012,7 +1012,7 @@ void SetStateSysSaveErrCardWrite(SYSSAVE_SCREEN* pSysSave)
     
     pSysSave->cMesFlag = 13;
     
-    SetCheckMcFlag(pSysSave->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
 }
 
 // 100% matching!
@@ -1092,7 +1092,7 @@ void SetStateSysSaveStartFormat(SYSSAVE_SCREEN* pSysSave)
     
     pSysSave->cMesFlag = 4;
     
-    SetCheckMcFlag(pSysSave->pMcState, 1);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 1);
 }
 
 // 100% matching!
@@ -1103,26 +1103,26 @@ void ExecuteStateSysSaveStartFormat(SYSSAVE_SCREEN* pSysSave)
     switch (pSysSave->ulSubState)
     {
     case 0:
-        if (FormatMemoryCard(pSysSave->pMcState) == 1)
+        if (FormatMemoryCard(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState)) == 1)
         {
             pSysSave->ulSubState = 1;
         }
         
         break;
     case 1:
-        lFormatResult = RecoveryMemoryCardFormatEnd(pSysSave->pMcState);
+        lFormatResult = RecoveryMemoryCardFormatEnd(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
 
         if (lFormatResult == 1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
             pSysSave->ulSubState = 2;
         }
         else if (lFormatResult == -1)
         {
-            SetCheckMcFlag(pSysSave->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState), 0);
             
-            RecoveryMemoryCardError(pSysSave->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pSysSave->pMcState));
             
             pSysSave->ulSubState = 3;
         }

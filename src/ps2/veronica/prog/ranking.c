@@ -562,15 +562,15 @@ void RankingTextureInit()
         
         if (sz != 0)
         {
-            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 0x3F) & ~0x3F)));
              
-            RequestReadIsoFile("sysmes.ald", sys->memp);
+            RequestReadIsoFile("sysmes.ald", P32(unsigned char *, sys->memp));
             
-            sys->mes_ip = (unsigned int*)sys->memp;
+            sys->mes_ip = S32((unsigned int*)P32(unsigned char *, sys->memp));
             
-            sys->memp += sz;
+            P32_ADD(unsigned char *, sys->memp ,  sz);
             
-            sys->doordp = bhGetFreeMemory(0x2A000, 0x20);
+            sys->doordp = S32(bhGetFreeMemory(0x2A000, 0x20));
             
             rk->mode_00 = 1;
         }
@@ -581,17 +581,17 @@ void RankingTextureInit()
     case 1:
         if (GetReadFileStatus() == 0) 
         {
-            datp = (unsigned char*)sys->mes_ip; 
+            datp = (unsigned char*)P32(unsigned int *, sys->mes_ip); 
                 
-            dt = *sys->mes_ip; 
+            dt = *P32(unsigned int *, sys->mes_ip); 
             
             datp += 4; 
             
-            sys->mes_ip = (unsigned int*)datp; 
+            sys->mes_ip = S32((unsigned int*)datp); 
             
             datp += dt; 
             
-            sys->mes_sp = (unsigned int*)(datp + 4);
+            sys->mes_sp = S32((unsigned int*)(datp + 4));
             
             rk->mode_00 = 2;
         }
@@ -600,9 +600,9 @@ void RankingTextureInit()
     case 2:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->sys_partid, 1) != 0)) 
         {
-            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 0x3F) & ~0x3F)));
             
-            RequestReadInsideFile(sys->sys_partid, 1, sys->memp);
+            RequestReadInsideFile(sys->sys_partid, 1, P32(unsigned char *, sys->memp));
             
             rk->mode_00 = 3;
         }
@@ -611,7 +611,7 @@ void RankingTextureInit()
     case 3:
         if (GetReadFileStatus() == 0) 
         {
-            bhSetFontTexture(sys->memp);
+            bhSetFontTexture(P32(unsigned char *, sys->memp));
             
             rk->mode_00 = 4;
         }
@@ -620,9 +620,9 @@ void RankingTextureInit()
     case 4:
         if (GetReadFileStatus() != 1) 
         {
-            sys->sbs_sp = sys->memp;
+            sys->sbs_sp = S32(P32(unsigned char *, sys->memp));
             
-            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 0x3F) & ~0x3F)));
             
             rk->mode_00 = 5;
         }
@@ -631,11 +631,11 @@ void RankingTextureInit()
     case 5:
         if ((GetReadFileStatus() == 0) && (GetInsideFileSize(sys->itm_partid, no + 277) != 0))
         {
-            sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 0x3F) & ~0x3F));
+            sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 0x3F) & ~0x3F)));
             
-            RequestReadInsideFile(sys->itm_partid, no + 277, sys->memp);
+            RequestReadInsideFile(sys->itm_partid, no + 277, P32(unsigned char *, sys->memp));
             
-            sys->subtxp = sys->memp;
+            sys->subtxp = S32(P32(unsigned char *, sys->memp));
             
             rk->mode_00 = 6;
         }
@@ -656,8 +656,8 @@ void RankingTextureInit()
         
         break;
     case 7:
-        rk->rktx_list.textures = rk->rktx;
-        rk->rktx_list.nbTexture = bhSetMemPvpTexture(&rk->rktx_list, sys->subtxp, 0);
+        rk->rktx_list.textures = S32(rk->rktx);
+        rk->rktx_list.nbTexture = bhSetMemPvpTexture(&rk->rktx_list, P32(unsigned char *, sys->subtxp), 0);
         
         rk->mode_00 = 8;
         break;

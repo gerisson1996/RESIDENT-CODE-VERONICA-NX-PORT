@@ -58,7 +58,7 @@ void bhCheckWall(BH_PWORK* pw)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -659,7 +659,7 @@ int pc_slope_ground(struct BH_PWORK* pw, void* pos, float ah)
 
     for (i = 0; i < n; i++)
     {
-        hp = i < rom->wal_n ? &rom->walp[i] : &sys->mwalp[i - rom->wal_n];
+        hp = i < rom->wal_n ? &P32(struct ATR_WORK *, rom->walp)[i] : &sys->mwalp[i - rom->wal_n];
         if (!(hp->flg & 0x1) || hp->type != 6 || hp->id > 3) continue;
         h = hp->h ? hp->h : rom->h;
         u = p->x - hp->px;
@@ -721,7 +721,7 @@ int bhCheckWallEx(BH_PWORK* pw, NJS_POINT3* npos, NJS_POINT3* opos, float par, f
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else
         {
@@ -1352,7 +1352,7 @@ void bhCheckWall2Box(BH_PWORK* pw)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -2005,7 +2005,7 @@ ATR_WORK* bhCheckWallType(NJS_POINT3* pos, unsigned int flg, float ar, float ah)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -2113,7 +2113,7 @@ ATR_WORK* bhCheckWallType2(NJS_POINT3* pos, unsigned int flg, float aw, float ad
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -2250,7 +2250,7 @@ ATR_WORK* bhCheckWallRefAngle(NJS_POINT3* pos, unsigned int flg, float ar, float
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else
         {
@@ -3619,7 +3619,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
     float yy;     
     float yn, nr;     
 
-    sys->htp = NULL;
+    sys->htp = S32(NULL);
     
     yn = -1000.0f;
     nr = 10000.0f;
@@ -3630,7 +3630,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else
         {
@@ -3658,7 +3658,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
                     nr = yy;
                     yn = hp->py + h;
                     
-                    sys->htp = hp;
+                    sys->htp = S32(hp);
                 }
                 
                 break;
@@ -3673,7 +3673,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
                     nr = yy;
                     yn = hp->py + h;
                     
-                    sys->htp = hp;
+                    sys->htp = S32(hp);
                 }
                 
                 break;
@@ -3689,7 +3689,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
                     nr = yy;
                     yn = hp->py + h;
                     
-                    sys->htp = hp;
+                    sys->htp = S32(hp);
                 }
                 
                 break;
@@ -3719,7 +3719,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
                         nr = pos->y - ln;
                         yn = ln;
                         
-                        sys->htp = hp;
+                        sys->htp = S32(hp);
                     }
                 }
                 
@@ -3737,7 +3737,7 @@ float bhGetGroundPosition(NJS_POINT3* pos)
                     nr = yy;
                     yn = hp->py;
                 
-                    sys->htp = hp;
+                    sys->htp = S32(hp);
                 }
                 
                 break;
@@ -4656,8 +4656,8 @@ void bhCheckExmAtari(BH_PWORK* pp)
     
     danf = 0;
     
-    pxn[0] = ((EXP_WORK*)plp->exp0)->fpx - (px * (1.5f + (3.0f - ((EXP_WORK*)plp->exp0)->arn)));
-    pzn[0] = ((EXP_WORK*)plp->exp0)->fpz - (pz * (1.5f + (3.0f - ((EXP_WORK*)plp->exp0)->arn)));
+    pxn[0] = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->fpx - (px * (1.5f + (3.0f - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn)));
+    pzn[0] = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->fpz - (pz * (1.5f + (3.0f - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn)));
     
     pxn[1] = plp->px - (0.75f * px);
     pzn[1] = plp->pz - (0.75f * pz);
@@ -4665,8 +4665,8 @@ void bhCheckExmAtari(BH_PWORK* pp)
     pxn[2] = plp->px - (4.5f * px);
     pzn[2] = plp->pz - (4.5f * pz); 
     
-    pxn[3] = ((EXP_WORK*)plp->exp0)->fpx - (px * (3.0f + (3.0f - ((EXP_WORK*)plp->exp0)->arn)));
-    pzn[3] = ((EXP_WORK*)plp->exp0)->fpz - (pz * (3.0f + (3.0f - ((EXP_WORK*)plp->exp0)->arn)));
+    pxn[3] = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->fpx - (px * (3.0f + (3.0f - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn)));
+    pzn[3] = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->fpz - (pz * (3.0f + (3.0f - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arn)));
     
     pxn[4] = plp->px - (2.0f * px);
     pzn[4] = plp->pz - (2.0f * pz);
@@ -4679,7 +4679,7 @@ void bhCheckExmAtari(BH_PWORK* pp)
     {
         if (i < rom->etc_n) 
         {
-            exp = &rom->etcp[i];
+            exp = &P32(struct ATR_WORK *, rom->etcp)[i];
         } 
         else
         {
@@ -4739,7 +4739,7 @@ void bhCheckExmAtari(BH_PWORK* pp)
                         
                         sys->st_flg |= 0x4;
                         
-                        sys->pl_htp = exp;
+                        sys->pl_htp = S32(exp);
                         
                         if (exp->prm0 == 0) 
                         {
@@ -4807,7 +4807,7 @@ void bhCheckExmAtari(BH_PWORK* pp)
                                 
                                 sys->st_flg |= 0x4;
                                 
-                                sys->pl_htp = exp;
+                                sys->pl_htp = S32(exp);
                                 
                                 pp->mode0 = 1;
                                 pp->mode1 = 0;
@@ -4913,7 +4913,7 @@ void bhCheckExmAtari(BH_PWORK* pp)
                             sys->cb_flg |= 0x20000;
                         }
                         
-                        op = &sys->itwp[exp->prm0];
+                        op = &P32(struct O_WRK *, sys->itwp)[exp->prm0];
                         
                         if ((op->flg & 0x1)) 
                         {
@@ -4959,7 +4959,7 @@ void bhCheckExmAtari(BH_PWORK* pp)
                     } 
                     else
                     {
-                        op = &sys->obwp[exp->prm0];
+                        op = &P32(struct O_WRK *, sys->obwp)[exp->prm0];
                         
                         if ((op->flg & 0x1)) 
                         {
@@ -5019,7 +5019,7 @@ void bhSetUseKaidanFlag(BH_PWORK* pp, ATR_WORK* exp, int idx)
 {
     ATR_WORK* exp2;
     
-    pp->kdnp   = &exp->flg;
+    pp->kdnp   = S32(&exp->flg);
     pp->kdnidx = idx;
     
     exp->attr |= 0x400000;
@@ -5028,7 +5028,7 @@ void bhSetUseKaidanFlag(BH_PWORK* pp, ATR_WORK* exp, int idx)
     {
         if (idx < rom->etc_n)
         {
-            exp2 = &rom->etcp[idx];
+            exp2 = &P32(struct ATR_WORK *, rom->etcp)[idx];
         } 
         else 
         {
@@ -5048,7 +5048,7 @@ void bhSetUseKaidanFlag(BH_PWORK* pp, ATR_WORK* exp, int idx)
     }
     else 
     {
-        exp2 = &rom->etcp[exp->prm3];
+        exp2 = &P32(struct ATR_WORK *, rom->etcp)[exp->prm3];
         
         exp2->attr |= 0x400000;
     }
@@ -5060,7 +5060,7 @@ void bhClrUseKaidanFlag(BH_PWORK* pp)
     ATR_WORK* exp, *exp2;
     int idx;
 	
-    exp = (ATR_WORK*)pp->kdnp;
+    exp = (ATR_WORK*)P32(unsigned char *, pp->kdnp);
     
     if (exp != NULL) 
     {
@@ -5072,7 +5072,7 @@ void bhClrUseKaidanFlag(BH_PWORK* pp)
         {
             if (idx < rom->etc_n) 
             {
-                exp2 = &rom->etcp[idx];
+                exp2 = &P32(struct ATR_WORK *, rom->etcp)[idx];
             } 
             else 
             {
@@ -5092,7 +5092,7 @@ void bhClrUseKaidanFlag(BH_PWORK* pp)
         }
         else
         {
-            exp = &rom->etcp[exp->prm3];
+            exp = &P32(struct ATR_WORK *, rom->etcp)[exp->prm3];
             
             exp->attr &= ~0x400000;
         }
@@ -5139,7 +5139,7 @@ void bhSetDansaLimitAtari(BH_PWORK* pp)
     {
         if (i < rom->etc_n) 
         {
-            exp = &rom->etcp[i];
+            exp = &P32(struct ATR_WORK *, rom->etcp)[i];
         } 
         else 
         {
@@ -5155,11 +5155,11 @@ void bhSetDansaLimitAtari(BH_PWORK* pp)
     
     if (pop == NULL) 
     {
-        pop = pp->dan_ap;
+        pop = P32(void *, pp->dan_ap);
     } 
     else 
     {
-        pp->dan_ap = pop;
+        pp->dan_ap = S32(pop);
     }
     
     if (pop == NULL) 
@@ -5278,7 +5278,7 @@ ATR_WORK* bhCheckDansaAtari(int flr_no, float px, float pz)
     {
         if (i < rom->etc_n) 
         {
-            exp = rom->etcp + i;
+            exp = P32(struct ATR_WORK *, rom->etcp) + i;
         } 
         else 
         {
@@ -5311,10 +5311,10 @@ void bhCheckFloorP(BH_PWORK* pp)
     
     njSinCos(pp->ay, &spx, &spz);
     
-    dp = (float*)plp->exp0;
+    dp = (float*)P32(unsigned char *, plp->exp0);
     spx = dp[9] - (spx * (3.0f + (3.0f - dp[7])));
     
-    dp = (float*)plp->exp0;
+    dp = (float*)P32(unsigned char *, plp->exp0);
     spz = dp[11] - (spz * (3.0f + (3.0f - dp[7])));
     
     pp->stflg &= ~0x100000;
@@ -5328,7 +5328,7 @@ void bhCheckFloorP(BH_PWORK* pp)
     {
         if (i < rom->flr_n) 
         {
-            fp = &rom->flrp[i];
+            fp = &P32(struct ATR_WORK *, rom->flrp)[i];
         } 
         else 
         {
@@ -5460,7 +5460,7 @@ void bhCheckDansa(BH_PWORK* pp)
     {
         if (i < rom->etc_n) 
         {
-            exp = rom->etcp + i;
+            exp = P32(struct ATR_WORK *, rom->etcp) + i;
         }
         else
         {
@@ -5499,7 +5499,7 @@ int bhCheckFloorSound(BH_PWORK* pp, int flr_no, float px, float pz)
     {
         if (i < rom->flr_n) 
         {
-            fp = &rom->flrp[i];
+            fp = &P32(struct ATR_WORK *, rom->flrp)[i];
         } 
         else 
         {
@@ -5536,7 +5536,7 @@ ATR_WORK* bhCheckFloorEnemy(int flr_no, float px, float pz)
     {
         if (i < rom->flr_n)
         {
-            fp = rom->flrp + i;
+            fp = P32(struct ATR_WORK *, rom->flrp) + i;
         } 
         else 
         {
@@ -5565,7 +5565,7 @@ ATR_WORK* bhCheckFloorEffect(int flr_no, float px, float pz)
     {
         if (i < rom->flr_n)
         {
-            fp = rom->flrp + i;
+            fp = P32(struct ATR_WORK *, rom->flrp) + i;
         } 
         else 
         {
@@ -5594,7 +5594,7 @@ ATR_WORK* bhCheckWater(NJS_POINT3* pos)
     {
         if (i < rom->flr_n)
         {
-            fp = rom->flrp + i;
+            fp = P32(struct ATR_WORK *, rom->flrp) + i;
         }
         else 
         {
@@ -5630,7 +5630,7 @@ ATR_WORK* bhCheckL2Water(NJS_LINE* lp, NJS_POINT3* pos)
     {
         if (i < rom->flr_n) 
         {
-            fp = &rom->flrp[i];
+            fp = &P32(struct ATR_WORK *, rom->flrp)[i];
         } 
         else 
         {
@@ -5691,7 +5691,7 @@ void bhResetAtariAttr()
     {
         if (i < rom->wal_n)
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         }
         else
         {
@@ -5718,7 +5718,7 @@ void bhResetAtariAttr()
     {
         if (i < rom->etc_n)
         {
-            hp = &rom->etcp[i];
+            hp = &P32(struct ATR_WORK *, rom->etcp)[i];
         } 
         else 
         {
@@ -5742,7 +5742,7 @@ void bhResetAtariAttr()
     {
         if (i < rom->flr_n) 
         {
-            hp = &rom->flrp[i]; 
+            hp = &P32(struct ATR_WORK *, rom->flrp)[i]; 
         } 
         else 
         {
@@ -5779,9 +5779,9 @@ void bhCheckPlayer(BH_PWORK* pp)
     
     if (!(plp->flg & 0x8)) 
     {
-        ppx = ((EXP_WORK*)plp->exp0)->nlxb + plp->aox; 
-        ppy = ((EXP_WORK*)plp->exp0)->nlyb + plp->aoy;
-        ppz = ((EXP_WORK*)plp->exp0)->nlzb + plp->aoz;
+        ppx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlxb + plp->aox; 
+        ppy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlyb + plp->aoy;
+        ppz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlzb + plp->aoz;
     }
     else 
     {
@@ -5868,7 +5868,7 @@ void bhCheckEnemies(BH_PWORK* pp)
         {
             enep = &ene[i];
             
-            if (((((enep->flg & 0x1)) && ((enep->flg & 0x8))) && (!(enep->stflg & 0x1000000))) && ((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(enep) & ~0x80000000))) && ((((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(plp) & ~0x80000000))) || ((enep->flg & 0x40))) && ((!(enep->flg & 0x80)) || (!(((O_WRK*)enep->lkwkp)->stflg & 0x1000000))))) 
+            if (((((enep->flg & 0x1)) && ((enep->flg & 0x8))) && (!(enep->stflg & 0x1000000))) && ((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(enep) & ~0x80000000))) && ((((((unsigned int)PS2_ADDR(pp) & ~0x80000000)) != (((unsigned int)PS2_ADDR(plp) & ~0x80000000))) || ((enep->flg & 0x40))) && ((!(enep->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, enep->lkwkp))->stflg & 0x1000000))))) 
             {
                 ex1 = enep->px + enep->aox;
                 ey1 = enep->py + enep->aoy;

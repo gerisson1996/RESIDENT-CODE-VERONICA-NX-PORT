@@ -172,7 +172,7 @@ void DrawSubItem(S_WORK* st, SITEM* si)
         njScale(NULL, testf, testf, testf);
     }
     
-    njSetTexture(si->mdl.texP);
+    njSetTexture(P32(NJS_TEXLIST *, si->mdl.texP));
     
     if (si->mw.rdid == 139) 
     {
@@ -183,11 +183,11 @@ void DrawSubItem(S_WORK* st, SITEM* si)
             njPushMatrix(NULL);
             njUnitMatrix(NULL);
             
-            njRotateX(NULL, si->mdl.objP->child->ang[0]);
-            njRotateY(NULL, si->mdl.objP->child->ang[1]);
-            njRotateZ(NULL, si->mdl.objP->child->ang[2]);
+            njRotateX(NULL, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0]);
+            njRotateY(NULL, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[1]);
+            njRotateZ(NULL, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[2]);
             
-            njCalcPoint(NULL, (NJS_POINT3*)si->mdl.objP->child->pos, &pos00);
+            njCalcPoint(NULL, (NJS_POINT3*)P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->pos, &pos00);
             
             njPopMatrix(1);
             njTranslate(NULL, pos00.x, pos00.y, pos00.z);
@@ -197,9 +197,9 @@ void DrawSubItem(S_WORK* st, SITEM* si)
                 njRotateY(NULL, fv->ang00);
             }
             
-            njCnkEasyMultiDrawModel(si->mdl.objP->child->model);
+            njCnkEasyMultiDrawModel(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->model));
             
-            MakeTag(si->mdl.objP->child, 0);
+            MakeTag(P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child), 0);
         }
         
         njPopMatrix(1);
@@ -210,11 +210,11 @@ void DrawSubItem(S_WORK* st, SITEM* si)
             njPushMatrix(NULL);
             njUnitMatrix(NULL);
             
-            njRotateX(NULL, si->mdl.objP->child->sibling->ang[0]);
-            njRotateY(NULL, si->mdl.objP->child->sibling->ang[1]);
-            njRotateZ(NULL, si->mdl.objP->child->sibling->ang[2]);
+            njRotateX(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[0]);
+            njRotateY(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[1]);
+            njRotateZ(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->ang[2]);
             
-            njCalcPoint(0, (NJS_POINT3*)si->mdl.objP->child->sibling->pos, &pos00);
+            njCalcPoint(0, (NJS_POINT3*)P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->pos, &pos00);
             
             njPopMatrix(1);
             njTranslate(NULL, pos00.x, pos00.y, pos00.z);
@@ -224,9 +224,9 @@ void DrawSubItem(S_WORK* st, SITEM* si)
                 njRotateY(NULL, fv->ang00);
             }
             
-            njCnkEasyMultiDrawModel(si->mdl.objP->child->sibling->model);
+            njCnkEasyMultiDrawModel(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->model));
             
-            MakeTag(si->mdl.objP->child->sibling, 2);
+            MakeTag(P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling), 2);
         }
         
         njPopMatrix(1);
@@ -237,11 +237,11 @@ void DrawSubItem(S_WORK* st, SITEM* si)
             njPushMatrix(NULL);
             njUnitMatrix(NULL);
             
-            njRotateX(NULL, si->mdl.objP->child->sibling->sibling->ang[0]);
-            njRotateY(NULL, si->mdl.objP->child->sibling->sibling->ang[1]);
-            njRotateZ(NULL, si->mdl.objP->child->sibling->sibling->ang[2]);
+            njRotateX(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[0]);
+            njRotateY(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[1]);
+            njRotateZ(NULL, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->ang[2]);
             
-            njCalcPoint(NULL, (NJS_POINT3*)si->mdl.objP->child->sibling->sibling->pos, &pos00);
+            njCalcPoint(NULL, (NJS_POINT3*)P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->pos, &pos00);
             
             njPopMatrix(1);
             njTranslate(NULL, pos00.x, pos00.y, pos00.z);
@@ -251,9 +251,9 @@ void DrawSubItem(S_WORK* st, SITEM* si)
                 njRotateY(NULL, fv->ang00);
             }
             
-            njCnkEasyMultiDrawModel(si->mdl.objP->child->sibling->sibling->model);
+            njCnkEasyMultiDrawModel(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling)->model));
             
-            MakeTag(si->mdl.objP->child->sibling->sibling, 1);
+            MakeTag(P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->sibling)->sibling), 1);
         }
         
         njPopMatrix(1);
@@ -262,14 +262,14 @@ void DrawSubItem(S_WORK* st, SITEM* si)
     {
         ViewType = ItemViewTypeTbl[st->itemid];
         
-        njCnkEasyMultiDrawObjectI(si->mdl.objP);
+        njCnkEasyMultiDrawObjectI(P32(struct cnkobj *, si->mdl.objP));
         
         if ((st->itemid == 33) || (st->itemid == 34) || (st->itemid == 142))
         {
             njTranslate(NULL, 0.1f, 1.0f, 0.2f);
             njPushMatrix(NULL);
             
-            njCnkEasyMultiDrawObjectI(si->mdl.objP);
+            njCnkEasyMultiDrawObjectI(P32(struct cnkobj *, si->mdl.objP));
             
             njPopMatrix(1);
         }
@@ -289,10 +289,10 @@ void Model_Read_Start()
     
     if ((si->mw.flg & 0x1))
     {
-        sys->sb_rdp = si->keep;
+        sys->sb_rdp = S32(P32(unsigned char *, si->keep));
         sys->sb_rdid = si->mw.rdid;
         
-        sys->sb_ppp = NULL;
+        sys->sb_ppp = S32(NULL);
         
         *(int*)&sys->mn_mode0 = 6;
         
@@ -301,14 +301,14 @@ void Model_Read_Start()
         si->mw.flg |= 0x2;
     }
     
-    if ((sys->sb_ppp != NULL) && ((si->mw.flg & 0x2))) 
+    if ((P32(void *, sys->sb_ppp) != NULL) && ((si->mw.flg & 0x2))) 
     {
         si->mw.flg &= ~0x2;
         
-        si->mw.mdl_p = sys->sb_mlb;
-        si->mw.tex_p = sys->sb_ppp;
+        si->mw.mdl_p = S32(P32(void *, sys->sb_mlb));
+        si->mw.tex_p = S32(P32(void *, sys->sb_ppp));
         
-        si->keep += sys->sb_rdsz;
+        P32_ADD(unsigned char *, si->keep ,  sys->sb_rdsz);
         
         swork.statusflg |= 0x400;
     }
@@ -325,11 +325,11 @@ void Model_Read_Set(S_WORK* st)
 
     if ((swork.statusflg & 0x400)) 
     {
-        bhMlbBinRealize(si->mw.mdl_p, &si->mdl);
+        bhMlbBinRealize(P32(void *, si->mw.mdl_p), &si->mdl);
         
-        bhSetMemPvpTexture(si->mdl.texP, si->mw.tex_p, 0);
+        bhSetMemPvpTexture(P32(NJS_TEXLIST *, si->mdl.texP), P32(void *, si->mw.tex_p), 0);
         
-        si->keep = bhKeepObjWork(&si->mdl, si->keep);
+        si->keep = S32(bhKeepObjWork(&si->mdl, P32(unsigned char *, si->keep)));
         
         swork.statusflg |= 0x200000;
         
@@ -346,7 +346,7 @@ void Model_Read_Set(S_WORK* st)
         
         dw = &dsptbl[st->itemid];
         
-        FlagErase(si->mdl.objP);
+        FlagErase(P32(struct cnkobj *, si->mdl.objP));
         
         if (dw->hide != 0) 
         {
@@ -355,12 +355,12 @@ void Model_Read_Set(S_WORK* st)
         
         if (st->itemid == 55) 
         {
-            LighterOpen(si->mdl.objP->child->child);
+            LighterOpen(P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child));
         }
         
         if (st->itemid == 139) 
         {
-            FileSyu(si->mdl.objP->child);
+            FileSyu(P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child));
         }
         
         testf = ModelScaleSet(si, itemflg[dw->hide][3]);
@@ -720,7 +720,7 @@ void ItemModelCheck()
                             
                             if ((mesnum & 0xFFF) == 72)
                             {
-                                st->pip[st->listcsr_0] |= 0x80000000;
+                                P32(unsigned int *, st->pip)[st->listcsr_0] |= 0x80000000;
                             }
                         }
                         
@@ -750,7 +750,7 @@ void ItemModelCheck()
                             return;
                         }
                         
-                        if ((unsigned char)st->pip[st->listcsr_0] != 0)
+                        if ((unsigned char)P32(unsigned int *, st->pip)[st->listcsr_0] != 0)
                         {
                             bhSetMessage(1, st->itemid);
                             return;
@@ -832,7 +832,7 @@ void ItemModelChangeZoomOut()
     
     if (st->actioncount == 0)
     {
-        wp_ = &st->pip[st->listcsr_0];
+        wp_ = &P32(unsigned int *, st->pip)[st->listcsr_0];
         
         st->ips1 = st->itemid = idsettbl[st->mesid = itemflg[dsptbl[st->mesid].hide][6]];
         
@@ -878,7 +878,7 @@ void ItemModelChangeZoomOut()
         sc->cay = 0;
         sc->caz = 0;
         
-        si->mdl.objP->child->ang[0] = 0;
+        P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] = 0;
     }
 }
 
@@ -953,10 +953,10 @@ unsigned char MdlAction00(SITEM* si)
     case 1:
         break;
     case 2:
-        si->mdl.objP->child->child->child->ang[0] += 1456;
-        si->mdl.objP->child->ang[0] -= 728;
+        P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] += 1456;
+        P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] -= 728;
         
-        if (si->mdl.objP->child->child->child->ang[0] >= 32768) 
+        if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] >= 32768) 
         {
             swork.maincsr = 3;
         }
@@ -989,40 +989,40 @@ unsigned char MdlAction01(SITEM* si)
     case 1:                                         
         if (swork.itemid == 128)
         {                                  
-            si->mdl.objP->child->child->child->child->child->ang[0] += 1456;
-            si->mdl.objP->child->ang[0] -= 728;
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->child)->child)->ang[0] += 1456;
+            P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] -= 728;
             
-            if (si->mdl.objP->child->child->child->child->child->ang[0] >= 32768) 
+            if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->child)->child)->ang[0] >= 32768) 
             {
                 swork.maincsr = 2;
             }
         }
         else if (swork.itemid == 63)
         {  
-            si->mdl.objP->child->child->child->child->ang[0] += 1456;
-            si->mdl.objP->child->ang[0] -= 728;
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->child)->ang[0] += 1456;
+            P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] -= 728;
             
-            if (si->mdl.objP->child->child->child->child->ang[0] >= 32768) 
+            if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->child)->ang[0] >= 32768) 
             {
                 swork.maincsr = 2;
             }
         }
         else if (swork.itemid == 129) 
         {  
-            si->mdl.objP->child->child->child->ang[0] += 1456;
-            si->mdl.objP->child->ang[0] -= 728;
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] += 1456;
+            P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] -= 728;
             
-            if (si->mdl.objP->child->child->child->ang[0] >= 32768) 
+            if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] >= 32768) 
             {
                 swork.maincsr = 2;
             }
         }
         else
         {                                    
-            si->mdl.objP->child->child->child->ang[0] += 1456;
-            si->mdl.objP->child->ang[0] -= 728;
+            P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] += 1456;
+            P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[0] -= 728;
             
-            if (si->mdl.objP->child->child->child->ang[0] >= 32768) 
+            if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[0] >= 32768) 
             {
                 swork.maincsr = 2;
             }
@@ -1054,10 +1054,10 @@ unsigned char MdlAction02(SITEM* si)
     case 0:
         swork.maincsr = 1;
     case 1:
-        si->mdl.objP->child->child->child->ang[2] += 1456;
-        si->mdl.objP->child->ang[2] -= 728;
+        P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[2] += 1456;
+        P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->ang[2] -= 728;
         
-        if (si->mdl.objP->child->child->child->ang[2] >= 32768) 
+        if (P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, P32(struct cnkobj *, si->mdl.objP)->child)->child)->child)->ang[2] >= 32768) 
         {
             swork.maincsr = 2;
         }
@@ -1083,7 +1083,7 @@ unsigned char MdlAction02(SITEM* si)
 // 100% matching!
 void MdlEvalflagsSet(unsigned short evalchk)
 {
-	MdlHideCheck(sitem.mdl.objP, itemflg[(unsigned short)evalchk][0], 1);
+	MdlHideCheck(P32(struct cnkobj *, sitem.mdl.objP), itemflg[(unsigned short)evalchk][0], 1);
 }
 
 // 100% matching!
@@ -1097,28 +1097,28 @@ void MdlHideCheck(NJS_CNK_OBJECT* op, unsigned char el, unsigned char chk)
         
         chk *= 2;
         
-        if ((el != 0) && (op->child != NULL)) 
+        if ((el != 0) && (P32(struct cnkobj *, op->child) != NULL)) 
         {
-            MdlHideCheck(op->child, el, chk);
+            MdlHideCheck(P32(struct cnkobj *, op->child), el, chk);
         } 
         
-        if ((el != 0) && (op->sibling != NULL))
+        if ((el != 0) && (P32(struct cnkobj *, op->sibling) != NULL))
         {
-            MdlHideCheck(op->sibling, el, chk);
+            MdlHideCheck(P32(struct cnkobj *, op->sibling), el, chk);
         }
     }
     else if (el) 
     {
         chk *= 2;
         
-        if (op->child != NULL)
+        if (P32(struct cnkobj *, op->child) != NULL)
         { 
-            MdlHideCheck(op->child, el, chk);
+            MdlHideCheck(P32(struct cnkobj *, op->child), el, chk);
         }
         
-        if (op->sibling != NULL) 
+        if (P32(struct cnkobj *, op->sibling) != NULL) 
         {
-            MdlHideCheck(op->sibling, el, chk);
+            MdlHideCheck(P32(struct cnkobj *, op->sibling), el, chk);
         }
     }
 }
@@ -1130,12 +1130,12 @@ float ModelScaleSet(SITEM* itemmodel, int flg)
 
     if (flg != 0) 
     {
-        itemmodel->mdl.objP->pos[2] = itemmodel->mdl.objP->pos[1] = itemmodel->mdl.objP->pos[0] = 0;
+        P32(struct cnkobj *, itemmodel->mdl.objP)->pos[2] = P32(struct cnkobj *, itemmodel->mdl.objP)->pos[1] = P32(struct cnkobj *, itemmodel->mdl.objP)->pos[0] = 0;
 
-        itemmodel->mdl.objP->child->pos[2] = itemmodel->mdl.objP->child->pos[1] = itemmodel->mdl.objP->child->pos[0] = 0;
+        P32(struct cnkobj *, P32(struct cnkobj *, itemmodel->mdl.objP)->child)->pos[2] = P32(struct cnkobj *, P32(struct cnkobj *, itemmodel->mdl.objP)->child)->pos[1] = P32(struct cnkobj *, P32(struct cnkobj *, itemmodel->mdl.objP)->child)->pos[0] = 0;
     }
     
-    npGetWHDSize(itemmodel->mdl.objP, &whd);
+    npGetWHDSize(P32(struct cnkobj *, itemmodel->mdl.objP), &whd);
     
     scale00 = njScalor(&whd);
    
@@ -1153,14 +1153,14 @@ void FlagErase(NJS_CNK_OBJECT* op)
     op->evalflags &= ~0x2;
     op->evalflags &= ~0x1;
     
-    if (op->child != NULL) 
+    if (P32(struct cnkobj *, op->child) != NULL) 
     {
-        FlagErase(op->child);
+        FlagErase(P32(struct cnkobj *, op->child));
     }
 
-    if (op->sibling != NULL) 
+    if (P32(struct cnkobj *, op->sibling) != NULL) 
     {
-        FlagErase(op->sibling);
+        FlagErase(P32(struct cnkobj *, op->sibling));
     }
 }
 
@@ -1176,11 +1176,11 @@ void FileSyu(NJS_CNK_OBJECT* op)
     op->ang[0] = 32768;
     op->ang[1] = 32768;
     
-    op->sibling->ang[0] = 32768;
-    op->sibling->sibling->ang[0] = 32768;
+    P32(struct cnkobj *, op->sibling)->ang[0] = 32768;
+    P32(struct cnkobj *, P32(struct cnkobj *, op->sibling)->sibling)->ang[0] = 32768;
     
-    op->sibling->ang[1] = 32768;
-    op->sibling->sibling->ang[1] = 32768;
+    P32(struct cnkobj *, op->sibling)->ang[1] = 32768;
+    P32(struct cnkobj *, P32(struct cnkobj *, op->sibling)->sibling)->ang[1] = 32768;
 }
 
 // 100% matching!
@@ -1237,9 +1237,9 @@ void MakeTag(NJS_CNK_OBJECT* param, unsigned short flg) // first parameter is no
                 }
             }
             
-            p3c.p = p;
-            p3c.col = col;
-            p3c.tex = NULL;
+            p3c.p = S32(p);
+            p3c.col = S32(col);
+            p3c.tex = S32(NULL);
             p3c.num = 4;
             
             p[0].x = 0;

@@ -10,19 +10,19 @@ void bhInitMask(BH_PWORK* pp)
     int j; // not from DWARF
 	MASK_WORK* fm;
 
-    pp->exp0 = bhGetFreeMemory(1092, 32);
-    pp->exp1 = bhGetFreeMemory(sizeof(MASK_WORK), 32);
-    pp->exp2 = bhGetFreeMemory(sizeof(LIP_WORK), 32);
+    pp->exp0 = S32(bhGetFreeMemory(1092, 32));
+    pp->exp1 = S32(bhGetFreeMemory(sizeof(MASK_WORK), 32));
+    pp->exp2 = S32(bhGetFreeMemory(sizeof(LIP_WORK), 32));
 
-    if (pp->mskp == NULL) 
+    if (P32(void *, pp->mskp) == NULL) 
     {
         pp->mdflg &= ~0x100;
         
-        pp->mlwP->owP[6].flg |= 0x4;
-        pp->mlwP->owP[7].flg |= 0x4;
-        pp->mlwP->owP[8].flg |= 0x4;
-        pp->mlwP->owP[9].flg |= 0x4;
-        pp->mlwP->owP[10].flg |= 0x4;
+        P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[6].flg |= 0x4;
+        P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[7].flg |= 0x4;
+        P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[8].flg |= 0x4;
+        P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[9].flg |= 0x4;
+        P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[10].flg |= 0x4;
         return;
     }
     
@@ -30,47 +30,47 @@ void bhInitMask(BH_PWORK* pp)
     {
         i++;
         
-        ((int*)&pp->exp0[j])[9] = 0; 
+        ((int*)&P32(unsigned char *, pp->exp0)[j])[9] = 0; 
     } 
     
-    ((int*)pp->exp0)[2] = 0;
-    ((int*)pp->exp0)[5] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[2] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[5] = 0;
     
-    fm = (MASK_WORK*)pp->exp1;
+    fm = (MASK_WORK*)P32(unsigned char *, pp->exp1);
     
-    fmCnkInitContext(fm, pp->mskp, pp->mlwP->objP, pp->mlwP);
+    fmCnkInitContext(fm, P32(void *, pp->mskp), P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP), P32(struct ML_WORK *, pp->mlwP));
     
     fmCnkSetMode(fm, 1);
     
-    ((int*)pp->exp0)[8] = fm->head->nFace;
+    ((int*)P32(unsigned char *, pp->exp0))[8] = P32(struct HEAD_WORK *, fm->head)->nFace;
     
-    ((int*)pp->exp0)[265] = (unsigned int)PS2_ADDR(fm->face); 
-    ((int*)pp->exp0)[267] = (unsigned int)PS2_ADDR(fm->face); 
+    ((int*)P32(unsigned char *, pp->exp0))[265] = (unsigned int)PS2_ADDR(P32(struct PARAM_WORK *, fm->face)); 
+    ((int*)P32(unsigned char *, pp->exp0))[267] = (unsigned int)PS2_ADDR(P32(struct PARAM_WORK *, fm->face)); 
     
-    *(int*)(&pp->exp0[(*(int*)(pp->exp0 + 8)) * 4] + 36) = (int)PS2_ADDR(fm->list);
+    *(int*)(&P32(unsigned char *, pp->exp0)[(*(int*)(P32(unsigned char *, pp->exp0) + 8)) * 4] + 36) = (int)PS2_ADDR(P32(struct LIST_WORK *, fm->list));
     
-    pp->mlwP->owP[6].flg |= 0x4;
-    pp->mlwP->owP[7].flg |= 0x4;
-    pp->mlwP->owP[8].flg |= 0x4;
-    pp->mlwP->owP[9].flg |= 0x4;
-    pp->mlwP->owP[10].flg |= 0x4;
-    pp->mlwP->owP[11].flg |= 0x4;
-    pp->mlwP->owP[12].flg |= 0x4;
-    pp->mlwP->owP[13].flg |= 0x4;
-    pp->mlwP->owP[14].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[6].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[7].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[8].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[9].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[10].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[11].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[12].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[13].flg |= 0x4;
+    P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[14].flg |= 0x4;
     
-    ((int*)pp->exp0)[3] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[3] = 0;
     
-    ((LIP_WORK*)pp->exp2)->flag = 0;
+    ((LIP_WORK*)P32(unsigned char *, pp->exp2))->flag = 0;
     
-    bhSetLip(pp, ((int*)pp->exp0)[3]);
+    bhSetLip(pp, ((int*)P32(unsigned char *, pp->exp0))[3]);
     
-    ((int*)pp->exp0)[0] = 0;
-    ((int*)pp->exp0)[4] = 0;
-    ((int*)pp->exp0)[6] = 0;
-    ((int*)pp->exp0)[7] = 0;
-    ((int*)pp->exp0)[1] = 1;
-    ((int*)pp->exp0)[272] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[0] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[4] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[6] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[7] = 0;
+    ((int*)P32(unsigned char *, pp->exp0))[1] = 1;
+    ((int*)P32(unsigned char *, pp->exp0))[272] = 0;
     
     pp->ko_num = 0;
 }
@@ -82,22 +82,22 @@ void bhControlMask(BH_PWORK* pp)
     LIP_WORK* lip; 
     void* fbak;   
 
-    if (pp->mskp != NULL) 
+    if (P32(void *, pp->mskp) != NULL) 
     {
-        switch (((int*)pp->exp0)[1]) 
+        switch (((int*)P32(unsigned char *, pp->exp0))[1]) 
         {
         case 0:
-            ((int*)pp->exp0)[1] = 1;
+            ((int*)P32(unsigned char *, pp->exp0))[1] = 1;
             break;
         case 1:
-            fm = (MASK_WORK*)pp->exp1;
-            lip = (LIP_WORK*)pp->exp2;
+            fm = (MASK_WORK*)P32(unsigned char *, pp->exp1);
+            lip = (LIP_WORK*)P32(unsigned char *, pp->exp2);
             
             if (!(pp->flg2 & 0x80)) 
             {
-                ((int*)pp->exp0)[272]++;
+                ((int*)P32(unsigned char *, pp->exp0))[272]++;
                 
-                if (((int*)pp->exp0)[272] > 1)
+                if (((int*)P32(unsigned char *, pp->exp0))[272] > 1)
                 {
                     pp->flg2 |= 0x80;
                 }
@@ -108,39 +108,39 @@ void bhControlMask(BH_PWORK* pp)
                 pp->flg2 &= ~0x80;
             }
             
-            if ((((unsigned int*)pp->exp0)[0] & 0x8)) 
+            if ((((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x8)) 
             {
-                ((int*)pp->exp0)[0] &= ~0x8;
+                ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x8;
                 
-                ((int*)pp->exp0)[272] = 0;
+                ((int*)P32(unsigned char *, pp->exp0))[272] = 0;
                 
                 pp->flg2 &= ~0x80;
                 
-                if ((*(unsigned char*)PS2_HOST(((int*)pp->exp0)[266]) == 0) || ((*(unsigned char*)PS2_HOST(((int*)pp->exp0)[266]) & 0xFF) == pp->id)) 
+                if ((*(unsigned char*)PS2_HOST(((int*)P32(unsigned char *, pp->exp0))[266]) == 0) || ((*(unsigned char*)PS2_HOST(((int*)P32(unsigned char *, pp->exp0))[266]) & 0xFF) == pp->id)) 
                 {
-                    fm->fnum = *(int*)PS2_HOST((((int*)pp->exp0)[266] + 4));
-                    fm->face = (PARAM_WORK*)PS2_HOST((((int*)pp->exp0)[266] + 8));
+                    fm->fnum = *(int*)PS2_HOST((((int*)P32(unsigned char *, pp->exp0))[266] + 4));
+                    fm->face = S32((PARAM_WORK*)PS2_HOST((((int*)P32(unsigned char *, pp->exp0))[266] + 8)));
                     
-                    fm->head->nFace = fm->fnum;
+                    P32(struct HEAD_WORK *, fm->head)->nFace = fm->fnum;
                     
-                    ((int*)pp->exp0)[6] = ((int*)pp->exp0)[5];
+                    ((int*)P32(unsigned char *, pp->exp0))[6] = ((int*)P32(unsigned char *, pp->exp0))[5];
                     
-                    ((int*)pp->exp0)[7] = fmCnkGetLastFrame(fm);
+                    ((int*)P32(unsigned char *, pp->exp0))[7] = fmCnkGetLastFrame(fm);
                     
-                    if (((int*)pp->exp0)[6] > ((int*)pp->exp0)[7]) 
+                    if (((int*)P32(unsigned char *, pp->exp0))[6] > ((int*)P32(unsigned char *, pp->exp0))[7]) 
                     {
-                        ((int*)pp->exp0)[6] = 0;
+                        ((int*)P32(unsigned char *, pp->exp0))[6] = 0;
                     }
                 }
             }
             
-            if ((((unsigned int*)pp->exp0)[0] & 0x4))
+            if ((((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x4))
             {
                 if (lip->flag == 0)
                 {
-                    lip->top = (unsigned char*)PS2_HOST(((int*)pp->exp0)[268]);
+                    lip->top = S32((unsigned char*)PS2_HOST(((int*)P32(unsigned char *, pp->exp0))[268]));
                     
-                    lip->ptr = lip->top;
+                    lip->ptr = S32(P32(unsigned char *, lip->top));
                     
                     lip->cnt = 0;
                     
@@ -154,89 +154,89 @@ void bhControlMask(BH_PWORK* pp)
                 lip->flag = 0;
             }
             
-            fmCnkSetCurrentFrame(fm, ((int*)pp->exp0)[6]);
+            fmCnkSetCurrentFrame(fm, ((int*)P32(unsigned char *, pp->exp0))[6]);
             
             if (lip->flag != 0) 
             {
                 pp->flg2 &= ~0x80;
                 
-                ((int*)pp->exp0)[272] = 0;
+                ((int*)P32(unsigned char *, pp->exp0))[272] = 0;
                 
-                fbak = fm->face;
+                fbak = P32(struct PARAM_WORK *, fm->face);
                 
-                fm->face = (PARAM_WORK*)PS2_HOST(((int*)pp->exp0)[267]);
+                fm->face = S32((PARAM_WORK*)PS2_HOST(((int*)P32(unsigned char *, pp->exp0))[267]));
                 
-                fmSetLipSyncParam(fm, (PARAM_WORK*)((unsigned char*)fm->face + (((int*)pp->exp0)[4] * 984)), lip, 0x3FFF000);
+                fmSetLipSyncParam(fm, (PARAM_WORK*)((unsigned char*)P32(struct PARAM_WORK *, fm->face) + (((int*)P32(unsigned char *, pp->exp0))[4] * 984)), lip, 0x3FFF000);
                 
                 if (lip->flag == 0) 
                 {
-                    ((int*)pp->exp0)[0] &= ~0x4;
+                    ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x4;
                 }
                 
-                fm->face = fbak;
+                fm->face = S32(fbak);
             }
             
-            if (((((unsigned int*)pp->exp0)[0] & 0x1)) && (!(((unsigned int*)pp->exp0)[0] & 0x10))) 
+            if (((((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x1)) && (!(((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x10))) 
             {
-                ((int*)pp->exp0)[6]++;
+                ((int*)P32(unsigned char *, pp->exp0))[6]++;
                 
-                if (((int*)pp->exp0)[6] >= ((int*)pp->exp0)[7])
+                if (((int*)P32(unsigned char *, pp->exp0))[6] >= ((int*)P32(unsigned char *, pp->exp0))[7])
                 {
-                    if (!(((unsigned int*)pp->exp0)[0] & 0x2)) 
+                    if (!(((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x2)) 
                     {
-                        ((int*)pp->exp0)[6] = ((int*)pp->exp0)[7] - 1;
+                        ((int*)P32(unsigned char *, pp->exp0))[6] = ((int*)P32(unsigned char *, pp->exp0))[7] - 1;
                         
-                        if (((int*)pp->exp0)[6] < 0) 
+                        if (((int*)P32(unsigned char *, pp->exp0))[6] < 0) 
                         {
-                            ((int*)pp->exp0)[6] = 0;
+                            ((int*)P32(unsigned char *, pp->exp0))[6] = 0;
                         }
                         
-                        ((int*)pp->exp0)[0] &= ~0x1;
+                        ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x1;
                     } 
                     else 
                     {
-                        ((int*)pp->exp0)[6] = 0;
+                        ((int*)P32(unsigned char *, pp->exp0))[6] = 0;
                     }
                 }
                 else 
                 {
                     pp->flg2 &= ~0x80;
                     
-                    ((int*)pp->exp0)[272] = 0;
+                    ((int*)P32(unsigned char *, pp->exp0))[272] = 0;
                 }
             }
             
-            if ((((unsigned int*)pp->exp0)[0] & 0x20))
+            if ((((unsigned int*)P32(unsigned char *, pp->exp0))[0] & 0x20))
             {
                 pp->flg2 &= ~0x80;
                 
-                ((int*)pp->exp0)[272] = 0;
+                ((int*)P32(unsigned char *, pp->exp0))[272] = 0;
                 
-                ((int*)pp->exp0)[0] &= ~0x31;
+                ((int*)P32(unsigned char *, pp->exp0))[0] &= ~0x31;
                 
-                fm->fnum = ((int*)pp->exp0)[8];
-                fm->face = (PARAM_WORK*)PS2_HOST(((int*)pp->exp0)[265]);
+                fm->fnum = ((int*)P32(unsigned char *, pp->exp0))[8];
+                fm->face = S32((PARAM_WORK*)PS2_HOST(((int*)P32(unsigned char *, pp->exp0))[265]));
                 
-                fm->head->nFace = fm->fnum;
+                P32(struct HEAD_WORK *, fm->head)->nFace = fm->fnum;
                 
-                ((int*)pp->exp0)[267] = ((int*)pp->exp0)[265];
-                ((int*)pp->exp0)[6] = 0;
+                ((int*)P32(unsigned char *, pp->exp0))[267] = ((int*)P32(unsigned char *, pp->exp0))[265];
+                ((int*)P32(unsigned char *, pp->exp0))[6] = 0;
                 
-                ((int*)pp->exp0)[7] = fmCnkGetLastFrame(fm);
+                ((int*)P32(unsigned char *, pp->exp0))[7] = fmCnkGetLastFrame(fm);
             }
             
             if ((sys->loop_now == (sys->loop_ct - 1)) && (!(pp->flg2 & 0x80))) 
             {
                 fmCnkCalcFace(fm);
                 
-                pp->mlwP->objP[7].ang[0] = fm->toothsrc->ang[0];
-                pp->mlwP->objP[11].ang[0] = fm->tangorg->ang[0];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[7].ang[0] = P32(struct cnkobj *, fm->toothsrc)->ang[0];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[11].ang[0] = P32(struct cnkobj *, fm->tangorg)->ang[0];
                 
-                pp->mlwP->objP[9].ang[0] = -fm->eyesrc[0]->ang[0];
-                pp->mlwP->objP[9].ang[1] = -fm->eyesrc[0]->ang[1];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[9].ang[0] = -P32(NJS_CNK_OBJECT *, fm->eyesrc[0])->ang[0];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[9].ang[1] = -P32(NJS_CNK_OBJECT *, fm->eyesrc[0])->ang[1];
                 
-                pp->mlwP->objP[13].ang[0] = -fm->eyesrc[1]->ang[0];
-                pp->mlwP->objP[13].ang[1] = -fm->eyesrc[1]->ang[1];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[13].ang[0] = -P32(NJS_CNK_OBJECT *, fm->eyesrc[1])->ang[0];
+                P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[13].ang[1] = -P32(NJS_CNK_OBJECT *, fm->eyesrc[1])->ang[1];
             }
             
             break;
@@ -252,11 +252,11 @@ int bhSetMask(BH_PWORK* pp, int msk_no, int frm_no)
     unsigned int sz;     
     int i;            
 
-    fm = (MASK_WORK*)pp->exp1;
+    fm = (MASK_WORK*)P32(unsigned char *, pp->exp1);
 
-    ((int*)pp->exp0)[5] = frm_no;
+    ((int*)P32(unsigned char *, pp->exp0))[5] = frm_no;
     
-    datp = sys->mspp;
+    datp = P32(unsigned char *, sys->mspp);
     
     if ((datp == NULL) || (fm == NULL))
     {
@@ -276,14 +276,14 @@ int bhSetMask(BH_PWORK* pp, int msk_no, int frm_no)
         
         datp += 4;
         
-        ((int*)pp->exp0)[266] = (int)PS2_ADDR(datp);
+        ((int*)P32(unsigned char *, pp->exp0))[266] = (int)PS2_ADDR(datp);
         
         datp = &datp[sz]; 
     }
     
-    ((int*)pp->exp0)[2] = msk_no;
+    ((int*)P32(unsigned char *, pp->exp0))[2] = msk_no;
 
-    ((int*)pp->exp0)[0] |= 0x8;
+    ((int*)P32(unsigned char *, pp->exp0))[0] |= 0x8;
     
     return 1;
 }
@@ -296,9 +296,9 @@ int bhSetLip(BH_PWORK* pp, int mls_no)
     unsigned int sz;     
     int i;              
     
-    datp = sys->lspp;
+    datp = P32(unsigned char *, sys->lspp);
     
-    lip = (LIP_WORK*)pp->exp2;
+    lip = (LIP_WORK*)P32(unsigned char *, pp->exp2);
     
     if ((datp == NULL) || (lip == NULL))
     {
@@ -318,12 +318,12 @@ int bhSetLip(BH_PWORK* pp, int mls_no)
         
         datp += 4;
         
-        ((int*)pp->exp0)[268] = (int)PS2_ADDR(datp);
+        ((int*)P32(unsigned char *, pp->exp0))[268] = (int)PS2_ADDR(datp);
         
         datp = &datp[sz]; 
     }
     
-    ((int*)pp->exp0)[3] = mls_no;
+    ((int*)P32(unsigned char *, pp->exp0))[3] = mls_no;
     
     return 1;
 }

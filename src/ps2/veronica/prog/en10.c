@@ -55,7 +55,7 @@ void bhEne10(BH_PWORK* epw)
         }
     }
     
-    epw->mlwP = &epw->mdl[EXP0_UC(0x1)];
+    epw->mlwP = S32(&epw->mdl[EXP0_UC(0x1)]);
     
     if (epw->flg & 4) 
     {
@@ -75,13 +75,13 @@ void bhEne10(BH_PWORK* epw)
     
     bhCalcModel(epw);
     
-    owk = &epw->mlwP->owP[1];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[1];
     
     epw->watr.c1.x = owk->mtx[12];
     epw->watr.c1.y = owk->mtx[13] + 0.2;
     epw->watr.c1.z = owk->mtx[14];
 
-    owk = &epw->mlwP->owP[1];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[1];
     
     epw->watr.c2.x = owk->mtx[12];
     epw->watr.c2.y = owk->mtx[13];
@@ -102,9 +102,9 @@ void bhEne10_Init(BH_PWORK* epw)
 {
     int ang;
 
-    if (epw->exp0 == NULL)
+    if (P32(unsigned char *, epw->exp0) == NULL)
     {
-        epw->exp0 = bhEne_CallocWork(0x24, 8);
+        epw->exp0 = S32(bhEne_CallocWork(0x24, 8));
     }
     
     epw->flg |= 0x138;

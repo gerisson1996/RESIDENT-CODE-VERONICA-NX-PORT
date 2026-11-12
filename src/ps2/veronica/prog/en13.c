@@ -55,7 +55,7 @@ void bhEne13(BH_PWORK* epw)
 {
     bhEne13_Mode0[epw->mode0](epw);
     
-    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, epw->mtn_tp);
+    bhSetMotion(epw, epw->mtn_add, epw->mtn_md, P32(unsigned char *, epw->mtn_tp));
     
     bhCalcModel(epw);
     
@@ -97,124 +97,124 @@ void bhEne13_Init(BH_PWORK* epw)
     
     epw->frm_no = 0;
     
-    if (epw->exp0 == NULL) 
+    if (P32(unsigned char *, epw->exp0) == NULL) 
     {
-        epw->exp0 = bhEne_CallocWork(992, 8);
+        epw->exp0 = S32(bhEne_CallocWork(992, 8));
 
-        *(BH_PWORK**)&epw->exp0[8] = bhSetEnemy(&ene18, rom->ene_n);
+        *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8] = bhSetEnemy(&ene18, rom->ene_n);
         
-        (*(BH_PWORK**)&epw->exp0[8])->type = 1;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->type = 1;
         
-        (*(BH_PWORK**)&epw->exp0[8])->lkwkp = (unsigned char*)epw;
-        (*(BH_PWORK**)&epw->exp0[8])->lkono = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->lkwkp = S32((unsigned char*)epw);
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->lkono = 0;
         
-        (*(BH_PWORK**)&epw->exp0[8])->lox = 0;
-        (*(BH_PWORK**)&epw->exp0[8])->loy = 0;
-        (*(BH_PWORK**)&epw->exp0[8])->loz = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->lox = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->loy = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->loz = 0;
         
-        (*(BH_PWORK**)&epw->exp0[8])->mlwP = &epw->mdl[1];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->mlwP = S32(&epw->mdl[1]);
 
-        *(BH_PWORK**)&epw->exp0[12] = bhSetEnemy(&ene18, rom->ene_n);
+        *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12] = bhSetEnemy(&ene18, rom->ene_n);
         
-        (*(BH_PWORK**)&epw->exp0[12])->type = 2;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->type = 2;
         
-        (*(BH_PWORK**)&epw->exp0[12])->lkwkp = (unsigned char*)epw;
-        (*(BH_PWORK**)&epw->exp0[12])->lkono = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->lkwkp = S32((unsigned char*)epw);
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->lkono = 0;
         
-        (*(BH_PWORK**)&epw->exp0[12])->lox = 0;
-        (*(BH_PWORK**)&epw->exp0[12])->loy = 0;
-        (*(BH_PWORK**)&epw->exp0[12])->loz = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->lox = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->loy = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->loz = 0;
         
-        (*(BH_PWORK**)&epw->exp0[12])->mlwP = &epw->mdl[4];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->mlwP = S32(&epw->mdl[4]);
 
-        *(BH_PWORK**)&epw->exp0[16] = bhSetEnemy(&ene18, rom->ene_n);
+        *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16] = bhSetEnemy(&ene18, rom->ene_n);
         
-        (*(BH_PWORK**)&epw->exp0[16])->type = 3;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->type = 3;
         
-        (*(BH_PWORK**)&epw->exp0[16])->lkwkp = (unsigned char*)epw;
-        (*(BH_PWORK**)&epw->exp0[16])->lkono = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->lkwkp = S32((unsigned char*)epw);
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->lkono = 0;
         
-        (*(BH_PWORK**)&epw->exp0[16])->lox = 0;
-        (*(BH_PWORK**)&epw->exp0[16])->loy = 0;
-        (*(BH_PWORK**)&epw->exp0[16])->loz = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->lox = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->loy = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->loz = 0;
         
-        (*(BH_PWORK**)&epw->exp0[16])->mlwP = &epw->mdl[7];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->mlwP = S32(&epw->mdl[7]);
 
-        *(BH_PWORK**)&epw->exp0[4] = bhSetEnemy(&ene18, rom->ene_n);
+        *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4] = bhSetEnemy(&ene18, rom->ene_n);
         
-        (*(BH_PWORK**)&epw->exp0[4])->type = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->type = 0;
         
-        (*(BH_PWORK**)&epw->exp0[4])->lkwkp = (unsigned char*)epw;
-        (*(BH_PWORK**)&epw->exp0[4])->lkono = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->lkwkp = S32((unsigned char*)epw);
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->lkono = 0;
         
-        (*(BH_PWORK**)&epw->exp0[4])->lox = 0;
-        (*(BH_PWORK**)&epw->exp0[4])->loy = 0;
-        (*(BH_PWORK**)&epw->exp0[4])->loz = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->lox = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->loy = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->loz = 0;
         
-        (*(BH_PWORK**)&epw->exp0[4])->mlwP = &epw->mdl[10];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->mlwP = S32(&epw->mdl[10]);
 
-        *(NJS_CNK_OBJECT**)&epw->exp0[92]  = (*(BH_PWORK**)&epw->exp0[4])->mlwP->objP;
-        *(NJS_CNK_OBJECT**)&epw->exp0[96]  = (*(BH_PWORK**)&epw->exp0[8])->mlwP->objP;
-        *(NJS_CNK_OBJECT**)&epw->exp0[100] = (*(BH_PWORK**)&epw->exp0[12])->mlwP->objP;
-        *(NJS_CNK_OBJECT**)&epw->exp0[104] = (*(BH_PWORK**)&epw->exp0[16])->mlwP->objP;
+        *(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[92]  = P32(struct cnkobj *, P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->mlwP)->objP);
+        *(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[96]  = P32(struct cnkobj *, P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->mlwP)->objP);
+        *(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[100] = P32(struct cnkobj *, P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->mlwP)->objP);
+        *(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[104] = P32(struct cnkobj *, P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->mlwP)->objP);
 
         for (i = 0; i < 6; i++)
         {
-            ((BH_PWORK**)epw->exp0)[i + 5] = bhSetEnemy(&ene18, rom->ene_n);
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5] = bhSetEnemy(&ene18, rom->ene_n);
             
-            ((BH_PWORK**)epw->exp0)[i + 5]->type = i + 4;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->type = i + 4;
             
-            ((BH_PWORK**)epw->exp0)[i + 5]->lkwkp = (unsigned char*)epw;
-            ((BH_PWORK**)epw->exp0)[i + 5]->lkono = 0;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->lkwkp = S32((unsigned char*)epw);
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->lkono = 0;
             
-            ((BH_PWORK**)epw->exp0)[i + 5]->lox = 0;
-            ((BH_PWORK**)epw->exp0)[i + 5]->loy = 0;
-            ((BH_PWORK**)epw->exp0)[i + 5]->loz = 0;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->lox = 0;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->loy = 0;
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->loz = 0;
             
-            ((BH_PWORK**)epw->exp0)[i + 5]->mlwP = &epw->mdl[10];
+            ((BH_PWORK**)P32(unsigned char *, epw->exp0))[i + 5]->mlwP = S32(&epw->mdl[10]);
         }
 
-        *(BH_PWORK**)&epw->exp0[976] = bhSetEnemy(&ene13B, rom->ene_n);
+        *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976] = bhSetEnemy(&ene13B, rom->ene_n);
 
-        (*(BH_PWORK**)&epw->exp0[976])->type = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->type = 0;
         
-        (*(BH_PWORK**)&epw->exp0[976])->lkwkp = (unsigned char*)epw;
-        (*(BH_PWORK**)&epw->exp0[976])->lkono = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->lkwkp = S32((unsigned char*)epw);
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->lkono = 0;
         
-        (*(BH_PWORK**)&epw->exp0[976])->lox = 0;
-        (*(BH_PWORK**)&epw->exp0[976])->loy = 0;
-        (*(BH_PWORK**)&epw->exp0[976])->loz = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->lox = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->loy = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->loz = 0;
         
-        (*(BH_PWORK**)&epw->exp0[976])->mlwP = &epw->mdl[13];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->mlwP = S32(&epw->mdl[13]);
         
-        (*(BH_PWORK**)&epw->exp0[976])->skp[0] = epw->skp[13];
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->skp[0] = S32(P32(int *, epw->skp[13]));
         
-        (*(BH_PWORK**)&epw->exp0[976])->mdl_no = 0;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->mdl_no = 0;
         
-        (*(BH_PWORK**)&epw->exp0[976])->mnwP  = epw->mnwP;
-        (*(BH_PWORK**)&epw->exp0[976])->mnwPb = epw->mnwPb;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->mnwP  = S32(P32(struct MN_WORK *, epw->mnwP));
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[976])->mnwPb = S32(P32(struct MN_WORK *, epw->mnwPb));
         
         bhEne_SetCallFunc(bhEne13B, 31);
         
         EXP0_I(932) = 0;
-        EXP0_I(936) = bhEne13_StoreObject(                        epw, (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(932));
-        EXP0_I(940) = bhEne13_StoreObject( *(BH_PWORK**)&epw->exp0[4], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(936));
-        EXP0_I(944) = bhEne13_StoreObject( *(BH_PWORK**)&epw->exp0[8], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(940));
-        EXP0_I(948) = bhEne13_StoreObject(*(BH_PWORK**)&epw->exp0[12], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(944));
+        EXP0_I(936) = bhEne13_StoreObject(                        epw, (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(932));
+        EXP0_I(940) = bhEne13_StoreObject( *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(936));
+        EXP0_I(944) = bhEne13_StoreObject( *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(940));
+        EXP0_I(948) = bhEne13_StoreObject(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(944));
         
-        bhEne13_StoreObject(*(BH_PWORK**)&epw->exp0[16], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(948));
+        bhEne13_StoreObject(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(948));
     }
 
-    (*(BH_PWORK**)&epw->exp0[4])->mlwP->objP  = *(NJS_CNK_OBJECT**)&epw->exp0[92];
-    (*(BH_PWORK**)&epw->exp0[8])->mlwP->objP  = *(NJS_CNK_OBJECT**)&epw->exp0[96];
-    (*(BH_PWORK**)&epw->exp0[12])->mlwP->objP = *(NJS_CNK_OBJECT**)&epw->exp0[100];
-    (*(BH_PWORK**)&epw->exp0[16])->mlwP->objP = *(NJS_CNK_OBJECT**)&epw->exp0[104];
+    P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4])->mlwP)->objP  = S32(*(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[92]);
+    P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->mlwP)->objP  = S32(*(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[96]);
+    P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->mlwP)->objP = S32(*(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[100]);
+    P32(struct ML_WORK *, (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->mlwP)->objP = S32(*(NJS_CNK_OBJECT**)&P32(unsigned char *, epw->exp0)[104]);
 
-    bhEne13_RestoreObject(                        epw, (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(932));
-    bhEne13_RestoreObject( *(BH_PWORK**)&epw->exp0[4], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(936));
-    bhEne13_RestoreObject( *(BH_PWORK**)&epw->exp0[8], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(940));
-    bhEne13_RestoreObject(*(BH_PWORK**)&epw->exp0[12], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(944));
-    bhEne13_RestoreObject(*(BH_PWORK**)&epw->exp0[16], (NJS_POINT3*)&epw->exp0[132], (NJS_VECTOR**)&epw->exp0[732], EXP0_I(948));
+    bhEne13_RestoreObject(                        epw, (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(932));
+    bhEne13_RestoreObject( *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[4], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(936));
+    bhEne13_RestoreObject( *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(940));
+    bhEne13_RestoreObject(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(944));
+    bhEne13_RestoreObject(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16], (NJS_POINT3*)&P32(unsigned char *, epw->exp0)[132], (NJS_VECTOR**)&P32(unsigned char *, epw->exp0)[732], EXP0_I(948));
     
     EXP0_I(108) = 0;
 
@@ -224,18 +224,18 @@ void bhEne13_Init(BH_PWORK* epw)
     {
         if (((ep->flg & 0x1)) && (ep->id == 30))
         {
-            *((BH_PWORK**)epw->exp0 + (EXP0_I(108) + 11)) = ep;
+            *((BH_PWORK**)P32(unsigned char *, epw->exp0) + (EXP0_I(108) + 11)) = ep;
             
             EXP0_I(108)++;
             
-            ep->lkwkp = (unsigned char*)epw;
+            ep->lkwkp = S32((unsigned char*)epw);
         }
         
         if (((ep->flg & 0x1)) && (ep->id == 14)) 
         {
-            *(BH_PWORK**)&epw->exp0[112] = ep;
+            *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112] = ep;
             
-            ep->lkwkp = (unsigned char*)epw;
+            ep->lkwkp = S32((unsigned char*)epw);
         }
     }
     
@@ -299,11 +299,11 @@ void bhEne13_BR00(BH_PWORK* epw)
         return;
     }
 
-    if ((dist < 60.0f) && (EXP0_I(968) == 0) && ((((*(BH_PWORK**)&epw->exp0[8])->mode2  != 4) && ((*(BH_PWORK**)&epw->exp0[8])->mode2 != 5)) && (((*(BH_PWORK**)&epw->exp0[12])->mode2 != 4) && ((*(BH_PWORK**)&epw->exp0[12])->mode2 != 5)) && (((*(BH_PWORK**)&epw->exp0[16])->mode2 != 4) && ((*(BH_PWORK**)&epw->exp0[16])->mode2 != 5))))
+    if ((dist < 60.0f) && (EXP0_I(968) == 0) && ((((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->mode2  != 4) && ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8])->mode2 != 5)) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->mode2 != 4) && ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[12])->mode2 != 5)) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->mode2 != 4) && ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[16])->mode2 != 5))))
     {
         j = bhEne13_SelectTentacle(epw);
 
-        if ((*(BH_PWORK**)(&epw->exp0[8] + (4 * j)))->mode2 == 0)
+        if ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[8] + (4 * j)))->mode2 == 0)
         {
             EXP0_I(128) = j;
 
@@ -343,7 +343,7 @@ void bhEne13_BR00(BH_PWORK* epw)
 
         for (i = 0; i < 3; i++)
         {
-            if ((*(BH_PWORK**)(&epw->exp0[8] + (4 * j)))->mode2 == 0)
+            if ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[8] + (4 * j)))->mode2 == 0)
             {
                 EXP0_I(128) = j;
                 break;
@@ -359,7 +359,7 @@ void bhEne13_BR00(BH_PWORK* epw)
         {
             for (i = 0; i < EXP0_I(108); i++)
             {
-                ep = *(BH_PWORK**)(&epw->exp0[44] + (4 * i));
+                ep = *(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[44] + (4 * i));
 
                 if ((ep->mode0 == 1) && (ep->mode2 == 0))
                 {
@@ -408,11 +408,11 @@ void bhEne13_BR01(BH_PWORK* epw)
         return;
     }
     
-    if ((EXP0_I(968) == 0) && (((*(BH_PWORK**)(&epw->exp0[8]))->mode2 != 4) && ((*(BH_PWORK**)(&epw->exp0[8]))->mode2 != 5) && ((*(BH_PWORK**)(&epw->exp0[12]))->mode2 != 4) && ((*(BH_PWORK**)(&epw->exp0[12]))->mode2 != 5) && ((*(BH_PWORK**)(&epw->exp0[16]))->mode2 != 4) && ((*(BH_PWORK**)(&epw->exp0[16]))->mode2 != 5)))
+    if ((EXP0_I(968) == 0) && (((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[8]))->mode2 != 4) && ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[8]))->mode2 != 5) && ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[12]))->mode2 != 4) && ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[12]))->mode2 != 5) && ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[16]))->mode2 != 4) && ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[16]))->mode2 != 5)))
     {
         j = bhEne13_SelectTentacle(epw);
         
-        if ((*(BH_PWORK**)(&epw->exp0[8] + (4 * j)))->mode2 == 0) 
+        if ((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[8] + (4 * j)))->mode2 == 0) 
         {
             EXP0_I(128) = j;
 
@@ -454,7 +454,7 @@ void bhEne13_Move(BH_PWORK* epw)
     
     bhEne13_MoveMode2[epw->mode2](epw);
     
-    if (((((*(BH_PWORK**)&epw->exp0[20])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[24])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[28])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[32])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[36])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[40])->flg & 0x4))) || ((*(BH_PWORK**)&epw->exp0[112] != NULL) && ((*(BH_PWORK**)&epw->exp0[112])->type == 0) && (((*(BH_PWORK**)&epw->exp0[112])->flg & 0x4)))) 
+    if (((((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[20])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[24])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[28])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[32])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[36])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->flg & 0x4))) || ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112] != NULL) && ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg & 0x4)))) 
     {
         bhEne13_InitDamage(epw);
     }
@@ -491,10 +491,10 @@ void bhEne13_MV01(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 45875;
         
-        if ((*(BH_PWORK**)&epw->exp0[112])->type == 0)
+        if ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0)
         {
-            (*(BH_PWORK**)&epw->exp0[112])->mode2 = 1;
-            (*(BH_PWORK**)&epw->exp0[112])->mode3 = 0;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode2 = 1;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode3 = 0;
         }
         
         epw->ct0 = 10;
@@ -511,7 +511,7 @@ void bhEne13_MV01(BH_PWORK* epw)
         
         if (epw->ct0-- == 0)
         {
-            ep = *(BH_PWORK**)&epw->exp0[8] + EXP0_I(128);
+            ep = *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8] + EXP0_I(128);
             
             ep->mode2 = 2;
             ep->mode3 = 0;
@@ -533,13 +533,13 @@ void bhEne13_MV02(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 45875;
         
-        if ((*(BH_PWORK**)&epw->exp0[112])->type == 0)
+        if ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0)
         { 
-            (*(BH_PWORK**)&epw->exp0[112])->mode2 = 2;
-            (*(BH_PWORK**)&epw->exp0[112])->mode3 = 0; 
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode2 = 2;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode3 = 0; 
         }
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
         break;
@@ -569,10 +569,10 @@ void bhEne13_MV03(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 45875;
         
-        if ((*(BH_PWORK**)&epw->exp0[112])->type == 0)
+        if ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0)
         {
-            (*(BH_PWORK**)&epw->exp0[112])->mode2 = 1;
-            (*(BH_PWORK**)&epw->exp0[112])->mode3 = 0;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode2 = 1;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode3 = 0;
         }
         
         epw->ct0 = 10;
@@ -589,7 +589,7 @@ void bhEne13_MV03(BH_PWORK* epw)
         
         if (epw->ct0-- == 0)
         {
-            ep = *(BH_PWORK**)&epw->exp0[8] + EXP0_I(128);
+            ep = *(BH_PWORK**)&P32(unsigned char *, epw->exp0)[8] + EXP0_I(128);
             
             ep->mode3 = 0;
             
@@ -620,17 +620,17 @@ void bhEne13_Damage(BH_PWORK* epw)
     int i;      
     int max_dam; 
     
-    if ((((*(BH_PWORK**)&epw->exp0[20])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[24])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[28])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[32])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[36])->flg & 0x4)) || (((*(BH_PWORK**)&epw->exp0[40])->flg & 0x4)) || ((*(BH_PWORK**)&epw->exp0[112] != NULL) && ((*(BH_PWORK**)&epw->exp0[112])->type == 0) && (((*(BH_PWORK**)&epw->exp0[112])->flg & 0x4))))
+    if ((((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[20])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[24])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[28])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[32])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[36])->flg & 0x4)) || (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[40])->flg & 0x4)) || ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112] != NULL) && ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg & 0x4))))
     {
         max_dam = 0;
 
         for (i = 0; i < 6; i++)
         {
-            if (((*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg & 0x4))
+            if (((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg & 0x4))
             {
-                (*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg &= ~0x4;
+                (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg &= ~0x4;
 
-                dam = bhEne18_HitMark(*(BH_PWORK**)(&epw->exp0[20] + (4 * i)));
+                dam = bhEne18_HitMark(*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)));
 
                 if (max_dam < dam)
                 {
@@ -639,11 +639,11 @@ void bhEne13_Damage(BH_PWORK* epw)
             }
         }
 
-        if (((*(BH_PWORK**)&epw->exp0[112])->type == 0) && (((*(BH_PWORK**)&epw->exp0[112])->flg & 0x4)))
+        if (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg & 0x4)))
         {
-            (*(BH_PWORK**)&epw->exp0[112])->flg &= ~0x4;
+            (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg &= ~0x4;
 
-            dam = bhEne14_HitMark(*(BH_PWORK**)&epw->exp0[112]);
+            dam = bhEne14_HitMark(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112]);
 
             if (max_dam < dam)
             {
@@ -669,7 +669,7 @@ void bhEne13_DG00(BH_PWORK* epw)
         epw->hokan_count = 8;
         epw->hokan_rate  = 45875;
         
-        epw->ct0 = epw->mnwP[epw->mtn_no].frm_num - 1;
+        epw->ct0 = P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no].frm_num - 1;
         
         epw->mode3++;
     case 1:
@@ -698,25 +698,25 @@ void bhEne13_Die(BH_PWORK* epw)
     switch (epw->mode3) 
     {
     case 0:
-        (*(unsigned char**)&epw->exp0[976])[12] = 4;
-        (*(unsigned char**)&epw->exp0[976])[13] = 0;
-        (*(unsigned char**)&epw->exp0[976])[14] = 0;
-        (*(unsigned char**)&epw->exp0[976])[15] = 0;
+        (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[12] = 4;
+        (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[13] = 0;
+        (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[14] = 0;
+        (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[15] = 0;
 
         for (i = 0; i < 4; i++)
         {
-            ((unsigned char**)epw->exp0)[1 + i][12] = 4;
-            ((unsigned char**)epw->exp0)[1 + i][13] = 0;
-            ((unsigned char**)epw->exp0)[1 + i][14] = 0;
-            ((unsigned char**)epw->exp0)[1 + i][15] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[1 + i][12] = 4;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[1 + i][13] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[1 + i][14] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[1 + i][15] = 0;
         }
 
         for (i = 0; i < 6; i++) 
         {
-            ((unsigned char**)epw->exp0)[5 + i][12] = 4;
-            ((unsigned char**)epw->exp0)[5 + i][13] = 0;
-            ((unsigned char**)epw->exp0)[5 + i][14] = 0;
-            ((unsigned char**)epw->exp0)[5 + i][15] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[5 + i][12] = 4;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[5 + i][13] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[5 + i][14] = 0;
+            ((unsigned char**)P32(unsigned char *, epw->exp0))[5 + i][15] = 0;
         }
 
         epw->mode3++;
@@ -741,36 +741,36 @@ void bhEne13_InitDamage(BH_PWORK* epw)
 
     for (i = 0; i < 6; i++)
     {
-        if (((*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg & 0x4))
+        if (((*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg & 0x4))
         {
-            (*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg &= ~0x4;
+            (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg &= ~0x4;
 
-            dam = bhEne18_HitMark(*(BH_PWORK**)(&epw->exp0[20] + (4 * i)));
+            dam = bhEne18_HitMark(*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)));
 
             if (max_dam < dam)
             {
                 max_dam = dam;
 
-                wep_no = (*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->wpnr_no;
+                wep_no = (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->wpnr_no;
                 
-                dflg = (*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg2 & 0x4;
+                dflg = (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg2 & 0x4;
             }
         }
     }
 
-    if (((*(BH_PWORK**)&epw->exp0[112])->type == 0) && (((*(BH_PWORK**)&epw->exp0[112])->flg & 0x4)))
+    if (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0) && (((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg & 0x4)))
     {
-        (*(BH_PWORK**)&epw->exp0[112])->flg &= ~0x4;
+        (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->flg &= ~0x4;
 
-        dam = bhEne14_HitMark(*(BH_PWORK**)&epw->exp0[112]);
+        dam = bhEne14_HitMark(*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112]);
 
         if (max_dam < dam)
         {
             max_dam = dam;
 
-            wep_no = (*(BH_PWORK**)&epw->exp0[112])->wpnr_no;
+            wep_no = (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->wpnr_no;
             
-            dflg = (*(BH_PWORK**)(&epw->exp0[20] + (4 * i)))->flg2 & 0x4;
+            dflg = (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[20] + (4 * i)))->flg2 & 0x4;
         }
     }
 
@@ -836,21 +836,21 @@ void bhEne13_InitDamage(BH_PWORK* epw)
             epw->mode2 = 0;
             epw->mode3 = 0;
 
-            if ((*(BH_PWORK**)&epw->exp0[112])->type == 0)
+            if ((*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->type == 0)
             {
                 if (epw->hp < 0)
                 {
-                    (*(BH_PWORK**)&epw->exp0[112])->mode0 = 3;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode1 = 0;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode2 = 1;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode3 = 0;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode0 = 3;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode1 = 0;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode2 = 1;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode3 = 0;
                 }
                 else
                 {
-                    (*(BH_PWORK**)&epw->exp0[112])->mode0 = 3;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode1 = 0;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode2 = 0;
-                    (*(BH_PWORK**)&epw->exp0[112])->mode3 = 0;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode0 = 3;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode1 = 0;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode2 = 0;
+                    (*(BH_PWORK**)&P32(unsigned char *, epw->exp0)[112])->mode3 = 0;
                 }
             }
         }
@@ -866,8 +866,8 @@ void bhEne13_Finish(BH_PWORK* epw)
 
     for (i = 0; i < 4; i++)
     {
-        pObj  = (*(BH_PWORK**)(&epw->exp0[4] + (4 * i)))->mlwP->objP;
-        obj_n = (*(BH_PWORK**)(&epw->exp0[4] + (4 * i)))->mlwP->obj_num;
+        pObj  = P32(struct cnkobj *, P32(struct ML_WORK *, (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[4] + (4 * i)))->mlwP)->objP);
+        obj_n = P32(struct ML_WORK *, (*(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[4] + (4 * i)))->mlwP)->obj_num;
 
         for (ono = 0; ono < obj_n; ono++, pObj++)
         {
@@ -877,8 +877,8 @@ void bhEne13_Finish(BH_PWORK* epw)
         }
     }
 
-    pObj  = epw->mlwP->objP;
-    obj_n = epw->mlwP->obj_num;
+    pObj  = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
+    obj_n = P32(struct ML_WORK *, epw->mlwP)->obj_num;
 
     for (ono = 0; ono < obj_n; ono++, pObj++)
     {
@@ -905,9 +905,9 @@ void bhEne13_ScaleModel(NJS_CNK_OBJECT* pObj, float sx, float sy, float sz)
  	NJS_POINT4* p; 
 	HDR_PS* pHdr; 
    
-    if (pObj->model != NULL)
+    if (P32(NJS_CNK_MODEL *, pObj->model) != NULL)
     {
-        pHdr = (HDR_PS*)pObj->model->vlist;
+        pHdr = (HDR_PS*)P32(int *, P32(NJS_CNK_MODEL *, pObj->model)->vlist);
         
         nVtx = pHdr->usIndexMax;
         
@@ -939,9 +939,9 @@ int bhEne13_StoreObject(BH_PWORK* epw, NJS_POINT3* pos, NJS_VECTOR** v, int no)
 	NJS_POINT4* ps, *pd; 
 	HDR_PS* pHdr; 
 
-    pObj = epw->mlwP->objP;
+    pObj = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
     
-    obj_n = epw->mlwP->obj_num;
+    obj_n = P32(struct ML_WORK *, epw->mlwP)->obj_num;
 
     for (ono = 0; ono < obj_n; ono++, pObj++, no++)
     {
@@ -949,11 +949,11 @@ int bhEne13_StoreObject(BH_PWORK* epw, NJS_POINT3* pos, NJS_VECTOR** v, int no)
         pos[no].y = pObj->pos[1];
         pos[no].z = pObj->pos[2];
 
-        pModel = pObj->model;
+        pModel = P32(NJS_CNK_MODEL *, pObj->model);
         
         if (pModel != NULL)
         {
-            pHdr = (HDR_PS*)pModel->vlist;
+            pHdr = (HDR_PS*)P32(int *, pModel->vlist);
             
             nVtx = pHdr->usIndexMax;
             
@@ -992,9 +992,9 @@ int bhEne13_RestoreObject(BH_PWORK* epw, NJS_POINT3* pos, NJS_VECTOR** v, int no
 	NJS_POINT4* ps, *pd;
 	HDR_PS* pHdr;
 
-    pObj = epw->mlwP->objP;
+    pObj = P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP);
     
-    obj_n = epw->mlwP->obj_num;
+    obj_n = P32(struct ML_WORK *, epw->mlwP)->obj_num;
 
     for (ono = 0; ono < obj_n; ono++, pObj++, no++)
     {
@@ -1002,11 +1002,11 @@ int bhEne13_RestoreObject(BH_PWORK* epw, NJS_POINT3* pos, NJS_VECTOR** v, int no
         pObj->pos[1] = pos[no].y;
         pObj->pos[2] = pos[no].z;
 
-        pModel = pObj->model;
+        pModel = P32(NJS_CNK_MODEL *, pObj->model);
         
         if (pModel != NULL)
         {
-            pHdr = (HDR_PS*)pModel->vlist;
+            pHdr = (HDR_PS*)P32(int *, pModel->vlist);
             
             ps = (NJS_POINT4*)v[no];
             
@@ -1049,7 +1049,7 @@ void bhEne13_PutAttacker(BH_PWORK* epw, int no)
     
     for (i = 0; i < EXP0_I(108); i++)
     {
-        ep = *(BH_PWORK**)(&epw->exp0[44] + (4 * i));
+        ep = *(BH_PWORK**)(&P32(unsigned char *, epw->exp0)[44] + (4 * i));
 
         if ((ep->mode0 == 1) && (ep->mode2 == 0))
         {
@@ -1077,12 +1077,12 @@ void bhEne13_PutAttacker(BH_PWORK* epw, int no)
 // 100% matching!
 void bhEne13_Tentacle(BH_PWORK* epw, int no)
 {
-    (*(unsigned char**)&epw->exp0[976])[12] = 1;
-    (*(unsigned char**)&epw->exp0[976])[13] = 0;
-    (*(unsigned char**)&epw->exp0[976])[14] = 1;
-    (*(unsigned char**)&epw->exp0[976])[15] = 0;
+    (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[12] = 1;
+    (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[13] = 0;
+    (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[14] = 1;
+    (*(unsigned char**)&P32(unsigned char *, epw->exp0)[976])[15] = 0;
     
-    (*(unsigned short**)&epw->exp0[976])[3] = no;
+    (*(unsigned short**)&P32(unsigned char *, epw->exp0)[976])[3] = no;
 }
 
 // 100% matching!
@@ -1102,7 +1102,7 @@ BH_PWORK** bhEne13_GetChild(BH_PWORK* epw, int* num)
 {
     *num = EXP0_I(108);
     
-    return (BH_PWORK**)&epw->exp0[44];
+    return (BH_PWORK**)&P32(unsigned char *, epw->exp0)[44];
 }
 
 // 100% matching!
@@ -1189,7 +1189,7 @@ void bhEne13_PlayerControl(BH_PWORK* epw)
                 plp->flg  &= ~0x40000;
                 plp->flg2 |=  0x1;
 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
 
                 if (plp->mode2 == 0)
                 {
@@ -1272,7 +1272,7 @@ void bhEne13_PlayerControl(BH_PWORK* epw)
 
                 if (plp->frm_no == 0)
                 {
-                    plp->mnwP = plp->mnwPb;
+                    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
 
                     plp->flg  &= ~0x10004;
                     plp->flg2 &= ~0x1;
@@ -1303,7 +1303,7 @@ void bhEne13_PlayerControl(BH_PWORK* epw)
                 plp->flg  &= ~0x40000;
                 plp->flg2 |=  0x1;
 
-                plp->mnwP = epw->mnwP;
+                plp->mnwP = S32(P32(struct MN_WORK *, epw->mnwP));
 
                 if (plp->mode2 == 2)
                 {
@@ -1357,7 +1357,7 @@ void bhEne13_PlayerControl(BH_PWORK* epw)
                         plp->mtn_no = mtn[sys->ply_id][5];
                     }
 
-                    plp->ct0 = plp->mnwP[plp->mtn_no].frm_num - 2;
+                    plp->ct0 = P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 2;
 
                     plp->mode3++;
                 }

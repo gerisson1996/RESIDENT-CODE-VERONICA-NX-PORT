@@ -17,10 +17,10 @@ unsigned char* bhGetFreeMemory(int size, int param) // second parameter is not p
 {
     unsigned char *temp; // not from the debugging symbols
     
-    sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sys->memp) + 63) & ~0x3F));
+    sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(P32(unsigned char *, sys->memp)) + 63) & ~0x3F)));
     
 #ifdef TARGET_PC
-    if (((sys->memp + size) - freemem) > 12845056 + PC_ARENA_EXTRA) 
+    if (((P32(unsigned char *, sys->memp) + size) - freemem) > 12845056 + PC_ARENA_EXTRA) 
 #else
     if (((sys->memp + size) - freemem) > 12845056) 
 #endif
@@ -28,13 +28,13 @@ unsigned char* bhGetFreeMemory(int size, int param) // second parameter is not p
         return NULL;
     } 
     
-    temp = sys->memp;
+    temp = P32(unsigned char *, sys->memp);
     
     npSetMemory(temp, size, 0);
     
-    sys->memp += size;
+    P32_ADD(unsigned char *, sys->memp ,  size);
     
-    printf("malloc area = %x\n", sys->memp);
+    printf("malloc area = %x\n", P32(unsigned char *, sys->memp));
     
     return temp;
 }
@@ -51,23 +51,23 @@ void bhCalcLinkModel(BH_PWORK* pp)
     
     for (ep = ene, i = 0; i < sys->ewk_n; i++, ep++)
     {
-        if ((((unsigned int)PS2_ADDR(ep) & ~0x80000000) != flg) && (((ep->flg & 0x1)) && ((ep->flg & 0x80))) && (((unsigned int)PS2_ADDR(ep->lkwkp) & ~0x80000000) == flg) && (ep->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(ep) & ~0x80000000) != flg) && (((ep->flg & 0x1)) && ((ep->flg & 0x80))) && (((unsigned int)PS2_ADDR(P32(unsigned char *, ep->lkwkp)) & ~0x80000000) == flg) && (P32(struct ML_WORK *, ep->mlwP) != NULL))
         {
             bhCalcModel(ep);
         }
     }
     
-    for (op = sys->obwp, i = 0; i < rom->obj_n; i++, op++)
+    for (op = P32(struct O_WRK *, sys->obwp), i = 0; i < rom->obj_n; i++, op++)
     {
-        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg) && (op->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(P32(unsigned char *, op->lkwkp)) & ~0x80000000) == flg) && (P32(struct ML_WORK *, op->mlwP) != NULL))
         {
             bhCalcModel((BH_PWORK*)op);
         }
     }
     
-    for (op = sys->itwp, i = 0; i < rom->itm_n; i++, op++)
+    for (op = P32(struct O_WRK *, sys->itwp), i = 0; i < rom->itm_n; i++, op++)
     {
-        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg) && (op->mlwP != NULL))
+        if ((((unsigned int)PS2_ADDR(op) & ~0x80000000) != flg) && (((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(P32(unsigned char *, op->lkwkp)) & ~0x80000000) == flg) && (P32(struct ML_WORK *, op->mlwP) != NULL))
         {
             bhCalcModel((BH_PWORK*)op);
         }
@@ -75,12 +75,12 @@ void bhCalcLinkModel(BH_PWORK* pp)
     
     for (op = eff, i = 0; i < 512; i++, op++)
     {
-        if ((((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(op->lkwkp) & ~0x80000000) == flg)) 
+        if ((((op->flg & 0x1)) && ((op->flg & 0x80))) && (((unsigned int)PS2_ADDR(P32(unsigned char *, op->lkwkp)) & ~0x80000000) == flg)) 
         {
-            njSetMatrix(op->mtx, &((BH_PWORK*)op->lkwkp)->mlwP->owP[op->lkono].mtx);
+            njSetMatrix(P32(float (*)[16], op->mtx), &P32(struct O_WORK *, P32(struct ML_WORK *, ((BH_PWORK*)P32(unsigned char *, op->lkwkp))->mlwP)->owP)[op->lkono].mtx);
             
-            njTranslate(op->mtx, op->lox, op->loy, op->loz);
-            njRotateXYZ(op->mtx, op->ax,  op->ay,  op->az);
+            njTranslate(P32(float (*)[16], op->mtx), op->lox, op->loy, op->loz);
+            njRotateXYZ(P32(float (*)[16], op->mtx), op->ax,  op->ay,  op->az);
         }
     }
 }
@@ -184,13 +184,13 @@ int bhCalcLockEneYR(BH_PWORK* pp, int idx)
     
     if ((pp->flg & 0x80000)) 
     {
-        px = pp->mlwP->owP[21].mtx[12];
-        pz = pp->mlwP->owP[21].mtx[14];
+        px = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[21].mtx[12];
+        pz = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[21].mtx[14];
     }
     else 
     {
-        px = pp->mlwP->owP[17].mtx[12];
-        pz = pp->mlwP->owP[17].mtx[14];
+        px = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[17].mtx[12];
+        pz = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[17].mtx[14];
     }
     
     ex = 0.5f * (ewp->watr.c1.x + ewp->watr.c2.x);
@@ -270,7 +270,7 @@ int bhSearchNearEnemy(BH_PWORK* pp, int* r, float* h, int* id)
     
     for (i = 0; i < sys->ewk_n; i++, epp++)
     {
-        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x2)) && (!(epp->flg2 & 0x10))) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)epp->lkwkp)->stflg & 0x1000000)))) 
+        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x2)) && (!(epp->flg2 & 0x10))) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, epp->lkwkp))->stflg & 0x1000000)))) 
         {
             cap.c2.x = 0.5f * (epp->watr.c1.x + epp->watr.c2.x);
             cap.c2.y = 0.5f * (epp->watr.c1.y + epp->watr.c2.y);
@@ -366,7 +366,7 @@ int bhSearchNearEnemyB(NJS_POINT3* pos, int ay, int ar, float len)
     
     for (i = 0; i < sys->ewk_n; i++, epp++) 
     {
-        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x8002)) && (!(epp->flg2 & 0x10)) && (!(epp->stflg & 0x41000000))) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)epp->lkwkp)->stflg & 0x1000000))))
+        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x8002)) && (!(epp->flg2 & 0x10)) && (!(epp->stflg & 0x41000000))) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, epp->lkwkp))->stflg & 0x1000000))))
         {
             cap.c2.x = 0.5f * (epp->watr.c1.x + epp->watr.c2.x);
             cap.c2.y = 0.5f * (epp->watr.c1.y + epp->watr.c2.y); 
@@ -446,7 +446,7 @@ int bhSearchNearEnemy2(BH_PWORK* pp, int* r, float* h, int* id)
     
     for (i = 0; i < sys->ewk_n; i++, epp++) 
     {
-        if (((epp->flg & 0x1)) && (!(epp->flg & 0x8000)) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)epp->lkwkp)->stflg & 0x1000000))))
+        if (((epp->flg & 0x1)) && (!(epp->flg & 0x8000)) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, epp->lkwkp))->stflg & 0x1000000))))
         {
             if (epp->lok_jno == 0) 
             {
@@ -456,9 +456,9 @@ int bhSearchNearEnemy2(BH_PWORK* pp, int* r, float* h, int* id)
             } 
             else
             {
-                epx = epp->mlwP->owP[epp->lok_jno].mtx[12];
-                epy = epp->mlwP->owP[epp->lok_jno].mtx[13];
-                epz = epp->mlwP->owP[epp->lok_jno].mtx[14];
+                epx = P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[epp->lok_jno].mtx[12];
+                epy = P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[epp->lok_jno].mtx[13];
+                epz = P32(struct O_WORK *, P32(struct ML_WORK *, epp->mlwP)->owP)[epp->lok_jno].mtx[14];
             }
             
             vc1.x = EXP1_F(12) - epx;
@@ -551,7 +551,7 @@ int bhSearchNextEnemy(BH_PWORK* pp, int r, float h)
     
     for (i = 0; i < sys->ewk_n; i++, epp++) 
     {
-        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x2)) && (!(epp->flg2 & 0x10))) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)epp->lkwkp)->stflg & 0x1000000)))) 
+        if ((((epp->flg & 0x1)) && ((epp->flg & 0x20)) && (!(epp->flg & 0x2)) && (!(epp->flg2 & 0x10))) && (!(epp->stflg & 0x41000000)) && ((!(epp->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, epp->lkwkp))->stflg & 0x1000000)))) 
         {
             cap.c2.x = 0.5f * (epp->watr.c1.x + epp->watr.c2.x);
             cap.c2.y = 0.5f * (epp->watr.c1.y + epp->watr.c2.y);
@@ -760,7 +760,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -850,7 +850,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -884,7 +884,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -918,7 +918,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -952,7 +952,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -986,7 +986,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1020,7 +1020,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1079,7 +1079,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                     
                                     hit++;
                                     
-                                    sys->ahtp = hp;
+                                    sys->ahtp = S32(hp);
                                     
                                     cap.c2 = pt;
                                 }
@@ -1117,7 +1117,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                     
                                     hit++;
                                     
-                                    sys->ahtp = hp;
+                                    sys->ahtp = S32(hp);
                                     
                                     cap.c2 = pt;
                                 }
@@ -1181,7 +1181,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                     
                                     hit++;
                                     
-                                    sys->ahtp = hp;
+                                    sys->ahtp = S32(hp);
                                     
                                     cap.c2 = pt;
                                 }
@@ -1357,7 +1357,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1387,7 +1387,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1425,7 +1425,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1463,7 +1463,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1510,7 +1510,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                                 
                                 hit++;
                                 
-                                sys->ahtp = hp;
+                                sys->ahtp = S32(hp);
                                 
                                 cap.c2 = pt;
                             }
@@ -1622,7 +1622,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         } 
@@ -1693,7 +1693,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         } 
@@ -1727,7 +1727,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         }
@@ -1761,7 +1761,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         }
@@ -1795,7 +1795,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         }
@@ -1829,7 +1829,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         }
@@ -1863,7 +1863,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
                             
                             hit++;
                             
-                            sys->ahtp = hp;
+                            sys->ahtp = S32(hp);
                             
                             cap.c2 = pt;
                         }
@@ -1883,7 +1883,7 @@ int bhCheckL2Wall(NJS_LINE* lp, unsigned int flg, float* len)
         sys->apos.y = lp->py + lp->vy;
         sys->apos.z = lp->pz + lp->vz;
         
-        sys->ahtp = NULL;
+        sys->ahtp = S32(NULL);
         
         return 0; 
     }
@@ -1926,7 +1926,7 @@ int bhCheckC2Wall(NJS_CAPSULE* cap)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else
         {
@@ -2207,7 +2207,7 @@ int bhCheckC2WallN(NJS_CAPSULE* cap, unsigned int flg)
     {
         if (i < rom->wal_n) 
         {
-            hp = &rom->walp[i];
+            hp = &P32(struct ATR_WORK *, rom->walp)[i];
         } 
         else 
         {
@@ -2483,7 +2483,7 @@ int bhCheckClipModel(BH_PWORK* pp)
     int i;         
     int jno;       
     
-    mlwP = pp->mlwP;
+    mlwP = P32(struct ML_WORK *, pp->mlwP);
     
     if (mlwP == NULL)
     {
@@ -2502,9 +2502,9 @@ int bhCheckClipModel(BH_PWORK* pp)
         
         jno = pp->clp_jno[i];
         
-        njProjectScreen(cam.mtx, (NJS_POINT3*)&mlwP->owP[jno].mtx[12], &p2);
+        njProjectScreen(P32(float (*)[16], cam.mtx), (NJS_POINT3*)&P32(struct O_WORK *, mlwP->owP)[jno].mtx[12], &p2);
         
-        njCalcPoint(cam.mtx, (NJS_POINT3*)&mlwP->owP[jno].mtx[12], &p3);
+        njCalcPoint(P32(float (*)[16], cam.mtx), (NJS_POINT3*)&P32(struct O_WORK *, mlwP->owP)[jno].mtx[12], &p3);
         
         if (((p2.x > PC_CLIP_X0) && (p2.x < PC_CLIP_X1)) && ((p2.y > 1632.0f) && (p2.y < 2624.0f)) && (p3.z > -1.0f)) 
         {
@@ -2524,9 +2524,9 @@ int bhCheckClipPoint(NJS_POINT3* pos)
 #ifdef TARGET_PC
     if (!pc_model_cull()) return 0;   /* option / third person: always drawn */
 #endif
-    njProjectScreen(cam.mtx, pos, &p2);
+    njProjectScreen(P32(float (*)[16], cam.mtx), pos, &p2);
     
-    njCalcPoint(cam.mtx, pos, &p3);
+    njCalcPoint(P32(float (*)[16], cam.mtx), pos, &p3);
     
     if (((p2.x > PC_CLIP_X0) && (p2.x < PC_CLIP_X1)) && ((p2.y > 1632.0f) && (p2.y < 2624.0f)) && (p3.z > -1.0f))
     {
@@ -2544,7 +2544,7 @@ void bhSetWaterSplash(BH_PWORK* pp, int jno, int type, float sx, float sy, float
     NJS_POINT3 ps; 
     NJS_POINT3* tmp, *tmp2; // not from DWARF
 
-    owp = &pp->mlwP->owP[jno];
+    owp = &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno];
     
     tmp  = (NJS_POINT3*)&owp->mtx[12];
     tmp2 = (NJS_POINT3*)&owp->mtx[14];
@@ -2703,7 +2703,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
 
     if ((WpnTab[wno].flg & 0x4)) 
     {
-        lp = rom->lgtp;
+        lp = P32(struct LGT_WORK *, rom->lgtp);
         
         lp->flg = 3;
         
@@ -2749,7 +2749,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         lp->ly = WpnTab[wno].wp_fps1.y;
         lp->lz = WpnTab[wno].wp_fps1.z;
         
-        lp->light = NULL;
+        lp->light = S32(NULL);
     }
     
     if (((pp->stflg & 0x40000000)) && (WpnTab[wno].vib_tp >= 0)) 
@@ -2778,7 +2778,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
             ops.z =  WpnTab[wno].wp_fps1.z; 
         }
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ops, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ops, (NJS_POINT3*)&eft->px);
         
         switch (wno) 
         {                            
@@ -2832,13 +2832,13 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
             {
                 op = &eff[eno];
                 
-                njSetMatrix(op->mtx, &pp->mlwP->owP[jno].mtx);
+                njSetMatrix(P32(float (*)[16], op->mtx), &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx);
                 
-                njTranslate(op->mtx, ops.x, ops.y, ops.z);
+                njTranslate(P32(float (*)[16], op->mtx), ops.x, ops.y, ops.z);
                 
                 if ((hand != 0) && (wno < 21))
                 { 
-                    njRotateY(op->mtx, 32768);
+                    njRotateY(P32(float (*)[16], op->mtx), 32768);
                 }
                 
                 switch (wno) 
@@ -2850,29 +2850,29 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
                         ps2.y = 0;
                         ps2.z = 0;
                         
-                        njCalcVector(&pp->mlwP->owP[jno].mtx, &ps2, &ps);
+                        njCalcVector(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps2, &ps);
                         
                         bhSetEffGunSpark((NJS_POINT3*)&eft->px, &ps, 0xFFF8F8A0, 0x4CE04010, 1);
                     }
                     
                     break;
                 case 13:                            
-                    njRotateY(op->mtx, 8192);
+                    njRotateY(P32(float (*)[16], op->mtx), 8192);
                     break;
                 case 14:                            
                 case 15:                            
                 case 16:                            
                 case 17:                            
-                    njRotateY(op->mtx, 9102);
+                    njRotateY(P32(float (*)[16], op->mtx), 9102);
                     break;
                 case 22:                            
                     if (hand == 0)
                     {
-                        njRotateXYZ(op->mtx, 4551, 2230, 1911);
+                        njRotateXYZ(P32(float (*)[16], op->mtx), 4551, 2230, 1911);
                     } 
                     else 
                     {
-                        njRotateXYZ(op->mtx, 49152, 20789, 62851);
+                        njRotateXYZ(P32(float (*)[16], op->mtx), 49152, 20789, 62851);
                     }
                     
                     break;
@@ -2915,7 +2915,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         
         eft2 = &WpnEffTab[wno][1];
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ops, (NJS_POINT3*)&eft2->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ops, (NJS_POINT3*)&eft2->px);
         
         if (!(eft2->flg & 0x80)) 
         {
@@ -2931,7 +2931,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
                 ps.x = 0.1f * -(float)eft2->flr_no;
             }
             
-            njCalcVector(&pp->mlwP->owP[jno].mtx, &ps, &ops);
+            njCalcVector(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, &ops);
             
             eft2->ay = ang;
             
@@ -3017,7 +3017,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = WpnTab[wno].wp_fps1.y;
         ps.z = WpnTab[wno].wp_fps1.z;
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
         
         eft->sx = 1.0f;
         eft->sy = 1.0f;
@@ -3037,7 +3037,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = WpnTab[wno].wp_fps1.y;
         ps.z = WpnTab[wno].wp_fps1.z;
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
         
         eft->sx = 1.5f;
         eft->sy = 1.5f;
@@ -3057,17 +3057,17 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = WpnTab[wno].wp_fps1.y;
         ps.z = WpnTab[wno].wp_fps1.z;
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
         
         ps.x = 1.5f;
         ps.y = 0;
         ps.z = 0;
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ps, &ops);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, &ops);
         
-        ops.x -= pp->mlwP->owP[jno].mtx[12];
-        ops.y -= pp->mlwP->owP[jno].mtx[13];
-        ops.z -= pp->mlwP->owP[jno].mtx[14];
+        ops.x -= P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx[12];
+        ops.y -= P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx[13];
+        ops.z -= P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx[14];
         
         eft->sx = 2.5f;
         eft->sy = 2.5f;
@@ -3079,7 +3079,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = WpnTab[wno].wp_fps1.y;
         ps.z = WpnTab[wno].wp_fps1.z;
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ps, (NJS_POINT3*)&eft->px);
         
         bhSetEffectTb(eft, &ops, NULL, 0);
         
@@ -3130,7 +3130,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = 0;
         ps.z = 0.4f;
         
-        njSetMatrix(NULL, &pp->mlwP->owP[jno].mtx);
+        njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx);
         
         for (i = 0; i < 8; i++) 
         {
@@ -3143,7 +3143,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         
         break;
     case 20:                                        
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, (NJS_POINT3*)&WpnTab[wno].wp_fps2, (NJS_POINT3*)&sys->ef.px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, (NJS_POINT3*)&WpnTab[wno].wp_fps2, (NJS_POINT3*)&sys->ef.px);
         
         sys->ef.id = 27;
         
@@ -3165,7 +3165,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         ps.y = 0;
         ps.z = 0;
         
-        njSetMatrix(NULL, &pp->mlwP->owP[jno].mtx);
+        njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx);
         
         njCalcVector(NULL, &ps, &ps2);
         
@@ -3174,12 +3174,12 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
     case 21:                                        
         ops = WpnTab[wno].wp_fps1; 
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ops, (NJS_POINT3*)&gline.px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ops, (NJS_POINT3*)&gline.px);
         
         ops.x = ops.y = 0;
         ops.z = -1000.0f;
         
-        njSetMatrix(NULL, &pp->mlwP->owP[jno].mtx);
+        njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx);
         
         njRotateY(NULL, 36);
         njRotateX(NULL, -1547);
@@ -3189,7 +3189,7 @@ void bhSetGunFire(BH_PWORK* pp, int wno, int jno, int hand, int ang)
         if (bhCheckL2Wall(&gline, 0x400, &len) != 0) 
         {
             wps = sys->apos;
-            wlp = sys->ahtp;
+            wlp = P32(struct ATR_WORK *, sys->ahtp);
             
             walhit = 1;
         }
@@ -3318,10 +3318,10 @@ void bhSetYakkyou(BH_PWORK* pp, int wno, int jno, int hand, int ang) // fifth pa
         wps.z =  WpnTab[wno].wp_fps1.z; 
     }
     
-    njCalcPoint(&pp->mlwP->owP[jno].mtx, &wps, &jps);
+    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &wps, &jps);
     
-    jps.x = pp->mlwP->owP->mtx[12] - jps.x;
-    jps.z = pp->mlwP->owP->mtx[14] - jps.z;
+    jps.x = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)->mtx[12] - jps.x;
+    jps.z = P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)->mtx[14] - jps.z;
     
     eft->ay = (int)(10430.381f * atan2f(jps.x, jps.z));
     
@@ -3347,7 +3347,7 @@ void bhSetYakkyou(BH_PWORK* pp, int wno, int jno, int hand, int ang) // fifth pa
         
         ops.z += eft->sz; 
         
-        njCalcPoint(&pp->mlwP->owP[jno].mtx, &ops, (NJS_POINT3*)&eft->px);
+        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[jno].mtx, &ops, (NJS_POINT3*)&eft->px);
         
         if (!(eft->flg & 0x80)) 
         {
@@ -3479,12 +3479,12 @@ void bhSetLighterFire(O_WRK* op, int flg)
         
         bhSetLightTab(&lgttab[1], 1);
         
-        rom->lgtp[1].flg |= 0x2;
+        P32(struct LGT_WORK *, rom->lgtp)[1].flg |= 0x2;
         sys->st_flg      |= 0x20000000;
     } 
     else 
     {
-        rom->lgtp[1].flg &= ~0x2;
+        P32(struct LGT_WORK *, rom->lgtp)[1].flg &= ~0x2;
         sys->st_flg      &= ~0x20000000;
     }
 }

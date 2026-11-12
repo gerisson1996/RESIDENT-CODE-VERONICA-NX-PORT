@@ -114,20 +114,20 @@ void bhDrawScreenFade()
     njColorBlendingMode(0, 8);
     njColorBlendingMode(1, 6);
     
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = NULL;
+    p2c.tex = S32(NULL);
     
     p2c.num = 1;
 
     argb = (unsigned int)sys->fade_bn | (((unsigned int)sys->fade_gn << 8) | (((unsigned int)sys->fade_an << 24) | ((unsigned int)sys->fade_rn << 16)));
     
-    ((int*)&p2c.col->color)[0] = argb;
-    ((int*)&p2c.col->color)[1] = argb;
-    ((int*)&p2c.col->color)[2] = argb;
-    ((int*)&p2c.col->color)[3] = argb; 
+    ((int*)&P32(NJS_COLOR *, p2c.col)->color)[0] = argb;
+    ((int*)&P32(NJS_COLOR *, p2c.col)->color)[1] = argb;
+    ((int*)&P32(NJS_COLOR *, p2c.col)->color)[2] = argb;
+    ((int*)&P32(NJS_COLOR *, p2c.col)->color)[3] = argb; 
     
     p[0].x = 0;
     p[0].y = 0;
@@ -274,17 +274,17 @@ void bhDrawCinesco()
         njColorBlendingMode(0, 8);
         njColorBlendingMode(1, 6);
 
-        p2c.p = p;
+        p2c.p = S32(p);
         
-        p2c.col = col;
+        p2c.col = S32(col);
         
-        p2c.tex = NULL;
+        p2c.tex = S32(NULL);
         
         p2c.num = 1;
 
         argb = (unsigned int)(255.0f * sys->cine_an) << 24;
     
-        p2c.col[3].color = p2c.col[2].color = p2c.col[1].color = p2c.col[0].color = argb;
+        P32(NJS_COLOR *, p2c.col)[3].color = P32(NJS_COLOR *, p2c.col)[2].color = P32(NJS_COLOR *, p2c.col)[1].color = P32(NJS_COLOR *, p2c.col)[0].color = argb;
 
         p[0].x = 0;
         p[0].y = 0;
@@ -334,18 +334,18 @@ void bhDrawScope()
         njColorBlendingMode(0, 8);
         njColorBlendingMode(1, 6);
         
-        njSetTexture((NJS_TEXLIST*)sys->obwp->mlwP->texP);
+        njSetTexture((NJS_TEXLIST*)P32(NJS_TEXLIST *, P32(struct ML_WORK *, P32(struct O_WRK *, sys->obwp)->mlwP)->texP));
         njSetTextureNum(2);
 
-        p2c.p = p;
+        p2c.p = S32(p);
         
-        p2c.col = col;
+        p2c.col = S32(col);
         
-        p2c.tex = uv;
+        p2c.tex = S32(uv);
         
         p2c.num = 1;
         
-        if (sys->obwp->type != 13) 
+        if (P32(struct O_WRK *, sys->obwp)->type != 13) 
         {
             argb = 0x20008000;
         } 
@@ -569,11 +569,11 @@ void bhDrawScopeNumber(float px, float py, int num)
                                    { 0  , 64, 32 , 64, 32 , 96, 0  , 96 },
                                    { 32 , 64, 64 , 64, 64 , 96, 32 , 96 } };
  
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
     
@@ -624,11 +624,11 @@ void bhDrawThermometer()
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(sys->ond_tnm);
 
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
 
@@ -808,11 +808,11 @@ void bhDrawThermoNumber(float px, float py, int num, unsigned int argb)
                                    { 96 , 208, 128, 208, 128, 256, 96 , 256 },
                                    { 128, 208, 160, 208, 160, 256, 128, 256 } };
 
-    p2c.p = p;
+    p2c.p = S32(p);
     
-    p2c.col = col;
+    p2c.col = S32(col);
     
-    p2c.tex = uv;
+    p2c.tex = S32(uv);
     
     p2c.num = 1;
 
@@ -994,8 +994,8 @@ void bhDrawSmallScreenRenderTexture()
         dist = _nj_screen_.dist;
         
         njSetRenderWidth(512);
-        njSetMatrix(&lcmat[10], cam.mtx);
-        njSetMatrix(&lcmat[11], cam.mtxb);
+        njSetMatrix(&lcmat[10], P32(float (*)[16], cam.mtx));
+        njSetMatrix(&lcmat[11], P32(float (*)[16], cam.mtxb));
 
         cambk = cam;
         
@@ -1067,8 +1067,8 @@ void bhDrawSmallScreenRenderTexture()
         
         cam = cambk;
         
-        njSetMatrix(cam.mtx, &lcmat[10]);
-        njSetMatrix(cam.mtxb, &lcmat[11]);        
+        njSetMatrix(P32(float (*)[16], cam.mtx), &lcmat[10]);
+        njSetMatrix(P32(float (*)[16], cam.mtxb), &lcmat[11]);        
         njSetScreenProjection(dist);
         
         Ps2CalcScreenCone();

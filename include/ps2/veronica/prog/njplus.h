@@ -7,29 +7,29 @@ typedef struct MDLSTR2
 {
     // total size: 0x14
     float pos[3]; // offset 0x0, size 0xC
-    int* vlist;   // offset 0xC, size 0x4
-    short* plist; // offset 0x10, size 0x4
+    ps2ptr_t vlist; /* int* vlist */   // offset 0xC, size 0x4
+    ps2ptr_t plist; /* short* plist */ // offset 0x10, size 0x4
 } MDLSTR2;
 
 typedef struct NP_WORK
 {
     // total size: 0x2F20
-	int* sknp;                 // offset 0x0, size 0x4
+	ps2ptr_t sknp; /* int* sknp */                 // offset 0x0, size 0x4
     int obj_now;               // offset 0x4, size 0x4
     int obj_cnt;               // offset 0x8, size 0x4
-    unsigned char* buff;       // offset 0xC, size 0x4
-    unsigned char* bp;         // offset 0x10, size 0x4
-    int* vlist[128];           // offset 0x14, size 0x200
+    ps2ptr_t buff; /* unsigned char* buff */       // offset 0xC, size 0x4
+    ps2ptr_t bp; /* unsigned char* bp */         // offset 0x10, size 0x4
+    ps2ptr_t vlist[128]; /* int* vlist[128] */           // offset 0x14, size 0x200
 	NJS_POINT3 op[128];        // offset 0x214, size 0x600
-	NJS_CNK_OBJECT* cobj[128]; // offset 0x814, size 0x200
-	int* sktp[128];            // offset 0xA14, size 0x200
-    int* vlp[128];             // offset 0xC14, size 0x200
-	NJS_MATRIX* mxp[128][10];  // offset 0xE14, size 0x1400
-	void* wkp;                 // offset 0x2214, size 0x4
-    unsigned char* buff2;      // offset 0x2218, size 0x4
-    unsigned char* bp2;        // offset 0x221C, size 0x4
+	ps2ptr_t cobj[128]; /* NJS_CNK_OBJECT* cobj[128] */ // offset 0x814, size 0x200
+	ps2ptr_t sktp[128]; /* int* sktp[128] */            // offset 0xA14, size 0x200
+    ps2ptr_t vlp[128]; /* int* vlp[128] */             // offset 0xC14, size 0x200
+	ps2ptr_t mxp[128][10]; /* NJS_MATRIX* mxp[128][10] */  // offset 0xE14, size 0x1400
+	ps2ptr_t wkp; /* void* wkp */                 // offset 0x2214, size 0x4
+    ps2ptr_t buff2; /* unsigned char* buff2 */      // offset 0x2218, size 0x4
+    ps2ptr_t bp2; /* unsigned char* bp2 */        // offset 0x221C, size 0x4
 	MDLSTR2 mdlstr2[128];      // offset 0x2220, size 0xA00
-	int* vlp2[128];            // offset 0x2C20, size 0x200
+	ps2ptr_t vlp2[128]; /* int* vlp2[128] */            // offset 0x2C20, size 0x200
     char mes[256];             // offset 0x2E20, size 0x100
 } NP_WORK;
 

@@ -74,9 +74,9 @@ void bhSelectContinue()
 {
     GV_WORK* gv;
 
-    sys->gov_exp = bhGetFreeMemory(sizeof(GV_WORK), 32);
+    sys->gov_exp = S32(bhGetFreeMemory(sizeof(GV_WORK), 32));
     
-    gv = sys->gov_exp;
+    gv = P32(void *, sys->gov_exp);
     
     gv->cont_x = 0;
     gv->count = 0;
@@ -121,11 +121,11 @@ void bhInitGameOver()
     
     bhSetScreenFade(0xFFE0E0E0, 60.0f);
     
-    gv = sys->gov_exp;
+    gv = P32(void *, sys->gov_exp);
     
-    gv->p3c.p   = gv->pt;
-    gv->p3c.col = gv->cl;
-    gv->p3c.tex = gv->uv;
+    gv->p3c.p   = S32(gv->pt);
+    gv->p3c.col = S32(gv->cl);
+    gv->p3c.tex = S32(gv->uv);
     gv->p3c.num = 256;
     
     gv->pz = -40.0f;
@@ -228,7 +228,7 @@ void bhMainGameOver()
     float* yn; // not from DWARF
     int temp;  // not from DWARF
 
-    gv = sys->gov_exp;
+    gv = P32(void *, sys->gov_exp);
     
     switch (sys->gov_md1) 
     {      
@@ -285,24 +285,24 @@ void bhMainGameOver()
                 
                 plp->ay = 35499;
                 
-                plp->mnwP = plp->mnwPb;
+                plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
                 
-                plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3];
+                plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3];
                 
                 plp->hokan_rate  = 0;
                 plp->hokan_count = 0;
                 
                 plp->mtn_add = 65536;
                 
-                plp->mlwP->texP = plp->txp[0];
+                P32(struct ML_WORK *, plp->mlwP)->texP = S32(P32(NJS_TEXLIST *, plp->txp[0]));
                 
-                plp->mlwP->owP[7].flg  &= ~0x2;
-                plp->mlwP->owP[11].flg &= ~0x2;
-                plp->mlwP->owP[5].flg  &= ~0x2;
-                plp->mlwP->owP[4].flg  &= ~0x2;
+                P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg  &= ~0x2;
+                P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg &= ~0x2;
+                P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].flg  &= ~0x2;
+                P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].flg  &= ~0x2;
                 
-                sys->obwp[0].mdflg &= ~0x1; 
-                sys->obwp[1].mdflg &= ~0x1;
+                P32(struct O_WRK *, sys->obwp)[0].mdflg &= ~0x1; 
+                P32(struct O_WRK *, sys->obwp)[1].mdflg &= ~0x1;
                 
                 sys->st_flg |= 0x1;
                 
@@ -432,7 +432,7 @@ void bhMainGameOver()
         
         break;
     case 2:
-        sys->mes_tp = cnt_mes;
+        sys->mes_tp = S32(cnt_mes);
         
         bhDispMessageEx(264.0f, 211.0f, -0.9f, 2, 0, (gv->count << 24) | 0xE0E0E0, 0);
         
@@ -604,7 +604,7 @@ void bhDrawGameOver()
     NJS_COLOR cl[32], uv[32]; 
     int x, y;             
 
-    gv = sys->gov_exp;
+    gv = P32(void *, sys->gov_exp);
     
     njTextureFilterMode(1);
     
@@ -614,9 +614,9 @@ void bhDrawGameOver()
     njSetTexture(&sys->ef_tlist);
     njSetTextureNum(4);
     
-    p3c.p   = pt;
-    p3c.col = cl;
-    p3c.tex = uv;
+    p3c.p   = S32(pt);
+    p3c.col = S32(cl);
+    p3c.tex = S32(uv);
     p3c.num = 32; 
     
     for (y = 0; y < 15; y++) 

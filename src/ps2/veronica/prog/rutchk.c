@@ -32,9 +32,9 @@ unsigned char bhCheckRoute(NJS_POINT3* ps0, NJS_POINT3* ps1, NJS_POINT3* ps2)
         return 0xFF;
     } 
 
-    now = *((rom->ruttp + (rom->rut_n * nxt)) + rid);
+    now = *((P32(unsigned char *, rom->ruttp) + (rom->rut_n * nxt)) + rid);
         
-    rp = &rom->rutp[now];
+    rp = &P32(struct ATR_WORK *, rom->rutp)[now];
         
     ps2->x = rp->px + (0.5f * rp->w);
     ps2->y = rp->py + (0.5f * rp->h);
@@ -49,7 +49,7 @@ unsigned char bhCheckRouteID(NJS_POINT3* ps)
     ATR_WORK* rp;
     int i;
 
-    rp = rom->rutp;
+    rp = P32(struct ATR_WORK *, rom->rutp);
     
     for (i = 0; i < rom->rut_n; i++, rp++) 
     {

@@ -190,10 +190,28 @@ CNK_LIGHT NaCnkLightSm[6] = { { 0, 0, 1.0f, 10.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0,
 														   { 0, 0, 1.0f, 10.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0 },
 														   { 0, 0, 1.0f, 10.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0 },
 														   { 0, 0, 1.0f, 10.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0 } };
+#ifndef TARGET_PC
 CNK_LIGHTING NaCnkLighting[4] = { { &NaCnkLightEs, 1, &NaCnkDefaultOne, &NaCnkSpeculaMaterial, &NaCnkAmbientEs, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 														       { NaCnkLightEm, 6, &NaCnkDefaultOne, &NaCnkDefaultOne, &NaCnkAmbientEm, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 														       { &NaCnkLightSs, 1, &NaCnkDiffuseMaterial, &NaCnkSpeculaMaterial, &NaCnkAmbientSs, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 														       { NaCnkLightSm, 6, &NaCnkDiffuseMaterial, &NaCnkDefaultOne, &NaCnkAmbientSm, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+#else
+CNK_LIGHTING NaCnkLighting[4] = { { 0, 1 }, { 0, 6 }, { 0, 1 }, { 0, 6 } };   /* slots: filled at start */
+static __attribute__((constructor)) void pc_init_NaCnkLighting(void)
+{
+    static void* const init[4][4] = {
+        { &NaCnkLightEs, &NaCnkDefaultOne, &NaCnkSpeculaMaterial, &NaCnkAmbientEs },
+        { NaCnkLightEm, &NaCnkDefaultOne, &NaCnkDefaultOne, &NaCnkAmbientEm },
+        { &NaCnkLightSs, &NaCnkDiffuseMaterial, &NaCnkSpeculaMaterial, &NaCnkAmbientSs },
+        { NaCnkLightSm, &NaCnkDiffuseMaterial, &NaCnkDefaultOne, &NaCnkAmbientSm } };
+    for (int i = 0; i < 4; i++) {
+        NaCnkLighting[i].pLightTop = S32(init[i][0]);
+        NaCnkLighting[i].pDiffuse = S32(init[i][1]);
+        NaCnkLighting[i].pSpecula = S32(init[i][2]);
+        NaCnkLighting[i].pAmbient = S32(init[i][3]);
+    }
+}
+#endif
 /*unsigned int njCnkConvTest; - unused*/
 extern void VU0_CALCPOINT() __attribute__((section(".vutext")));
 extern void VU0_CALCPOINT_END() __attribute__((section(".vutext")));
@@ -560,7 +578,7 @@ void    njCnkEasyDrawModel( NJS_CNK_MODEL *model )
 int pc_part_unused(const void* obj);   /* pc/glue/view_glue.c */
 static int pc_show_hidden(NJS_CNK_OBJECT* obj)
 {
-    if (obj->model == NULL || !pc_is_room_object(obj) || pc_part_unused(obj)) return 0;
+    if (P32(NJS_CNK_MODEL *, obj->model) == NULL || !pc_is_room_object(obj) || pc_part_unused(obj)) return 0;
     return tps_cam_active || (pc_hor_scale() > 1.0f && pc_margin_part(obj));
 }
 #endif
@@ -572,7 +590,7 @@ void    njCnkEasyDrawObject( NJS_CNK_OBJECT *model )
 
     njCnkSetCurrentDrawMode(0);
     
-    for ( ; model != NULL; model = model->sibling) 
+    for ( ; model != NULL; model = P32(struct cnkobj *, model->sibling)) 
     {
         ulFlags = model->evalflags;
     
@@ -603,7 +621,7 @@ void    njCnkEasyDrawObject( NJS_CNK_OBJECT *model )
         } 
         else
         {
-            lDrawResult = njCnkDrawModelLocal(model->model);
+            lDrawResult = njCnkDrawModelLocal(P32(NJS_CNK_MODEL *, model->model));
         }
     
 #ifdef TARGET_PC
@@ -613,7 +631,7 @@ void    njCnkEasyDrawObject( NJS_CNK_OBJECT *model )
         {
             if ((!(ulFlags & 0x100)) || (lDrawResult != 0)) 
             {
-                njCnkEasyDrawObject(model->child);
+                njCnkEasyDrawObject(P32(struct cnkobj *, model->child));
             }
         }
     
@@ -640,7 +658,7 @@ void    njCnkEasyMultiDrawObject( NJS_CNK_OBJECT *model )
 
     njCnkSetCurrentDrawMode(1);
     
-    for ( ; model != NULL; model = model->sibling) 
+    for ( ; model != NULL; model = P32(struct cnkobj *, model->sibling)) 
     {
         ulFlags = model->evalflags;
     
@@ -671,7 +689,7 @@ void    njCnkEasyMultiDrawObject( NJS_CNK_OBJECT *model )
         } 
         else
         {
-            lDrawResult = njCnkDrawModelLocal(model->model);
+            lDrawResult = njCnkDrawModelLocal(P32(NJS_CNK_MODEL *, model->model));
         }
     
 #ifdef TARGET_PC
@@ -681,7 +699,7 @@ void    njCnkEasyMultiDrawObject( NJS_CNK_OBJECT *model )
         {
             if ((!(ulFlags & 0x100)) || (lDrawResult != 0)) 
             {
-                njCnkEasyMultiDrawObject(model->child);
+                njCnkEasyMultiDrawObject(P32(struct cnkobj *, model->child));
             }
         }
     
@@ -813,7 +831,7 @@ int njCnkDrawModelLocal(NJS_CNK_MODEL* pModel)
 #ifdef TARGET_PC
     /* index offset + count of the vertex chunk: past the vertex work buffer the PS2 wrote over
        whatever followed it (docs/modding/ROOM_FORMAT.md "Limits and budgets"); such a node is not drawn */
-    pCnk = (CHUNK_HEAD*)pModel->vlist;
+    pCnk = (CHUNK_HEAD*)P32(int *, pModel->vlist);
 
     if ((pCnk != NULL) && ((((unsigned short*)pCnk)[2] + ((unsigned short*)pCnk)[3]) > iNaCnkVerBufMax))
     {
@@ -823,7 +841,7 @@ int njCnkDrawModelLocal(NJS_CNK_MODEL* pModel)
 
     njPushMatrixEx();
 
-    pCnk = (CHUNK_HEAD*)pModel->vlist;
+    pCnk = (CHUNK_HEAD*)P32(int *, pModel->vlist);
 
     if (pCnk != NULL)
     {
@@ -856,7 +874,7 @@ int njCnkDrawModelLocal(NJS_CNK_MODEL* pModel)
         njColorBlendingModeSys(lNaCnkSrcBlendMode, lNaCnkDstBlendMode);
     }
     
-    pCnk = (CHUNK_HEAD*)pModel->plist;
+    pCnk = (CHUNK_HEAD*)P32(short *, pModel->plist);
     
     if (pCnk != NULL) 
     {
@@ -950,18 +968,18 @@ int njCnkDrawModelLocalMod(NJS_CNK_MODEL* pModel)
     
     njPushMatrixEx();
     
-    pCnk = (CHUNK_HEAD*)pModel->vlist;
+    pCnk = (CHUNK_HEAD*)P32(int *, pModel->vlist);
     
-    if (pModel->vlist != NULL)
+    if (P32(int *, pModel->vlist) != NULL)
     {
-        njCnkCvVMod((CHUNK_HEAD*)pModel->vlist);
+        njCnkCvVMod((CHUNK_HEAD*)P32(int *, pModel->vlist));
     }
 
     njPopMatrixEx();
     
-    if (pModel->plist != NULL) 
+    if (P32(short *, pModel->plist) != NULL) 
     {
-        njCnkCoP3((CHUNK_HEAD*)pModel->plist);
+        njCnkCoP3((CHUNK_HEAD*)P32(short *, pModel->plist));
     }
     
     return 1;
@@ -1330,7 +1348,7 @@ CHUNK_HEAD* njCnkCvVn(CHUNK_HEAD* pCnk)
 
         pBuffer->fNz = f28;
 
-        pLightPtr = pNaCnkCrntLighting->pLightTop;
+        pLightPtr = P32(struct CNK_LIGHT *, pNaCnkCrntLighting->pLightTop);
         
         for (lLightCnt = pNaCnkCrntLighting->lLightMax; lLightCnt != 0; lLightCnt--, pLightPtr++) 
         {
@@ -1409,7 +1427,7 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
 
     fog = 0;
 
-    lp = pNaCnkCrntLighting->pLightTop;
+    lp = P32(struct CNK_LIGHT *, pNaCnkCrntLighting->pLightTop);
     
     v[0][0] = lp->fCx;
     v[0][1] = lp[1].fCx;
@@ -1997,7 +2015,7 @@ CHUNK_HEAD* njCnkCs(CHUNK_HEAD* pCnk)
     else
     {
         vu1SetDiffuseMaterial(&NaCnkDiffuseMaterial);
-        vu1SetAmbient(pNaCnkCrntLighting->pAmbient);
+        vu1SetAmbient(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pAmbient));
         vu1SetAlphaRatio(fNaCnkAlphaMaterial);
         
         usColorCalc = usCnkCsPolColorCalcFunc[ulMode & 0x7];
@@ -2171,9 +2189,9 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
     } 
     else
     {
-        vu1SetDiffuseMaterial(pNaCnkCrntLighting->pDiffuse);
-        vu1SetSpeculaMaterial(pNaCnkCrntLighting->pSpecula);
-        vu1SetAmbient(pNaCnkCrntLighting->pAmbient);
+        vu1SetDiffuseMaterial(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pDiffuse));
+        vu1SetSpeculaMaterial(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pSpecula));
+        vu1SetAmbient(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pAmbient));
         vu1SetAlphaRatio(fNaCnkAlphaMaterial);
         
         usColorCalc = uspCnkCrntTexColCalcTbl[ucFlag & 0x7];
@@ -2201,7 +2219,7 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
             vu1func_tag = SCE_VIF1_SET_MSCAL(0,   0);
         }
 
-        timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+        timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
         
         if (timp->TpFlag != 0) 
         {
@@ -2693,9 +2711,9 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
     } 
     else
     {
-        vu1SetDiffuseMaterial(pNaCnkCrntLighting->pDiffuse);
-        vu1SetSpeculaMaterial(pNaCnkCrntLighting->pSpecula);
-        vu1SetAmbient(pNaCnkCrntLighting->pAmbient);
+        vu1SetDiffuseMaterial(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pDiffuse));
+        vu1SetSpeculaMaterial(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pSpecula));
+        vu1SetAmbient(P32(struct VU1_COLOR *, pNaCnkCrntLighting->pAmbient));
         vu1SetAlphaRatio(fNaCnkAlphaMaterial);
         
         usColorCalc = uspCnkCrntTexColCalcTbl[ucFlag & 0x7];
@@ -2723,7 +2741,7 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
             vu1func_tag = SCE_VIF1_SET_MSCAL(0,   0);
         }
 
-        timp = (TIM2_PICTUREHEADER_EX*)Ps2_now_tex->texinfo.texsurface.pSurface;
+        timp = (TIM2_PICTUREHEADER_EX*)P32(unsigned int *, Ps2_now_tex->texinfo.texsurface.pSurface);
         
         if (timp->TpFlag != 0) 
         {
@@ -3183,7 +3201,7 @@ void njCnkEasyMultiDrawObjectI(NJS_CNK_OBJECT* pObject)
     
     ulCnkCurrentDrawMode |= 0x4;
     
-    for ( ; pObject != NULL; pObject = pObject->sibling) 
+    for ( ; pObject != NULL; pObject = P32(struct cnkobj *, pObject->sibling)) 
     {
         ulFlags = pObject->evalflags;
     
@@ -3214,7 +3232,7 @@ void njCnkEasyMultiDrawObjectI(NJS_CNK_OBJECT* pObject)
         } 
         else
         {
-            lDrawResult = njCnkDrawModelLocal(pObject->model);
+            lDrawResult = njCnkDrawModelLocal(P32(NJS_CNK_MODEL *, pObject->model));
         }
     
 #ifdef TARGET_PC
@@ -3224,7 +3242,7 @@ void njCnkEasyMultiDrawObjectI(NJS_CNK_OBJECT* pObject)
         {
             if ((!(ulFlags & 0x100)) || (lDrawResult != 0)) 
             {
-                njCnkEasyMultiDrawObjectI(pObject->child);
+                njCnkEasyMultiDrawObjectI(P32(struct cnkobj *, pObject->child));
             }
         }
     

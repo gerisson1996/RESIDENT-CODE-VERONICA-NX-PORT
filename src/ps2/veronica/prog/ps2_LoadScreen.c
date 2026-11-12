@@ -32,17 +32,17 @@ LOAD_SCREEN* CreateLoadScreen(LOAD_SCREEN* pLoad, void* vpWorkPtrSys) // second 
     pLoad->cMesFlag = 0;
     pLoad->cCgFlag = 0;
     
-    pLoad->pConfigFile = mcCreateConfigInit(&ConfigFile);
-    pLoad->pSaveFile = mcCreateSaveFileInit(&SaveFile);
+    pLoad->pConfigFile = S32(mcCreateConfigInit(&ConfigFile));
+    pLoad->pSaveFile = S32(mcCreateSaveFileInit(&SaveFile));
     
-    pLoad->pMcState = CreateMemoryCard(&McState);
+    pLoad->pMcState = S32(CreateMemoryCard(&McState));
     
-    pLoad->pIconInfo = mcCreateIconInit(&IconInfo, cpNameList, 1);
+    pLoad->pIconInfo = S32(mcCreateIconInit(&IconInfo, cpNameList, 1));
     
-    pLoad->pSelectFileInfo = mcSelectFileInfoInit(SelectFileInfo);
-    pLoad->pSelectFileWindow = mcCreateFileSelectWindow(&SelectFileWindow, pLoad->pSelectFileInfo, 15);
+    pLoad->pSelectFileInfo = S32(mcSelectFileInfoInit(SelectFileInfo));
+    pLoad->pSelectFileWindow = S32(mcCreateFileSelectWindow(&SelectFileWindow, P32(struct SELECTFILEINFO *, pLoad->pSelectFileInfo), 15));
     
-    CheckMemoryCardChangeConnectTypeAll(pLoad->pMcState);
+    CheckMemoryCardChangeConnectTypeAll(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
     
     return pLoad;
 }
@@ -106,14 +106,14 @@ void DispLoadTexture(LOAD_SCREEN* pLoad)
         CheckDispLoadMemoryCard(pLoad);
         break;
     case 1:
-        DispLoadPortCard = GetMemoryCardCurrentPort(pLoad->pMcState);
+        DispLoadPortCard = GetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         
-        mcDisplayFileSelectWindow(pLoad->pSelectFileWindow, 60.0f, 108.0f, DispLoadPortCard);
+        mcDisplayFileSelectWindow(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 60.0f, 108.0f, DispLoadPortCard);
         break;
     case 2:
-        DispLoadPortCard = GetMemoryCardCurrentPort(pLoad->pMcState);
+        DispLoadPortCard = GetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         
-        mcDisplayFileSelectWindow(pLoad->pSelectFileWindow, 60.0f, 108.f, DispLoadPortCard);
+        mcDisplayFileSelectWindow(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 60.0f, 108.f, DispLoadPortCard);
         
         DispUpDownCursol(256.0f, 358.0f, pLoad->sSelectCur + 2);
         break;
@@ -124,10 +124,10 @@ void DispLoadTexture(LOAD_SCREEN* pLoad)
 int ExecuteLoadScreen(LOAD_SCREEN* pLoad)
 {
 #ifdef TARGET_PC   /* native saves: no memory card; its queued reads come from the save files */
-    pLoad->lCardState = pc_saves_native(pLoad->ulState) ? pc_save_card(pLoad->pMcState) : ExecuteMemoryCard(pLoad->pMcState);
+    pLoad->lCardState = pc_saves_native(pLoad->ulState) ? pc_save_card(P32(struct MEMORYCARDSTATE *, pLoad->pMcState)) : ExecuteMemoryCard(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
 
     /* mouse in menus: hover moves the cursor, a click confirms (pc/glue/save_glue.c) */
-    pc_save_mouse(0, pLoad->ulState, pLoad->cCgFlag, &pLoad->sCursorX, &pLoad->sCursorY, &pLoad->sSelectCur, pLoad->pSelectFileWindow, pLoad->pMcState);
+    pc_save_mouse(0, pLoad->ulState, pLoad->cCgFlag, &pLoad->sCursorX, &pLoad->sCursorY, &pLoad->sSelectCur, P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
 #else
     pLoad->lCardState = ExecuteMemoryCard(pLoad->pMcState);
 #endif
@@ -200,7 +200,7 @@ void SetStateLoadScreenAwarenessCard(LOAD_SCREEN* pLoad)
     
     pLoad->usLoopCount = 0;
     
-    SetCheckMcFlag(pLoad->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 }
 
 // 100% matching! 
@@ -212,7 +212,7 @@ void ExecuteStateLoadScreenAwarenessCard(LOAD_SCREEN* pLoad)
 #ifdef TARGET_PC   /* native saves: straight to the list of saves */
     if (pc_saves_native(-1))
     {
-        pc_save_list(pLoad->pSelectFileWindow, pLoad->pMcState, 0);
+        pc_save_list(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 
         SetStateLoadScreenSelectFile(pLoad);
         return;
@@ -222,8 +222,8 @@ void ExecuteStateLoadScreenAwarenessCard(LOAD_SCREEN* pLoad)
     switch (pLoad->lCardState)
     {                              
     case 100:
-        lPort0State = GetMemoryCardSelectPortState(pLoad->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pLoad->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
         
         if ((lPort0State == 2) || (lPort1State == 2))
         {                     
@@ -277,8 +277,8 @@ void ExecuteStateLoadScreenErrLostCard(LOAD_SCREEN* pLoad)
     switch (pLoad->lCardState) 
     {
     case 100:
-        lPort0State = GetMemoryCardSelectPortState(pLoad->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pLoad->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
         
         if ((lPort0State == 2) || (lPort1State == 2))
         {                     
@@ -325,8 +325,8 @@ void ExecuteStateLoadScreenErrUnPS2MemCard(LOAD_SCREEN* pLoad)
     switch (pLoad->lCardState) 
     {
     case 100:  
-        lPort0State = GetMemoryCardSelectPortState(pLoad->pMcState, 0);
-        lPort1State = GetMemoryCardSelectPortState(pLoad->pMcState, 1);
+        lPort0State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
+        lPort1State = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
 
         if ((lPort0State == 2) || (lPort1State == 2)) 
         {
@@ -359,9 +359,9 @@ void SetStateLoadScreenSelectCard(LOAD_SCREEN* pLoad)
     pLoad->cMesFlag = 0;
     pLoad->cCgFlag = 0;
     
-    SetMemoryCardFileNumber(pLoad->pMcState, 0);
+    SetMemoryCardFileNumber(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 
-    mcSetFileSelectWindowCursolInit(pLoad->pSelectFileWindow);
+    mcSetFileSelectWindowCursolInit(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow));
 }
 
 // 100% matching! 
@@ -382,7 +382,7 @@ void ExecuteStateLoadScreenSelectCard(LOAD_SCREEN* pLoad)
     
     pLoad->sCursorY &= 0x1;
     
-    if ((pLoad->sCursorY == 0) && ((GetMemoryCardSelectPortState(pLoad->pMcState, 0) == 2) && (GetMemoryCardSelectPortState(pLoad->pMcState, 1) == 2)))
+    if ((pLoad->sCursorY == 0) && ((GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0) == 2) && (GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1) == 2)))
     {
         if ((sys->pad_ps & 0x4)) 
         {
@@ -455,7 +455,7 @@ void SetStateLoadScreenErrUnFormat(LOAD_SCREEN* pLoad)
     pLoad->cMesFlag = 3;
     pLoad->cCgFlag = 100;
     
-    SetCheckMcFlag(pLoad->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 }
 
 // 100% matching! 
@@ -511,10 +511,10 @@ void SetStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
     
     pLoad->ulMemCheckCountTimer = 10;
     
-    SetMemoryCardFileNumber(pLoad->pMcState, 0);
-    SetMemoryCardCurrentPort(pLoad->pMcState, pLoad->sCursorX);
+    SetMemoryCardFileNumber(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
+    SetMemoryCardCurrentPort(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), pLoad->sCursorX);
     
-    SetCheckMcFlag(pLoad->pMcState, 1);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
 }
 
 // 100% matching! 
@@ -525,7 +525,7 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
     switch (pLoad->ulSubState)
     {
     case 0:
-        lResult = CheckMemoryCardFormatStatus(pLoad->pMcState);
+        lResult = CheckMemoryCardFormatStatus(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         
         if (lResult == 1)
         {
@@ -542,16 +542,16 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
         }
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
             
             pLoad->ulSubState = 6;
         }
         
         break;
     case 1:
-        lResult = CheckMemoryCardExistSubDirectory(pLoad->pMcState);
+        lResult = CheckMemoryCardExistSubDirectory(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         
         if (lResult == 1)
         {
@@ -559,22 +559,22 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
         }
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
             pLoad->ulSubState = 5;
         }
         
         break;
     case 2:
-        lResult = CheckMemoryCardExistFileList(pLoad->pMcState, cpNameList, 18);
+        lResult = CheckMemoryCardExistFileList(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), cpNameList, 18);
         
         if (lResult < 0)
         {
             pLoad->ulSubState = 6;
             
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         }
         else if (lResult == 1)
         {
@@ -583,7 +583,7 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
         
         break;
     case 3:
-        lResult = mcReadStartSaveFile(pLoad->pSaveFile, pLoad->pMcState, cpNameList, pLoad->usLoopCount);
+        lResult = mcReadStartSaveFile(P32(struct SAVEFILE *, pLoad->pSaveFile), P32(struct MEMORYCARDSTATE *, pLoad->pMcState), cpNameList, pLoad->usLoopCount);
         
         if (lResult == 1)
         {
@@ -592,11 +592,11 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
         
         break;
     case 4:
-        lResult = mcCheckReadStartSaveFile(pLoad->pSaveFile, pLoad->pMcState, 0);
+        lResult = mcCheckReadStartSaveFile(P32(struct SAVEFILE *, pLoad->pSaveFile), P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
         
         if (lResult == 1)
         {
-            mcGetPortSelectDirInfo(pLoad->pSaveFile, pLoad->pSelectFileWindow, pLoad->usLoopCount);
+            mcGetPortSelectDirInfo(P32(struct SAVEFILE *, pLoad->pSaveFile), P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), pLoad->usLoopCount);
             
             if (++pLoad->usLoopCount > 14)
             {
@@ -611,9 +611,9 @@ void ExecuteStateLoadScreenDirCheck(LOAD_SCREEN* pLoad)
         {
             pLoad->ulSubState = 6;
             
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         }
         
         break;
@@ -673,11 +673,11 @@ void SetStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
 
     pLoad->usLoopCount = 0;
     
-    pLoad->sCursorY = GetMemoryCardFileNumber(pLoad->pMcState);
+    pLoad->sCursorY = GetMemoryCardFileNumber(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
 
     pLoad->sSelectCur = 0;
     
-    SetCheckMcFlag(pLoad->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 }
 
 // 99.48% matching
@@ -712,7 +712,7 @@ void ExecuteStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
 #ifdef TARGET_PC   /* native saves: any number of rows */
             if ((pc_saves_native(-1)) && ((sys->pad_on & 0x3)))
             {
-                pc_save_move(pLoad->pSelectFileWindow, &pLoad->sCursorY, (sys->pad_on & 0x1) ? -1 : 1);
+                pc_save_move(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), &pLoad->sCursorY, (sys->pad_on & 0x1) ? -1 : 1);
             }
             else
 #endif
@@ -720,7 +720,7 @@ void ExecuteStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
             {
                 pLoad->sCursorY--;
                 
-                mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, -1);
+                mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), -1);
                 
                 CallSystemSe(0, 2);
                 
@@ -728,20 +728,20 @@ void ExecuteStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
                 {
                     pLoad->sCursorY = 14;
                     
-                    mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, 4);
+                    mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 4);
                 } 
-                else if (mcGetFileSelectWindowCursol(pLoad->pSelectFileWindow) < 0) 
+                else if (mcGetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow)) < 0) 
                 {
-                    mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, 0);
+                    mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 0);
                 }
                 
-                mcMoveFileSelectWindowCursor(pLoad->pSelectFileWindow, -1);
+                mcMoveFileSelectWindowCursor(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), -1);
             } 
             else if ((sys->pad_on & 0x2)) 
             {
                 pLoad->sCursorY++;
                 
-                mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, 1);
+                mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 1);
                 
                 CallSystemSe(0, 2);
                 
@@ -749,14 +749,14 @@ void ExecuteStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
                 {
                     pLoad->sCursorY = 0;
                     
-                    mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, 0);
+                    mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 0);
                 } 
-                else if (mcGetFileSelectWindowCursol(pLoad->pSelectFileWindow) > 4) 
+                else if (mcGetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow)) > 4) 
                 {
-                    mcSetFileSelectWindowCursol(pLoad->pSelectFileWindow, 4);
+                    mcSetFileSelectWindowCursol(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 4);
                 }
                 
-                mcMoveFileSelectWindowCursor(pLoad->pSelectFileWindow, 1);
+                mcMoveFileSelectWindowCursor(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), 1);
             }
         }
     } 
@@ -794,9 +794,9 @@ void ExecuteStateLoadScreenSelectFile(LOAD_SCREEN* pLoad)
 // 100% matching! 
 void LoadScreenCheckSave(LOAD_SCREEN* pLoad)
 {
-    SetMemoryCardFileNumber(pLoad->pMcState, pLoad->sCursorY);
+    SetMemoryCardFileNumber(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), pLoad->sCursorY);
     
-    if (mcSelectSaveFileCheck(pLoad->pSelectFileWindow, pLoad->sCursorY) == 0) 
+    if (mcSelectSaveFileCheck(P32(struct SELECTFILEWINDOW *, pLoad->pSelectFileWindow), pLoad->sCursorY) == 0) 
     {
         SetStateLoadScreenLoadCursor(pLoad);
         
@@ -900,7 +900,7 @@ void SetStateLoadScreenLoad(LOAD_SCREEN* pLoad)
     pLoad->cMesFlag = 8;
     pLoad->cCgFlag = 1;
     
-    SetCheckMcFlag(pLoad->pMcState, 1);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
 }
 
 // 100% matching!
@@ -912,10 +912,10 @@ void ExecuteStateLoadScreenLoad(LOAD_SCREEN* pLoad)
     switch (pLoad->ulSubState) 
     {
     case 0:
-        lFileNumber = GetMemoryCardFileNumber(pLoad->pMcState);
+        lFileNumber = GetMemoryCardFileNumber(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
         
 #ifdef TARGET_PC   /* native saves: the row can be past the card's 15 file names; pc_save_card reads the row's file */
-        lResult = mcReadStartSaveFile(pLoad->pSaveFile, pLoad->pMcState, cpNameList, pc_saves_native(-1) ? 0 : lFileNumber);
+        lResult = mcReadStartSaveFile(P32(struct SAVEFILE *, pLoad->pSaveFile), P32(struct MEMORYCARDSTATE *, pLoad->pMcState), cpNameList, pc_saves_native(-1) ? 0 : lFileNumber);
 #else
         lResult = mcReadStartSaveFile(pLoad->pSaveFile, pLoad->pMcState, cpNameList, lFileNumber);
 #endif
@@ -927,7 +927,7 @@ void ExecuteStateLoadScreenLoad(LOAD_SCREEN* pLoad)
         
         break;
     case 1:
-        lResult = mcCheckReadStartSaveFile(pLoad->pSaveFile, pLoad->pMcState, 1);
+        lResult = mcCheckReadStartSaveFile(P32(struct SAVEFILE *, pLoad->pSaveFile), P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
         
         if (lResult == 1) 
         {
@@ -935,17 +935,17 @@ void ExecuteStateLoadScreenLoad(LOAD_SCREEN* pLoad)
         } 
         else if (lResult == -1)
         {
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
             
             pLoad->ulSubState = 3;
         }
         else if (lResult == -2)
         {
-            SetCheckMcFlag(pLoad->pMcState, 0);
+            SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
             
-            RecoveryMemoryCardError(pLoad->pMcState);
+            RecoveryMemoryCardError(P32(struct MEMORYCARDSTATE *, pLoad->pMcState));
             
             pLoad->ulSubState = 2;
         }
@@ -1027,7 +1027,7 @@ void SetStateLoadScreenLoadExit(LOAD_SCREEN* pLoad)
     
     pLoad->ulMemCheckCountTimer = 1;
     
-    SetCheckMcFlag(pLoad->pMcState, 0);
+    SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
 }
 
 // 100% matching!
@@ -1035,7 +1035,7 @@ void ExecuteStateLoadScreenLoadExit(LOAD_SCREEN* pLoad)
 {
     if (--pLoad->ulMemCheckCountTimer == 0) 
     {
-        SetCheckMcFlag(pLoad->pMcState, 0);
+        SetCheckMcFlag(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0);
         
         sys->typ_flg |= 0x10;
         
@@ -1066,8 +1066,8 @@ void CheckDispLoadMemoryCard(LOAD_SCREEN* pLoad)
     int lPort0CurY, lPort1CurY; // not from the debugging symbols
     short temp; // not from the debugging symbols
     
-    lPort0Card = GetMemoryCardSelectPortState(pLoad->pMcState, 0); 
-    lPort1Card = GetMemoryCardSelectPortState(pLoad->pMcState, 1);
+    lPort0Card = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 0); 
+    lPort1Card = GetMemoryCardSelectPortState(P32(struct MEMORYCARDSTATE *, pLoad->pMcState), 1);
     
     lPort0CurY = 2;
     

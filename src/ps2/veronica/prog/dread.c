@@ -24,18 +24,18 @@ void bhReadPlayerData()
     unsigned char* plmtnp; 
     int temp; // not from the debugging symbols
 
-    mempb = sys->memp;
-    datp = sys->memp;
+    mempb = P32(unsigned char *, sys->memp);
+    datp = P32(unsigned char *, sys->memp);
     
     dt0 = *(unsigned int*)datp;
     
     datp += 4;
     
-    njMemCopy(sys->plmdlp, datp, dt0);
+    njMemCopy(P32(unsigned char *, sys->plmdlp), datp, dt0);
     
-    plmdlp = sys->plmdlp;
+    plmdlp = P32(unsigned char *, sys->plmdlp);
     
-    plp->mlwP = plp->mdl;
+    plp->mlwP = S32(plp->mdl);
     
     mdlp = plp->mdl;
     
@@ -49,19 +49,19 @@ void bhReadPlayerData()
             
             if (*(unsigned int*)plmdlp == SKIN_MAGIC) 
             {
-                plp->skp[plp->mdl_n] = (int*)&plmdlp[4];
+                plp->skp[plp->mdl_n] = S32((int*)&plmdlp[4]);
             }
             else
             {
                 bhMlbBinRealize(plmdlp, mdlp);
                 
-                if (plp->skp[plp->mdl_n] != NULL) 
+                if (P32(int *, plp->skp[plp->mdl_n]) != NULL) 
                 {
-                    npSkinConvert(mdlp->objP, plp->skp[plp->mdl_n]);
+                    npSkinConvert(P32(struct cnkobj *, mdlp->objP), P32(int *, plp->skp[plp->mdl_n]));
                 }
                 
-                plp->mbp[plp->mdl_n] = mdlp->objP;
-                plp->txp[plp->mdl_n] = mdlp->texP;
+                plp->mbp[plp->mdl_n] = S32(P32(struct cnkobj *, mdlp->objP));
+                plp->txp[plp->mdl_n] = S32(P32(NJS_TEXLIST *, mdlp->texP));
                 
                 mdlp++;
                 
@@ -82,16 +82,16 @@ void bhReadPlayerData()
     
     datp += 4;
     
-    njMemCopy(sys->plbmtp, datp, dt1);
+    njMemCopy(P32(unsigned char *, sys->plbmtp), datp, dt1);
     
     sys->bmt_size = dt1;
     
-    plmtnp = sys->plbmtp;
+    plmtnp = P32(unsigned char *, sys->plbmtp);
     
-    plp->mnwP = (MN_WORK*)sys->plmthp;
-    plp->mnwPb = plp->mnwP;
+    plp->mnwP = S32((MN_WORK*)P32(unsigned char *, sys->plmthp));
+    plp->mnwPb = S32(P32(struct MN_WORK *, plp->mnwP));
     
-    mtnp = plp->mnwP;
+    mtnp = P32(struct MN_WORK *, plp->mnwP);
     
     while ((temp = *(unsigned int*)plmtnp) != -1) 
     {
@@ -105,7 +105,7 @@ void bhReadPlayerData()
         } 
         else
         {
-            mtnp->md2P = NULL;
+            mtnp->md2P = S32(NULL);
             
             plmtnp += 4;
         }
@@ -119,13 +119,13 @@ void bhReadPlayerData()
     
     datp += 4;
     
-    njMemCopy(sys->plzmtp, datp, plmdlsz);
+    njMemCopy(P32(unsigned char *, sys->plzmtp), datp, plmdlsz);
     
     datp = &datp[plmdlsz];
     
     for (i = 0; i < plp->mdl_n; i++) 
     {
-        if (plp->mdl[i].texP != NULL) 
+        if (P32(NJS_TEXLIST *, plp->mdl[i].texP) != NULL) 
         {
             temp = *(unsigned int*)datp;
             
@@ -144,7 +144,7 @@ void bhReadPlayerData()
             
             plp->mdl[i].flg |= 0x200;
             
-            bhSetMemPvpTexture(plp->mdl[i].texP, datp, 0);
+            bhSetMemPvpTexture(P32(NJS_TEXLIST *, plp->mdl[i].texP), datp, 0);
             
             datp = &datp[temp];
         } 
@@ -154,16 +154,16 @@ void bhReadPlayerData()
         }
     }
     
-    sys->memp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(&sys->plmdlp[dt0]) + 256) & ~0xFF));
+    sys->memp = S32((unsigned char*)PS2_HOST((((int)PS2_ADDR(&P32(unsigned char *, sys->plmdlp)[dt0]) + 256) & ~0xFF)));
     
     for (i = 0; i < plp->mdl_n; i++) 
     {
-        plp->mdl[i].owP = (O_WORK*)bhGetFreeMemory(plp->mdl[i].obj_num * sizeof(O_WORK), 32);
+        plp->mdl[i].owP = S32((O_WORK*)bhGetFreeMemory(plp->mdl[i].obj_num * sizeof(O_WORK), 32));
     }
     
-    sys->hd_pos = *(NJS_POINT3*)&plp->mlwP->objP[5].pos;
+    sys->hd_pos = *(NJS_POINT3*)&P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].pos;
     
-    sys->memp = mempb;
+    sys->memp = S32(mempb);
 }
 
 // 100% matching! 
@@ -182,32 +182,32 @@ void bhReadWeaponData()
 
     wpn_no = plp->wpnr_no;
     
-    dp = sys->memp;
+    dp = P32(unsigned char *, sys->memp);
     
     msz = *(unsigned int*)dp;
     
     dp += 4;
     
-    op = sys->obwp;
+    op = P32(struct O_WRK *, sys->obwp);
     
-    if ((!(sys->ss_flg & 0x100)) && (op->mlwP->texP != NULL)) 
+    if ((!(sys->ss_flg & 0x100)) && (P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP) != NULL)) 
     {
-        njReleaseTexture(op->mlwP->texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP));
         
         bhGarbageTexture(NULL, 0);
     }
     
     if (msz != 0) 
     {
-        mp = sys->wrmdlp;
+        mp = P32(unsigned char *, sys->wrmdlp);
         
         npCopyMemory(mp, dp, msz);
         
         bhSetWeapon(op, wpn_no, 0);
         
-        op->mlwP = op->mdl;
+        op->mlwP = S32(op->mdl);
         
-        bhMlbBinRealize(mp, op->mlwP);
+        bhMlbBinRealize(mp, P32(struct ML_WORK *, op->mlwP));
     }
     
     dp = &dp[msz];
@@ -229,16 +229,16 @@ void bhReadWeaponData()
     
     if (temp != 0) 
     {
-        if (op->mlwP->texP != NULL)
+        if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP) != NULL)
         {
-            op->mlwP->flg |= 0x200;
+            P32(struct ML_WORK *, op->mlwP)->flg |= 0x200;
             
-            bhSetMemPvpTexture(op->mlwP->texP, dp, 0);
+            bhSetMemPvpTexture(P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP), dp, 0);
         }
         
-        op->mlwP->owP = (O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF));
+        P32(struct ML_WORK *, op->mlwP)->owP = S32((O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF)));
         
-        memset(op->mlwP->owP, 0, op->mlwP->obj_num * 80);
+        memset(P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP), 0, P32(struct ML_WORK *, op->mlwP)->obj_num * 80);
         
         op->mdl_no = 0;
     }
@@ -249,26 +249,26 @@ void bhReadWeaponData()
     
     dp += 4;
     
-    op = &sys->obwp[1]; 
+    op = &P32(struct O_WRK *, sys->obwp)[1]; 
     
-    if ((!(sys->ss_flg & 0x100)) && (op->mlwP->texP != NULL))
+    if ((!(sys->ss_flg & 0x100)) && (P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP) != NULL))
     {
-        njReleaseTexture(op->mlwP->texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP));
         
         bhGarbageTexture(NULL, 0);
     }
     
     if (msz != 0) 
     {
-        mp = sys->wlmdlp;
+        mp = P32(unsigned char *, sys->wlmdlp);
         
         npCopyMemory(mp, dp, msz);
         
         bhSetWeapon(op, wpn_no, 1);
         
-        op->mlwP = op->mdl;
+        op->mlwP = S32(op->mdl);
         
-        bhMlbBinRealize(mp, op->mlwP);
+        bhMlbBinRealize(mp, P32(struct ML_WORK *, op->mlwP));
     }
     
     dp = &dp[msz];
@@ -290,16 +290,16 @@ void bhReadWeaponData()
     
     if (sz != 0)
     {
-        if (op->mlwP->texP != NULL)
+        if (P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP) != NULL)
         {
-            op->mlwP->flg |= 0x200;
+            P32(struct ML_WORK *, op->mlwP)->flg |= 0x200;
             
-            bhSetMemPvpTexture(op->mlwP->texP, dp, 0);
+            bhSetMemPvpTexture(P32(NJS_TEXLIST *, P32(struct ML_WORK *, op->mlwP)->texP), dp, 0);
         }
         
-        op->mlwP->owP = (O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF));
+        P32(struct ML_WORK *, op->mlwP)->owP = S32((O_WORK*)PS2_HOST((((int)PS2_ADDR(&mp[msz]) + 255) & ~0xFF)));
         
-        memset(op->mlwP->owP, 0, op->mlwP->obj_num * 80);
+        memset(P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP), 0, P32(struct ML_WORK *, op->mlwP)->obj_num * 80);
         
         op->mdl_no = 0;
     }
@@ -311,11 +311,11 @@ void bhReadWeaponData()
 #ifdef TARGET_PC   /* a file without the reload motion (116: knife, Gold Lugers, SMG, M-100P, linear and rocket launcher) skips
                       its entry, which kept the previous weapon's, pointing into this buffer now overwritten (or NULL):
                       empty, bhCPM2_act_rld reloads without a motion */
-    if (plp->mnwP != NULL) memset(&plp->mnwP[116], 0, sizeof(plp->mnwP[116]));
+    if (P32(struct MN_WORK *, plp->mnwP) != NULL) memset(&P32(struct MN_WORK *, plp->mnwP)[116], 0, sizeof(P32(struct MN_WORK *, plp->mnwP)[116]));
 #endif
     if (sz != 0) 
     {
-        plmtnp = sys->plwmtp;
+        plmtnp = P32(unsigned char *, sys->plwmtp);
 
         dp += 4;
         
@@ -323,7 +323,7 @@ void bhReadWeaponData()
         
         sys->wmt_size = sz;
         
-        for (mtnp = &plp->mnwP[100]; (mtsz = *(unsigned int*)plmtnp) != -1; mtnp++) 
+        for (mtnp = &P32(struct MN_WORK *, plp->mnwP)[100]; (mtsz = *(unsigned int*)plmtnp) != -1; mtnp++) 
         {
             if (mtsz != 0) 
             {
@@ -346,7 +346,7 @@ unsigned char* bhKeepObjWork(ML_WORK* mp, unsigned char* sp)
 {
     sp = (unsigned char*)PS2_HOST((((int)PS2_ADDR(sp) + 15) & ~0xF));
     
-    mp->owP = (O_WORK*)sp;
+    mp->owP = S32((O_WORK*)sp);
     
     memset(sp, 0, mp->obj_num * 80);
     

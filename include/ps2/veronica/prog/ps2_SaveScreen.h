@@ -19,13 +19,13 @@ typedef struct SAVE_SCREEN
     unsigned short usLoopCount;          // offset 0x1E, size 0x2
     char cMesFlag;                       // offset 0x20, size 0x1
     char cCgFlag;                        // offset 0x21, size 0x1
-    CONFIGFILE* pConfigFile;             // offset 0x24, size 0x4
-    SAVEFILE* pSaveFile;                 // offset 0x28, size 0x4
-    ICONINFORMATION* pIconInfo;          // offset 0x2C, size 0x4
-    MEMORYCARDSTATE* pMcState;           // offset 0x30, size 0x4
-    SELECTFILEINFO* pSelectFileInfo;     // offset 0x34, size 0x4
-    SELECTFILEWINDOW* pSelectFileWindow; // offset 0x38, size 0x4
-    void* vpReadBuffer;                  // offset 0x3C, size 0x4
+    ps2ptr_t pConfigFile; /* CONFIGFILE* pConfigFile */             // offset 0x24, size 0x4
+    ps2ptr_t pSaveFile; /* SAVEFILE* pSaveFile */                 // offset 0x28, size 0x4
+    ps2ptr_t pIconInfo; /* ICONINFORMATION* pIconInfo */          // offset 0x2C, size 0x4
+    ps2ptr_t pMcState; /* MEMORYCARDSTATE* pMcState */           // offset 0x30, size 0x4
+    ps2ptr_t pSelectFileInfo; /* SELECTFILEINFO* pSelectFileInfo */     // offset 0x34, size 0x4
+    ps2ptr_t pSelectFileWindow; /* SELECTFILEWINDOW* pSelectFileWindow */ // offset 0x38, size 0x4
+    ps2ptr_t vpReadBuffer; /* void* vpReadBuffer */                  // offset 0x3C, size 0x4
 } SAVE_SCREEN;
 
 SAVE_SCREEN* CreateSaveScreen(SAVE_SCREEN* pSave, void* vpWorkPtrSys);

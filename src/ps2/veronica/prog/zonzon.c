@@ -215,9 +215,9 @@ void bhEne_GetTranslateMtn(BH_PWORK* epw, int frm, int mode)
     MN_WORK* mtnp; // not from DWARF
     NJS_POINT3 key; 
 
-    mtnp = &epw->mnwP[epw->mtn_no];
+    mtnp = &P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no];
     
-    mkfP = (void*)&((NJS_POINT3*)mtnp->md2P->p[0])[frm];
+    mkfP = (void*)&((NJS_POINT3*)P32(void *, P32(struct NJS_MDATA2_MOD *, mtnp->md2P)->p[0]))[frm];
     
     if ((epw->mtn_add != 0) || ((epw->frm_no / 65536) != frm)) 
     {
@@ -257,9 +257,9 @@ void bhEne_GetTranslateMtn2(BH_PWORK* epw, int frm, int mode)
     MN_WORK* mtnp; // not from DWARF
     NJS_POINT3 key; 
 
-    mtnp = &epw->mnwP[epw->mtn_no];
+    mtnp = &P32(struct MN_WORK *, epw->mnwP)[epw->mtn_no];
     
-    mkfP = (void*)&((NJS_POINT3*)mtnp->md2P->p[0])[frm];
+    mkfP = (void*)&((NJS_POINT3*)P32(void *, P32(struct NJS_MDATA2_MOD *, mtnp->md2P)->p[0]))[frm];
     
     if ((epw->mtn_add != 0) || ((epw->frm_no / 65536) != frm)) 
     {
@@ -301,7 +301,7 @@ void bhEne_CalcPartsPos(BH_PWORK* epw, NJS_MATRIX* mtx, NJS_POINT3* pos, char* t
 
     for (i = 0; i < parts_num; i++, tree++) 
     {
-        obj = &epw->mlwP->objP[*tree];
+        obj = &P32(struct cnkobj *, P32(struct ML_WORK *, epw->mlwP)->objP)[*tree];
         
         njTranslate(mtx, obj->pos[0], obj->pos[1], obj->pos[2]);
         njRotateXYZ(mtx, obj->ang[0], obj->ang[1], obj->ang[2]);
@@ -327,7 +327,7 @@ ATR_WORK* bhKaidanAtrCheck(BH_PWORK* epw, float len, int* idx)
     {
         if (i < rom->etc_n) 
         { 
-            exp = &rom->etcp[i]; 
+            exp = &P32(struct ATR_WORK *, rom->etcp)[i]; 
         }
         else 
         { 
@@ -385,7 +385,7 @@ ATR_WORK* bhEne_EnemyAtariCheck(NJS_POINT3* pos, int flr_no, unsigned char id, u
     {
         if (rom->flr_n > i)
         {
-            fp = rom->flrp + i;
+            fp = P32(struct ATR_WORK *, rom->flrp) + i;
         }
         else 
         {
@@ -425,7 +425,7 @@ void bhEne_SetBlood(BH_PWORK* epw, unsigned char type, BT_WORK* bt)
 
     fhit = 0;
     
-    owk = &epw->mlwP->owP[epw->djnt_no];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[epw->djnt_no];
     
     if ((bt == NULL) || ((epw->wpnr_no == 13) || (epw->wpnr_no == 10)))
     {
@@ -669,7 +669,7 @@ void bhEne_SetBlood3(BH_PWORK* epw, int lnk_obj, NJS_POINT3* ofs, NJS_POINT3* dv
     {
         eff[eno].stflg |= 0x20;
         
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         
         eff[eno].tex_id = tex_id;
         
@@ -722,7 +722,7 @@ void bhEne_SetBlood4(BH_PWORK* epw, int lnk_obj, NJS_POINT3* ofs, int tex_id, in
     
     if (type == 2)
     {
-        if (bhDGCdirCheck2((NJS_VECTOR*)&epw->dvx, &epw->mlwP->owP[lnk_obj]) != 0)
+        if (bhDGCdirCheck2((NJS_VECTOR*)&epw->dvx, &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[lnk_obj]) != 0)
         {
             angY = 32768;
         }
@@ -792,7 +792,7 @@ void bhEne_SetNikuhenEffect(BH_PWORK* epw, int type, NJS_POINT3* pos, NJS_POINT3
     {
         eff[eno].stflg |= 0x20;
         
-        eff[eno].txp[0] = epw->mlwP->texP;
+        eff[eno].txp[0] = S32(P32(NJS_TEXLIST *, P32(struct ML_WORK *, epw->mlwP)->texP));
         
         eff[eno].tex_id = tex_id;
         
@@ -843,7 +843,7 @@ int bhEne_SetDFireEffect(BH_PWORK* epw, int no, BT_WORK* ltbl, int type)
     int fmax; 
     int i; 
 
-    obj_num = epw->mlwP->obj_num;
+    obj_num = P32(struct ML_WORK *, epw->mlwP)->obj_num;
     
     if (obj_num > 42) 
     {
@@ -859,9 +859,9 @@ int bhEne_SetDFireEffect(BH_PWORK* epw, int no, BT_WORK* ltbl, int type)
         wp->indx = 0;
     }
     
-    njGetTranslation(&epw->mlwP->owP[no].mtx, &pos);
+    njGetTranslation(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[no].mtx, &pos);
 
-    owk = epw->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
     
     wp = work;
     
@@ -959,7 +959,7 @@ void bhEne_SetDFireEffect2(BH_PWORK* epw, int no, BT_WORK* ltbl, int type)
     ofp.x = ltbl->x + (ltbl->xlen - ((2.0f * ltbl->xlen) * (-rand() / -2.1474836E9f)));
     ofp.y = ltbl->y + (ltbl->ylen - ((2.0f * ltbl->ylen) * (-rand() / -2.1474836E9f)));
     
-    if (bhDGCdirCheck2((NJS_VECTOR*)&epw->dvx, &epw->mlwP->owP[ltbl->lnk_obj]) == 0)
+    if (bhDGCdirCheck2((NJS_VECTOR*)&epw->dvx, &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[ltbl->lnk_obj]) == 0)
     {
         ofp.z = -ltbl->z;
     } 
@@ -1006,7 +1006,7 @@ int bhEne_SetSanEffect(BH_PWORK* epw, int no, BT_WORK* ltbl)
     int obj_num; 
     int i;
 
-    obj_num = epw->mlwP->obj_num;
+    obj_num = P32(struct ML_WORK *, epw->mlwP)->obj_num;
     
     if (obj_num > 42) 
     {
@@ -1022,11 +1022,11 @@ int bhEne_SetSanEffect(BH_PWORK* epw, int no, BT_WORK* ltbl)
         wp->indx = 0;
     }
     
-    njGetTranslation(&epw->mlwP->owP[no].mtx, &pos);
+    njGetTranslation(&P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[no].mtx, &pos);
     
     wp = work;
     
-    owk = epw->mlwP->owP;
+    owk = P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP);
     
     for (i = 0; i < obj_num; i++, wp++, owk++) 
     {
@@ -1078,7 +1078,7 @@ int bhEne_SetSanEffect2(BH_PWORK* epw, int no, BT_WORK* ltbl)
     
     sys->ef.type = (short)(rand() % 8) + 12;
 
-    owk = &epw->mlwP->owP[no];
+    owk = &P32(struct O_WORK *, P32(struct ML_WORK *, epw->mlwP)->owP)[no];
 
     ltbl = &ltbl[no]; 
     
@@ -1383,10 +1383,10 @@ void bhEne_HitCheckParts(BH_PWORK* pp, NJS_POINT3* pos) {
     float slen;
     int i;
 
-    owk = (O_WORK*)pp->mlwP->owP+1;
+    owk = (O_WORK*)P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)+1;
     len = -1.0f;
     
-    for (i = 1; i < (int)(pp->mlwP->obj_num - 1); i++)
+    for (i = 1; i < (int)(P32(struct ML_WORK *, pp->mlwP)->obj_num - 1); i++)
     {        
         vec.x = pos->x - owk->mtx[12];
         vec.y = pos->y - owk->mtx[13];

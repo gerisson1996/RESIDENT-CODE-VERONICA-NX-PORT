@@ -30,7 +30,7 @@ typedef struct OR_WORK
     unsigned int stflg;  // offset 0x88, size 0x4
     unsigned int Dummy;  // offset 0x8C, size 0x4
     char free4[1092];    // offset 0x90, size 0x444
-    void (*func)(void*); // offset 0x4D4, size 0x4
+    ps2ptr_t func; /* void (*func)(void*) */ // offset 0x4D4, size 0x4
     int idx;             // offset 0x4D8, size 0x4
     int Dummy2;          // offset 0x4DC, size 0x4
 } OR_WORK;
@@ -38,7 +38,7 @@ typedef struct OR_WORK
 typedef struct ANM_WORK 
 {
     // total size: 0x14
-    UV_WORK* uv_tabP; // offset 0x0, size 0x4
+    ps2ptr_t uv_tabP; /* UV_WORK* uv_tabP */ // offset 0x0, size 0x4
     int anm_no;       // offset 0x4, size 0x4
     int color;        // offset 0x8, size 0x4
     int col_add;      // offset 0xC, size 0x4
@@ -63,7 +63,7 @@ typedef struct _rap_tex_typ rap_tex_typ;
 struct _rap_tex_typ 
 {
     // total size: 0x98
-    rap_tex_typ* nextP;  // offset 0x0, size 0x4
+    ps2ptr_t nextP; /* rap_tex_typ* nextP */  // offset 0x0, size 0x4
     int mode;            // offset 0x4, size 0x4
     DSP_WRK dsp_wrk;    // offset 0x8, size 0x70
     rap_dsp_typ mov_wrk; // offset 0x78, size 0xC
@@ -214,7 +214,7 @@ typedef struct PMB_WORK
 typedef struct PMB_WRK 
 {
     // total size: 0x1C
-    NJS_MATRIX* vtx_mtxP; // offset 0x0, size 0x4
+    ps2ptr_t vtx_mtxP; /* NJS_MATRIX* vtx_mtxP */ // offset 0x0, size 0x4
     NJS_POINT3 vtx_pos;   // offset 0x4, size 0xC
     NJS_POINT3 vtx_dir;   // offset 0x10, size 0xC
 } PMB_WRK;
@@ -226,10 +226,10 @@ typedef struct R09_WORK
     PMB_WRK prm_b;         // offset 0x30, size 0x1C
     int mode;              // offset 0x4C, size 0x4
     int type;              // offset 0x50, size 0x4
-    rap_tex_typ* busyP;    // offset 0x54, size 0x4
-    rap_tex_typ* freeP;    // offset 0x58, size 0x4
+    ps2ptr_t busyP; /* rap_tex_typ* busyP */    // offset 0x54, size 0x4
+    ps2ptr_t freeP; /* rap_tex_typ* freeP */    // offset 0x58, size 0x4
     rap_tex_typ RapTex[6]; // offset 0x5C, size 0x390
-    NJS_TEXLIST* texP;     // offset 0x3EC, size 0x4
+    ps2ptr_t texP; /* NJS_TEXLIST* texP */     // offset 0x3EC, size 0x4
     int tex_id;            // offset 0x3F0, size 0x4
 } R09_WORK;
 
@@ -251,7 +251,7 @@ struct _eff30b_vtx_buf_typ
 {
     // total size: 0x4D8
     unsigned int flg;          // offset 0x0, size 0x4
-    eff30b_vtx_buf_typ* nextP; // offset 0x4, size 0x4
+    ps2ptr_t nextP; /* eff30b_vtx_buf_typ* nextP */ // offset 0x4, size 0x4
     VTXBUF_WORK VtxBuf[28];    // offset 0x8, size 0x4D0
 };
 
@@ -263,10 +263,10 @@ typedef struct R0B_WORK
     int mode;                     // offset 0x4C, size 0x4
     int type;                     // offset 0x50, size 0x4
     int time;                     // offset 0x54, size 0x4
-    NJS_TEXLIST* texP;            // offset 0x58, size 0x4
+    ps2ptr_t texP; /* NJS_TEXLIST* texP */            // offset 0x58, size 0x4
     int tex_id;                   // offset 0x5C, size 0x4
     float eff_scale;              // offset 0x60, size 0x4
-    eff30b_vtx_buf_typ* vtx_bufP; // offset 0x64, size 0x4
+    ps2ptr_t vtx_bufP; /* eff30b_vtx_buf_typ* vtx_bufP */ // offset 0x64, size 0x4
 } R0B_WORK;
 
 typedef struct E02_WORK 
@@ -286,16 +286,16 @@ typedef struct E02_WORK
     unsigned int dst_col;   // offset 0x2C, size 0x4
     int col_add;            // offset 0x30, size 0x4
     int col_sub;            // offset 0x34, size 0x4
-    NJS_POINT3* vtx_bufP;   // offset 0x38, size 0x4
+    ps2ptr_t vtx_bufP; /* NJS_POINT3* vtx_bufP */   // offset 0x38, size 0x4
     NJS_POINT3 vtx_gravity; // offset 0x3C, size 0xC
     NJS_POINT3 pos_bak;     // offset 0x48, size 0xC
     char atr_bak[192];      // offset 0x54, size 0xC0
     int stg_col[6];         // offset 0x114, size 0x18
     int stg_tim[6];         // offset 0x12C, size 0x18
-    NJS_POINT3* stg_buf[6]; // offset 0x144, size 0x18
+    ps2ptr_t stg_buf[6]; /* NJS_POINT3* stg_buf[6] */ // offset 0x144, size 0x18
     NJS_POINT3 stg_grv[6];  // offset 0x15C, size 0x48
     NJS_POINT3 vtx_dir[16]; // offset 0x1A4, size 0xC0
-    float* stg_spd[6];      // offset 0x264, size 0x18
+    ps2ptr_t stg_spd[6]; /* float* stg_spd[6] */      // offset 0x264, size 0x18
     float vtx_spd[96];      // offset 0x27C, size 0x180
     NJS_POINT3COL lne_p3c;  // offset 0x3FC, size 0x10
     NJS_POINT3 lne_pnt[2];  // offset 0x40C, size 0x18
@@ -308,9 +308,9 @@ typedef struct E02_WORK
 typedef struct PRM_WRK 
 {
     // total size: 0x24
-    NJS_MATRIX* mtxP;  // offset 0x0, size 0x4
-    NJS_TEXLIST* texP; // offset 0x4, size 0x4
-    NJS_MODEL* mdlP;   // offset 0x8, size 0x4
+    ps2ptr_t mtxP; /* NJS_MATRIX* mtxP */  // offset 0x0, size 0x4
+    ps2ptr_t texP; /* NJS_TEXLIST* texP */ // offset 0x4, size 0x4
+    ps2ptr_t mdlP; /* NJS_MODEL* mdlP */   // offset 0x8, size 0x4
     float pos[3];      // offset 0xC, size 0xC
     int ang[3];        // offset 0x18, size 0xC
 } PRM_WRK;
@@ -321,7 +321,7 @@ typedef struct R0_WK
     PRM_WRK prm;      // offset 0x0, size 0x24
     int mode;         // offset 0x24, size 0x4
     int erase;        // offset 0x28, size 0x4
-    NJS_MATRIX* mtxP; // offset 0x2C, size 0x4
+    ps2ptr_t mtxP; /* NJS_MATRIX* mtxP */ // offset 0x2C, size 0x4
     char mtx_buf[64]; // offset 0x30, size 0x40
 } R0_WK; 
 
@@ -353,21 +353,21 @@ typedef struct E02_WRK
 typedef struct R49_WORK
 {
     // total size: 0x1008
-    void (*fnc_prcP)(void*);    // offset 0x0, size 0x4
-    void (*fnc_drwP)(OR_WORK*); // offset 0x4, size 0x4
+    ps2ptr_t fnc_prcP; /* void (*fnc_prcP)(void*) */    // offset 0x0, size 0x4
+    ps2ptr_t fnc_drwP; /* void (*fnc_drwP)(OR_WORK*) */ // offset 0x4, size 0x4
     int free[1024];             // offset 0x8, size 0x1000
 } R49_WORK;
 
 typedef struct EFFPRM_WORK 
 {
     // total size: 0x30
-    NJS_MATRIX* mtxP;  // offset 0x0, size 0x4
+    ps2ptr_t mtxP; /* NJS_MATRIX* mtxP */  // offset 0x0, size 0x4
     NJS_POINT3 src;    // offset 0x4, size 0xC
     NJS_POINT3 dst;    // offset 0x10, size 0xC
     float frm_inc;     // offset 0x1C, size 0x4
     int col;           // offset 0x20, size 0x4
     int tim;           // offset 0x24, size 0x4
-    NJS_TEXLIST* texP; // offset 0x28, size 0x4
+    ps2ptr_t texP; /* NJS_TEXLIST* texP */ // offset 0x28, size 0x4
     int tex_id;        // offset 0x2C, size 0x4
 } EFFPRM_WORK;
 

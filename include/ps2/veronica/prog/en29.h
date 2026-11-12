@@ -88,8 +88,8 @@ typedef struct _e19_dmg_typ e19_dmg_typ;
 struct _e19_dmg_typ 
 {
     // total size: 0x14
-    e19_dmg_typ* nextP;  // offset 0x0, size 0x4
-    BH_PWORK* ewP;       // offset 0x4, size 0x4
+    ps2ptr_t nextP; /* e19_dmg_typ* nextP */  // offset 0x0, size 0x4
+    ps2ptr_t ewP; /* BH_PWORK* ewP */       // offset 0x4, size 0x4
     TC_OBJ_BODY atr_top; // offset 0x8, size 0x4
     TC_OBJ_BODY atr_end; // offset 0xC, size 0x4
     float atr_rad;       // offset 0x10, size 0x4
@@ -99,14 +99,14 @@ typedef struct _eaw_typ
 {
     // total size: 0x48
     int act_flg;                           // offset 0x0, size 0x4
-    void (*prgP)(BH_PWORK*, void*, int);   // offset 0x4, size 0x4
+    ps2ptr_t prgP; /* void (*prgP)(BH_PWORK*, void*, int) */   // offset 0x4, size 0x4
     int act_frm;                           // offset 0x8, size 0x4
     int act_now;                           // offset 0xC, size 0x4
     int mtn_rte;                           // offset 0x10, size 0x4
     int chg_rte;                           // offset 0x14, size 0x4
     int act_cnt;                           // offset 0x18, size 0x4
     int b_act_flg;                         // offset 0x1C, size 0x4
-    void (*b_prgP)(BH_PWORK*, void*, int); // offset 0x20, size 0x4
+    ps2ptr_t b_prgP; /* void (*b_prgP)(BH_PWORK*, void*, int) */ // offset 0x20, size 0x4
     int b_act_frm;                         // offset 0x24, size 0x4
     int b_act_now;                         // offset 0x28, size 0x4
     int b_mtn_rte;                         // offset 0x2C, size 0x4
@@ -114,14 +114,14 @@ typedef struct _eaw_typ
     int b_act_cnt;                         // offset 0x34, size 0x4
     int b_mtn_md;                          // offset 0x38, size 0x4
     int dummy;                             // offset 0x3C, size 0x4
-    EA_WORK* act_tblP;                     // offset 0x40, size 0x4
+    ps2ptr_t act_tblP; /* EA_WORK* act_tblP */                     // offset 0x40, size 0x4
     int tbl_num;                           // offset 0x44, size 0x4
 } eaw_typ;
 
 typedef struct _en29_freework 
 {
     // total size: 0x1A0
-    e19_dmg_typ* dmg_eneP;  // offset 0x0, size 0x4
+    ps2ptr_t dmg_eneP; /* e19_dmg_typ* dmg_eneP */  // offset 0x0, size 0x4
     e19_dmg_typ DmgWrk[8];  // offset 0x4, size 0xA0
     int status;             // offset 0xA4, size 0x4
     TC_PRG_MODE0 mode0_bak; // offset 0xA8, size 0x4
@@ -142,8 +142,8 @@ typedef struct _en29_freework
     TC_OBJ_BODY dmg_obj;    // offset 0xEC, size 0x4
     int dmg_lvl;            // offset 0xF0, size 0x4
     int eff_wit;            // offset 0xF4, size 0x4
-    O_WRK* sdw_owkP;        // offset 0xF8, size 0x4
-    ATR_WORK* hit_tabP;     // offset 0xFC, size 0x4
+    ps2ptr_t sdw_owkP; /* O_WRK* sdw_owkP */        // offset 0xF8, size 0x4
+    ps2ptr_t hit_tabP; /* ATR_WORK* hit_tabP */     // offset 0xFC, size 0x4
     TC_OBJ_BODY atr_obj;    // offset 0x100, size 0x4
     int p_status;           // offset 0x104, size 0x4
     int p_br_mde0;          // offset 0x108, size 0x4

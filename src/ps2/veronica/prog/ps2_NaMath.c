@@ -644,7 +644,7 @@ void	njBezierSpline(Float *idata, Float *odata, NJS_SPLINE *attr, Float frame)
     odata[1] = 0;
     odata[2] = 0;
     
-    ulMax = *attr->iparam - 1;
+    ulMax = *P32(int *, attr->iparam) - 1;
     
     fResult = njFactorial(ulMax);
 

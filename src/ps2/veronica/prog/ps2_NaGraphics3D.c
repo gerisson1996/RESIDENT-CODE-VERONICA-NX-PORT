@@ -147,12 +147,12 @@ void    njDrawLine3D(NJS_POINT3COL *p, Int n, Uint32 attr)
     
         for (i = 0; i < n; i++, bp += 3) 
         {
-            *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2];
-            *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1];
-            *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0];
-            *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3];
+            *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2];
+            *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1];
+            *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0];
+            *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3];
             
-            njRotTransPers(&p->p[i], &scr);
+            njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr);
             
             bp[2][0] = scr.x;
             bp[2][1] = scr.y;
@@ -163,8 +163,8 @@ void    njDrawLine3D(NJS_POINT3COL *p, Int n, Uint32 attr)
             
             if ((attr & 0x80000000)) 
             {
-                *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-                *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+                *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+                *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
                 *(unsigned int*)&bp[0][2] = 0;
                 *(unsigned int*)&bp[0][3] = 0;
                 
@@ -194,12 +194,12 @@ void    njDrawLine3D(NJS_POINT3COL *p, Int n, Uint32 attr)
     
         for (i = 0; i < n; i++, bp += 3) 
         {
-            *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2];
-            *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1];
-            *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0];
-            *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3];
+            *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2];
+            *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1];
+            *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0];
+            *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3];
             
-            njRotTransPers(&p->p[i], &scr);
+            njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr);
             
             bp[2][0] = scr.x;
             bp[2][1] = scr.y;
@@ -210,8 +210,8 @@ void    njDrawLine3D(NJS_POINT3COL *p, Int n, Uint32 attr)
             
             if ((attr & 0x80000000)) 
             {
-                *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-                *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+                *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+                *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
                 *(unsigned int*)&bp[0][2] = 0;
                 *(unsigned int*)&bp[0][3] = 0;
                 
@@ -267,12 +267,12 @@ void njDrawLine3DEx(NJS_POINT3COL* p, int n, unsigned int attr)
     
         for (i = 0; i < n; i++, bp += 3) 
         {
-            *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2];
-            *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1];
-            *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0];
-            *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3];
+            *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2];
+            *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1];
+            *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0];
+            *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3];
             
-            njRotTransPers(&p->p[i], &scr);
+            njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr);
             
             bp[2][0] = scr.x;
             bp[2][1] = scr.y;
@@ -283,8 +283,8 @@ void njDrawLine3DEx(NJS_POINT3COL* p, int n, unsigned int attr)
             
             if ((attr & 0x80000000)) 
             {
-                *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-                *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+                *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+                *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
                 *(unsigned int*)&bp[0][2] = 0;
                 *(unsigned int*)&bp[0][3] = 0;
                 
@@ -316,14 +316,14 @@ void njDrawLine3DEx(NJS_POINT3COL* p, int n, unsigned int attr)
         {
             if (!(i & 0x1)) 
             {
-                njRotTrans(&p->p[i],     (NJS_POINT3*)&pos); 
-                njRotTrans(&p->p[i] + 1, (NJS_POINT3*)&pos[1]); 
+                njRotTrans(&P32(NJS_POINT3 *, p->p)[i],     (NJS_POINT3*)&pos); 
+                njRotTrans(&P32(NJS_POINT3 *, p->p)[i] + 1, (NJS_POINT3*)&pos[1]); 
              }
             
-            *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2];
-            *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1];
-            *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0];
-            *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3];
+            *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2];
+            *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1];
+            *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0];
+            *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3];
             
             if (Across_Plane(&sc_plane, pos[0], pos[1]) < 0)
             {
@@ -362,7 +362,7 @@ void njDrawLine3DEx(NJS_POINT3COL* p, int n, unsigned int attr)
             else 
             {
 label:
-                njRotTransPers(&p->p[i], &scr); 
+                njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr); 
             }
             
             bp[2][0] = scr.x;
@@ -374,8 +374,8 @@ label:
             
             if ((attr & 0x80000000)) 
             {
-                *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-                *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+                *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+                *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
                 *(unsigned int*)&bp[0][2] = 0;
                 *(unsigned int*)&bp[0][3] = 0;
                 
@@ -436,12 +436,12 @@ void    njDrawTriangle3D(NJS_POINT3COL *p, Int n, Uint32 attr)
     
     for (i = 0; i < n; i++, bp += 3) 
     {
-        *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2] >> 1;
-        *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1] >> 1;
-        *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0] >> 1;
-        *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3] >> 1;
+        *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2] >> 1;
+        *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1] >> 1;
+        *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0] >> 1;
+        *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3] >> 1;
         
-        njRotTransPers(&p->p[i], &scr);
+        njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr);
         
         bp[2][0] = scr.x;
         bp[2][1] = scr.y;
@@ -452,8 +452,8 @@ void    njDrawTriangle3D(NJS_POINT3COL *p, Int n, Uint32 attr)
         
         if ((attr & 0x80000000)) 
         {
-            *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-            *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+            *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+            *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
             *(unsigned int*)&bp[0][2] = 0;
             *(unsigned int*)&bp[0][3] = 0;
             
@@ -513,17 +513,17 @@ void    njDrawPolygon3D(NJS_POINT3COL *p, Int n, Uint32 attr)
         
         for (i = 0; i < n; i++, vp++) 
         {
-            vp->fIr = ((unsigned char*)&p->col[i])[2] / 256.0f;
-            vp->fIg = ((unsigned char*)&p->col[i])[1] / 256.0f;
-            vp->fIb = ((unsigned char*)&p->col[i])[0] / 256.0f;
-            vp->fA =  ((unsigned char*)&p->col[i])[3] / 256.0f;
+            vp->fIr = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2] / 256.0f;
+            vp->fIg = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1] / 256.0f;
+            vp->fIb = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0] / 256.0f;
+            vp->fA =  ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3] / 256.0f;
             
-            vu1RotTransStripBuf(NULL, &p->p[i], vp);
+            vu1RotTransStripBuf(NULL, &P32(NJS_POINT3 *, p->p)[i], vp);
             
             if ((attr & 0x80000000)) 
             {
-                vp->fU = p->tex[i].tex.u / 256.0f;
-                vp->fV = p->tex[i].tex.v / 256.0f;
+                vp->fU = P32(NJS_COLOR *, p->tex)[i].tex.u / 256.0f;
+                vp->fV = P32(NJS_COLOR *, p->tex)[i].tex.v / 256.0f;
             }
         } 
         
@@ -547,12 +547,12 @@ void    njDrawPolygon3D(NJS_POINT3COL *p, Int n, Uint32 attr)
     
         for (i = 0; i < n; i++, bp += 3) 
         {
-            *(unsigned int*)&bp[1][0] = ((unsigned char*)&p->col[i])[2];
-            *(unsigned int*)&bp[1][1] = ((unsigned char*)&p->col[i])[1];
-            *(unsigned int*)&bp[1][2] = ((unsigned char*)&p->col[i])[0];
-            *(unsigned int*)&bp[1][3] = ((unsigned char*)&p->col[i])[3];
+            *(unsigned int*)&bp[1][0] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[2];
+            *(unsigned int*)&bp[1][1] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[1];
+            *(unsigned int*)&bp[1][2] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[0];
+            *(unsigned int*)&bp[1][3] = ((unsigned char*)&P32(NJS_COLOR *, p->col)[i])[3];
             
-            njRotTransPers(&p->p[i], &scr);
+            njRotTransPers(&P32(NJS_POINT3 *, p->p)[i], &scr);
             
             bp[2][0] = scr.x;
             bp[2][1] = scr.y;
@@ -563,8 +563,8 @@ void    njDrawPolygon3D(NJS_POINT3COL *p, Int n, Uint32 attr)
             
             if ((attr & 0x80000000)) 
             {
-                *(unsigned int*)&bp[0][0] = p->tex[i].tex.u << 4;
-                *(unsigned int*)&bp[0][1] = p->tex[i].tex.v << 4;
+                *(unsigned int*)&bp[0][0] = P32(NJS_COLOR *, p->tex)[i].tex.u << 4;
+                *(unsigned int*)&bp[0][1] = P32(NJS_COLOR *, p->tex)[i].tex.v << 4;
                 *(unsigned int*)&bp[0][2] = 0;
                 *(unsigned int*)&bp[0][3] = 0;
                 

@@ -641,27 +641,27 @@ void bhInitPlayer()
 {
     npSetMemory((unsigned char*)plp, sizeof(BH_PWORK), 0);
     
-    sys->plmdlp = bhGetFreeMemory(131072, 32);
-    sys->lmmdlp = bhGetFreeMemory(32768, 32);
-    sys->wrmdlp = bhGetFreeMemory(32768, 32);
-    sys->wlmdlp = bhGetFreeMemory(32768, 32);
+    sys->plmdlp = S32(bhGetFreeMemory(131072, 32));
+    sys->lmmdlp = S32(bhGetFreeMemory(32768, 32));
+    sys->wrmdlp = S32(bhGetFreeMemory(32768, 32));
+    sys->wlmdlp = S32(bhGetFreeMemory(32768, 32));
     
-    sys->plmthp = bhGetFreeMemory(12288, 32);
+    sys->plmthp = S32(bhGetFreeMemory(12288, 32));
     
-    sys->plbmtp = bhGetFreeMemory(393216, 32);
-    sys->plwmtp = bhGetFreeMemory(65536, 32);
-    sys->plzmtp = bhGetFreeMemory(8192, 32);
+    sys->plbmtp = S32(bhGetFreeMemory(393216, 32));
+    sys->plwmtp = S32(bhGetFreeMemory(65536, 32));
+    sys->plzmtp = S32(bhGetFreeMemory(8192, 32));
     
-    sys->plexwp = bhGetFreeMemory(124, 32);
-    sys->plhdwp = bhGetFreeMemory(124, 32);
+    sys->plexwp = S32(bhGetFreeMemory(124, 32));
+    sys->plhdwp = S32(bhGetFreeMemory(124, 32));
     
-    sys->pletcp = bhGetFreeMemory(32768, 32);
+    sys->pletcp = S32(bhGetFreeMemory(32768, 32));
     
-    plp->exp0 = sys->plexwp;
-    plp->exp1 = sys->plhdwp;
-    plp->exp3 = sys->pletcp;
+    plp->exp0 = S32(P32(unsigned char *, sys->plexwp));
+    plp->exp1 = S32(P32(unsigned char *, sys->plhdwp));
+    plp->exp3 = S32(P32(unsigned char *, sys->pletcp));
     
-    sys->mempb = sys->memp;
+    sys->mempb = S32(P32(unsigned char *, sys->memp));
     
     if ((sys->ss_flg & 0x200)) 
     {
@@ -721,13 +721,13 @@ void bhSetPlayer()
     
     plp->ct0 = plp->ct1 = plp->ct2 = plp->ct3 = 0;
     
-    plp->lkwkp = NULL;
+    plp->lkwkp = S32(NULL);
     
-    plp->exp0 = sys->plexwp;
-    plp->exp1 = sys->plhdwp;
-    plp->exp3 = sys->pletcp;
+    plp->exp0 = S32(P32(unsigned char *, sys->plexwp));
+    plp->exp1 = S32(P32(unsigned char *, sys->plhdwp));
+    plp->exp3 = S32(P32(unsigned char *, sys->pletcp));
     
-    plp->mtx = (float(*)[16])plp->mtxbuf;
+    plp->mtx = S32((float(*)[16])plp->mtxbuf);
     
     plp->frm_no = 0;
     plp->mtn_no = 0;
@@ -739,15 +739,15 @@ void bhSetPlayer()
     plp->sy = plp->syb = 1.0f;
     plp->sz = plp->szb = 1.0f;
     
-    plp->kdnp = NULL;
+    plp->kdnp = S32(NULL);
     
     if (plp->wpnr_no < 10) 
     {
-        ((EXP_WORK*)plp->exp0)->wpntp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp = 0;
     }
     else 
     {
-        ((EXP_WORK*)plp->exp0)->wpntp = 1;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp = 1;
     }
     
     plp->clp_jno[0] = 0;
@@ -756,42 +756,42 @@ void bhSetPlayer()
     plp->clp_jno[3] = 13;
     plp->clp_jno[4] = -1;
     
-    plp->cpcl = PlyCapColTab;
+    plp->cpcl = S32(PlyCapColTab);
     
     switch (sys->ply_id)
     {
     case 0:
         bhSetObject(lkmtab, 2, (unsigned char*)plp);
         
-        sys->obwp[2].lkono = 5;
+        P32(struct O_WRK *, sys->obwp)[2].lkono = 5;
         
-        sys->obwp[2].lox   = 0;
-        sys->obwp[2].loy   = 1.5869f;
-        sys->obwp[2].loz   = 0.7747f;
+        P32(struct O_WRK *, sys->obwp)[2].lox   = 0;
+        P32(struct O_WRK *, sys->obwp)[2].loy   = 1.5869f;
+        P32(struct O_WRK *, sys->obwp)[2].loz   = 0.7747f;
         
-        sys->obwp[2].skp[0] = plp->skp[sys->obwp[2].mdlver];
-        sys->obwp[2].mdl[0] = plp->mdl[sys->obwp[2].mdlver];
+        P32(struct O_WRK *, sys->obwp)[2].skp[0] = S32(P32(int *, plp->skp[P32(struct O_WRK *, sys->obwp)[2].mdlver]));
+        P32(struct O_WRK *, sys->obwp)[2].mdl[0] = plp->mdl[P32(struct O_WRK *, sys->obwp)[2].mdlver];
         
-        sys->obwp[2].mlwP = &sys->obwp[2].mdl[0];
+        P32(struct O_WRK *, sys->obwp)[2].mlwP = S32(&P32(struct O_WRK *, sys->obwp)[2].mdl[0]);
         break;
     case 3:
         bhSetObject(&lkmtab[1], 2, (unsigned char*)plp);
         
-        sys->obwp[2].lkono = 5;
+        P32(struct O_WRK *, sys->obwp)[2].lkono = 5;
         
-        sys->obwp[2].lox   = 0;
-        sys->obwp[2].loy   = 0.85f;
-        sys->obwp[2].loz   = -1.03f;
+        P32(struct O_WRK *, sys->obwp)[2].lox   = 0;
+        P32(struct O_WRK *, sys->obwp)[2].loy   = 0.85f;
+        P32(struct O_WRK *, sys->obwp)[2].loz   = -1.03f;
         
-        sys->obwp[2].mdl[0] = plp->mdl[sys->obwp[2].mdlver];
+        P32(struct O_WRK *, sys->obwp)[2].mdl[0] = plp->mdl[P32(struct O_WRK *, sys->obwp)[2].mdlver];
         
-        sys->obwp[2].mlwP = &sys->obwp[2].mdl[0];
+        P32(struct O_WRK *, sys->obwp)[2].mlwP = S32(&P32(struct O_WRK *, sys->obwp)[2].mdl[0]);
         break;
     }
 
-    ((int*)plp->exp1)[0] = 1;
+    ((int*)P32(unsigned char *, plp->exp1))[0] = 1;
     
-    ((short*)plp->exp1)[34] = -1;
+    ((short*)P32(unsigned char *, plp->exp1))[34] = -1;
     
     bhSetShadow(NULL, (unsigned char*)plp, 1, 4.5f, 4.0f, 3.5f);
     
@@ -805,25 +805,25 @@ void bhSetPlayer()
     {
         if ((plp->stflg & 0x280000)) 
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
-        else if (((EXP_WORK*)plp->exp0)->dmlvl != 0)
+        else if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 0)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 0;
         }
     }
     else if (plp->hp >= 30) 
     {
-        if (((EXP_WORK*)plp->exp0)->dmlvl != 1)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 1)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
     }
     else 
     {
-        if (((EXP_WORK*)plp->exp0)->dmlvl != 2)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 2)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 2;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 2;
         }
     }
     
@@ -832,15 +832,15 @@ void bhSetPlayer()
     
     plp->frm_mode = 0;
     
-    plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+    plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
     plp->mtn_add = 65536;
     plp->mtn_md = 0;
-    plp->mtn_tp = (unsigned char*)PlyFlip;
+    plp->mtn_tp = S32((unsigned char*)PlyFlip);
     
-    (void*)plp->mtn_tp; // FAKE
-    bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, plp->mtn_tp);
+    (void*)P32(unsigned char *, plp->mtn_tp); // FAKE
+    bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, P32(unsigned char *, plp->mtn_tp));
     
-    plp->kdnp = NULL;
+    plp->kdnp = S32(NULL);
     
     bhCalcModel(plp);
     
@@ -852,8 +852,8 @@ void bhSetPlayer()
     
     bhPushGameData();
     
-    plp->mlwP->owP[7].flg  |= 0x8;
-    plp->mlwP->owP[11].flg |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg  |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg |= 0x8;
 }
 
 // 100% matching!
@@ -877,35 +877,35 @@ void bhInitRoomChangePlayer()
     
     *(int*)&plp->mode0 = 1;
 
-    ((int*)plp->exp1)[0] = 1;
-    ((int*)plp->exp1)[0] &= ~0x2;
+    ((int*)P32(unsigned char *, plp->exp1))[0] = 1;
+    ((int*)P32(unsigned char *, plp->exp1))[0] &= ~0x2;
     
-    ((int*)plp->exp1)[15] = 0;
-    ((int*)plp->exp1)[16] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[15] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[16] = 0;
     
-    ((short*)plp->exp1)[34] = -1;
+    ((short*)P32(unsigned char *, plp->exp1))[34] = -1;
     
-    ((int*)plp->exp1)[1] = 0;
-    ((int*)plp->exp1)[2] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[1] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[2] = 0;
     
-    ((short*)plp->exp1)[24] = 0;
-    ((short*)plp->exp1)[25] = 0;
-    ((short*)plp->exp1)[27] = 0;
-    ((short*)plp->exp1)[28] = 0;
+    ((short*)P32(unsigned char *, plp->exp1))[24] = 0;
+    ((short*)P32(unsigned char *, plp->exp1))[25] = 0;
+    ((short*)P32(unsigned char *, plp->exp1))[27] = 0;
+    ((short*)P32(unsigned char *, plp->exp1))[28] = 0;
     
-    ((char*)plp->exp1)[120] = 0;
+    ((char*)P32(unsigned char *, plp->exp1))[120] = 0;
     
-    ((int*)plp->exp1)[29] = 0;
-    ((int*)plp->exp1)[28] = 0;
-    ((int*)plp->exp1)[27] = 0;
-    ((int*)plp->exp1)[26] = 0;
-    ((int*)plp->exp1)[25] = 0;
-    ((int*)plp->exp1)[24] = 0;
-    ((int*)plp->exp1)[23] = 0;
-    ((int*)plp->exp1)[22] = 0;
-    ((int*)plp->exp1)[21] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[29] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[28] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[27] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[26] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[25] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[24] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[23] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[22] = 0;
+    ((int*)P32(unsigned char *, plp->exp1))[21] = 0;
     
-    plp->mlwP->texP = plp->txp[0];
+    P32(struct ML_WORK *, plp->mlwP)->texP = S32(P32(NJS_TEXLIST *, plp->txp[0]));
     
     bhSetShadow(NULL, (unsigned char*)plp, 1, 4.5f, 4.0f, 3.5f);
     
@@ -913,9 +913,9 @@ void bhInitRoomChangePlayer()
 
     bhCheckFloorP(plp);
     
-    ((EXP_WORK*)plp->exp0)->bpx = plp->px;
-    ((EXP_WORK*)plp->exp0)->bpy = 12.5f + plp->py;
-    ((EXP_WORK*)plp->exp0)->bpz = plp->pz;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = plp->px;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = 12.5f + plp->py;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = plp->pz;
     
     plp->hokan_count = 0;
     plp->hokan_rate = 0;
@@ -923,16 +923,16 @@ void bhInitRoomChangePlayer()
     plp->frm_mode = 0;
     plp->frm_no = 0;
     
-    plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+    plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
     
     plp->mtn_add = 65536;
     plp->mtn_md = 0;
-    plp->mtn_tp = (unsigned char*)PlyFlip;
+    plp->mtn_tp = S32((unsigned char*)PlyFlip);
     
-    (void*)plp->mtn_tp; // FAKE
-    bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, plp->mtn_tp); 
+    (void*)P32(unsigned char *, plp->mtn_tp); // FAKE
+    bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, P32(unsigned char *, plp->mtn_tp)); 
     
-    plp->kdnp = NULL;
+    plp->kdnp = S32(NULL);
     
     bhCalcModel(plp);
     
@@ -941,13 +941,13 @@ void bhInitRoomChangePlayer()
     
     if (sys->ply_id == 0) 
     {
-        sys->obwp[2].lkwkp = (unsigned char*)plp;
+        P32(struct O_WRK *, sys->obwp)[2].lkwkp = S32((unsigned char*)plp);
     }
     
     PlyPchInit(plp);
     
-    plp->mlwP->owP[7].flg  |= 0x8;
-    plp->mlwP->owP[11].flg |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg  |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg |= 0x8;
 }
 
 // 100% matching!
@@ -962,36 +962,36 @@ void bhResetPlayer()
     plp->car = PlyInfo[sys->ply_id][0] - 1.0f;
     plp->cah = PlyInfo[sys->ply_id][1] - 1.0f;
     
-    plp->mlwP = plp->mdl;
+    plp->mlwP = S32(plp->mdl);
     
     switch (sys->ply_id)
     {
     case 0:
         bhSetObject(lkmtab, 2, (unsigned char*)plp);
         
-        sys->obwp[2].lkono = 5;
+        P32(struct O_WRK *, sys->obwp)[2].lkono = 5;
         
-        sys->obwp[2].lox   = 0;
-        sys->obwp[2].loy   = 1.5869f;
-        sys->obwp[2].loz   = 0.7747f;
+        P32(struct O_WRK *, sys->obwp)[2].lox   = 0;
+        P32(struct O_WRK *, sys->obwp)[2].loy   = 1.5869f;
+        P32(struct O_WRK *, sys->obwp)[2].loz   = 0.7747f;
         
-        sys->obwp[2].skp[0] = plp->skp[sys->obwp[2].mdlver];
-        sys->obwp[2].mdl[0] = plp->mdl[sys->obwp[2].mdlver];
+        P32(struct O_WRK *, sys->obwp)[2].skp[0] = S32(P32(int *, plp->skp[P32(struct O_WRK *, sys->obwp)[2].mdlver]));
+        P32(struct O_WRK *, sys->obwp)[2].mdl[0] = plp->mdl[P32(struct O_WRK *, sys->obwp)[2].mdlver];
         
-        sys->obwp[2].mlwP = &sys->obwp[2].mdl[0];
+        P32(struct O_WRK *, sys->obwp)[2].mlwP = S32(&P32(struct O_WRK *, sys->obwp)[2].mdl[0]);
         break;
     case 3:
         bhSetObject(&lkmtab[1], 2, (unsigned char*)plp);
     
-        sys->obwp[2].lkono = 5;
+        P32(struct O_WRK *, sys->obwp)[2].lkono = 5;
         
-        sys->obwp[2].lox   = 0;
-        sys->obwp[2].loy   = 0.85f;
-        sys->obwp[2].loz   = -1.03f;
+        P32(struct O_WRK *, sys->obwp)[2].lox   = 0;
+        P32(struct O_WRK *, sys->obwp)[2].loy   = 0.85f;
+        P32(struct O_WRK *, sys->obwp)[2].loz   = -1.03f;
         
-        sys->obwp[2].mdl[0] = plp->mdl[sys->obwp[2].mdlver];
+        P32(struct O_WRK *, sys->obwp)[2].mdl[0] = plp->mdl[P32(struct O_WRK *, sys->obwp)[2].mdlver];
         
-        sys->obwp[2].mlwP = &sys->obwp[2].mdl[0];
+        P32(struct O_WRK *, sys->obwp)[2].mlwP = S32(&P32(struct O_WRK *, sys->obwp)[2].mdl[0]);
         break;
     }
     
@@ -1004,25 +1004,25 @@ void bhResetPlayer()
     {
         if ((plp->stflg & 0x280000)) 
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
-        else if (((EXP_WORK*)plp->exp0)->dmlvl != 0)
+        else if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 0)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 0;
         } 
     }
     else if (plp->hp >= 30) 
     {
-        if (((EXP_WORK*)plp->exp0)->dmlvl != 1)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 1)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
     }
     else 
     {
-        if (((EXP_WORK*)plp->exp0)->dmlvl != 2)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 2)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 2;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 2;
         }
     }
     
@@ -1039,8 +1039,8 @@ void bhResetPlayer()
     bhCheckMothEgg();
     bhCheckSubPack();
     
-    plp->mlwP->owP[7].flg  |= 0x8;
-    plp->mlwP->owP[11].flg |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg  |= 0x8;
+    P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg |= 0x8;
 }
 
 // 100% matching! 
@@ -1122,23 +1122,23 @@ void bhStandPlayerMotion()
     {
         if ((plp->stflg & 0x280000)) 
         {
-            ((int*)plp->exp0)[5] = 1; 
+            ((int*)P32(unsigned char *, plp->exp0))[5] = 1; 
         } 
-        else if (((int*)plp->exp0)[5] != 0) 
+        else if (((int*)P32(unsigned char *, plp->exp0))[5] != 0) 
         {
-            ((int*)plp->exp0)[5] = 0; 
+            ((int*)P32(unsigned char *, plp->exp0))[5] = 0; 
         }
     }
     else if (plp->hp >= 30)
     {
-        if (((int*)plp->exp0)[5] != 1) 
+        if (((int*)P32(unsigned char *, plp->exp0))[5] != 1) 
         {
-            ((int*)plp->exp0)[5] = 1; 
+            ((int*)P32(unsigned char *, plp->exp0))[5] = 1; 
         }
     } 
-    else if (((int*)plp->exp0)[5] != 2) 
+    else if (((int*)P32(unsigned char *, plp->exp0))[5] != 2) 
     {
-        ((int*)plp->exp0)[5] = 2;
+        ((int*)P32(unsigned char *, plp->exp0))[5] = 2;
     }
     
     plp->flg &= 0xC96EFFFB;
@@ -1149,17 +1149,17 @@ void bhStandPlayerMotion()
     
     *(int*)&plp->mode0 = 1;
     
-    *(float*)&plp->exp0[72] = plp->px;
-    *(float*)&plp->exp0[80] = plp->pz;
+    *(float*)&P32(unsigned char *, plp->exp0)[72] = plp->px;
+    *(float*)&P32(unsigned char *, plp->exp0)[80] = plp->pz;
     
-    plp->mtn_no = PlMtnAct[((int*)plp->exp0)[0]][((int*)plp->exp0)[5]][0];
+    plp->mtn_no = PlMtnAct[((int*)P32(unsigned char *, plp->exp0))[0]][((int*)P32(unsigned char *, plp->exp0))[5]][0];
     
     plp->hokan_rate = 0; 
     plp->hokan_count = 0;
     
     plp->frm_no = 0;
     
-    plp->mnwP = plp->mnwPb;
+    plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
     
     bhSetMotion(plp, 0, 0, NULL);
     
@@ -1171,7 +1171,7 @@ void bhKaidanPlayerMotion(int flg, int idx)
 {
 	ATR_WORK* exp;
 
-    exp = &rom->etcp[idx];
+    exp = &P32(struct ATR_WORK *, rom->etcp)[idx];
     
     bhSetUseKaidanFlag(plp, exp, idx);
     
@@ -1182,7 +1182,7 @@ void bhKaidanPlayerMotion(int flg, int idx)
     
     plp->flg2 |= 0x1;
     
-    sys->pl_htp = exp;
+    sys->pl_htp = S32(exp);
     
     if (flg == 0) 
     {
@@ -1237,29 +1237,29 @@ int bhCheckPlayerKegaMotion(int wpntp, int dmlvl, int num)
     {
         if ((plp->stflg & 0x280000)) 
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
-        else if (((EXP_WORK*)plp->exp0)->dmlvl != 0) 
+        else if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 0) 
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 0;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 0;
         }
     }
     else if (plp->hp >= 30) 
     {
-        if (((EXP_WORK*)plp->exp0)->dmlvl != 1)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 1)
         {
-            ((EXP_WORK*)plp->exp0)->dmlvl = 1;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 1;
         }
     } 
-    else if (((EXP_WORK*)plp->exp0)->dmlvl != 2)
+    else if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != 2)
     {
-        ((EXP_WORK*)plp->exp0)->dmlvl = 2;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl = 2;
     }
     
-    if (((EXP_WORK*)plp->exp0)->dmlvl != dmlvl)
+    if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl != dmlvl)
     {
-        plp->mtn_no = PlMtnAct[wpntp][((EXP_WORK*)plp->exp0)->dmlvl][num];
-        plp->frm_no = bhGetFrameNum(plp->mnwP[PlMtnAct[wpntp][dmlvl][num]].frm_num, plp->mnwP[PlMtnAct[wpntp][((EXP_WORK*)plp->exp0)->dmlvl][num]].frm_num, plp->frm_no);
+        plp->mtn_no = PlMtnAct[wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][num];
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[wpntp][dmlvl][num]].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][num]].frm_num, plp->frm_no);
         
         plp->hokan_count = 3;
 
@@ -1365,7 +1365,7 @@ void bhControlPlayer()
     ATR_WORK* hp;
     GA_WORK gap;   
 
-    expw = (EXP_WORK*)plp->exp0;
+    expw = (EXP_WORK*)P32(unsigned char *, plp->exp0);
         
     if (((sys->sp_flg & 0x1)) && (!(plp->stflg & 0x1000000))) 
     {
@@ -1381,26 +1381,26 @@ void bhControlPlayer()
         plp->ayb = plp->ay;
         plp->azb = plp->az;
         
-        px = plp->mlwP->owP->mtx[12] - ((EXP_WORK*)plp->exp0)->nlxb;
-        py = plp->py - ((EXP_WORK*)plp->exp0)->nlyb;
-        pz = plp->mlwP->owP->mtx[14] - ((EXP_WORK*)plp->exp0)->nlzb;
+        px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12] - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlxb;
+        py = plp->py - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlyb;
+        pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14] - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlzb;
         
         if (njSqrt((px * px) + (py * py) + (pz * pz)) > 0.3f) 
         {
-            ((EXP_WORK*)plp->exp0)->nlxb = plp->mlwP->owP->mtx[12];
-            ((EXP_WORK*)plp->exp0)->nlyb = plp->py;
-            ((EXP_WORK*)plp->exp0)->nlzb = plp->mlwP->owP->mtx[14];
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlxb = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlyb = plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->nlzb = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         }
         
         plp->stflg &= ~0x300;
         
         if (((plp->stflg & 0x281000)) && (!(plp->stflg & 0x40000))) 
         {
-            ((EXP_WORK*)plp->exp0)->dm_ct++;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dm_ct++;
             
-            if (((EXP_WORK*)plp->exp0)->dm_ct > 30) 
+            if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dm_ct > 30) 
             {
-                ((EXP_WORK*)plp->exp0)->dm_ct = 0;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dm_ct = 0;
                 
                 if (plp->hp > 0) 
                 {
@@ -1415,7 +1415,7 @@ void bhControlPlayer()
             {
                 *(int*)&plp->mode0 = 3;
                 
-                plp->mnwP = plp->mnwPb;
+                plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
             }
         }
         
@@ -1438,17 +1438,17 @@ void bhControlPlayer()
         
         if ((plp->flg & 0x100000)) 
         {
-            plp->ay += (short)(plp->ayp - plp->ay) / ((EXP_WORK*)plp->exp0)->yrct;
+            plp->ay += (short)(plp->ayp - plp->ay) / ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct;
             
-            ((EXP_WORK*)plp->exp0)->yrct--;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct--;
             
-            if (((EXP_WORK*)plp->exp0)->yrct <= 0)
+            if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct <= 0)
             {
                 plp->ay = plp->ayp;
                 
                 if ((plp->flg & 0x4000000)) 
                 {
-                    owP = plp->mlwP->owP;
+                    owP = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
                     
                     CallPlayerFootStepSe(bhCheckFloorSound(plp, plp->flr_no, owP[17].mtx[12], owP[17].mtx[14]), 1, 1);
                     
@@ -1464,15 +1464,15 @@ void bhControlPlayer()
                     {
                         px = py = pz = 0.8f;
                         
-                        bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, px, py, pz);
+                        bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, px, py, pz);
                     }
                 }
                 
                 plp->flg &= ~0x4100000;
                 plp->stflg &= ~0x800;
                 
-                ((EXP_WORK*)plp->exp0)->spx = plp->px;
-                ((EXP_WORK*)plp->exp0)->spz = plp->pz;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = plp->px;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = plp->pz;
             }
         }
         
@@ -1491,43 +1491,43 @@ void bhControlPlayer()
                 
                 bhSetLightTab(&lgttab[1], 1);
                 
-                rom->lgtp[1].flg |= 0x2;
+                P32(struct LGT_WORK *, rom->lgtp)[1].flg |= 0x2;
             }
-            else if (!(rom->lgtp[1].flg & 0x2))
+            else if (!(P32(struct LGT_WORK *, rom->lgtp)[1].flg & 0x2))
             {
-                rom->lgtp[1].flg |= 0x2;
+                P32(struct LGT_WORK *, rom->lgtp)[1].flg |= 0x2;
                 
-                rom->lgtp[1].lkflg = 1;
+                P32(struct LGT_WORK *, rom->lgtp)[1].lkflg = 1;
                 
-                rom->lgtp[1].lkno = 0;
-                rom->lgtp[1].lkono = 9;
+                P32(struct LGT_WORK *, rom->lgtp)[1].lkno = 0;
+                P32(struct LGT_WORK *, rom->lgtp)[1].lkono = 9;
             }
             
-            plp->mlwP->owP[7].flg |= 0x2;
-            plp->mlwP->owP[8].flg |= 0x2;
-            plp->mlwP->owP[9].flg |= 0x2;        
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg |= 0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].flg |= 0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].flg |= 0x2;        
         }
         else if ((plp->flg & 0x1000000))
         {
             plp->flg &= ~0x1000000;
             
-            rom->lgtp[1].flg &= ~0x2;
+            P32(struct LGT_WORK *, rom->lgtp)[1].flg &= ~0x2;
         }
         
         PlyPchMain(plp);
         
-        mnwP = plp->mnwP;
+        mnwP = P32(struct MN_WORK *, plp->mnwP);
 
-        (void*)plp->mtn_tp; // FAKE
+        (void*)P32(unsigned char *, plp->mtn_tp); // FAKE
 #ifdef TARGET_PC
         pc_plp_frm = plp->frm_no;   /* the frame shown and its blend, before the step (gender-matched copy: actor_glue.c) */
         pc_plp_hokan = plp->hokan_count;
         pc_plp_mtn = plp->mtn_no;
-        pc_plp_set = plp->mnwP;
+        pc_plp_set = P32(struct MN_WORK *, plp->mnwP);
 #endif
-        bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, plp->mtn_tp);
+        bhSetMotion(plp, (int)plp->mtn_add, plp->mtn_md, P32(unsigned char *, plp->mtn_tp));
         
-        if ((plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 1))
+        if ((plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
         {
             plp->flg |= 0x400000;
         }
@@ -1536,11 +1536,11 @@ void bhControlPlayer()
             plp->flg &= ~0x400000;
         }
         
-        plp->mnwP = mnwP;
+        plp->mnwP = S32(mnwP);
         
         if (plp->wpnr_no == 1) 
         {
-            owP = plp->mlwP->owP;
+            owP = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP);
                 
             if (sys->ply_id == 0) 
             {
@@ -1559,7 +1559,7 @@ void bhControlPlayer()
             
             bhArmIkMdk(plp, 6, &eff0, 35498);
             
-            plp->mlwP->objP[9].ang[1] = -910;
+            P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[9].ang[1] = -910;
         }
         
         if ((plp->flg & 0x40000)) 
@@ -1653,9 +1653,9 @@ void bhControlPlayer()
             {
                 bhit = 1;
                 
-                ((EXP_WORK*)plp->exp0)->spx = bps.x;
-                ((EXP_WORK*)plp->exp0)->spy = plp->py;
-                ((EXP_WORK*)plp->exp0)->spz = bps.z;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = bps.x;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spy = plp->py;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = bps.z;
             }
             else
             {
@@ -1678,9 +1678,9 @@ void bhControlPlayer()
             
             if (bhit == 0)
             {
-                ((EXP_WORK*)plp->exp0)->spx = expw->bpx;
-                ((EXP_WORK*)plp->exp0)->spy = plp->py;
-                ((EXP_WORK*)plp->exp0)->spz = expw->bpz;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = expw->bpx;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spy = plp->py;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = expw->bpz;
             }
         }
 #ifdef TARGET_PC
@@ -1728,7 +1728,7 @@ void bhControlPlayer()
         }
 #endif
         
-        if (plp->exp1 != NULL)
+        if (P32(unsigned char *, plp->exp1) != NULL)
         {
             bhControlPlayerHead();
         }
@@ -1762,12 +1762,12 @@ void bhControlPlayer()
                 plp->way = plp->ay;
                 plp->waz = 0;
                 
-                njSetMatrix(NULL, &plp->mlwP->owP[9].mtx);
+                njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx);
                 njCalcPoint(NULL, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, (NJS_POINT3*)&gap.px);
                 
-                gap.gx = plp->mlwP->owP[8].mtx[12];
-                gap.gy = plp->mlwP->owP[8].mtx[13];
-                gap.gz = plp->mlwP->owP[8].mtx[14];
+                gap.gx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].mtx[12];
+                gap.gy = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].mtx[13];
+                gap.gz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[8].mtx[14];
                 
                 gap.vx = gap.px - gap.gx;
                 gap.vy = gap.py - gap.gy;
@@ -1789,17 +1789,17 @@ void bhControlPlayer()
         
         plp->flg2 &= ~0x200;
         
-        if ((!(plp->stflg & 0x10)) && (plp->kdnp != NULL)) 
+        if ((!(plp->stflg & 0x10)) && (P32(unsigned char *, plp->kdnp) != NULL)) 
         {
             bhClrUseKaidanFlag(plp);
             
-            plp->kdnp = NULL;
+            plp->kdnp = S32(NULL);
         }
         
         if (((plp->stflg & 0x30)) || (plp->mode0 == 7)) 
         {
-            plp->gpx = plp->mlwP->owP->mtx[12];
-            plp->gpz = plp->mlwP->owP->mtx[14];
+            plp->gpx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+            plp->gpz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         }
         else 
         {
@@ -1807,22 +1807,22 @@ void bhControlPlayer()
             plp->gpz = plp->pz;
         }
         
-        plp->gpy = plp->mlwP->owP[1].mtx[13];
+        plp->gpy = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[1].mtx[13];
         plp->gpy = bhGetGroundPosition((NJS_VECTOR*)&plp->gpx);
         
-        plp->watr.c1.x = plp->mlwP->owP[4].mtx[12];
-        plp->watr.c1.y = plp->mlwP->owP[4].mtx[13];
-        plp->watr.c1.z = plp->mlwP->owP[4].mtx[14];
+        plp->watr.c1.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].mtx[12];
+        plp->watr.c1.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].mtx[13];
+        plp->watr.c1.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].mtx[14];
         
-        plp->watr.c2.x = plp->mlwP->owP->mtx[12];
-        plp->watr.c2.y = plp->mlwP->owP->mtx[13];
-        plp->watr.c2.z = plp->mlwP->owP->mtx[14];
+        plp->watr.c2.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+        plp->watr.c2.y = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
+        plp->watr.c2.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
         
         plp->watr.r = 2.5f;
     }
     else if ((((plp->stflg & 0x1000000)) && (plp->wpnr_no == 1)) && (!(sys->st_flg & 0x20000000)))
     {
-        rom->lgtp[1].flg &= ~0x2;
+        P32(struct LGT_WORK *, rom->lgtp)[1].flg &= ~0x2;
     }
 }
 
@@ -2015,16 +2015,16 @@ void bhCPM1_act_bas()
     
     if ((!(sys->gm_flg & 0x40)) || ((plp->stflg & 0x30))) 
     {
-        switch (((EXP_WORK*)plp->exp0)->dmlvl)
+        switch (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl)
         {
         case 1:
-            ((EXP_WORK*)plp->exp0)->rtspd = 1.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 1.0f;
             break;
         case 2:
-            ((EXP_WORK*)plp->exp0)->rtspd = 0.8f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 0.8f;
             break;
         default:
-            ((EXP_WORK*)plp->exp0)->rtspd = 1.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 1.0f;
             break;
         }
     }
@@ -2032,16 +2032,16 @@ void bhCPM1_act_bas()
     {
         if ((sys->pad_on & 0xC))
         {
-            ((EXP_WORK*)plp->exp0)->rtspd = 0.0078125f * fabsf(sys->pad_dx);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 0.0078125f * fabsf(sys->pad_dx);
         }
         else 
         {
-            ((EXP_WORK*)plp->exp0)->rtspd = 0.0078125f * fabsf(sys->pad_ax);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 0.0078125f * fabsf(sys->pad_ax);
         }
         
-        if (((EXP_WORK*)plp->exp0)->dmlvl == 2)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl == 2)
         {
-            ((EXP_WORK*)plp->exp0)->rtspd *= 0.8f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd *= 0.8f;
         }
     }
     
@@ -2053,14 +2053,14 @@ void bhCPM1_act_bas()
         bhCPM2_act_std();
         break;
     case 1:           
-        p->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             
         plp->mtn_add = -65536;
         
         bhCPM2_act_srt();
         break;
     case 2:           
-        p->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         plp->mtn_add = 65536;
         
@@ -2070,12 +2070,12 @@ void bhCPM1_act_bas()
         bhCPM2_act_wlk();
         break;
     case 4:           
-        p->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         bhCPM2_act_wlk();
         break;
     case 5:           
-        p->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         bhCPM2_act_wlk();
         break;
@@ -2086,12 +2086,12 @@ void bhCPM1_act_bas()
         bhCPM2_act_bak();
         break;
     case 10:          
-        p->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         bhCPM2_act_bak();
         break;
     case 11:          
-        p->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+        p->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
         bhCPM2_act_bak();
         break;
@@ -2151,7 +2151,7 @@ void bhCPM2_act_std()
     }
     else 
     {
-        dmlvl = ((EXP_WORK*)plp->exp0)->dmlvl;
+        dmlvl = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl;
     }
     
     switch (plp->mode3)
@@ -2170,7 +2170,7 @@ void bhCPM2_act_std()
         
         EXP1_I(0) |= 0x4;
             
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][0];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][0];
         
         plp->hokan_rate = 42598;
         plp->hokan_count = 5;
@@ -2181,10 +2181,10 @@ void bhCPM2_act_std()
         
         plp->ct3 = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
-        ((EXP_WORK*)plp->exp0)->spxn = 0.3f * (((EXP_WORK*)plp->exp0)->spx - plp->px);
-        ((EXP_WORK*)plp->exp0)->spzn = 0.3f * (((EXP_WORK*)plp->exp0)->spz - plp->pz);
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spxn = 0.3f * (((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx - plp->px);
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spzn = 0.3f * (((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz - plp->pz);
         
         plp->mode3++;
     case 1:
@@ -2194,13 +2194,13 @@ void bhCPM2_act_std()
         }
         else if (plp->hokan_count > 2) 
         {
-            plp->px += ((EXP_WORK*)plp->exp0)->spxn;
-            plp->pz += ((EXP_WORK*)plp->exp0)->spzn;
+            plp->px += ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spxn;
+            plp->pz += ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spzn;
         }
         
         plp->ct3++;
         
-        if ((plp->ct3 > 300) && (((EXP_WORK*)plp->exp0)->dmlvl == 0) && ((sys->ply_id != 1) || (plp->wpnr_no != 1))) 
+        if ((plp->ct3 > 300) && (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl == 0) && ((sys->ply_id != 1) || (plp->wpnr_no != 1))) 
         {
             plp->flg |= 0x10000;
             
@@ -2209,7 +2209,7 @@ void bhCPM2_act_std()
         }
     }
     
-    bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 0);
+    bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 0);
 }
 
 // 99.91% matching
@@ -2223,7 +2223,7 @@ void bhCPM2_act_srt()
     }
     else 
     {
-        dmlvl = ((EXP_WORK*)plp->exp0)->dmlvl;
+        dmlvl = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl;
     }
     
     switch (plp->mode3)
@@ -2234,14 +2234,14 @@ void bhCPM2_act_srt()
         
         EXP1_I(0) |= 0x4;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][1];
         
         plp->hokan_rate = 42598;
         plp->hokan_count = 8;
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->mode3++;
     case 1:
@@ -2271,17 +2271,17 @@ void bhCPM2_act_srt()
             {
                 if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][4]) 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 } 
                 else 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 }
             }
         }
     }
     
-    bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 1);
+    bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 1);
 }
 
 // 100% matching!
@@ -2295,7 +2295,7 @@ void bhCPM2_act_sta()
         
         EXP1_I(0) |= 0x4;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][6];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][6];
         
         plp->hokan_rate = 49152;
         plp->hokan_count = 8;
@@ -2304,13 +2304,13 @@ void bhCPM2_act_sta()
 
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->mode3++;
     case 1:
-        if (((unsigned int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 1)) 
+        if (((unsigned int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1)) 
         {
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][6] + 1;
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][6] + 1;
             
             plp->hokan_rate = 49152;
             plp->hokan_count = 4;
@@ -2327,7 +2327,7 @@ void bhCPM2_act_sta()
         break;
     }
     
-    if (((sys->pad_on & 0x1F)) || (bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 6) != 0))
+    if (((sys->pad_on & 0x1F)) || (bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 6) != 0))
     {
         plp->flg &= ~0x10000;
         
@@ -2348,7 +2348,7 @@ void bhCPM2_act_wlk()
     }
     else 
     {
-        dmlvl = ((EXP_WORK*)plp->exp0)->dmlvl;
+        dmlvl = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl;
     }
     
     switch (plp->mode3) 
@@ -2363,21 +2363,21 @@ void bhCPM2_act_wlk()
         }
         else 
         {
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][2]].frm_num, plp->frm_no);
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][2]].frm_num, plp->frm_no);
         }
         
         plp->flg &= ~0x800000;
         
         EXP1_I(0) |= 0x4;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][2];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][2];
         
         plp->hokan_rate = 42598;
         plp->hokan_count = 8;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         if ((plp->stflg & 0x100000)) 
         {
@@ -2386,7 +2386,7 @@ void bhCPM2_act_wlk()
         
         plp->mode3++;
     case 1:
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][2];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][2];
         
         plp->flg |= 0x2000000;
         
@@ -2401,7 +2401,7 @@ void bhCPM2_act_wlk()
         
         if ((sys->gm_flg & 0x1000000)) 
         {
-            switch (((EXP_WORK*)plp->exp0)->dmlvl) 
+            switch (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl) 
             {
             case 1:
                 plp->spd *= 0.8f;
@@ -2413,7 +2413,7 @@ void bhCPM2_act_wlk()
         
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][0])
         {
-            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]), 0, 1);
+            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]), 0, 1);
             
             plp->stflg |= 0x200;
             
@@ -2425,13 +2425,13 @@ void bhCPM2_act_wlk()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
             }
         }
         
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][0])
         {
-            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]), 0, 1);
+            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]), 0, 1);
             
             plp->stflg |= 0x200;
             
@@ -2443,7 +2443,7 @@ void bhCPM2_act_wlk()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
             }
         }
     }
@@ -2468,7 +2468,7 @@ void bhCPM2_act_wlk()
         plp->mode3 = 0;
     }
     
-    bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 2);
+    bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 2);
 }
 
 // 100% matching!
@@ -2485,7 +2485,7 @@ void bhCPM2_act_run()
     }
     else 
     {
-        dmlvl = ((EXP_WORK*)plp->exp0)->dmlvl;
+        dmlvl = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl;
     }
     
     switch (plp->mode3)
@@ -2496,15 +2496,15 @@ void bhCPM2_act_run()
         
         EXP1_I(0) |= 0x4;
         
-        plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][3]].frm_num, plp->frm_no);
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][dmlvl][3];
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][3]].frm_num, plp->frm_no);
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][dmlvl][3];
         
         plp->hokan_rate = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 3.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 3.0f;
         
         plp->mode3++;
     case 1:
@@ -2523,7 +2523,7 @@ void bhCPM2_act_run()
             
             if ((sys->gm_flg & 0x1000000)) 
             {
-                switch (((EXP_WORK*)plp->exp0)->dmlvl)
+                switch (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl)
                 {
                 case 1:
                     plp->spd *= 0.8f;
@@ -2555,12 +2555,12 @@ void bhCPM2_act_run()
             
             if ((sys->pad_on & 0x8)) 
             {
-                plp->ay -= (int)(182.04445f * (4.5f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay -= (int)(182.04445f * (4.5f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
             
             if ((sys->pad_on & 0x4)) 
             {
-                plp->ay += (int)(182.04445f * (4.5f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay += (int)(182.04445f * (4.5f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
             
             bhAddSpeed(plp, 0);
@@ -2587,13 +2587,13 @@ void bhCPM2_act_run()
             plp->px -= 0.2f * fSin;
             plp->pz -= 0.2f * fCos;
             
-            ((EXP_WORK*)plp->exp0)->spx = plp->px;
-            ((EXP_WORK*)plp->exp0)->spz = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = plp->pz;
         }
 
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][1]) 
         {
-            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]), 1, 1);
+            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]), 1, 1);
             
             plp->stflg |= 0x200;
             
@@ -2605,13 +2605,13 @@ void bhCPM2_act_run()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
             }
         }
         
         if (((int)plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][1]) 
         {
-            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]), 1, 1);
+            CallPlayerFootStepSe(bhCheckFloorSound(plp, (int)plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]), 1, 1);
             
             plp->stflg |= 0x200;
             
@@ -2623,11 +2623,11 @@ void bhCPM2_act_run()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
             }
         }
     default:
-        bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 3);
+        bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 3);
         break;
     }
 }
@@ -2648,7 +2648,7 @@ void bhCPM2_act_bak()
         
         if ((plp->flg & 0x2000000))  
         {
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][4]].frm_num, plp->frm_no);
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][4]].frm_num, plp->frm_no);
         }
         else 
         {
@@ -2657,7 +2657,7 @@ void bhCPM2_act_bak()
         
         plp->flg &= ~0x800000;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][4];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][4];
         
         plp->hokan_rate  = 49152;
         plp->hokan_count = 8;
@@ -2666,7 +2666,7 @@ void bhCPM2_act_bak()
         
         plp->ct0 = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = -1.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = -1.0f;
         
         if ((plp->stflg & 0x100000)) 
         {
@@ -2675,7 +2675,7 @@ void bhCPM2_act_bak()
         
         plp->mode3++;
     case 1:
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][4];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][4];
         
         if ((sys->pad_ps & 0x400)) 
         {
@@ -2688,19 +2688,19 @@ void bhCPM2_act_bak()
             
             EXP1_I(0) |= 0x4;
             
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3]].frm_num, plp->frm_no);
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3];
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3]].frm_num, plp->frm_no);
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3];
                 
             plp->hokan_rate  = 42598;
             plp->hokan_count = 16;
             
             plp->mtn_add = 65536;
             
-            ((EXP_WORK*)plp->exp0)->arp = 3.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 3.0f;
             
-            ((EXP_WORK*)plp->exp0)->yrct = 8;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 8;
 
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 1, 1);
                 
@@ -2714,21 +2714,21 @@ void bhCPM2_act_bak()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
             }
 
             return;
         }
         else 
         {
-            if ((((EXP_WORK*)plp->exp0)->dmlvl <= 0) && (bhSearchNearEnemyB((NJS_POINT3*)&EXP1_I(12), plp->ay, 13653, 30.0f) != 0))
+            if ((((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl <= 0) && (bhSearchNearEnemyB((NJS_POINT3*)&EXP1_I(12), plp->ay, 13653, 30.0f) != 0))
             {
                 plp->mode2 = 12;
                 plp->mode3 = 0;
                 return;
             }
             
-            trsz = bhGetTransZ(PlyTrsZ[1][((EXP_WORK*)plp->exp0)->dmlvl]);
+            trsz = bhGetTransZ(PlyTrsZ[1][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl]);
             
             plp->spd = -trsz[(plp->frm_no / 65536) + 1];
             
@@ -2739,7 +2739,7 @@ void bhCPM2_act_bak()
             
             if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][2]) 
             {
-                fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+                fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
                 
                 CallPlayerFootStepSe(fsnd, 0, 1);
                 
@@ -2753,13 +2753,13 @@ void bhCPM2_act_bak()
                 
                 if ((plp->flg2 & 0x8)) 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 }
             }
             
             if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][2]) 
             {
-                fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+                fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
                 
                 CallPlayerFootStepSe(fsnd, 0, 1);
                 
@@ -2773,7 +2773,7 @@ void bhCPM2_act_bak()
                 
                 if ((plp->flg2 & 0x8)) 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 }
             }
         }
@@ -2781,7 +2781,7 @@ void bhCPM2_act_bak()
 
     bhAddSpeed(plp, 32768);
     
-    bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 4);
+    bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 4);
 }
 
 // 98.96% matching
@@ -2798,8 +2798,8 @@ void bhCPM2_act_bk2()
         
         EXP1_I(0) |= 0x4;
         
-        plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3]].frm_num, plp->frm_no);
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][5];
+        plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3]].frm_num, plp->frm_no);
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][5];
             
         plp->hokan_rate  = 49152;
         plp->hokan_count = 8;
@@ -2808,7 +2808,7 @@ void bhCPM2_act_bk2()
         
         plp->ct0 = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = -1.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = -1.0f;
         
         plp->mode3++;
     case 1:
@@ -2823,19 +2823,19 @@ void bhCPM2_act_bk2()
             
             EXP1_I(0) |= 0x4;
             
-            plp->frm_no = bhGetFrameNum(plp->mnwP[plp->mtn_no].frm_num, plp->mnwP[PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3]].frm_num, plp->frm_no);
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][3];
+            plp->frm_no = bhGetFrameNum(P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num, P32(struct MN_WORK *, plp->mnwP)[PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3]].frm_num, plp->frm_no);
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][3];
             
             plp->hokan_rate  = 42598;
             plp->hokan_count = 16;
             
             plp->mtn_add = 65536;
             
-            ((EXP_WORK*)plp->exp0)->arp = 3.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 3.0f;
             
-            ((EXP_WORK*)plp->exp0)->yrct = 8;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 8;
             
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 1, 1);
             
@@ -2849,7 +2849,7 @@ void bhCPM2_act_bk2()
             
             if ((plp->flg2 & 0x8)) 
             {
-                bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 break;
             }
 
@@ -2873,7 +2873,7 @@ void bhCPM2_act_bk2()
                 break;
             }
             
-            trsz = bhGetTransZ(PlyTrsZ[2][((EXP_WORK*)plp->exp0)->dmlvl]);
+            trsz = bhGetTransZ(PlyTrsZ[2][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl]);
             
             plp->spd = -trsz[(plp->frm_no / 65536) + 1];
             
@@ -2884,17 +2884,17 @@ void bhCPM2_act_bk2()
             
             if ((sys->pad_on & 0x8)) 
             {
-                plp->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay -= (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
             
             if ((sys->pad_on & 0x4)) 
             {
-                plp->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay += (int)(182.04445f * (4.0f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
             
             if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][3]) 
             {
-                fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+                fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
                 
                 CallPlayerFootStepSe(fsnd, 0, 1);
                 
@@ -2908,13 +2908,13 @@ void bhCPM2_act_bk2()
                 
                 if ((plp->flg2 & 0x8)) 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 }
             }
             
             if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][3]) 
             {
-                fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+                fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
                 
                 CallPlayerFootStepSe(fsnd, 0, 1);
                 
@@ -2928,14 +2928,14 @@ void bhCPM2_act_bk2()
                 
                 if ((plp->flg2 & 0x8)) 
                 {
-                    bhSetWaterSplash3((NJS_POINT3*)&plp->mlwP->owP[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
+                    bhSetWaterSplash3((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], plp->ay, plp->footeff, 0.8f, 0.8f, 0.8f);
                 }
             }
         }
     default:
         bhAddSpeed(plp, 32768);
         
-        bhCheckPlayerKegaMotion(((EXP_WORK*)plp->exp0)->wpntp, ((EXP_WORK*)plp->exp0)->dmlvl, 5);
+        bhCheckPlayerKegaMotion(((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl, 5);
         break;
     }
 }
@@ -2951,7 +2951,7 @@ void bhCPM2_act_kdu()
     int dlvl;
     short ayn;
 
-    htp = sys->pl_htp;
+    htp = P32(struct ATR_WORK *, sys->pl_htp);
     
     sys->st_flg |= 0x4;
     
@@ -2965,14 +2965,14 @@ void bhCPM2_act_kdu()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -2999,7 +2999,7 @@ void bhCPM2_act_kdu()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -3014,7 +3014,7 @@ void bhCPM2_act_kdu()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -3032,7 +3032,7 @@ void bhCPM2_act_kdu()
             plp->mtn_no = 31;
         }
         
-        if (((EXP_WORK*)plp->exp0)->dmlvl >= 2) 
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl >= 2) 
         {
             plp->mtn_no += 2;
         }
@@ -3042,7 +3042,7 @@ void bhCPM2_act_kdu()
         
         flr_no = bhCheckFloorNum(plp->py + (2.0f * htp->prm2));
         
-        ((EXP_WORK*)plp->exp0)->kdn_fr = flr_no;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_fr = flr_no;
         
         plp->yn = rom->grand[flr_no + 2];
         
@@ -3061,7 +3061,7 @@ void bhCPM2_act_kdu()
         
         bhGetObjMotion(plp, 0, (float*)&pos, ang);
         
-        ((EXP_WORK*)plp->exp0)->kdn_py = pos.y;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_py = pos.y;
         
         plp->mode3 = 4;
     case 4:
@@ -3085,13 +3085,13 @@ void bhCPM2_act_kdu()
             njCalcPoint(NULL, &pos, &pos2);
             
             plp->px += pos2.x;
-            plp->py += pos2.y - ((EXP_WORK*)plp->exp0)->kdn_py;
+            plp->py += pos2.y - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_py;
             plp->pz += pos2.z;
             
             plp->frm_no = 0;
         }
         
-        if (((EXP_WORK*)plp->exp0)->dmlvl >= 2)
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl >= 2)
         {
             dlvl = 1;
         }
@@ -3105,7 +3105,7 @@ void bhCPM2_act_kdu()
             plp->flg |= 0x8040000;
             plp->flg &= ~0x80000;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][2];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][2];
             
             plp->hokan_rate  = 42598;
             plp->hokan_count = 4;
@@ -3115,7 +3115,7 @@ void bhCPM2_act_kdu()
             
             plp->frm_no = PlKDU[sys->ply_id][dlvl][2] * 65536;
                 
-            if (((EXP_WORK*)plp->exp0)->dmlvl < 2)
+            if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl < 2)
             {
                 plp->ct1 = 10;
             }
@@ -3126,7 +3126,7 @@ void bhCPM2_act_kdu()
             
             plp->stflg &= ~0x10;
             
-            fsnd = bhCheckFloorSound(plp, ((EXP_WORK*)plp->exp0)->kdn_fr, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_fr, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -3138,8 +3138,8 @@ void bhCPM2_act_kdu()
         
         if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][5]) 
         {
-            flr_no = bhCheckFloorNum(plp->mlwP->owP[17].mtx[13]);
-            fsnd   = bhCheckFloorSound(plp, flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            flr_no = bhCheckFloorNum(P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[13]);
+            fsnd   = bhCheckFloorSound(plp, flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -3148,8 +3148,8 @@ void bhCPM2_act_kdu()
         
         if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][5])  
         {
-            flr_no = bhCheckFloorNum(plp->mlwP->owP[21].mtx[13]);
-            fsnd   = bhCheckFloorSound(plp, flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            flr_no = bhCheckFloorNum(P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[13]);
+            fsnd   = bhCheckFloorSound(plp, flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -3164,13 +3164,13 @@ void bhCPM2_act_kdu()
         {
             bhClrUseKaidanFlag(plp);
             
-            plp->px = ((EXP_WORK*)plp->exp0)->spx = plp->mlwP->owP->mtx[12];
+            plp->px = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py = plp->yn;
-            plp->pz = ((EXP_WORK*)plp->exp0)->spz = plp->mlwP->owP->mtx[14];
+            plp->pz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -3187,7 +3187,7 @@ void bhCPM2_act_kdu()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -3213,7 +3213,7 @@ void bhCPM2_act_kdd()
     int flr_no, fsnd;
     short ayn;
 
-    htp = sys->pl_htp;
+    htp = P32(struct ATR_WORK *, sys->pl_htp);
 
     sys->st_flg |= 0x4;
     
@@ -3227,14 +3227,14 @@ void bhCPM2_act_kdd()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -3261,7 +3261,7 @@ void bhCPM2_act_kdd()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -3276,7 +3276,7 @@ void bhCPM2_act_kdd()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -3294,7 +3294,7 @@ void bhCPM2_act_kdd()
             plp->mtn_no = 32;
         }
         
-        if (((EXP_WORK*)plp->exp0)->dmlvl >= 2) 
+        if (((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl >= 2) 
         {
             plp->mtn_no += 2;
         }
@@ -3314,7 +3314,7 @@ void bhCPM2_act_kdd()
         
         bhGetObjMotion(plp, 0, (float*)&pos, ang);
         
-        ((EXP_WORK*)plp->exp0)->kdn_py = pos.y;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_py = pos.y;
         
         plp->mode3 = 4;
     case 4:
@@ -3337,7 +3337,7 @@ void bhCPM2_act_kdd()
             njCalcPoint(NULL, &pos, &pos2);
             
             plp->px += pos2.x;
-            plp->py += pos2.y - ((EXP_WORK*)plp->exp0)->kdn_py;
+            plp->py += pos2.y - ((EXP_WORK*)P32(unsigned char *, plp->exp0))->kdn_py;
             plp->pz += pos2.z;
             
             plp->frm_no = 0;
@@ -3347,7 +3347,7 @@ void bhCPM2_act_kdd()
         {
             plp->stflg &= ~0x80010010;
             
-            fsnd = bhCheckFloorSound(plp, plp->flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            fsnd = bhCheckFloorSound(plp, plp->flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
                 
@@ -3355,17 +3355,17 @@ void bhCPM2_act_kdd()
             
             bhClrUseKaidanFlag(plp);
             
-            plp->px = ((EXP_WORK*)plp->exp0)->spx = plp->mlwP->owP->mtx[12];
+            plp->px = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py = htp->py - (2.0f * htp->prm2);
-            plp->pz = ((EXP_WORK*)plp->exp0)->spz = plp->mlwP->owP->mtx[14];
+            plp->pz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
             plp->spd = 2.0f;
             
             bhAddSpeed(plp, 0);
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -3380,7 +3380,7 @@ void bhCPM2_act_kdd()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -3395,8 +3395,8 @@ void bhCPM2_act_kdd()
         
         if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][0][6]) 
         {
-            flr_no = bhCheckFloorNum(plp->mlwP->owP[17].mtx[13]);
-            fsnd   = bhCheckFloorSound(plp, flr_no, plp->mlwP->owP[17].mtx[12], plp->mlwP->owP[17].mtx[14]);
+            flr_no = bhCheckFloorNum(P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[13]);
+            fsnd   = bhCheckFloorSound(plp, flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[17].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -3405,8 +3405,8 @@ void bhCPM2_act_kdd()
         
         if ((plp->frm_no / 65536) == PlFootSnd[sys->ply_id][1][6]) 
         {
-            flr_no = bhCheckFloorNum(plp->mlwP->owP[21].mtx[13]);
-            fsnd   = bhCheckFloorSound(plp, flr_no, plp->mlwP->owP[21].mtx[12], plp->mlwP->owP[21].mtx[14]);
+            flr_no = bhCheckFloorNum(P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[13]);
+            fsnd   = bhCheckFloorSound(plp, flr_no, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[12], P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[21].mtx[14]);
             
             CallPlayerFootStepSe(fsnd, 0, 1);
             
@@ -3434,14 +3434,14 @@ void bhCPM2_act_dnu()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -3468,7 +3468,7 @@ void bhCPM2_act_dnu()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -3483,7 +3483,7 @@ void bhCPM2_act_dnu()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -3539,13 +3539,13 @@ void bhCPM2_act_dnu()
         
         if ((plp->flg & 0x400000)) 
         {
-            plp->px = plp->mlwP->owP->mtx[12];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py += 9.0f;
-            plp->pz = plp->mlwP->owP->mtx[14];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -3562,7 +3562,7 @@ void bhCPM2_act_dnu()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -3596,14 +3596,14 @@ void bhCPM2_act_dnd()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -3630,7 +3630,7 @@ void bhCPM2_act_dnd()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -3645,7 +3645,7 @@ void bhCPM2_act_dnd()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -3678,9 +3678,9 @@ void bhCPM2_act_dnd()
     case 5:
         if (((sys->st_flg & 0x40)) && (plp->ct3 == 0)) 
         {
-            if ((hp = bhCheckWater((NJS_POINT3*)&plp->mlwP->owP[(sys->ply_id) ? 16 : 19].mtx[12])) != NULL) 
+            if ((hp = bhCheckWater((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[(sys->ply_id) ? 16 : 19].mtx[12])) != NULL) 
             {
-                bhSetEffect(108, (POINT*)&plp->mlwP->owP->mtx[12], NULL, 15);
+                bhSetEffect(108, (POINT*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12], NULL, 15);
                 
                 ay = plp->ay;
                 py = plp->py;
@@ -3701,9 +3701,9 @@ void bhCPM2_act_dnd()
                 sys->ef.sy = 3.0f;
                 sys->ef.sz = 3.0f;
                 
-                sys->ef.px = plp->mlwP->owP[15].mtx[12];
+                sys->ef.px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[15].mtx[12];
                 sys->ef.py = hp->py + hp->h;
-                sys->ef.pz = plp->mlwP->owP[15].mtx[14];
+                sys->ef.pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[15].mtx[14];
                 
                 sys->ef.ay = plp->ay + 16384;
                 
@@ -3719,9 +3719,9 @@ void bhCPM2_act_dnd()
                 
                 plp->ay -= 32768;
                 
-                sys->ef.px = plp->mlwP->owP[19].mtx[12];
+                sys->ef.px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[19].mtx[12];
                 sys->ef.py = hp->py + hp->h;
-                sys->ef.pz = plp->mlwP->owP[19].mtx[14];
+                sys->ef.pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[19].mtx[14];
                 
                 sys->ef.ay = plp->ay + 16384;
                 
@@ -3757,13 +3757,13 @@ void bhCPM2_act_dnd()
         
         if ((plp->flg & 0x400000)) 
         {
-            plp->px = plp->mlwP->owP->mtx[12];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py -= 9.0f;
-            plp->pz = plp->mlwP->owP->mtx[14];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -3782,7 +3782,7 @@ void bhCPM2_act_dnd()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -3815,14 +3815,14 @@ void bhCPM2_act_psh()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -3849,7 +3849,7 @@ void bhCPM2_act_psh()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -3864,7 +3864,7 @@ void bhCPM2_act_psh()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -3916,7 +3916,7 @@ void bhCPM2_act_psh()
             StartVibrationEx(0, 8);
         }
         
-        trsz = bhGetTransZ(PlyTrsZ[4][((EXP_WORK*)plp->exp0)->dmlvl]);
+        trsz = bhGetTransZ(PlyTrsZ[4][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl]);
         
         plp->spd = trsz[(plp->frm_no / 65536) + 1];
         
@@ -3933,7 +3933,7 @@ void bhCPM2_act_psh()
         plp->mtn_md  = 8;
         plp->mtn_add = -32768;
         
-        plp->frm_no = (plp->mnwP[plp->mtn_no].frm_num - 1) * 65536;
+        plp->frm_no = (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) * 65536;
         
         plp->mode3 = 7;
         break;
@@ -3980,11 +3980,11 @@ void bhCPM2_act_cro()
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->mode3++;
     case 1:
-        if (((int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 6)) 
+        if (((int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 6)) 
         {
             plp->flg &= ~0x8;
         }
@@ -4008,7 +4008,7 @@ void bhCPM2_act_hsu()
 	ATR_WORK* htp;
     short ayn;
 
-    htp = sys->pl_htp;
+    htp = P32(struct ATR_WORK *, sys->pl_htp);
     
     sys->st_flg |= 0x4;
     
@@ -4022,14 +4022,14 @@ void bhCPM2_act_hsu()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -4056,7 +4056,7 @@ void bhCPM2_act_hsu()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -4071,7 +4071,7 @@ void bhCPM2_act_hsu()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -4118,9 +4118,9 @@ void bhCPM2_act_hsu()
     case 4:
         if ((plp->frm_no / 65536) == 0)
         {
-            plp->px = plp->mlwP->owP->mtx[12];
-            plp->pz = plp->mlwP->owP->mtx[14];
-            plp->py = plp->mlwP->owP->mtx[13];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
+            plp->py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
             
             plp->mode3 = 5;
             
@@ -4134,7 +4134,7 @@ void bhCPM2_act_hsu()
         
         if ((plp->flg & 0x400000)) 
         {
-            plp->py = plp->mlwP->owP->mtx[13];
+            plp->py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
             
             plp->frm_no = 0;
             
@@ -4142,8 +4142,8 @@ void bhCPM2_act_hsu()
             
             if (plp->ct0 <= 0) 
             {
-                plp->px = plp->mlwP->owP->mtx[12];
-                plp->pz = plp->mlwP->owP->mtx[14];
+                plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+                plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
                 
                 plp->mode3 = 6;
                 
@@ -4158,13 +4158,13 @@ void bhCPM2_act_hsu()
         {
             bhClrUseKaidanFlag(plp);
             
-            plp->px = plp->mlwP->owP->mtx[12];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py = htp->py + (4.0f * htp->prm2);
-            plp->pz = plp->mlwP->owP->mtx[14];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -4181,7 +4181,7 @@ void bhCPM2_act_hsu()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -4203,7 +4203,7 @@ void bhCPM2_act_hsd()
 	ATR_WORK* htp;
     short ayn;
 
-    htp = sys->pl_htp;
+    htp = P32(struct ATR_WORK *, sys->pl_htp);
     
     sys->st_flg |= 0x4;
     
@@ -4217,14 +4217,14 @@ void bhCPM2_act_hsd()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 32768;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -4251,7 +4251,7 @@ void bhCPM2_act_hsd()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -4266,7 +4266,7 @@ void bhCPM2_act_hsd()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
@@ -4313,9 +4313,9 @@ void bhCPM2_act_hsd()
     case 4:
         if ((plp->frm_no / 65536) == 0)
         {
-            plp->px = plp->mlwP->owP->mtx[12];
-            plp->pz = plp->mlwP->owP->mtx[14];
-            plp->py = plp->mlwP->owP->mtx[13];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
+            plp->py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
             
             plp->mode3 = 5;
             
@@ -4329,7 +4329,7 @@ void bhCPM2_act_hsd()
         
         if ((plp->frm_no / 65536) == 0) 
         {
-            plp->py = plp->mlwP->owP->mtx[13];
+            plp->py = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[13];
             
             plp->frm_no = 65536;
             
@@ -4337,8 +4337,8 @@ void bhCPM2_act_hsd()
             
             if (plp->ct0 <= 0) 
             {
-                plp->px = plp->mlwP->owP->mtx[12];
-                plp->pz = plp->mlwP->owP->mtx[14];
+                plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
+                plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
                 
                 plp->mode3 = 6;
                 
@@ -4353,13 +4353,13 @@ void bhCPM2_act_hsd()
         {
             bhClrUseKaidanFlag(plp);
             
-            plp->px = plp->mlwP->owP->mtx[12];
+            plp->px = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[12];
             plp->py = htp->py - (4.0f * htp->prm2);
-            plp->pz = plp->mlwP->owP->mtx[14];
+            plp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)->mtx[14];
             
-            ((EXP_WORK*)plp->exp0)->bpx = ((EXP_WORK*)plp->exp0)->bpxb = plp->px;
-            ((EXP_WORK*)plp->exp0)->bpy = ((EXP_WORK*)plp->exp0)->bpyb = 12.5f + plp->py;
-            ((EXP_WORK*)plp->exp0)->bpz = ((EXP_WORK*)plp->exp0)->bpzb = plp->pz;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpx = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpxb = plp->px;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpy = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpyb = 12.5f + plp->py;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpz = ((EXP_WORK*)P32(unsigned char *, plp->exp0))->bpzb = plp->pz;
             
             plp->pxb = plp->px;
             plp->pyb = plp->py;
@@ -4376,7 +4376,7 @@ void bhCPM2_act_hsd()
             
             *(int*)&plp->mode0 = 1;
             
-            plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][0];
+            plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][0];
             
             plp->hokan_rate  = 49152;
             plp->hokan_count = 8;
@@ -4410,14 +4410,14 @@ void bhCPM2_act_rpsh()
         
         plp->flg2 |= 0x1;
         
-        plp->mtn_no = PlMtnAct[((EXP_WORK*)plp->exp0)->wpntp][((EXP_WORK*)plp->exp0)->dmlvl][1];
+        plp->mtn_no = PlMtnAct[((EXP_WORK*)P32(unsigned char *, plp->exp0))->wpntp][((EXP_WORK*)P32(unsigned char *, plp->exp0))->dmlvl][1];
         
         plp->hokan_rate  = 42598;
         plp->hokan_count = 4;
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->frm_no = 0;
         
@@ -4444,7 +4444,7 @@ void bhCPM2_act_rpsh()
         }
         else
         {
-            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = -65536;
         }
@@ -4459,14 +4459,14 @@ void bhCPM2_act_rpsh()
         }
         else
         {
-            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (7.2f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         
             plp->mtn_add = 65536;
         }
         
         break;
     case 3:
-        plp->mnwP = sys->rmthp;
+        plp->mnwP = S32(P32(struct MN_WORK *, sys->rmthp));
         
         plp->mtn_no = 0;
         
@@ -4529,7 +4529,7 @@ void bhCPM2_act_rpsh()
         
         plp->mtn_add = -65536;
         
-        plp->frm_no = (plp->mnwP[plp->mtn_no].frm_num - 1) * 65536; 
+        plp->frm_no = (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) * 65536; 
         
         plp->mode3 = 7;
         break;
@@ -4538,7 +4538,7 @@ void bhCPM2_act_rpsh()
         {
             *(int*)&plp->mode0 = 1;
             
-            plp->mnwP = plp->mnwPb;
+            plp->mnwP = S32(P32(struct MN_WORK *, plp->mnwPb));
             
             plp->mtn_add = 0;
             
@@ -4569,17 +4569,17 @@ void bhCPM1_act_atk()
     
     if (!(sys->gm_flg & 0x40)) 
     {
-        ((EXP_WORK*)plp->exp0)->rtspd = 1.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 1.0f;
     }
     else 
     {
         if ((sys->pad_on & 0xC)) 
         {
-            ((EXP_WORK*)plp->exp0)->rtspd = 0.0078125f * fabsf(sys->pad_dx);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 0.0078125f * fabsf(sys->pad_dx);
         }
         else 
         {
-            ((EXP_WORK*)plp->exp0)->rtspd = 0.0078125f * fabsf(sys->pad_ax);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd = 0.0078125f * fabsf(sys->pad_ax);
         }
     }
     
@@ -4647,7 +4647,7 @@ void bhCPM2_act_suw()
     switch (plp->mode3)
     {
     case 0:
-        ln = plp->mlwP->owP[5].mtx[13] - plp->py;
+        ln = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13] - plp->py;
         
         plp->ayp = 0;
         
@@ -4671,7 +4671,7 @@ void bhCPM2_act_suw()
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         plp->frm_no = 0;
         
@@ -4691,7 +4691,7 @@ void bhCPM2_act_suw()
             plp->flg   |= 0x100000;
             plp->stflg |= 0x800;
             
-            ((EXP_WORK*)plp->exp0)->yrct = 8;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 8;
         }
         
         if ((plp->stflg & 0x100000)) 
@@ -4726,14 +4726,14 @@ void bhCPM2_act_suw()
             plp->flg |= 0x200000;
         }
         
-        if (((unsigned int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 4)) 
+        if (((unsigned int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 4)) 
         {
             plp->at_flg &= ~0x1;
         }
         
         if ((WpnTab[plp->wpnr_no].flg & 0x20))
         {
-            if ((plp->mnwP[plp->mtn_no].frm_num - 1) <= (plp->frm_no / 65536))
+            if ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= (plp->frm_no / 65536))
             {
                 plp->at_flg &= ~0x1;
                 
@@ -4769,7 +4769,7 @@ void bhCPM2_act_suw()
         } 
         else 
         {
-            if ((plp->mnwP[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
+            if ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
             {
                 plp->mtn_add = 0;
                 
@@ -4823,12 +4823,12 @@ void bhCPM2_act_suw()
 
     if ((sys->pad_on & 0x8))
     {
-        plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
     }
     
     if ((sys->pad_on & 0x4)) 
     {
-        plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
     }
 }
 
@@ -4875,7 +4875,7 @@ void bhCPM2_act_wpn()
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         plp->frm_no = 0;
         
@@ -4883,14 +4883,14 @@ void bhCPM2_act_wpn()
         
         if ((ply.at_flg & 0xE) == 0x2) 
         {
-            if ((*(int*)ply.exp2 & 0x4)) // TODO: find the correct parsing  
+            if ((*(int*)P32(unsigned char *, ply.exp2) & 0x4)) // TODO: find the correct parsing  
             {
                 ply.mtn_no += 13;
             }
         }
         else 
         {
-            *(int*)ply.exp2 &= ~0x4; // same as above
+            *(int*)P32(unsigned char *, ply.exp2) &= ~0x4; // same as above
         }
     case 1: 
         if (!(sys->pad_on & 0x100))
@@ -5010,7 +5010,7 @@ void bhCPM2_act_wpn()
                         return;
                     }
                     
-                    njCalcPoint(&plp->mlwP->owP[9].mtx, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, &pos);
+                    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, &pos);
                     
                     CallPlayerWeaponSeEx(&pos, 260, 0); 
                 }
@@ -5050,7 +5050,7 @@ void bhCPM2_act_wpn()
                         
                         if (WpnTab[wno].seno0 != 0) 
                         {
-                            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], (unsigned int)WpnTab[wno].seno0, 0);
+                            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], (unsigned int)WpnTab[wno].seno0, 0);
                             
                             if (!(WpnTab[wno].flg & 0x100)) 
                             {
@@ -5066,7 +5066,7 @@ void bhCPM2_act_wpn()
                         
                         eft = &WpnEffTab[plp->wpnr_no][2];
                         
-                        njSetMatrix(NULL, &plp->mlwP->owP[9].mtx);
+                        njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx);
                         
                         njCalcPoint(NULL, (NJS_POINT3*)&WpnTab[plp->wpnr_no].wp_fps1, (NJS_POINT3*)&eft->px);
                         
@@ -5205,7 +5205,7 @@ void bhCPM2_act_wpn()
     default: 
         if ((sys->pad_on & 0x8)) 
         {
-            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             
             if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF))) 
             {
@@ -5224,7 +5224,7 @@ void bhCPM2_act_wpn()
         
         if ((sys->pad_on & 0x4)) 
         {
-            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             
             if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF))) 
             {
@@ -5249,7 +5249,7 @@ void bhCPM2_act_wpn()
                 return;
             }
             
-            plp->ayp = bhSearchNextEnemy(plp, 15473, plp->mlwP->owP[5].mtx[13] - plp->py);
+            plp->ayp = bhSearchNextEnemy(plp, 15473, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13] - plp->py);
             
             if (plp->ayp != -1) 
             {
@@ -5258,7 +5258,7 @@ void bhCPM2_act_wpn()
                 plp->flg   |= 0x100000;
                 plp->stflg |= 0x800;
                 
-                ((EXP_WORK*)plp->exp0)->yrct = 4;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 4;
             }
         }
         
@@ -5291,9 +5291,9 @@ void bhCPM2_act_wre()
         
         plp->mtn_add = -131072;
         
-        plp->frm_no = (plp->mnwP[plp->mtn_no].frm_num - 1) * 65536;
+        plp->frm_no = (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) * 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 0;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
         
         plp->wax = 0;
         
@@ -5320,12 +5320,12 @@ void bhCPM2_act_wre()
     default:
         if ((sys->pad_on & 0x8)) 
         {
-            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         }
         
         if ((sys->pad_on & 0x4)) 
         {
-            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         }
     }
 }
@@ -5404,9 +5404,9 @@ void bhCPM2_act_atk()
             
             if ((WpnTab[plp->wpnr_no].flg & 0x2))
             {
-                sys->obwp->flg |= 0x80000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x80000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             }
             
             if ((WpnTab[plp->wpnr_no].flg & 0x10000000))
@@ -5427,7 +5427,7 @@ void bhCPM2_act_atk()
                 plp->way = plp->ay;
                 plp->waz = 0;
                 
-                njSetMatrix(NULL, &plp->mlwP->owP[9].mtx);
+                njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx);
                 
                 ps.x = ps.y = 0;
                 ps.z = WpnTab[plp->wpnr_no].wp_fps1.z;
@@ -5489,33 +5489,33 @@ void bhCPM2_act_atk()
             
             if ((frm_no == *act_ct) && ((WpnTab[plp->wpnr_no].flg & 0x1000)))
             {
-                sys->obwp->flg |= 0x400000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x400000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             }
             
             if ((frm_no == (*act_ct + 4)) && (plp->wpnr_no == 11))
             {
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], WpnTab[plp->wpnr_no].seno1, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], WpnTab[plp->wpnr_no].seno1, 0);
             }
             
             if ((frm_no == 12) && (((WpnTab[plp->wpnr_no].flg & 0x400)) && (bhCheckBullet() != 0))) 
             {
-                sys->obwp->flg |= 0x800000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x800000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
                 
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 263, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 263, 0);
             }
             
             if ((frm_no == 35) && (((WpnTab[plp->wpnr_no].flg & 0x400)) && (bhCheckBullet() != 0))) 
             {
-                sys->obwp->mode0 = 1;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 1;
                 
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 264, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 264, 0);
             }
             
-            if (((((plp->at_flg & 0x10)) && (!(plp->at_flg & 0x40))) && (((sys->pad_on & 0x100)) && ((sys->pad_on & 0x10)))) || (frm_no >= (plp->mnwP[plp->mtn_no].frm_num - 1)) || ((frm_no == 10) && ((WpnTab[plp->wpnr_no].flg & 0x400)) && (!bhCheckBullet())))
+            if (((((plp->at_flg & 0x10)) && (!(plp->at_flg & 0x40))) && (((sys->pad_on & 0x100)) && ((sys->pad_on & 0x10)))) || (frm_no >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1)) || ((frm_no == 10) && ((WpnTab[plp->wpnr_no].flg & 0x400)) && (!bhCheckBullet())))
             {
                 if ((((plp->at_flg & 0x10)) && (!(plp->at_flg & 0x40))) && (((sys->pad_on & 0x100)) && ((sys->pad_on & 0x10))) && ((!bhCheckBullet()) && (bhSearchBullet() != 0)))
                 {
@@ -5575,7 +5575,7 @@ void bhCPM2_act_atk()
                 break;
             }
             
-            if (frm_no >= (plp->mnwP[plp->mtn_no].frm_num - WpnTab[plp->wpnr_no].at_cct)) 
+            if (frm_no >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - WpnTab[plp->wpnr_no].at_cct)) 
             {
                 plp->at_flg |= 0x10;
             }
@@ -5589,7 +5589,7 @@ void bhCPM2_act_atk()
             
             if ((sys->pad_on & 0x8)) 
             {
-                plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
                 
                 if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF))) 
                 {
@@ -5608,7 +5608,7 @@ void bhCPM2_act_atk()
             
             if ((sys->pad_on & 0x4)) 
             {
-                plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
                 
                 if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF)))
                 {
@@ -5680,9 +5680,9 @@ void bhCPM2_act_atk()
             
             if ((WpnTab[plp->wpnr_no].flg & 0x2)) 
             {
-                sys->obwp->flg |= 0x80000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x80000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             }
             
             if ((WpnTab[plp->wpnr_no].flg & 0x10000000)) 
@@ -5703,7 +5703,7 @@ void bhCPM2_act_atk()
                 plp->way = plp->ay;
                 plp->waz = 0;
         
-                njSetMatrix(NULL, &plp->mlwP->owP[9].mtx);
+                njSetMatrix(NULL, &P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx);
         
                 ps.x = ps.y = 0;
                 ps.z = WpnTab[plp->wpnr_no].wp_fps1.z;
@@ -5755,7 +5755,7 @@ void bhCPM2_act_atk()
             
             if (WpnTab[plp->wpnr_no].seno0 != 0)
             {
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], (unsigned short)WpnTab[plp->wpnr_no].seno0, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], (unsigned short)WpnTab[plp->wpnr_no].seno0, 0);
                 
                 if (!(WpnTab[plp->wpnr_no].flg & 0x100)) 
                 {
@@ -5968,7 +5968,7 @@ void bhCPM2_act_atk()
         
         if ((sys->pad_on & 0x8)) 
         {
-            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             
             if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF))) 
             {
@@ -5987,7 +5987,7 @@ void bhCPM2_act_atk()
         
         if ((sys->pad_on & 0x4))
         {
-            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             
             if (((plp->stflg & 0x100000)) && (!(sys->eor_ct & 0xF))) 
             {
@@ -6006,7 +6006,7 @@ void bhCPM2_act_atk()
         
         if ((sys->pad_ps & 0x80)) 
         {
-            plp->ayp = bhSearchNextEnemy(plp, 15473, plp->mlwP->owP[5].mtx[13] - plp->py);
+            plp->ayp = bhSearchNextEnemy(plp, 15473, P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13] - plp->py);
             
             if (plp->ayp != -1) 
             {
@@ -6015,7 +6015,7 @@ void bhCPM2_act_atk()
                 plp->flg   |= 0x100000;
                 plp->stflg |= 0x800;
                 
-                ((EXP_WORK*)plp->exp0)->yrct = 4;
+                ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 4;
             }
         }
     }
@@ -6053,7 +6053,7 @@ void bhCPM2_act_rld()
 #ifdef TARGET_PC   /* the weapon file has no reload motion (dual weapons: the SMG; dread.c bhReadWeaponData empties the entry):
                       the ammo is already combined (bhSearchBullet), so back to the aim as at the motion's end. The PS2
                       played whatever entry 116 still held (the previous weapon's, its data overwritten); the PC crashed */
-        if (plp->mnwP[116].md2P == NULL)
+        if (P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, plp->mnwP)[116].md2P) == NULL)
         {
             plp->mode2 = (plp->at_flg & 0x8) ? 67 : (plp->at_flg & 0x4) ? 66 : 65;
             plp->mode3 = 0;
@@ -6071,15 +6071,15 @@ void bhCPM2_act_rld()
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         if ((WpnTab[plp->wpnr_no].flg & 0x400)) 
         {
-            sys->obwp->flg |= 0x800000;
+            P32(struct O_WRK *, sys->obwp)->flg |= 0x800000;
             
-            sys->obwp->mode0 = 0;
+            P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 263, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 263, 0);
         }
         
         plp->mode3++;
@@ -6088,11 +6088,11 @@ void bhCPM2_act_rld()
             
         if (((WpnTab[plp->wpnr_no].flg & 0x400)) && (frm_no == WpnTab[plp->wpnr_no].act_ct1)) 
         {
-            sys->obwp->flg |= 0x800000;
+            P32(struct O_WRK *, sys->obwp)->flg |= 0x800000;
             
-            sys->obwp->mode0 = 1;
+            P32(struct O_WRK *, sys->obwp)->mode0 = 1;
             
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 264, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 264, 0);
         }
         
         if (frm_no == WpnTab[plp->wpnr_no].act_ct0)
@@ -6103,7 +6103,7 @@ void bhCPM2_act_rld()
                 {
                     bhSetMagazine(plp, plp->wpnr_no, 9, 0, plp->ay);
                     
-                    CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 257, 0);
+                    CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 257, 0);
                 }
                 else 
                 {
@@ -6143,18 +6143,18 @@ void bhCPM2_act_rld()
                         }
                     }
                     
-                    CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 286, 0);
+                    CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 286, 0);
                 }
             }
         }
         
         if ((frm_no == WpnTab[plp->wpnr_no].act_ct1) && ((WpnTab[plp->wpnr_no].flg & 0x80))) 
         {
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 258, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 258, 0);
             
             if (plp->wpnr_no == 12) 
             {
-                sys->obwp->mlwP->objP[2].evalflags &= ~0x8;
+                P32(struct cnkobj *, P32(struct ML_WORK *, P32(struct O_WRK *, sys->obwp)->mlwP)->objP)[2].evalflags &= ~0x8;
             }
         }
         
@@ -6164,26 +6164,26 @@ void bhCPM2_act_rld()
             {
                 if ((frm_no == 25) || (frm_no == 38))  
                 {
-                    CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 265, 0);
+                    CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 265, 0);
                 }
             }
             else if (frm_no == 20) 
             {
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 265, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 265, 0);
             }
         }
         
         if (((WpnTab[plp->wpnr_no].flg & 0x10)) && ((frm_no == WpnTab[plp->wpnr_no].act_ct1) || (frm_no == WpnTab[plp->wpnr_no].act_ct2))) 
         {
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 285, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 285, 0);
         }
         
         if ((frm_no == WpnTab[plp->wpnr_no].act_ct0) && ((WpnTab[plp->wpnr_no].flg & 0x2000))) 
         {
-            CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], 272, 0);
+            CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], 272, 0);
         }
         
-        if (frm_no >= (plp->mnwP[plp->mtn_no].frm_num - 1))
+        if (frm_no >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
         {
             if ((WpnTab[plp->wpnr_no].flg & 0x20))
             {
@@ -6260,11 +6260,11 @@ void bhCPM2_act_knf()
         
         plp->frm_no = 0;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         plp->mode3++;
     case 1:
-        if ((plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 1))
+        if ((plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1))
         {
             switch (plp->at_flg & 0xE)
             {
@@ -6339,7 +6339,7 @@ void bhCPM0_damage()
             
             plp->mode3 = 1;
             
-            ((EXP_WORK*)plp->exp0)->arp = -(1.0f + plp->mode2);
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = -(1.0f + plp->mode2);
             
             if (plp->mode2 < 2) 
             {
@@ -6393,7 +6393,7 @@ void bhCPM0_damage()
             
             plp->mode3 = 1;
             
-            ((EXP_WORK*)plp->exp0)->arp = 1.0f + plp->mode2;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 1.0f + plp->mode2;
             
             CallPlayerVoice(1024);
             break;
@@ -6478,16 +6478,16 @@ void bhCPM0_die()
             
             plp->mode3 = 1;
             
-            ((EXP_WORK*)plp->exp0)->arp = 3.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 3.0f;
             
             plp->yn = 0;
             
             CallPlayerVoice(1025);
             break;
         case 1:      
-            pos.x = plp->mlwP->owP[2].mtx[12];
-            pos.y = 1.0f + plp->mlwP->owP[2].mtx[13];
-            pos.z = plp->mlwP->owP[2].mtx[14];
+            pos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[12];
+            pos.y = 1.0f + P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[13];
+            pos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[14];
             
             gy = bhGetGroundPosition(&pos);
             
@@ -6538,9 +6538,9 @@ void bhCPM0_die()
             
             break;
         case 2:  
-            pos.x = plp->mlwP->owP[2].mtx[12];
-            pos.y = 1.0f + plp->mlwP->owP[2].mtx[13];
-            pos.z = plp->mlwP->owP[2].mtx[14];
+            pos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[12];
+            pos.y = 1.0f + P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[13];
+            pos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[14];
             
             gy = bhGetGroundPosition(&pos);
             
@@ -6585,16 +6585,16 @@ void bhCPM0_die()
             
             plp->mode3 = 1;
 
-            ((EXP_WORK*)plp->exp0)->arp = -3.0f;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = -3.0f;
             
             plp->yn = 0;
             
             CallPlayerVoice(1025);
             break;
         case 1:          
-            pos.x = plp->mlwP->owP[2].mtx[12];
-            pos.y = 1.0f + plp->mlwP->owP[2].mtx[13];
-            pos.z = plp->mlwP->owP[2].mtx[14];
+            pos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[12];
+            pos.y = 1.0f + P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[13];
+            pos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[14];
             
             gy = bhGetGroundPosition(&pos);
             
@@ -6645,9 +6645,9 @@ void bhCPM0_die()
             
             break;
         case 2:              
-            pos.x = plp->mlwP->owP[2].mtx[12];
-            pos.y = 1.0f + plp->mlwP->owP[2].mtx[13];
-            pos.z = plp->mlwP->owP[2].mtx[14];
+            pos.x = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[12];
+            pos.y = 1.0f + P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[13];
+            pos.z = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[2].mtx[14];
             
             gy = bhGetGroundPosition(&pos);
             
@@ -6697,10 +6697,10 @@ void bhCPM0_nage()
     
     sys->st_flg |= 0x4;
     
-    ((EXP_WORK*)plp->exp0)->spx = plp->px;
-    ((EXP_WORK*)plp->exp0)->spz = plp->pz;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = plp->px;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = plp->pz;
     
-    ((EXP_WORK*)plp->exp0)->arp = 0;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
     
     plp->flg &= ~0x36900000;
     
@@ -6736,10 +6736,10 @@ void bhCPM0_enedam()
     
     sys->st_flg |= 0x4;
     
-    ((EXP_WORK*)plp->exp0)->spx = plp->px;
-    ((EXP_WORK*)plp->exp0)->spz = plp->pz;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = plp->px;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = plp->pz;
     
-    ((EXP_WORK*)plp->exp0)->arp = 0;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
     
     plp->flg &= ~0x36900000;
     
@@ -6775,10 +6775,10 @@ void bhCPM0_enedie()
     
     sys->st_flg |= 0x4;
     
-    ((EXP_WORK*)plp->exp0)->spx = plp->px;
-    ((EXP_WORK*)plp->exp0)->spz = plp->pz;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spx = plp->px;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->spz = plp->pz;
     
-    ((EXP_WORK*)plp->exp0)->arp = 0;
+    ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 0;
     
     plp->flg &= ~0x36900000;
     
@@ -6827,9 +6827,9 @@ void bhCPM0_nothing()
         
         plp->mode3++;
     case 1:
-        if (((unsigned int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 1)) 
+        if (((unsigned int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1)) 
         {
-            plp->frm_no = (plp->mnwP[plp->mtn_no].frm_num - 1) * 65536;
+            plp->frm_no = (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) * 65536;
             
             plp->mtn_add = 0;
         }
@@ -6851,21 +6851,21 @@ void bhControlPlayerHead()
     EXP1_S(44) = EXP1_S(38);
     EXP1_S(46) = EXP1_S(40);
     
-    ax = plp->ax + plp->mlwP->objP[0].ang[0];
-    ay = plp->ay + plp->mlwP->objP[0].ang[1];
-    az = plp->az + plp->mlwP->objP[0].ang[2];
+    ax = plp->ax + P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[0].ang[0];
+    ay = plp->ay + P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[0].ang[1];
+    az = plp->az + P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[0].ang[2];
 
-    ax += plp->mlwP->objP[1].ang[0];
-    ay += plp->mlwP->objP[1].ang[1];
-    az += plp->mlwP->objP[1].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[1].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[1].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[1].ang[2];
 
-    ax += plp->mlwP->objP[2].ang[0];
-    ay += plp->mlwP->objP[2].ang[1];
-    az += plp->mlwP->objP[2].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[2].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[2].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[2].ang[2];
 
-    ax += plp->mlwP->objP[3].ang[0];
-    ay += plp->mlwP->objP[3].ang[1];
-    az += plp->mlwP->objP[3].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[3].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[3].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[3].ang[2];
 
     if ((EXP1_UC(120) & 0xF0))
     {
@@ -6888,7 +6888,7 @@ void bhControlPlayerHead()
             }
         }
         
-        plp->mlwP->objP[4].ang[1] = EXP1_I(112);
+        P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1] = EXP1_I(112);
         
         if ((EXP1_UC(120) & 0x40))
         {
@@ -6909,7 +6909,7 @@ void bhControlPlayerHead()
             }
         }
         
-        plp->mlwP->objP[4].ang[0] = EXP1_I(108);
+        P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0] = EXP1_I(108);
     }
     else
     {
@@ -6928,22 +6928,22 @@ void bhControlPlayerHead()
             {
                 if (!(EXP1_I(0) & 0x20))
                 {
-                    EXP1_S(48) = plp->mlwP->objP[4].ang[0];
+                    EXP1_S(48) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0];
                 }
                 
                 if (!(EXP1_I(0) & 0x40))
                 {
-                    EXP1_S(50) = plp->mlwP->objP[4].ang[1];
+                    EXP1_S(50) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1];
                 }
                 
                 if (!(EXP1_I(0) & 0x80))
                 {
-                    EXP1_S(54) = plp->mlwP->objP[5].ang[0];
+                    EXP1_S(54) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0];
                 }
                 
                 if (!(EXP1_I(0) & 0x100))
                 {
-                    EXP1_S(56) = plp->mlwP->objP[5].ang[1];
+                    EXP1_S(56) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1];
                 }
             }
         }
@@ -6951,35 +6951,35 @@ void bhControlPlayerHead()
         {
             if (!(EXP1_I(0) & 0x20))
             {
-                EXP1_S(48) = plp->mlwP->objP[4].ang[0];
+                EXP1_S(48) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0];
             }
             
             if (!(EXP1_I(0) & 0x40))
             {
-                EXP1_S(50) = plp->mlwP->objP[4].ang[1];
+                EXP1_S(50) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1];
             }
             
             if (!(EXP1_I(0) & 0x80))
             {
-                EXP1_S(54) = plp->mlwP->objP[5].ang[0];
+                EXP1_S(54) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0];
             }
             
             if (!(EXP1_I(0) & 0x100))
             {
-                EXP1_S(56) = plp->mlwP->objP[5].ang[1];
+                EXP1_S(56) = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1];
             }
         }
         
         if ((EXP1_I(0) & 0x20))
         {
             lax = EXP1_S(48);
-            pax = plp->mlwP->objP[4].ang[0];
+            pax = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0];
 
             if (ABS(pax - lax) > 182)
             {
                 lax += ((short)pax - (short)lax) / 4;
                 
-                plp->mlwP->objP[4].ang[0] = EXP1_S(48) = lax;
+                P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0] = EXP1_S(48) = lax;
             }
             else
             {
@@ -6990,13 +6990,13 @@ void bhControlPlayerHead()
         if ((EXP1_I(0) & 0x40))
         {
             lay = EXP1_S(50);
-            pay = plp->mlwP->objP[4].ang[1];
+            pay = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1];
 
             if (ABS(pay - lay) > 182)
             {
                 lay += ((short)pay - (short)lay) / 4;
                 
-                plp->mlwP->objP[4].ang[1] = EXP1_S(50) = lay;
+                P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1] = EXP1_S(50) = lay;
             }
             else
             {
@@ -7005,27 +7005,27 @@ void bhControlPlayerHead()
         }
     }
     
-    ax += plp->mlwP->objP[4].ang[0];
-    ay += plp->mlwP->objP[4].ang[1];
-    az += plp->mlwP->objP[4].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[2];
     
     if ((EXP1_UC(120) & 0xF0))
     {
-        plp->mlwP->objP[5].ang[1] = EXP1_I(112);
-        plp->mlwP->objP[5].ang[0] = EXP1_I(108);
+        P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1] = EXP1_I(112);
+        P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0] = EXP1_I(108);
     }
     else
     {
         if ((EXP1_I(0) & 0x80))
         {
-            lax = plp->mlwP->objP[5].ang[0];
+            lax = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0];
             pax = EXP1_S(54);
 
             if (ABS(lax - pax) > 182)
             {
                 pax += ((short)lax - (short)pax) / 4;
                 
-                plp->mlwP->objP[5].ang[0] = EXP1_S(54) = pax;
+                P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0] = EXP1_S(54) = pax;
             }
             else
             {
@@ -7036,13 +7036,13 @@ void bhControlPlayerHead()
         if ((EXP1_I(0) & 0x100))
         {
             pay = EXP1_S(56);
-            lay = plp->mlwP->objP[5].ang[1];
+            lay = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1];
 
             if (ABS(lay - pay) > 182)
             {
                 pay += ((short)lay - (short)pay) / 4;
                 
-                plp->mlwP->objP[5].ang[1] = EXP1_S(56) = pay;
+                P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1] = EXP1_S(56) = pay;
             }
             else
             {
@@ -7051,17 +7051,17 @@ void bhControlPlayerHead()
         }
     }
 
-    ax += plp->mlwP->objP[5].ang[0];
-    ay += plp->mlwP->objP[5].ang[1];
-    az += plp->mlwP->objP[5].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[2];
     
     EXP1_S(36) = ax;
     EXP1_S(38) = ay;
     EXP1_S(40) = az;
     
-    EXP1_F(12) = plp->mlwP->owP[5].mtx[12];
-    EXP1_F(16) = plp->mlwP->owP[5].mtx[13];
-    EXP1_F(20) = plp->mlwP->owP[5].mtx[14];
+    EXP1_F(12) = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[12];
+    EXP1_F(16) = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[13];
+    EXP1_F(20) = P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].mtx[14];
     
     if (plp->mdl_no != 3)
     {
@@ -7079,7 +7079,7 @@ void bhControlPlayerHead()
         
         if ((EXP1_I(0) & 0x1))
         {
-            plp->mlwP->texP = plp->txp[PlyEyeTab[EXP1_I(4)]];
+            P32(struct ML_WORK *, plp->mlwP)->texP = S32(P32(NJS_TEXLIST *, plp->txp[PlyEyeTab[EXP1_I(4)]]));
             
             if ((EXP1_I(0) & 0x2))
             {
@@ -7092,7 +7092,7 @@ void bhControlPlayerHead()
                     EXP1_I(4) = 0;
                     EXP1_I(8) = 0;
                     
-                    plp->mlwP->texP = plp->txp[0];
+                    P32(struct ML_WORK *, plp->mlwP)->texP = S32(P32(NJS_TEXLIST *, plp->txp[0]));
                 }
             }
         }
@@ -7179,7 +7179,7 @@ void bhSetHeadRotation(short ax, short ay)
             EXP1_S(68) = 0;
         }
         
-        pwp = (BH_PWORK*)&sys->obwp[EXP1_S(68)];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->obwp)[EXP1_S(68)];
         break;
     case 4:
         if (rom->itm_n <= EXP1_S(68)) 
@@ -7187,7 +7187,7 @@ void bhSetHeadRotation(short ax, short ay)
             EXP1_S(68) = 0;
         }
         
-        pwp = (BH_PWORK*)&sys->itwp[EXP1_S(68)];
+        pwp = (BH_PWORK*)&P32(struct O_WRK *, sys->itwp)[EXP1_S(68)];
         break;
     case 5:
         if (rom->eff_n <= EXP1_S(68)) 
@@ -7205,7 +7205,7 @@ void bhSetHeadRotation(short ax, short ay)
             EXP1_S(68) = 0;
         }
         
-        psp = &rom->posp[EXP1_S(68)];  
+        psp = &P32(struct POS *, rom->posp)[EXP1_S(68)];  
         
         lpx = psp->px;
         lpy = psp->py;
@@ -7223,9 +7223,9 @@ void bhSetHeadRotation(short ax, short ay)
         } 
         else
         {
-            lpx = pwp->mlwP->owP[ono].mtx[12]; 
-            lpy = pwp->mlwP->owP[ono].mtx[13]; 
-            lpz = pwp->mlwP->owP[ono].mtx[14];
+            lpx = P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[ono].mtx[12]; 
+            lpy = P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[ono].mtx[13]; 
+            lpz = P32(struct O_WORK *, P32(struct ML_WORK *, pwp->mlwP)->owP)[ono].mtx[14];
         }
     }
     
@@ -7290,11 +7290,11 @@ void bhSetHeadRotation(short ax, short ay)
     EXP1_S(54) = lax;
     EXP1_S(56) = lay;
     
-    plp->mlwP->objP[4].ang[0] = EXP1_S(48);
-    plp->mlwP->objP[4].ang[1] = EXP1_S(50); 
+    P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[0] = EXP1_S(48);
+    P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang[1] = EXP1_S(50); 
     
-    plp->mlwP->objP[5].ang[0] = EXP1_S(54);
-    plp->mlwP->objP[5].ang[1] = EXP1_S(56);
+    P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[0] = EXP1_S(54);
+    P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang[1] = EXP1_S(56);
 }
 
 // 100% matching!
@@ -7304,35 +7304,35 @@ void bhCalcHair(O_WRK* op, BH_PWORK* pp)
     NJS_POINT3 ps;   
     short ax, ay, az;        
 
-    hair = (HAIR_WORK*)op->exp3;
+    hair = (HAIR_WORK*)P32(unsigned char *, op->exp3);
     
     hair->axb = hair->ax;
     hair->ayb = hair->ay;
     hair->azb = hair->az;
     
-    ax = pp->ax + pp->mlwP->objP[0].ang[0];
-    ay = pp->ay + pp->mlwP->objP[0].ang[1];
-    az = pp->az + pp->mlwP->objP[0].ang[2];
+    ax = pp->ax + P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[0].ang[0];
+    ay = pp->ay + P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[0].ang[1];
+    az = pp->az + P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[0].ang[2];
     
-    ax += pp->mlwP->objP[1].ang[0];
-    ay += pp->mlwP->objP[1].ang[1];
-    az += pp->mlwP->objP[1].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[1].ang[2];
     
-    ax += pp->mlwP->objP[2].ang[0];
-    ay += pp->mlwP->objP[2].ang[1];
-    az += pp->mlwP->objP[2].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[2].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[2].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[2].ang[2];
     
-    ax += pp->mlwP->objP[3].ang[0];
-    ay += pp->mlwP->objP[3].ang[1];
-    az += pp->mlwP->objP[3].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[3].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[3].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[3].ang[2];
     
-    ax += pp->mlwP->objP[4].ang[0];
-    ay += pp->mlwP->objP[4].ang[1];
-    az += pp->mlwP->objP[4].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[4].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[4].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[4].ang[2];
     
-    ax += pp->mlwP->objP[5].ang[0];
-    ay += pp->mlwP->objP[5].ang[1];
-    az += pp->mlwP->objP[5].ang[2];
+    ax += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[5].ang[0];
+    ay += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[5].ang[1];
+    az += P32(struct cnkobj *, P32(struct ML_WORK *, pp->mlwP)->objP)[5].ang[2];
     
     hair->ax = ax;
     hair->ay = ay;
@@ -7342,9 +7342,9 @@ void bhCalcHair(O_WRK* op, BH_PWORK* pp)
     hair->oyb = hair->oy;
     hair->ozb = hair->oz;
     
-    hair->ox = op->mlwP->owP->mtx[12];
-    hair->oy = op->mlwP->owP->mtx[13];
-    hair->oz = op->mlwP->owP->mtx[14];
+    hair->ox = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12];
+    hair->oy = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13];
+    hair->oz = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14];
     
     ps.x = hair->ox - hair->oxb;
     ps.y = 0;
@@ -7400,7 +7400,7 @@ void* bhGetTransZ(int mtn_no)
 
     i = mtn_no + 1;
 
-    datp = sys->plzmtp;
+    datp = P32(unsigned char *, sys->plzmtp);
     
     while (i-- != 0) 
     {

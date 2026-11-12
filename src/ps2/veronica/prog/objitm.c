@@ -161,8 +161,8 @@ extern void VU0_WAVE_CALC() __attribute__((section(".vutext")));
 // 100% matching! 
 void bhInitObjItm()
 {
-    npSetMemory((unsigned char*)sys->obwp, 39936, 0);
-    npSetMemory((unsigned char*)sys->itwp, 39936, 0);
+    npSetMemory((unsigned char*)P32(struct O_WRK *, sys->obwp), 39936, 0);
+    npSetMemory((unsigned char*)P32(struct O_WRK *, sys->itwp), 39936, 0);
 }
 
 // 100% matching!
@@ -170,7 +170,7 @@ O_WRK* bhSetObject(ETTY_WORK* otp, int no, unsigned char* lkp)
 {
     O_WRK* opp;
 
-    opp = &sys->obwp[no];
+    opp = &P32(struct O_WRK *, sys->obwp)[no];
     
     npSetMemory((unsigned char*)opp, sizeof(O_WRK), 0);
     
@@ -217,9 +217,9 @@ O_WRK* bhSetObject(ETTY_WORK* otp, int no, unsigned char* lkp)
     opp->hide[2] = otp->hide[2];
     opp->hide[3] = otp->hide[3];
     
-    opp->lkwkp = lkp;
+    opp->lkwkp = S32(lkp);
     
-    opp->mtx = (void*)opp->mtxbuf;
+    opp->mtx = S32((void*)opp->mtxbuf);
     
     opp->clp_jno[0] = 0;
     opp->clp_jno[1] = -1;
@@ -234,7 +234,7 @@ O_WRK* bhSetItem(ETTY_WORK* itp, int no, unsigned char* lkp)
 {
     O_WRK* opp;
 
-    opp = &sys->itwp[no];
+    opp = &P32(struct O_WRK *, sys->itwp)[no];
     
     npSetMemory((unsigned char*)opp, sizeof(O_WRK), 0);
     
@@ -281,9 +281,9 @@ O_WRK* bhSetItem(ETTY_WORK* itp, int no, unsigned char* lkp)
     opp->hide[2] = itp->hide[2];
     opp->hide[3] = itp->hide[3];
     
-    opp->lkwkp = lkp;
+    opp->lkwkp = S32(lkp);
     
-    opp->mtx = (void*)opp->mtxbuf;
+    opp->mtx = S32((void*)opp->mtxbuf);
     
     opp->clp_jno[0] = 0;
     opp->clp_jno[1] = -1;
@@ -307,7 +307,7 @@ void bhControlObjItm()
         sys->ob_hlgn = 0;
         sys->ob_spcn = 0;
         
-        op = sys->obwp;
+        op = P32(struct O_WRK *, sys->obwp);
         
         if ((sys->cb_flg & 0x40000000)) 
         {
@@ -324,7 +324,7 @@ void bhControlObjItm()
             
             if ((op->flg & 0x80)) 
             {
-                if ((((O_WRK*)op->lkwkp)->stflg & 0x1000000)) 
+                if ((((O_WRK*)P32(unsigned char *, op->lkwkp))->stflg & 0x1000000)) 
                 {
                     op->stflg |= 0x1000000;
                 } 
@@ -348,9 +348,9 @@ void bhControlObjItm()
                     
                     if ((op->flg & 0x80)) 
                     {
-                        pp = (BH_PWORK*)op->lkwkp;
+                        pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
                         
-                        njCalcPoint(&pp->mlwP->owP[op->lkono].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->px);
+                        njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[op->lkono].mtx, (NJS_POINT3*)&op->lox, (NJS_POINT3*)&op->px);
                         
                         if ((!(pp->flg & 0x10)) && ((op->flg & 0x10))) 
                         { 
@@ -376,24 +376,24 @@ void bhControlObjItm()
                         bhJumpObject[op->type]((BH_PWORK*)op);
                     }
                     
-                    if ((!(op->mdflg & 0x1)) && (op->mlwP->objP != NULL)) 
+                    if ((!(op->mdflg & 0x1)) && (P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP) != NULL)) 
                     {
                         if (op->id >= 1000) 
                         {
                             if ((((sys->pt_flg & 0x1)) && (op->id >= 1210)) || (((sys->pt_flg & 0x2)) && (op->id < 1210))) 
                             {
-                                sys->ob_hlg[sys->ob_hlgn++] = op;
+                                sys->ob_hlg[sys->ob_hlgn++] = S32(op);
                             }
                         } 
                         else if ((sys->pt_flg & 0x4)) 
                         {
                             if ((op->type == 5) && (op->aspd != 0)) 
                             {
-                                sys->ob_spc[sys->ob_spcn++] = op;
+                                sys->ob_spc[sys->ob_spcn++] = S32(op);
                             } 
                             else 
                             {
-                                sys->ob_nlg[sys->ob_nlgn++] = op;
+                                sys->ob_nlg[sys->ob_nlgn++] = S32(op);
                             }
                         }
                     }
@@ -415,7 +415,7 @@ void bhControlObjItm()
         
         if (!(sys->cb_flg & 0x40000000))
         {
-            op = sys->itwp;
+            op = P32(struct O_WRK *, sys->itwp);
             
             for (i = 0; i < rom->itm_n; i++, op++) 
             {
@@ -499,7 +499,7 @@ void bhDrawGeneralPurposeWater()
             {
                 ulDrawGeneralPurposeWater = 1;
                 
-                bhDrawSpObject(sys->ob_spc[i]);
+                bhDrawSpObject(P32(O_WRK *, sys->ob_spc[i]));
                 
                 ulDrawGeneralPurposeWater = 0;
             }
@@ -527,7 +527,7 @@ void bhDrawObjItm()
         
         for (i = 0; i < sys->ob_nlgn; i++) 
         {
-            bhDrawObject(sys->ob_nlg[i]);
+            bhDrawObject(P32(O_WRK *, sys->ob_nlg[i]));
         }
         
         if (!(sys->st_flg & 0x20)) 
@@ -540,14 +540,14 @@ void bhDrawObjItm()
         
         for (i = 0; i < sys->ob_hlgn; i++) 
         {
-            bhDrawObject(sys->ob_hlg[i]);
+            bhDrawObject(P32(O_WRK *, sys->ob_hlg[i]));
         }
         
         for (i = 0; i < sys->ob_spcn; i++) 
         {
             if ((((sys->stg_no != 1) || (sys->rom_no != 13)) || (i != 0)) && (((sys->stg_no != 3) || (sys->rom_no != 6)) || (i != 0)) && (((sys->stg_no != 7) ||(sys->rom_no != 6)) || (i != 0)) && (((sys->stg_no != 7) || (sys->rom_no != 10)) || (i != 0)) && (((sys->stg_no != 9) || (sys->rom_no != 11)) || (i != 0)))
             {
-                bhDrawSpObject(sys->ob_spc[i]);
+                bhDrawSpObject(P32(O_WRK *, sys->ob_spc[i]));
             } 
         }
     }
@@ -564,7 +564,7 @@ void bhDrawObjItm()
     
     if ((sys->pt_flg & 0x8))
     {
-        op = sys->itwp;
+        op = P32(struct O_WRK *, sys->itwp);
         
         for (i = 0; i < rom->itm_n; i++, op++) 
         {
@@ -587,7 +587,7 @@ void bhDrawObjItm()
                                 
                                 bhGetLightVector(57344, op->ayp, 0, &vec);
                                 
-                                njSetMatrix(NULL, cam.mtx);
+                                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                                 
                                 njCnkSetEasyMultiLightVector(vec.x, vec.y, vec.z);
                                 njCnkSetEasyMultiLightColor(1, its, its, its);
@@ -601,7 +601,7 @@ void bhDrawObjItm()
                             } 
                             else
                             {
-                                njSetMatrix(NULL, cam.mtx);
+                                njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
                                 
                                 if (!(sys->st_flg & 0x10000)) 
                                 {
@@ -625,7 +625,7 @@ void bhDrawObjItm()
                                 }
                             }
                             
-                            if (op->mlwP->objP != NULL) 
+                            if (P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP) != NULL) 
                             {
                                 bhPutModel((BH_PWORK*)op);
                             }
@@ -649,7 +649,7 @@ void bhDrawObject(O_WRK* op)
     
     if ((op->flg & 0x80))
     {
-        opp = (O_WRK*)op->lkwkp;
+        opp = (O_WRK*)P32(unsigned char *, op->lkwkp);
         
         if ((opp->stflg & 0x1000000)) 
         {
@@ -708,11 +708,11 @@ void bhDrawSpObject(O_WRK* op)
     switch (op->type) 
     {
     case 5:
-        lp = &rom->lgtp[op->aspd];
+        lp = &P32(struct LGT_WORK *, rom->lgtp)[op->aspd];
         
         if (op->draw_tp == 0) 
         {
-            njSetMatrix(NULL, cam.mtx);
+            njSetMatrix(NULL, P32(float (*)[16], cam.mtx));
             
             njCnkSetEasyMultiLightVector(lp->vx, lp->vy, lp->vz);
             njCnkSetEasyMultiLightColor(1, lp->r, lp->g, lp->b);
@@ -721,7 +721,7 @@ void bhDrawSpObject(O_WRK* op)
         } 
         else 
         {
-            njCalcVector(cam.mtx, (NJS_VECTOR*)&lp->vx, &vec);
+            njCalcVector(P32(float (*)[16], cam.mtx), (NJS_VECTOR*)&lp->vx, &vec);
             
             njCnkSetEasyLightColor(lp->r, lp->g, lp->b);
             njCnkSetEasyLightIntensity(1.0f, 0.2f);
@@ -771,13 +771,13 @@ void bhControlAlphaFadeObject(O_WRK* op)
     na    = fwk[0]; 
     count = fwk[1]; 
     
-    objp = &op->mlwP->objP[iwk[0]]; 
+    objp = &P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)[iwk[0]]; 
     
     for (i = 0; i < jnt_n; i++, objp++) 
     { 
-        if ((objp->model != NULL) && (!(objp->evalflags & 0x8)))
+        if ((P32(NJS_CNK_MODEL *, objp->model) != NULL) && (!(objp->evalflags & 0x8)))
         { 
-            alpha =  ((unsigned char*)&objp->model->plist[2])[3]; 
+            alpha =  ((unsigned char*)&P32(short *, P32(NJS_CNK_MODEL *, objp->model)->plist)[2])[3]; 
             alpha += (na - alpha) / count; 
             
             if (alpha < 0)
@@ -1214,12 +1214,12 @@ void bhObj004(O_WRK* op)
         op->py = 0;
         op->pz = 0;
         
-        npChangeMatAlphaColor(op->mlwP->objP, op->mlwP->obj_num, 0);
+        npChangeMatAlphaColor(P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP), P32(struct ML_WORK *, op->mlwP)->obj_num, 0);
         
         op->mode0 = 1;
         break;
     case 1:
-        npChangeMatAlphaColor(op->mlwP->objP, op->mlwP->obj_num, sys->thunder);
+        npChangeMatAlphaColor(P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP), P32(struct ML_WORK *, op->mlwP)->obj_num, sys->thunder);
         break;
     }
 }
@@ -1244,15 +1244,15 @@ void bhObj005(O_WRK* op)
     case 0:                                         
         if ((sys->st_flg & 0x40)) 
         {
-            npSetMemoryL((unsigned int*)sys->wt_wvp, sys->wt_nbpt, 0);
+            npSetMemoryL((unsigned int*)P32(unsigned char *, sys->wt_wvp), sys->wt_nbpt, 0);
             
             op->mode0 = 1;
             break;
         }
         
-        cmd = op->mlwP->objP->model;
+        cmd = P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model);
         
-        pCnk = (HDR_PS*)cmd->vlist;
+        pCnk = (HDR_PS*)P32(int *, cmd->vlist);
         
         ps = (NJS_POINT4*)&pCnk[1];
         
@@ -1299,24 +1299,24 @@ void bhObj005(O_WRK* op)
         sys->wt_maxx = wt_xp;
         sys->wt_maxz = wt_zp;
         
-        op->exp0 = bhGetFreeMemory((wt_xp * wt_zp) * 4, 64);
+        op->exp0 = S32(bhGetFreeMemory((wt_xp * wt_zp) * 4, 64));
         
-        sys->wt_wvp = op->exp0;
+        sys->wt_wvp = S32(P32(unsigned char *, op->exp0));
         
-        op->exp1 = (unsigned char*)cmd->vlist;
-        op->exp2 = bhGetFreeMemory((nb * 32) + 72, 64);
+        op->exp1 = S32((unsigned char*)P32(int *, cmd->vlist));
+        op->exp2 = S32(bhGetFreeMemory((nb * 32) + 72, 64));
         
-        cmd->vlist = (int*)op->exp2;
+        cmd->vlist = S32((int*)P32(unsigned char *, op->exp2));
         
-        npCopyMemory(op->exp2, op->exp1, (nb * 32) + 72);
+        npCopyMemory(P32(unsigned char *, op->exp2), P32(unsigned char *, op->exp1), (nb * 32) + 72);
         
-        pOrg = (HDR_PS*)op->exp1;
+        pOrg = (HDR_PS*)P32(unsigned char *, op->exp1);
         
         pp = (NJS_POINT4*)&pOrg[1];
         
         for (i = 0; i < op->ct2; i++)
         {
-            wty = (float*)sys->wt_wvp;
+            wty = (float*)P32(unsigned char *, sys->wt_wvp);
             
             xp = pp->x;
             zp = pp->z;
@@ -1337,52 +1337,52 @@ void bhObj005(O_WRK* op)
         switch (op->ct3)
         {                          
         case 0:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 1:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 2:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 3:                                     
-            npSetOffsetUV2(op->mlwP->objP->model, -768, 256);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), -768, 256);
             break;
         case 4:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 5:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 6:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 7:                                     
-            npSetOffsetUV2(op->mlwP->objP->model, -768, 256);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), -768, 256);
             break;
         case 8:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 9:                                     
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 10:                                    
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 11:                                    
-            npSetOffsetUV2(op->mlwP->objP->model, -768, 256);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), -768, 256);
             break;
         case 12:                                    
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 13:                                    
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 14:                                    
-            npSetOffsetUV2(op->mlwP->objP->model,  256, 0);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model),  256, 0);
             break;
         case 15:                                    
-            npSetOffsetUV2(op->mlwP->objP->model, -768, -768);
+            npSetOffsetUV2(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), -768, -768);
             break;
         }    
         
@@ -1390,8 +1390,8 @@ void bhObj005(O_WRK* op)
         
         j = sys->gfrm_ct & 0x1;
         
-        pOrg = (HDR_PS*)op->exp2;
-        pCnk = (HDR_PS*)op->exp1;
+        pOrg = (HDR_PS*)P32(unsigned char *, op->exp2);
+        pCnk = (HDR_PS*)P32(unsigned char *, op->exp1);
         
         pOrg++;
         pCnk++;
@@ -1690,7 +1690,7 @@ void bhObj006(O_WRK* op)
     
     njRotateXYZ(NULL, op->ax, op->ay, op->az);
     
-    obp = op->mlwP->objP;
+    obp = P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP);
     
     njRotateXYZ(NULL, obp[0].ang[0], obp[0].ang[1], obp[0].ang[2]);
     njRotateXYZ(NULL, obp[1].ang[0], obp[1].ang[1], obp[1].ang[2]);
@@ -1709,7 +1709,7 @@ void bhObj006(O_WRK* op)
     njTranslate(NULL, op->px, op->py, op->pz);
     njRotateXYZ(NULL, op->ax, op->ay, op->az);
     
-    obp = op->mlwP->objP;
+    obp = P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP);
     
     njRotateXYZ(NULL, obp[0].ang[0], obp[0].ang[1], obp[0].ang[2]);
     njRotateXYZ(NULL, obp[1].ang[0], obp[1].ang[1], obp[1].ang[2]);
@@ -1720,11 +1720,11 @@ void bhObj006(O_WRK* op)
     
     njCalcPoint(NULL, &ps, &ps0);
     
-    op->mlwP->objP[2].ang[2] = -(int)(10430.381f * atan2f(-ps0.x, -ps0.y)) - 16384;
+    P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)[2].ang[2] = -(int)(10430.381f * atan2f(-ps0.x, -ps0.y)) - 16384;
     
     if (op->aspd > 0) 
     {
-        lp = &rom->evlp[op->aspd];
+        lp = &P32(struct LGT_WORK *, rom->evlp)[op->aspd];
         
         line.vx *= 200.0f;
         line.vy *= 200.0f;
@@ -1762,7 +1762,7 @@ void bhObj006(O_WRK* op)
         
         njRotateXYZ(NULL, op->ax, op->ay, op->az);
         
-        obp = op->mlwP->objP;
+        obp = P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP);
         
         njRotateXYZ(NULL, obp[0].ang[0], obp[0].ang[1], obp[0].ang[2]);
         njRotateXYZ(NULL, obp[1].ang[0], obp[1].ang[1], obp[1].ang[2]);
@@ -2022,9 +2022,9 @@ void bhObj008(O_WRK* op)
     
     hp = &sys->mwalp[op->ct0];
     
-    hp->px = op->mlwP->owP->mtx[12] - 6.0f;
-    hp->py = op->mlwP->owP->mtx[13]; 
-    hp->pz = op->mlwP->owP->mtx[14] - 11.0f;
+    hp->px = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12] - 6.0f;
+    hp->py = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13]; 
+    hp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14] - 11.0f;
 }
 
 // 100% matching!
@@ -2039,7 +2039,7 @@ void bhObj009(O_WRK* op)
         switch (op->mode0) 
         {
         case 1:
-            ptp = rom->posp;
+            ptp = P32(struct POS *, rom->posp);
             
             op->px = op->gpx;
             op->pz = op->gpz;
@@ -2136,7 +2136,7 @@ void bhObj009(O_WRK* op)
         switch (op->mode0) 
         {                          
         case 0:
-            ptp = rom->posp;
+            ptp = P32(struct POS *, rom->posp);
             
             vec.x = ptp[12].px - ptp[11].px;
             vec.z = ptp[12].pz - ptp[11].pz;
@@ -2182,13 +2182,13 @@ void bhObj010(O_WRK* op)
 {
 	if (bhCkFlg(&sys->rm_flg, 31) != 0)
     {
-        npSetOffsetUV(op->mlwP->objP->model, 32, 0);
+        npSetOffsetUV(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), 32, 0);
 
         op->ct0 = (op->ct0 + 32) & 0x3FF;
 
         if (op->ct0 == 0)
         {
-            npSetOffsetUV(op->mlwP->objP->model, -1024, 0);
+            npSetOffsetUV(P32(NJS_CNK_MODEL *, P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)->model), -1024, 0);
         }
     }
 }
@@ -2244,9 +2244,9 @@ void bhObj012(O_WRK* op)
     
     hp = &sys->mwalp[op->ct0];
     
-    hp->px = op->mlwP->owP->mtx[12]; 
-    hp->py = op->mlwP->owP->mtx[13];
-    hp->pz = op->mlwP->owP->mtx[14];
+    hp->px = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12]; 
+    hp->py = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13];
+    hp->pz = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14];
 }
 
 // 99.96% matching
@@ -2274,15 +2274,15 @@ void bhObjClpn(O_WRK* op)
             {
                 op->flg |= 0x100000;
                 
-                if (op->lkwkp == (unsigned char*)plp) 
+                if (P32(unsigned char *, op->lkwkp) == (unsigned char*)plp) 
                 {
-                    op->exp0 = &sys->pletcp[4096];
-                    op->exp3 = sys->pletcp;
+                    op->exp0 = S32(&P32(unsigned char *, sys->pletcp)[4096]);
+                    op->exp3 = S32(P32(unsigned char *, sys->pletcp));
                 }
                 else 
                 {
-                    op->exp0 = bhGetFreeMemory(0x4000, 32);
-                    op->exp3 = bhGetFreeMemory(0x1000, 32);
+                    op->exp0 = S32(bhGetFreeMemory(0x4000, 32));
+                    op->exp3 = S32(bhGetFreeMemory(0x1000, 32));
                 }
             }
             
@@ -2291,7 +2291,7 @@ void bhObjClpn(O_WRK* op)
             op->ct2 = 0;
             op->ct3 = 0;
             
-            p3p = (NJS_POINT3*)op->exp0;
+            p3p = (NJS_POINT3*)P32(unsigned char *, op->exp0);
             
             for (i = 128; i-- != 0; p3p++) 
             {
@@ -2308,18 +2308,18 @@ void bhObjClpn(O_WRK* op)
             op->mode0 = 1;
             break;
         case 1:
-            pp = (BH_PWORK*)op->lkwkp;
+            pp = (BH_PWORK*)P32(unsigned char *, op->lkwkp);
             
-            hair = (HAIR_WORK*)op->exp3;
+            hair = (HAIR_WORK*)P32(unsigned char *, op->exp3);
             
             if ((pp->flg2 & 0x2))
             {
                 pp->flg2 &= ~0x2;
                 
-                npSetMemoryL((unsigned int*)op->exp0, 0x1000, 0);
-                npSetMemory(op->exp3, sizeof(HAIR_WORK), 0);
+                npSetMemoryL((unsigned int*)P32(unsigned char *, op->exp0), 0x1000, 0);
+                npSetMemory(P32(unsigned char *, op->exp3), sizeof(HAIR_WORK), 0);
                 
-                p3p = (NJS_POINT3*)op->exp0;
+                p3p = (NJS_POINT3*)P32(unsigned char *, op->exp0);
                 
                 for (i = 128; i-- != 0; p3p++) 
                 {
@@ -2336,7 +2336,7 @@ void bhObjClpn(O_WRK* op)
             
             bhCalcHair(op, pp);
 
-            p3p = (NJS_POINT3*)op->exp0 + op->ct0;
+            p3p = (NJS_POINT3*)P32(unsigned char *, op->exp0) + op->ct0;
             
             tmp = -hair->spx * 0.25f;
             py  = -hair->spy * 0.25f;
@@ -2346,23 +2346,23 @@ void bhObjClpn(O_WRK* op)
             op->yn += 0.333f * (py  - op->yn);
             op->zn += 0.333f * (pz  - op->zn);  
             
-            px = op->mlwP->owP->mtx[12];
-            py = op->mlwP->owP->mtx[13];
-            pz = op->mlwP->owP->mtx[14];
+            px = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[12];
+            py = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[13];
+            pz = P32(struct O_WORK *, P32(struct ML_WORK *, op->mlwP)->owP)->mtx[14];
             
             p3p->x = op->xn;
             p3p->y = op->yn;
             p3p->z = op->zn;
             
-            g3p = (NJS_POINT3*)&op->exp0[4096]; 
-            psp = (NJS_POINT3*)&op->exp0[8192];
+            g3p = (NJS_POINT3*)&P32(unsigned char *, op->exp0)[4096]; 
+            psp = (NJS_POINT3*)&P32(unsigned char *, op->exp0)[8192];
 
             rx = 0;
             ry = 0;
             
             for (i = 0; i < 4; psp++, g3p++, i++) 
             {
-                p3p = (NJS_POINT3*)op->exp0 + ((op->ct0 - (3 * i)) & 0x7F);
+                p3p = (NJS_POINT3*)P32(unsigned char *, op->exp0) + ((op->ct0 - (3 * i)) & 0x7F);
                 
                 njUnitMatrix(NULL);
                 
@@ -2401,7 +2401,7 @@ void bhObjClpn(O_WRK* op)
                 ps2.y = 1.0f;
                 ps2.z = 0; 
                 
-                njCalcPoint(&pp->mlwP->owP[5].mtx, &ps2, &ps3);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[5].mtx, &ps2, &ps3);
                 
                 ps2.x = g3p->x - ps3.x;
                 ps2.y = g3p->y - ps3.y;
@@ -2444,7 +2444,7 @@ void bhObjClpn(O_WRK* op)
                 ps4.y =  1.8f;
                 ps4.z = -0.3f;
                 
-                njCalcPoint(&pp->mlwP->owP[5].mtx, &ps4, &ps5);
+                njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, pp->mlwP)->owP)[5].mtx, &ps4, &ps5);
                 
                 ps5.y = ps3.y;
                 
@@ -2491,12 +2491,12 @@ void bhObjClpn(O_WRK* op)
                 ay = 10430.381f * atan2f(ps3.x, 0.1f + ps3.z);
                 ry -= ay;
                 
-                op->mlwP->objP[i].ang[1] = ay;
+                P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)[i].ang[1] = ay;
                 
                 ax = 182.04445f * (150.0f * -ps3.y);
                 rx -= ax;
                 
-                op->mlwP->objP[i].ang[0] = ax;
+                P32(struct cnkobj *, P32(struct ML_WORK *, op->mlwP)->objP)[i].ang[0] = ax;
                 
                 px = psp->x;
                 py = psp->y;

@@ -15,7 +15,7 @@
 // 100% matching! 
 void PlyPchInit(BH_PWORK* ewP)
 {
-    ewP->exp2 = bhGetFreeMemory(1712, 32);
+    ewP->exp2 = S32(bhGetFreeMemory(1712, 32));
 }
 
 // 100% matching!
@@ -28,19 +28,19 @@ void PlyPchMain(BH_PWORK* ewP)
     int* atP, *dstP;               
     static const char RouteArmRn_0[5] = { 1, 2, 6, 7, 0xFF }, RouteArmLn_0[5] = { 1, 2, 10, 11, 0xFF }; 
     
-    ppP = (PP_WORK*)ewP->exp2;
+    ppP = (PP_WORK*)P32(unsigned char *, ewP->exp2);
     
     if ((WpnTab[plp->wpnr_no].flg & 0x800)) 
     {
         if ((plp->mode0 == 1) && (plp->mode1 != 0)) 
         {
-            mlwP = plp->mlwP;
+            mlwP = P32(struct ML_WORK *, plp->mlwP);
             
             if (plp->mode2 == 164) 
             {
                 if (!(ppP->mode & 0x1)) 
                 {
-                    objP = mlwP->objP;
+                    objP = P32(struct cnkobj *, mlwP->objP);
                     
                     *(NJS_POINT3*)&ppP->obj_l.ang[0] = *(NJS_POINT3*)&objP[11].ang[0];
                     *(NJS_POINT3*)&ppP->obj_r.ang[0] = *(NJS_POINT3*)&objP[7].ang[0];
@@ -49,8 +49,8 @@ void PlyPchMain(BH_PWORK* ewP)
                     
                     EXP1_I(0) &= ~0x1E4;
                     
-                    mlwP->owP[5].flg |= 0x2;
-                    mlwP->owP[4].flg |= 0x2;
+                    P32(struct O_WORK *, mlwP->owP)[5].flg |= 0x2;
+                    P32(struct O_WORK *, mlwP->owP)[4].flg |= 0x2;
                     
                     if ((ppP->mode & 0x8)) 
                     {
@@ -77,8 +77,8 @@ void PlyPchMain(BH_PWORK* ewP)
                 EXP1_I(0) &= ~0x8;
             }
             
-            mlwP->owP[7].flg  |= 0x2;
-            mlwP->owP[11].flg |= 0x2;
+            P32(struct O_WORK *, mlwP->owP)[7].flg  |= 0x2;
+            P32(struct O_WORK *, mlwP->owP)[11].flg |= 0x2;
             
             GetOneObjectMotion(ewP, 7, ppP->ang_tmp); 
             SetOneObjectMotion(ewP, &ppP->obj_r, ppP->ang_tmp);
@@ -94,8 +94,8 @@ void PlyPchMain(BH_PWORK* ewP)
                 ppP->count--;
             }
             
-            MixSetToJointRot(mlwP->objP, (char*)RouteArmRn_0, &ppP->obj_r, ppP->arm_ar);
-            MixSetToJointRot(mlwP->objP, (char*)RouteArmLn_0, &ppP->obj_l, ppP->arm_al);
+            MixSetToJointRot(P32(struct cnkobj *, mlwP->objP), (char*)RouteArmRn_0, &ppP->obj_r, ppP->arm_ar);
+            MixSetToJointRot(P32(struct cnkobj *, mlwP->objP), (char*)RouteArmLn_0, &ppP->obj_l, ppP->arm_al);
             
             if ((sys->pad_on & 0x8))
             {
@@ -119,7 +119,7 @@ void PlyPchMain(BH_PWORK* ewP)
             dir = (ppP->arm_dl + ((ppP->hed_rate * (ppP->arm_dr - ppP->arm_dl)) / 65536)) / 2;
             
             atP  = ppP->ang_tmp;
-            dstP = plp->mlwP->objP[5].ang;
+            dstP = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[5].ang;
             
             GetOneObjectMotion(plp, 5, atP);
             
@@ -127,7 +127,7 @@ void PlyPchMain(BH_PWORK* ewP)
             dstP[1] += (short)(dir - dstP[1])    / 4;
             dstP[2] = atP[2];
             
-            dstP = plp->mlwP->objP[4].ang;
+            dstP = P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[4].ang;
             
             GetOneObjectMotion(plp, 4, atP);
             
@@ -137,10 +137,10 @@ void PlyPchMain(BH_PWORK* ewP)
         }
         else 
         { 
-            plp->mlwP->owP[7].flg  &= ~0x2;
-            plp->mlwP->owP[11].flg &= ~0x2;
-            plp->mlwP->owP[5].flg  &= ~0x2;
-            plp->mlwP->owP[4].flg  &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[7].flg  &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[11].flg &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[5].flg  &= ~0x2;
+            P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[4].flg  &= ~0x2;
             
             ppP->arm_dl = ppP->arm_dr = 0;
             ppP->arm_al = ppP->arm_ar = 0;
@@ -205,7 +205,7 @@ static void GetOneObjectMotion(BH_PWORK* ewP, int obj_no, int* ang)
 
     if ((ewP->mtn_md & 0x2))
     {
-        rutP = (char*)ewP->mtn_tp;
+        rutP = (char*)P32(unsigned char *, ewP->mtn_tp);
         
         flp = -1;
     }
@@ -216,9 +216,9 @@ static void GetOneObjectMotion(BH_PWORK* ewP, int obj_no, int* ang)
         flp = 1;
     }
     
-    if (ewP->mnwP[ewP->mtn_no].md2P[rutP[obj_no]].p[1] != NULL)
+    if (P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P)[rutP[obj_no]].p[1]) != NULL)
     { 
-        mkaP =  ewP->mnwP[ewP->mtn_no].md2P[rutP[obj_no]].p[1]; 
+        mkaP =  P32(void *, P32(struct NJS_MDATA2_MOD *, P32(struct MN_WORK *, ewP->mnwP)[ewP->mtn_no].md2P)[rutP[obj_no]].p[1]); 
         mkaP += ewP->frm_no / 65536;
         
         ang[0] = mkaP->key[0];
@@ -337,9 +337,9 @@ static search* bhSearchEnemy(BH_PWORK* pwP, int rng, float hgt)
     NJS_CAPSULE cap; 
     PP_WORK* ppP; // not from DWARF
 
-    ppP = (PP_WORK*)pwP->exp2;
+    ppP = (PP_WORK*)P32(unsigned char *, pwP->exp2);
     
-    ppP->sch_hed.nextP = NULL;
+    ppP->sch_hed.nextP = S32(NULL);
     ppP->sch_hed.dst   = 0;
     
     lstP = ppP->SchLst;
@@ -357,7 +357,7 @@ static search* bhSearchEnemy(BH_PWORK* pwP, int rng, float hgt)
     
     for (i = 0; i < sys->ewk_n; i++, ewP++)
     {
-        if (((((ewP->flg & 0x1)) && ((ewP->flg & 0x20))) && ((!(ewP->flg2 & 0x10)) && (!(ewP->flg & 0x2))) && (!(ewP->stflg & 0x41000000))) && ((!(ewP->flg & 0x80)) || (!(((O_WRK*)ewP->lkwkp)->stflg & 0x1000000)))) 
+        if (((((ewP->flg & 0x1)) && ((ewP->flg & 0x20))) && ((!(ewP->flg2 & 0x10)) && (!(ewP->flg & 0x2))) && (!(ewP->stflg & 0x41000000))) && ((!(ewP->flg & 0x80)) || (!(((O_WRK*)P32(unsigned char *, ewP->lkwkp))->stflg & 0x1000000)))) 
         {
             vct1.x = 0.5f * (ewP->watr.c1.x + ewP->watr.c2.x);
             vct1.y = 0.5f * (ewP->watr.c1.y + ewP->watr.c2.y);
@@ -383,12 +383,12 @@ static search* bhSearchEnemy(BH_PWORK* pwP, int rng, float hgt)
                 {
                     lstP->dir = (int)(10430.381f * atan2f(vct1.x, vct1.z)) + 32768;
                     lstP->dst = dst;                    
-                    lstP->ewP = ewP;
+                    lstP->ewP = S32(ewP);
                     lstP->idx = i;
                     
                     prvP = hedP; 
                     
-                    for (scnP = hedP->nextP; scnP != NULL; scnP = scnP->nextP) 
+                    for (scnP = P32(struct _search *, hedP->nextP); scnP != NULL; scnP = P32(struct _search *, scnP->nextP)) 
                     {
                         if (scnP->dst >= dst) 
                         {
@@ -398,14 +398,14 @@ static search* bhSearchEnemy(BH_PWORK* pwP, int rng, float hgt)
                         prvP = scnP;
                     }
                     
-                    lstP->nextP = prvP->nextP;
-                    prvP->nextP = lstP++;
+                    lstP->nextP = S32(P32(struct _search *, prvP->nextP));
+                    prvP->nextP = S32(lstP++);
                 }
             }
         }
     }
     
-    return hedP->nextP; 
+    return P32(struct _search *, hedP->nextP); 
 }
 
 // 99.92% matching
@@ -416,20 +416,20 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
     BH_PWORK* pwP; // not from DWARF 
     
     pwP = plp; 
-    ppP = (PP_WORK*)pwP->exp2;
+    ppP = (PP_WORK*)P32(unsigned char *, pwP->exp2);
     
     if (mode == 0) 
     {
-        ppP->endPP = ppP->LckTbl;
+        ppP->endPP = S32(ppP->LckTbl);
     }
     
     ppP->count = count;
     
-    topP = bhSearchEnemy(pwP, range, pwP->mlwP[pwP->mdl_no].owP[5].mtx[13] - pwP->py);
+    topP = bhSearchEnemy(pwP, range, P32(struct O_WORK *, P32(struct ML_WORK *, pwP->mlwP)[pwP->mdl_no].owP)[5].mtx[13] - pwP->py);
     
     if (topP != NULL)
     {
-        ppP->endPP = ppP->LckTbl;
+        ppP->endPP = S32(ppP->LckTbl);
         
         tgtP = topP;
         
@@ -446,7 +446,7 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
         
         if (!(ppP->mode & 0x10))
         {
-            while ((tgtP = tgtP->nextP) != NULL) 
+            while ((tgtP = P32(struct _search *, tgtP->nextP)) != NULL) 
             {
                 if (((short)(tgtP->dir - topP->dir) >= -16384) && ((short)(tgtP->dir - topP->dir) <= 16384)) 
                 {
@@ -471,7 +471,7 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
         } 
         else 
         {
-            tgtP = topP->nextP;
+            tgtP = P32(struct _search *, topP->nextP);
         }
         
         ppP->mode ^= 0x10;
@@ -481,7 +481,7 @@ static int SetLockOnDirection(int range, int count, int mode, int special)
             ppP->mode &= ~0x4;
         }
         
-        *ppP->endPP++ = topP->ewP;
+        *P32_POSTINC(struct BH_PWORK **, ppP->endPP) = P32(struct BH_PWORK *, topP->ewP);
     }
     
     return (int)PS2_ADDR(topP);
@@ -499,7 +499,7 @@ void bhCPM2_act_suw_pch()
         {
             plp->flg |= 0x100000;
             
-            ((EXP_WORK*)plp->exp0)->yrct = 8;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 8;
         }
         
         plp->flg    &= ~0xC0000;
@@ -512,7 +512,7 @@ void bhCPM2_act_suw_pch()
         
         plp->mtn_add = 65536;
         
-        ((EXP_WORK*)plp->exp0)->arp = 2.0f;
+        ((EXP_WORK*)P32(unsigned char *, plp->exp0))->arp = 2.0f;
         
         plp->frm_no = 0;
         
@@ -537,12 +537,12 @@ void bhCPM2_act_suw_pch()
             plp->flg |= 0x200000;
         }
         
-        if (((unsigned int)plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - 4)) 
+        if (((unsigned int)plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 4)) 
         {
             plp->at_flg &= ~0x1;
         }
         
-        if ((plp->mnwP[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
+        if ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= ((unsigned int)plp->frm_no / 65536))
         {
             plp->mtn_add = 0;
         
@@ -594,12 +594,12 @@ void bhCPM2_act_suw_pch()
     
     if ((sys->pad_on & 0x8))
     {
-        plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
     }
     
     if ((sys->pad_on & 0x4)) 
     {
-        plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+        plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
     }
 }
 
@@ -617,7 +617,7 @@ void bhCPM2_act_atk_pch()
     EF_WORK* wet;  
     search* lstP; // needs use   
   
-    ppP = (PP_WORK*)plp->exp2;
+    ppP = (PP_WORK*)P32(unsigned char *, plp->exp2);
     
     wt  = &WpnTab[plp->wpnr_no];
     wet = WpnEffTab[plp->wpnr_no]; 
@@ -662,12 +662,12 @@ void bhCPM2_act_atk_pch()
 
             if ((wt->flg & 0x2))
             {
-                sys->obwp->flg |= 0x80000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x80000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             }
 
-            gaP = CheckGunHit(wt, 9, ((PP_WORK*)plp->exp2)->arm_dr + plp->ay);
+            gaP = CheckGunHit(wt, 9, ((PP_WORK*)P32(unsigned char *, plp->exp2))->arm_dr + plp->ay);
             
             bhCountBullet(); 
             
@@ -684,7 +684,7 @@ void bhCPM2_act_atk_pch()
         case 1:
             if (((plp->frm_no / 65536) == (wt->ef_yct - 2)) && (plp->wpnr_no == 11))
             {
-                CallPlayerWeaponSeEx((NJS_POINT3*)&plp->mlwP->owP[9].mtx[12], wt->seno1, 0);
+                CallPlayerWeaponSeEx((NJS_POINT3*)&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[12], wt->seno1, 0);
             } 
 
             if (((plp->frm_no / 65536) == wt->ef_yct) && (wet[3].flg != 0))  
@@ -692,7 +692,7 @@ void bhCPM2_act_atk_pch()
                 bhSetYakkyou(plp, plp->wpnr_no, 9, 0, ppP->arm_dr + plp->ay);
             } 
             
-            if (((((plp->at_flg & 0x10)) && (!(plp->at_flg & 0x40))) && (((sys->pad_on & 0x100)) && ((sys->pad_on & 0x10)))) || ((plp->mnwP[plp->mtn_no].frm_num - 1) <= (plp->frm_no / 65536)))
+            if (((((plp->at_flg & 0x10)) && (!(plp->at_flg & 0x40))) && (((sys->pad_on & 0x100)) && ((sys->pad_on & 0x10)))) || ((P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - 1) <= (plp->frm_no / 65536)))
             { 
                 if ((wt->flg & 0x400))
                 {
@@ -745,7 +745,7 @@ void bhCPM2_act_atk_pch()
                 return;
             }
             
-            if ((plp->frm_no / 65536) >= (plp->mnwP[plp->mtn_no].frm_num - wt->at_cct)) 
+            if ((plp->frm_no / 65536) >= (P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num - wt->at_cct)) 
             {
                 plp->at_flg |= 0x10;
             }
@@ -759,12 +759,12 @@ void bhCPM2_act_atk_pch()
             
             if ((sys->pad_on & 0x8)) 
             {
-                plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
             
             if ((sys->pad_on & 0x4)) 
             {
-                plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+                plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
             }
         }
     } 
@@ -792,7 +792,7 @@ void bhCPM2_act_atk_pch()
             case 2:
                 plp->mtn_no = PlMtnWpn[4];
                 
-                if ((((PP_WORK*)plp->exp2)->mode & 0x4)) 
+                if ((((PP_WORK*)P32(unsigned char *, plp->exp2))->mode & 0x4)) 
                 { 
                     plp->mtn_no += 17;
                 } 
@@ -825,12 +825,12 @@ void bhCPM2_act_atk_pch()
             
             if ((wt->flg & 0x2)) 
             {
-                sys->obwp->flg |= 0x80000;
+                P32(struct O_WRK *, sys->obwp)->flg |= 0x80000;
                 
-                sys->obwp->mode0 = 0;
+                P32(struct O_WRK *, sys->obwp)->mode0 = 0;
             }
 
-            gaP = CheckGunHit(wt, 9, ((PP_WORK*)plp->exp2)->arm_dr + plp->ay);
+            gaP = CheckGunHit(wt, 9, ((PP_WORK*)P32(unsigned char *, plp->exp2))->arm_dr + plp->ay);
             
             if (bhCountBullet() == 0)
             {
@@ -896,7 +896,7 @@ void bhCPM2_act_atk_pch()
                     case 2:
                         plp->mtn_no = 102;
                         
-                        if ((((PP_WORK*)plp->exp2)->mode & 0x4)) 
+                        if ((((PP_WORK*)P32(unsigned char *, plp->exp2))->mode & 0x4)) 
                         {
                             plp->mtn_no += 17;
                         }
@@ -937,7 +937,7 @@ void bhCPM2_act_atk_pch()
                     
                     plp->waxp = 0;
                     
-                    ppP = (PP_WORK*)plp->exp2;
+                    ppP = (PP_WORK*)P32(unsigned char *, plp->exp2);
                     
                     if ((ppP->mode & 0x4)) 
                     {
@@ -983,7 +983,7 @@ void bhCPM2_act_atk_pch()
                 
                 plp->waxp = 0;
                 
-                ppP = (PP_WORK*)plp->exp2;
+                ppP = (PP_WORK*)P32(unsigned char *, plp->exp2);
                 
                 if ((ppP->mode & 0x4)) 
                 {
@@ -1038,7 +1038,7 @@ void bhCPM2_act_atk_pch()
                 
                 plp->waxp = 0;
     
-                if ((((PP_WORK*)plp->exp2)->mode & 0x4)) 
+                if ((((PP_WORK*)P32(unsigned char *, plp->exp2))->mode & 0x4)) 
                 {
                     plp->mtn_no += 17;
                 }
@@ -1100,19 +1100,19 @@ void bhCPM2_act_atk_pch()
             
         if ((sys->pad_on & 0x8)) 
         {
-            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay -= (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         }
         
         if ((sys->pad_on & 0x4))
         {
-            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)plp->exp0)->rtspd));
+            plp->ay += (int)(182.04445f * (2.4f * ((EXP_WORK*)P32(unsigned char *, plp->exp0))->rtspd));
         }
         
         if (((sys->pad_ps & 0x80)) && (SetLockOnDirection(16384, 6, 1, 0) != 0)) 
         {
             plp->flg |= 0x100000;
             
-            ((EXP_WORK*)plp->exp0)->yrct = 4;
+            ((EXP_WORK*)P32(unsigned char *, plp->exp0))->yrct = 4;
         } 
     }
 
@@ -1131,7 +1131,7 @@ void bhCPM2_act_atk_pch()
     }
     if ((plp->at_flg & 0xE) != 0x2) 
     {
-        ppP = (PP_WORK*)plp->exp2;
+        ppP = (PP_WORK*)P32(unsigned char *, plp->exp2);
         
         ppP->mode &= ~0x14;
     }
@@ -1162,7 +1162,7 @@ static GA_WORK* CheckGunHit(const WPN_TAB* wtP, int obj_no, int yaw)
     ps.x = ps.y = 0;
     ps.z = WpnTab[plp->wpnr_no].wp_fps1.z; 
     
-    njCalcPoint(&plp->mlwP->owP[obj_no].mtx, &ps, (NJS_POINT3*)&gap.gx);
+    njCalcPoint(&P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[obj_no].mtx, &ps, (NJS_POINT3*)&gap.gx);
     
     *(NJS_POINT3*)&gap.px = *(NJS_POINT3*)&gap.gx;
     gap.py = 11.0f + plp->py;
@@ -1206,7 +1206,7 @@ void bhCPM2_SearchPch()
         
         PEXP0_I(4) = 8;
         
-        ppP = (PP_WORK*)plp->exp2;
+        ppP = (PP_WORK*)P32(unsigned char *, plp->exp2);
         
         if ((ppP->mode & 0x8)) 
         {
@@ -1243,12 +1243,12 @@ void bhArmIkMdk(BH_PWORK* ewP, int bas_no, NJS_POINT3* effP, int rot)
     vb1P = (NJS_VECTOR*)&lcmat[0][8]; 
     vtP =  (NJS_VECTOR*)&lcmat[0][12]; 
     
-    basP = &plp->mlwP->objP[bas_no];
+    basP = &P32(struct cnkobj *, P32(struct ML_WORK *, plp->mlwP)->objP)[bas_no];
     
     obj0P = &basP[1];
     obj1P = &basP[2];
     
-    njPushMatrix(&ewP->mlwP->owP[bas_no].mtx);
+    njPushMatrix(&P32(struct O_WORK *, P32(struct ML_WORK *, ewP->mlwP)->owP)[bas_no].mtx);
     njInvertMatrix(NULL);
     
     njGetMatrix(lcmat);

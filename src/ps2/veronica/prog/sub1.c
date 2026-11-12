@@ -1452,7 +1452,7 @@ void StatusInit(S_WORK* st)
     st->keywait = 0;
     st->boxwait = 0;
     
-    st->pip = &sys->itm[sys->ply_id * 16];
+    st->pip = S32(&sys->itm[sys->ply_id * 16]);
     
     st->clip[0].x = 32.0f;
     st->clip[0].y = 28.0f;
@@ -1562,12 +1562,12 @@ void StatusInit(S_WORK* st)
     
     swork.flgchk &= ~0x2;
     
-    st->itemid = (st->pip[st->listcsr_0] >> 16) & 0xFF;
+    st->itemid = (P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF;
     
     if (!(swork.statusflg & 0x200)) 
     {
-        sitem.keep = bhGetFreeMemory(0x20000, 32);
-        sitem.keepbackup = sitem.keep;
+        sitem.keep = S32(bhGetFreeMemory(0x20000, 32));
+        sitem.keepbackup = S32(P32(unsigned char *, sitem.keep));
         
         swork.statusflg |= 0x200;
     }
@@ -1614,20 +1614,20 @@ void StatusInit(S_WORK* st)
     {
         if ((sys->cb_flg & 0x80000)) 
         {
-             st->bxp = &sys->itm[192];
+             st->bxp = S32(&sys->itm[192]);
         }
         else if ((sys->cb_flg & 0x100000))
         {
-            st->bxp = &sys->itm[224];
+            st->bxp = S32(&sys->itm[224]);
         }
         else
         {
-            st->bxp = &sys->itm[64];
+            st->bxp = S32(&sys->itm[64]);
         }
     }
     else
     {
-        st->bxp = &sys->itm[64];
+        st->bxp = S32(&sys->itm[64]);
     }
 }
 
@@ -1651,7 +1651,7 @@ void ItemBoxInit(S_WORK* st)
     st->keywait = 0;
     st->boxwait = 0;
     
-    st->pip = &sys->itm[sys->ply_id * 16];
+    st->pip = S32(&sys->itm[sys->ply_id * 16]);
     
     for (num1 = 0; num1 < 11; num1++) 
     {
@@ -1695,20 +1695,20 @@ void ItemBoxInit(S_WORK* st)
     {
         if ((sys->cb_flg & 0x80000)) 
         {
-            st->bxp = &sys->itm[192];
+            st->bxp = S32(&sys->itm[192]);
         }
         else if ((sys->cb_flg & 0x100000)) 
         {
-            st->bxp = &sys->itm[224];
+            st->bxp = S32(&sys->itm[224]);
         }
         else
         {
-            st->bxp = &sys->itm[64];
+            st->bxp = S32(&sys->itm[64]);
         }
     }
     else
     {
-        st->bxp = &sys->itm[64];
+        st->bxp = S32(&sys->itm[64]);
     }
 
     pb = itembox[5];
@@ -1726,7 +1726,7 @@ void ItemBoxInit(S_WORK* st)
         njSetTexture(&st->subtx_list);
     }
     
-    st->itemid = (st->pip[st->listcsr_0] >> 16) & 0xFF;
+    st->itemid = (P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF;
     
     st->ips1 = 0;
     st->ipsdisp = 0;
@@ -1782,7 +1782,7 @@ void CursorMove(S_WORK* st)
             swork.statusflg &= ~0x8000;
         }
         
-        st->itemid = (st->pip[st->listcsr_0] >> 16) & 0xFF;
+        st->itemid = (P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF;
         
         swork.statusflg |= 0x100000;
         
@@ -2137,7 +2137,7 @@ void CursorSet(S_WORK* st)
     
     if ((parts_09b->atr & 0x20)) 
     {
-        st->itemid = (st->pip[st->listcsr_0] >> 16) & 0xFF;
+        st->itemid = (P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF;
     }
     else if (!(st->subscreenmode & 0x8)) 
     {
@@ -2148,7 +2148,7 @@ void CursorSet(S_WORK* st)
     {
         num1 = st->listcsr_2;
         
-        if ((((unsigned short*)&itemdata->type)[((st->pip[st->listcsr_0] >> 16) & 0xFF) * 3] & 0x100))
+        if ((((unsigned short*)&itemdata->type)[((P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF) * 3] & 0x100))
         {
             num1 = (num1 & 0xFFFE) & 0xFFFF;
         }
@@ -2181,7 +2181,7 @@ void CursorSet(S_WORK* st)
         }
     }
     
-    if ((((unsigned short*)&itemdata->type)[((st->pip[st->listcsr_0] >> 16) & 0xFF) * 3] & 0x100))
+    if ((((unsigned short*)&itemdata->type)[((P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF) * 3] & 0x100))
     {
         if ((parts_09b[1].atr & 0x20)) 
         {
@@ -2246,8 +2246,8 @@ void SpriteSet2D(S_WORK* st, PARTS* cbjim, NJS_TEXANIM* anim1, NJS_TEXLIST* tlis
         atr1 |= atr[4];
     }
     
-    spr2d.tlist = tlist;
-    spr2d.tanim = anim1;
+    spr2d.tlist = S32(tlist);
+    spr2d.tanim = S32(anim1);
     
     spr2d.sx = 1.0f;
     spr2d.sy = 1.0f;
@@ -2288,11 +2288,11 @@ void ItemSort()
     
     for (num1 = 0; num1 < 10; num1++)
     {
-        wpn = (((NJS_TEXNAME *)&st->pip[num1])->texaddr >> 16) & 0xFF;
+        wpn = (((NJS_TEXNAME *)&P32(unsigned int *, st->pip)[num1])->texaddr >> 16) & 0xFF;
         
         if ((itemdata[wpn].type & 0x100))
         {
-            itmbk[num2] = ((NJS_TEXNAME*)&st->pip[num1])->texaddr;
+            itmbk[num2] = ((NJS_TEXNAME*)&P32(unsigned int *, st->pip)[num1])->texaddr;
             
             if ((swork.flgchk & 0x10)) 
             {
@@ -2305,11 +2305,11 @@ void ItemSort()
     
     for (num1 = 0; num1 < 10; num1++)
     {
-        wpn = (((NJS_TEXNAME*)&st->pip[num1])->texaddr >> 16) & 0xFF;
+        wpn = (((NJS_TEXNAME*)&P32(unsigned int *, st->pip)[num1])->texaddr >> 16) & 0xFF;
         
         if ((!(itemdata[wpn].type & 0x100)) && (wpn != 0))
         {
-            itmbk[num2] = ((NJS_TEXNAME*)&st->pip[num1])->texaddr;
+            itmbk[num2] = ((NJS_TEXNAME*)&P32(unsigned int *, st->pip)[num1])->texaddr;
             
             if ((((itemdata[wpn].type & 0x1)) || ((itemdata[wpn].type & 0x10))) && ((swork.flgchk & 0x10)))
             {
@@ -2327,14 +2327,14 @@ void ItemSort()
     
     for (num1 = 0; num1 < 10; num1++)
     {
-        ((NJS_TEXNAME*)&st->pip[num1])->texaddr = itmbk[num1];
+        ((NJS_TEXNAME*)&P32(unsigned int *, st->pip)[num1])->texaddr = itmbk[num1];
     }
     
     num1 = 0;
     
     do
     {
-        wpn = (((NJS_TEXNAME*)&st->pip[num1])->texaddr >> 16) & 0xFF;
+        wpn = (((NJS_TEXNAME*)&P32(unsigned int *, st->pip)[num1])->texaddr >> 16) & 0xFF;
         
         if (!(itemdata[wpn].type & 0x100))
         {
@@ -2390,7 +2390,7 @@ void ItemSet(S_WORK* st, unsigned char flg) // second parameter is not present o
     
     for ( ; num3 < num2; pa++, pb++, num1++, num3++, setanm++) 
     {
-        itemid = (unsigned char)(st->pip[num1 + 1] >> 16);
+        itemid = (unsigned char)(P32(unsigned int *, st->pip)[num1 + 1] >> 16);
         itemno = itemid;
         
         switch (itemid)
@@ -2629,7 +2629,7 @@ void KazuSet(S_WORK* st, unsigned char flg)
     {
         if (!flg) 
         {
-            itemid = st->pip[num1];
+            itemid = P32(unsigned int *, st->pip)[num1];
         }
         else if (flg == 1) 
         {
@@ -2649,7 +2649,7 @@ void KazuSet(S_WORK* st, unsigned char flg)
                 ips2 &= 0x7F;
             }
             
-            itemid = st->bxp[ips2++];
+            itemid = P32(unsigned int *, st->bxp)[ips2++];
         }
         
         if (((pb->atr & 0x20)) && ((itemdata[(unsigned char)(itemid >> 16)].type & 0x3800))) 
@@ -2682,9 +2682,9 @@ unsigned char ItemUse(S_WORK* st)
 
     useon = 0;
 
-    bullet = st->pip[st->listcsr_0];
+    bullet = P32(unsigned int *, st->pip)[st->listcsr_0];
 
-    itemid = (unsigned char)(st->pip[st->listcsr_0] >> 16);
+    itemid = (unsigned char)(P32(unsigned int *, st->pip)[st->listcsr_0] >> 16);
     
     sys->sb_id = itemid;
 
@@ -2736,11 +2736,11 @@ unsigned char ItemUse(S_WORK* st)
                 st->itemid = 0;
             }
     
-            st->pip[st->listcsr_0] = (st->itemid << 16) | bullet;
+            P32(unsigned int *, st->pip)[st->listcsr_0] = (st->itemid << 16) | bullet;
             
-            if ((sys->sb_id != 82) && ((st->listcsr_0 < *st->pip) && (*st->pip != 0)))
+            if ((sys->sb_id != 82) && ((st->listcsr_0 < *P32(unsigned int *, st->pip)) && (*P32(unsigned int *, st->pip) != 0)))
             {
-                *st->pip = *st->pip - 1;
+                *P32(unsigned int *, st->pip) = *P32(unsigned int *, st->pip) - 1;
             }
         }
     }
@@ -3044,7 +3044,7 @@ void ItemTaskCheck()
     {
         StopVibrationEx();
         
-        st->subp = sys->memp;
+        st->subp = S32(P32(unsigned char *, sys->memp));
         
         sys->ts_flg &= ~0x200;
         sys->ts_flg |= 0x80;
@@ -3109,7 +3109,7 @@ void ItemTaskCheck()
                 
                 swork.statusflg |= 0x200;
                 
-                sys->memp = st->subp;
+                sys->memp = S32(P32(unsigned char *, st->subp));
             }
         } 
         else if (((swork.statusflg & 0x80000)) && (st->taskloop == 4) && (*(int*)&sys->mn_md0 == 0)) 
@@ -3120,7 +3120,7 @@ void ItemTaskCheck()
             
             if ((fvwork.afsmode & 0x400)) 
             {
-                bhReleaseFreeMemory(st->ssp);
+                bhReleaseFreeMemory(P32(unsigned char *, st->ssp));
                 
                 fvwork.afsmode &= ~0x400;
             }
@@ -3166,11 +3166,11 @@ void ItemTaskCheck()
                 
                 swork.flgchk &= ~0xF;
                 
-                sys->memp = sys->sbs_sp;
+                sys->memp = S32(P32(unsigned char *, sys->sbs_sp));
                 
-                if (rom->mdl.texP != NULL) 
+                if (P32(NJS_TEXLIST *, rom->mdl.texP) != NULL) 
                 { 
-                    bhCopyMainmem2Texmem(rom->mdl.texP); 
+                    bhCopyMainmem2Texmem(P32(NJS_TEXLIST *, rom->mdl.texP)); 
                 }
                 
                 st->scr.w = 640.0f;
@@ -3313,7 +3313,7 @@ void StatusMain()
             
             st->statusflg = 0;
             
-            swork.bxp = &sys->itm[64];
+            swork.bxp = S32(&sys->itm[64]);
         } 
         else if ((sys->cb_flg & 0x10)) 
         {
@@ -3412,7 +3412,7 @@ void StatusMain()
         
         BgColorInit();
         
-        st->sspb = sys->memp;
+        st->sspb = S32(P32(unsigned char *, sys->memp));
         
         cnt = 0;
         break;
@@ -3578,13 +3578,13 @@ void StatusMain()
     }
     else if ((swork.statusflg & 0x400000)) 
     {
-        njReleaseTexture(sitem.mdl.texP);
+        njReleaseTexture(P32(NJS_TEXLIST *, sitem.mdl.texP));
         
         bhGarbageTexture(NULL, 0);
         
-        sitem.keep = sitem.keepbackup;
+        sitem.keep = S32(P32(unsigned char *, sitem.keepbackup));
         
-        memset(sitem.keep, 0, 0x20000);   /* NULL in the original */
+        memset(P32(unsigned char *, sitem.keep), 0, 0x20000);   /* NULL in the original */
         
         swork.statusflg &= ~0x400000;
     }
@@ -3767,8 +3767,8 @@ void GetItem(S_WORK* st)
         
         for (num1 = 0, num2 = max; (unsigned short)num1 < max; num1++) 
         {
-            itemid1 = (st->pip[num1 + 2] >> 16) & 0xFF;
-            bullet1 =  st->pip[num1 + 2];
+            itemid1 = (P32(unsigned int *, st->pip)[num1 + 2] >> 16) & 0xFF;
+            bullet1 =  P32(unsigned int *, st->pip)[num1 + 2];
         
             if ((itemdata[itemid1].type & 0x100)) 
             {
@@ -3789,9 +3789,9 @@ void GetItem(S_WORK* st)
                     }
                     else 
                     {
-                        st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+                        st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
                         
-                        bullet1 += *st->gb;
+                        bullet1 += *P32(unsigned int *, st->gb);
                     }
                     
                     if (bullet1 > 999) 
@@ -3987,10 +3987,10 @@ void GetItem(S_WORK* st)
             amari++;
             num2++;
             
-            itemid1 = (st->pip[amari + 1] >> 16) & 0xFF;
-            bullet1 =  st->pip[amari + 1];
+            itemid1 = (P32(unsigned int *, st->pip)[amari + 1] >> 16) & 0xFF;
+            bullet1 =  P32(unsigned int *, st->pip)[amari + 1];
             
-            bullettype = (st->pip[amari + 1] >> 16) & 0xFF00;
+            bullettype = (P32(unsigned int *, st->pip)[amari + 1] >> 16) & 0xFF00;
             
             if (itemid1 == sys->sb_id) 
             {
@@ -4004,7 +4004,7 @@ void GetItem(S_WORK* st)
                         } 
                         else 
                         {
-                            st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+                            st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
                             
                             if (sys->sb_id == 31) 
                             {
@@ -4014,12 +4014,12 @@ void GetItem(S_WORK* st)
                                 }
                                 else 
                                 {
-                                    bullet1 += *st->gb;
+                                    bullet1 += *P32(unsigned int *, st->gb);
                                 }
                             }
                             else 
                             {
-                                bullet1 += *st->gb;
+                                bullet1 += *P32(unsigned int *, st->gb);
                             }
                         }
                         
@@ -4033,7 +4033,7 @@ void GetItem(S_WORK* st)
                             num1 = 0;
                         }
                         
-                        st->pip[amari + 1] = (itemid1 << 16) | bullet1;
+                        P32(unsigned int *, st->pip)[amari + 1] = (itemid1 << 16) | bullet1;
 
                         if (!num1)
                         {
@@ -4044,7 +4044,7 @@ void GetItem(S_WORK* st)
                     } 
                     else 
                     {
-                        st->pip[amari + 1] = ((itemid1 | 0x800) << 16) | bullet1;
+                        P32(unsigned int *, st->pip)[amari + 1] = ((itemid1 | 0x800) << 16) | bullet1;
                         
                         swork.statusflg |= 0x100; 
                         
@@ -4056,67 +4056,67 @@ void GetItem(S_WORK* st)
             {
                 if ((itemdata[sys->sb_id].type & 0x100)) 
                 {
-                    st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+                    st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
                     
-                    st->pip[amari + 1] = (sys->sb_id << 16) | *st->gb;
+                    P32(unsigned int *, st->pip)[amari + 1] = (sys->sb_id << 16) | *P32(unsigned int *, st->gb);
                     
                     if ((sys->sb_id == 33) && (sys->ply_id == 0))
                     {
-                        st->pip[amari + 1] &= 0xFFFF0000;
+                        P32(unsigned int *, st->pip)[amari + 1] &= 0xFFFF0000;
                     }
                     
                     if ((sys->sb_id == 34) && (sys->ply_id == 0)) 
                     {
-                        st->pip[amari + 1] &= 0xFFFF0000;
+                        P32(unsigned int *, st->pip)[amari + 1] &= 0xFFFF0000;
                     }
                     
-                    itemid2 = (st->pip[*st->pip] >> 16) & 0xFF;
+                    itemid2 = (P32(unsigned int *, st->pip)[*P32(unsigned int *, st->pip)] >> 16) & 0xFF;
                     
-                    if ((*st->pip > 1) && (!(itemdata[itemid2].type & 0x100)))
+                    if ((*P32(unsigned int *, st->pip) > 1) && (!(itemdata[itemid2].type & 0x100)))
                     {
-                        *st->pip += 1;
+                        *P32(unsigned int *, st->pip) += 1;
                     }
                 } 
                 else if (num1) 
                 {
-                    st->pip[amari + 1] = (sys->sb_id << 16) | num1;
+                    P32(unsigned int *, st->pip)[amari + 1] = (sys->sb_id << 16) | num1;
                 } 
                 else 
                 {
                     if ((sys->sb_id == 4) && ((roomno == 926) || (roomno == 706))) 
                     {
-                        st->pip[amari + 1] = (sys->sb_id << 16) | (unsigned char)sys->itm[224]; 
+                        P32(unsigned int *, st->pip)[amari + 1] = (sys->sb_id << 16) | (unsigned char)sys->itm[224]; 
                     } 
 #ifdef TARGET_PC   /* the lighter into its slot only while that is empty (Claire's lockpick may be there: pc_rules.h), else into this cell */
-                    else if (pc_to_special(st->pip, sys->sb_id, 55, 55))
+                    else if (pc_to_special(P32(unsigned int *, st->pip), sys->sb_id, 55, 55))
 #else
                     else if (sys->sb_id == 55) 
 #endif
                     {
-                        st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+                        st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
                         
-                        st->pip[1] = (sys->sb_id << 16) | *st->gb;
+                        P32(unsigned int *, st->pip)[1] = (sys->sb_id << 16) | *P32(unsigned int *, st->gb);
                     } 
                     else 
                     {
-                        st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+                        st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
                         
-                        st->pip[amari + 1] = (sys->sb_id << 16) | *st->gb;
+                        P32(unsigned int *, st->pip)[amari + 1] = (sys->sb_id << 16) | *P32(unsigned int *, st->gb);
                         
                         if ((sys->sb_id == 31) && (roomno == 1))
                         {
-                            st->pip[amari + 1] &= 0xFFFF0000;
-                            st->pip[amari + 1] |= 0x1;
+                            P32(unsigned int *, st->pip)[amari + 1] &= 0xFFFF0000;
+                            P32(unsigned int *, st->pip)[amari + 1] |= 0x1;
                         }
                         
                         if ((sys->sb_id == 37) && (roomno == 551)) 
                         {
-                            st->pip[amari + 1] |= 0x8000000;
+                            P32(unsigned int *, st->pip)[amari + 1] |= 0x8000000;
                         }
                         
                         if (sys->sb_id == 11) 
                         {
-                            st->pip[amari + 1] |= 0x8000000;
+                            P32(unsigned int *, st->pip)[amari + 1] |= 0x8000000;
                         }
                     }
                     
@@ -4124,11 +4124,11 @@ void GetItem(S_WORK* st)
                     {
                         if (sys->sb_id == 9)
                         {
-                            st->pip[amari + 1] -= 3;
+                            P32(unsigned int *, st->pip)[amari + 1] -= 3;
                         } 
                         else if (sys->sb_id == 3) 
                         {
-                            st->pip[amari + 1] -= 2;
+                            P32(unsigned int *, st->pip)[amari + 1] -= 2;
                         }
                     }
                 }
@@ -4158,17 +4158,17 @@ void GetItem(S_WORK* st)
     {
         swork.statusflg |= 0x100;
         
-        st->gb = (unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode];
+        st->gb = S32((unsigned int*)&getbulletmax[sys->sb_id][sys->gm_mode]);
         
-        st->pip[1] = (sys->sb_id << 16) | *st->gb;
+        P32(unsigned int *, st->pip)[1] = (sys->sb_id << 16) | *P32(unsigned int *, st->gb);
         
-        if (*st->pip == 1)
+        if (*P32(unsigned int *, st->pip) == 1)
         {
             plp->mode3 = 0;
             
             plp->wpnr_no = 0;
             
-            *st->pip = 0;
+            *P32(unsigned int *, st->pip) = 0;
             
             *(int*)&sys->mn_mode0 = 3; 
         }
@@ -4477,7 +4477,7 @@ void WeaponSet(unsigned int wpncsr, unsigned int lt_c)
 	
     st = &swork;
 
-    itemid = st->pip[wpncsr] >> 16;
+    itemid = P32(unsigned int *, st->pip)[wpncsr] >> 16;
     
     wpnno = plp->wpnr_no;
     
@@ -4577,22 +4577,22 @@ void WeaponSet(unsigned int wpncsr, unsigned int lt_c)
     
     if (plp->wpnr_no == wpnno) 
     {
-        if (*st->pip == lt_c)
+        if (*P32(unsigned int *, st->pip) == lt_c)
         {
             plp->wpnr_no = 0;
             
-            *st->pip = 0;
+            *P32(unsigned int *, st->pip) = 0;
             
             sys->gm_flg &= ~0x10000000;
         }
         else
         {
-            *st->pip = lt_c;
+            *P32(unsigned int *, st->pip) = lt_c;
         }
     } 
     else 
     {
-        *st->pip = lt_c;
+        *P32(unsigned int *, st->pip) = lt_c;
     }
     
     swork.statusflg |= 0x4000000;
@@ -4999,7 +4999,7 @@ void ArmsSet(S_WORK* st, unsigned char flg)
     pb99 = parts_14b; 
     pb = parts_19b; 
     
-    cursor = *st->pip; 
+    cursor = *P32(unsigned int *, st->pip); 
     
     if (!(st->subscreenmode & 0x4)) 
     {
@@ -5010,7 +5010,7 @@ void ArmsSet(S_WORK* st, unsigned char flg)
         center = 9;
     }
     
-    itemid = (unsigned char)(st->pip[cursor] >> 16);
+    itemid = (unsigned char)(P32(unsigned int *, st->pip)[cursor] >> 16);
     
     if (!(sys->cb_flg & 0x180000)) 
     {
@@ -5085,7 +5085,7 @@ void ArmsSet(S_WORK* st, unsigned char flg)
             }
         }
         
-        itemid = st->pip[cursor];
+        itemid = P32(unsigned int *, st->pip)[cursor];
         
         num1 = 0;
         
@@ -5466,14 +5466,14 @@ void ItemCombination(S_WORK* st)
                 
                 if ((sys->pad_ps & 0x800)) 
                 {
-                    st->itemid = (st->pip[st->listcsr_0] >> 16) & 0xFF;
+                    st->itemid = (P32(unsigned int *, st->pip)[st->listcsr_0] >> 16) & 0xFF;
                     
                     if ((unsigned char)st->listcsr_0 != (unsigned char)st->listcsr_1) 
                     {
-                        itemid1 = (st->pip[(unsigned char)st->listcsr_0 & 0xFF] >> 16) & 0xFF;
-                        itemid2 = (st->pip[(unsigned char)st->listcsr_1 & 0xFF] >> 16) & 0xFF;
+                        itemid1 = (P32(unsigned int *, st->pip)[(unsigned char)st->listcsr_0 & 0xFF] >> 16) & 0xFF;
+                        itemid2 = (P32(unsigned int *, st->pip)[(unsigned char)st->listcsr_1 & 0xFF] >> 16) & 0xFF;
                         
-                        bullettype = (st->pip[(unsigned char)st->listcsr_0 & 0xFF] >> 16) & 0x7000; 
+                        bullettype = (P32(unsigned int *, st->pip)[(unsigned char)st->listcsr_0 & 0xFF] >> 16) & 0x7000; 
                         
                         if (itemid1 == 6)
                         {
@@ -5500,7 +5500,7 @@ void ItemCombination(S_WORK* st)
                             } 
                         }
                         
-                        tmp = (st->pip[(unsigned char)st->listcsr_1 & 0xFF] >> 16) & 0x7000; 
+                        tmp = (P32(unsigned int *, st->pip)[(unsigned char)st->listcsr_1 & 0xFF] >> 16) & 0x7000; 
                         
                         if (itemid2 == 6) 
                         { 
@@ -5593,8 +5593,8 @@ void ItemCombination(S_WORK* st)
         csrtest1 = st->listcsr_0;
         csrtest2 = st->listcsr_1; 
         
-        moto = &st->pip[st->listcsr_0];
-        aite = &st->pip[st->listcsr_1];
+        moto = &P32(unsigned int *, st->pip)[st->listcsr_0];
+        aite = &P32(unsigned int *, st->pip)[st->listcsr_1];
         
         ok = 0;
         
@@ -5612,7 +5612,7 @@ void ItemCombination(S_WORK* st)
                 ok &= ~0x80;
             }
             
-            if (st->listcsr_0 < *st->pip)
+            if (st->listcsr_0 < *P32(unsigned int *, st->pip))
             {
                 if (ok == 0)
                 {
@@ -5642,7 +5642,7 @@ void ItemCombination(S_WORK* st)
                 ok &= ~0x80; 
             }
             
-            if (st->listcsr_1 < *st->pip)
+            if (st->listcsr_1 < *P32(unsigned int *, st->pip))
             {
                 if (ok == 0) 
                 {
@@ -5666,7 +5666,7 @@ void ItemCombination(S_WORK* st)
         case 2:                                     
             ok = Combi_01(st->cmbitm, moto, aite);
             
-            if (st->listcsr_0 < *st->pip) 
+            if (st->listcsr_0 < *P32(unsigned int *, st->pip)) 
             {
                 if (ok != 3)
                 {
@@ -5691,7 +5691,7 @@ void ItemCombination(S_WORK* st)
                     ok &= ~0x80;
                 }
                 
-                if (st->listcsr_0 < *st->pip)
+                if (st->listcsr_0 < *P32(unsigned int *, st->pip))
                 {
                     if (ok == 1)
                     {
@@ -5721,7 +5721,7 @@ void ItemCombination(S_WORK* st)
                     ok &= ~0x80;
                 }
                 
-                if (st->listcsr_1 < *st->pip) 
+                if (st->listcsr_1 < *P32(unsigned int *, st->pip)) 
                 {
                     if (ok == 1) 
                     {
@@ -5744,7 +5744,7 @@ void ItemCombination(S_WORK* st)
         case 5:                                     
             ok = Combi_01(st->cmbitm, aite, moto);
             
-            if (st->listcsr_1 < *st->pip) 
+            if (st->listcsr_1 < *P32(unsigned int *, st->pip)) 
             {
                 ok = 1;
             }
@@ -5775,7 +5775,7 @@ void ItemCombination(S_WORK* st)
                 case 100:                          
                     ok = Combi_03(st->cmbitm, moto, aite);
                     
-                    if (st->listcsr_0 < *st->pip) 
+                    if (st->listcsr_0 < *P32(unsigned int *, st->pip)) 
                     {
                         ok = 1;
                     } 
@@ -5806,7 +5806,7 @@ void ItemCombination(S_WORK* st)
                 ok = 3;
                 break;
             case 1:                                 
-                if (st->listcsr_0 < *st->pip) 
+                if (st->listcsr_0 < *P32(unsigned int *, st->pip)) 
                 {
                     ok = 1;
                 } 
@@ -5817,7 +5817,7 @@ void ItemCombination(S_WORK* st)
                 
                 break;
             case 2:                                 
-                if (st->listcsr_1 < *st->pip)
+                if (st->listcsr_1 < *P32(unsigned int *, st->pip))
                 {
                     ok = 1;
                 } 
@@ -5846,7 +5846,7 @@ void ItemCombination(S_WORK* st)
             case 1:                                 
                 movedir = 1;
                 
-                if (st->listcsr_1 < *st->pip) 
+                if (st->listcsr_1 < *P32(unsigned int *, st->pip)) 
                 {
                     ok = 1;
                 } 
@@ -5857,7 +5857,7 @@ void ItemCombination(S_WORK* st)
                 
                 break;
             case 2:                                 
-                if (st->listcsr_0 < *st->pip) 
+                if (st->listcsr_0 < *P32(unsigned int *, st->pip)) 
                 {
                     ok = 1;
                 } 
@@ -5873,7 +5873,7 @@ void ItemCombination(S_WORK* st)
         case 9:                                     
             ok = Combi_03(st->cmbitm, moto, aite);
             
-            if (st->listcsr_0 < *st->pip) 
+            if (st->listcsr_0 < *P32(unsigned int *, st->pip)) 
             {
                 ok = 1;
             } 
@@ -5886,7 +5886,7 @@ void ItemCombination(S_WORK* st)
         case 10:                                    
             ok = Combi_05(st->cmbitm, moto, aite);
             
-            if (st->listcsr_0 < *st->pip)
+            if (st->listcsr_0 < *P32(unsigned int *, st->pip))
             {
                 ok = 1;
             } 
@@ -5899,7 +5899,7 @@ void ItemCombination(S_WORK* st)
         case 11:                                    
             ok = Combi_05(st->cmbitm, aite, moto);
             
-            if (st->listcsr_1 < *st->pip)
+            if (st->listcsr_1 < *P32(unsigned int *, st->pip))
             {
                 ok = 1;
             }
@@ -5978,9 +5978,9 @@ void ItemCombination(S_WORK* st)
             return;
         }
         
-        if ((ok == 1) && (((*st->pip > st->listcsr_0) || (*st->pip > st->listcsr_1)) && (*st->pip > 1)))
+        if ((ok == 1) && (((*P32(unsigned int *, st->pip) > st->listcsr_0) || (*P32(unsigned int *, st->pip) > st->listcsr_1)) && (*P32(unsigned int *, st->pip) > 1)))
         {
-            *st->pip -= 1;
+            *P32(unsigned int *, st->pip) -= 1;
         }
         
         swork.statusflg |= 0x800000;
@@ -6469,7 +6469,7 @@ unsigned char Use_01(S_WORK* st)
     
     if ((sys->cb_flg & 0x200))
     {
-        evit = &rom->flrp[sys->flr_idx];
+        evit = &P32(struct ATR_WORK *, rom->flrp)[sys->flr_idx];
         
         if ((evit->prm0 == sys->sb_id) || (evit->prm1 == sys->sb_id) || (evit->prm2 == sys->sb_id) || (evit->prm3 == sys->sb_id))
         {
@@ -6545,13 +6545,13 @@ unsigned char Use_05(S_WORK* st)
 
     if ((sys->cb_flg & 0x200))
     {
-        evit = &rom->flrp[sys->flr_idx];
+        evit = &P32(struct ATR_WORK *, rom->flrp)[sys->flr_idx];
         
         if ((evit->prm0 == sys->sb_id) || (evit->prm1 == sys->sb_id) || (evit->prm2 == sys->sb_id) || (evit->prm3 == sys->sb_id)) 
         {
             if (sys->sb_id == 82)
             {
-                if ((unsigned char)st->pip[st->listcsr_0] != 0) 
+                if ((unsigned char)P32(unsigned int *, st->pip)[st->listcsr_0] != 0) 
                 {
                     StatusCancel(st);
                     
@@ -6577,7 +6577,7 @@ unsigned char Use_05(S_WORK* st)
             } 
             else if (sys->sb_id == 4) 
             {   
-                sys->itm[224] = (unsigned char)st->pip[st->listcsr_0];
+                sys->itm[224] = (unsigned char)P32(unsigned int *, st->pip)[st->listcsr_0];
                 
                 StatusCancel(st);
                 
@@ -6659,7 +6659,7 @@ unsigned char Combi_00(short ps, unsigned int* moto, unsigned int* aite)
     bullettype0 = (*moto >> 16) & 0xFF00;
     bullettype  = (*aite >> 16) & 0xFF00;
 
-    st->gb = (unsigned int*)&getbulletmax[itemid2][sys->gm_mode];
+    st->gb = S32((unsigned int*)&getbulletmax[itemid2][sys->gm_mode]);
     
     if ((itemid1 == 42) || (itemid2 == 42))
     {
@@ -6667,7 +6667,7 @@ unsigned char Combi_00(short ps, unsigned int* moto, unsigned int* aite)
     } 
     else 
     {
-        bltmax = *st->gb;
+        bltmax = *P32(unsigned int *, st->gb);
     }
     
     if ((bullet2 == bltmax) && (itemid1 != 19) && (!(bullettype & 0x800))) 
@@ -6697,7 +6697,7 @@ unsigned char Combi_00(short ps, unsigned int* moto, unsigned int* aite)
             itemid2 = combidata[1 + ps];
         }
         
-        st->gb = (unsigned int*)&getbulletmax[itemid2][sys->gm_mode];
+        st->gb = S32((unsigned int*)&getbulletmax[itemid2][sys->gm_mode]);
         
         if ((itemid1 == 42) || (itemid2 == 42)) 
         {
@@ -6705,7 +6705,7 @@ unsigned char Combi_00(short ps, unsigned int* moto, unsigned int* aite)
         } 
         else 
         {
-            bltmax = *st->gb;
+            bltmax = *P32(unsigned int *, st->gb);
         }
         
         if ((bullet2 > bltmax) && (!(bullettype & 0x800))) 
@@ -6748,7 +6748,7 @@ unsigned char Combi_00(short ps, unsigned int* moto, unsigned int* aite)
         
         ok = 1;
         
-        if ((unsigned char)(st->pip[*st->pip] >> 16) == 9) 
+        if ((unsigned char)(P32(unsigned int *, st->pip)[*P32(unsigned int *, st->pip)] >> 16) == 9) 
         {
             ok = 129;
         }
@@ -6895,7 +6895,7 @@ unsigned char Combi_02(short ps, unsigned int* moto, unsigned int* aite)
     
     if (itemid2 == 6)
     {
-        if ((*swork.pip == swork.listcsr_0) || (*swork.pip == swork.listcsr_1))
+        if ((*P32(unsigned int *, swork.pip) == swork.listcsr_0) || (*P32(unsigned int *, swork.pip) == swork.listcsr_1))
         {
             ok = 128;
         }
@@ -6931,7 +6931,7 @@ unsigned char Combi_02(short ps, unsigned int* moto, unsigned int* aite)
     } 
     else if (itemid2 == 7)
     {
-        if ((*swork.pip == swork.listcsr_0) || (*swork.pip == swork.listcsr_1)) 
+        if ((*P32(unsigned int *, swork.pip) == swork.listcsr_0) || (*P32(unsigned int *, swork.pip) == swork.listcsr_1)) 
         {
             ok = 128;
         }
@@ -7020,9 +7020,9 @@ unsigned char Combi_03(short ps, unsigned int* moto, unsigned int* aite)
 
     bullet2 = (&combidata[1])[ps];
     
-    swork.gb = (unsigned int*)&getbulletmax[bullet2][sys->gm_mode];
+    swork.gb = S32((unsigned int*)&getbulletmax[bullet2][sys->gm_mode]);
 
-    tmp = *(unsigned short*)swork.gb;
+    tmp = *(unsigned short*)P32(unsigned int *, swork.gb);
     
     *moto = 0;
     *aite = (bullet2 << 16) | tmp;
@@ -7116,9 +7116,9 @@ unsigned char Combi_05(short ps, unsigned int* moto, unsigned int* aite) // firs
     
     bullet2 = dbwtbl[chgid][bullet1 - 1];  
     
-    st->gb = (unsigned int*)&getbulletmax[bullet2][sys->gm_mode]; 
+    st->gb = S32((unsigned int*)&getbulletmax[bullet2][sys->gm_mode]); 
 
-    bullet1 = *st->gb;
+    bullet1 = *P32(unsigned int *, st->gb);
     
     *moto = 0;
     *aite = (bullet2 << 16) | bullet1;
@@ -7137,20 +7137,20 @@ unsigned char Combi_99(short ps, unsigned short moto, unsigned short aite) // fi
 
     st = &swork; 
     
-    itemid1    = (st->pip[moto] >> 16) & 0xFF;
-    itemid2    = (st->pip[aite] >> 16) & 0xFF;
+    itemid1    = (P32(unsigned int *, st->pip)[moto] >> 16) & 0xFF;
+    itemid2    = (P32(unsigned int *, st->pip)[aite] >> 16) & 0xFF;
     
-    bt         = (st->pip[moto] >> 16) & 0xFF00;
-    bullettype = (st->pip[aite] >> 16) & 0xFF00;
+    bt         = (P32(unsigned int *, st->pip)[moto] >> 16) & 0xFF00;
+    bullettype = (P32(unsigned int *, st->pip)[aite] >> 16) & 0xFF00;
     
-    bullet1    = st->pip[moto];
-    bullet2    = st->pip[aite];
+    bullet1    = P32(unsigned int *, st->pip)[moto];
+    bullet2    = P32(unsigned int *, st->pip)[aite];
     
     if ((bt & 0x800)) 
     {
-        st->gb = (unsigned int*)&getbulletmax[itemid2][sys->gm_mode];
+        st->gb = S32((unsigned int*)&getbulletmax[itemid2][sys->gm_mode]);
         
-        bullet2 = *st->gb;
+        bullet2 = *P32(unsigned int *, st->gb);
         
         ok = 2;
     } 
@@ -7158,14 +7158,14 @@ unsigned char Combi_99(short ps, unsigned short moto, unsigned short aite) // fi
     {
         bullet2 += bullet1;
         
-        st->gb = (unsigned int*)&getbulletmax[itemid2][sys->gm_mode];
+        st->gb = S32((unsigned int*)&getbulletmax[itemid2][sys->gm_mode]);
         
-        if (*st->gb < bullet2) 
+        if (*P32(unsigned int *, st->gb) < bullet2) 
         {
             ok = 2;
             
-            bullet1 = bullet2 - *st->gb;
-            bullet2 = *st->gb;
+            bullet1 = bullet2 - *P32(unsigned int *, st->gb);
+            bullet2 = *P32(unsigned int *, st->gb);
         } 
         else 
         {
@@ -7181,8 +7181,8 @@ unsigned char Combi_99(short ps, unsigned short moto, unsigned short aite) // fi
         itemid2 |= 0x2000;
     }
     
-    st->pip[moto] = bullet1 | ((itemid1 | (bt & 0x800)) << 16);
-    st->pip[aite] = bullet2 | ((itemid2 | ((bullettype & 0xFF00) & 0x800)) << 16);
+    P32(unsigned int *, st->pip)[moto] = bullet1 | ((itemid1 | (bt & 0x800)) << 16);
+    P32(unsigned int *, st->pip)[aite] = bullet2 | ((itemid2 | ((bullettype & 0xFF00) & 0x800)) << 16);
     
     return ok;
 }
@@ -7212,13 +7212,13 @@ void ItemBox(S_WORK* st)
     
     do 
     {
-        if (!(itemdata[(st->pip[num1 + 2] >> 16) & 0xFF].type & 0x100)) 
+        if (!(itemdata[(P32(unsigned int *, st->pip)[num1 + 2] >> 16) & 0xFF].type & 0x100)) 
         {
             sakai = num1 + 2;
             
             num1 = 0;
         } 
-        else if ((itemdata[(st->pip[num1 + 2] >> 16) & 0xFF].type & 0x100))
+        else if ((itemdata[(P32(unsigned int *, st->pip)[num1 + 2] >> 16) & 0xFF].type & 0x100))
         { 
             num1++;
         }
@@ -7790,13 +7790,13 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
     
     chk2 = 0;
     
-	itemid1 = st->pip[lt_c];
-	itemid2 = st->bxp[ibcsr];
+	itemid1 = P32(unsigned int *, st->pip)[lt_c];
+	itemid2 = P32(unsigned int *, st->bxp)[ibcsr];
     
-	id1 = (st->pip[lt_c]  >> 16) & 0xFF;
-    id2 = (st->bxp[ibcsr] >> 16) & 0xFF;
+	id1 = (P32(unsigned int *, st->pip)[lt_c]  >> 16) & 0xFF;
+    id2 = (P32(unsigned int *, st->bxp)[ibcsr] >> 16) & 0xFF;
     
-    arms = (st->pip[*st->pip] >> 16) & 0xFF;
+    arms = (P32(unsigned int *, st->pip)[*P32(unsigned int *, st->pip)] >> 16) & 0xFF;
  
 	if (sys->ply_id == 0) 
     {
@@ -7836,7 +7836,7 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 
 	for (num1 = 0, bmax = max; num1 < max; num1++) 
     {
-        wpn = (st->pip[num1 + 2] >> 16) & 0xFF;
+        wpn = (P32(unsigned int *, st->pip)[num1 + 2] >> 16) & 0xFF;
         
         if ((itemdata[wpn].type & 0x100)) 
         {
@@ -7926,7 +7926,7 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 			chk2 = 1;
             
 #ifdef TARGET_PC   /* into the special slot only while it is empty, else into the cell as any item (pc_rules.h): the game wrote it over the lighter or lockpick there */
-			if (pc_to_special(st->pip, id2, standard[sys->ply_id][0], standard[sys->ply_id][1]))
+			if (pc_to_special(P32(unsigned int *, st->pip), id2, standard[sys->ply_id][0], standard[sys->ply_id][1]))
 #else
 			if ((id2 == standard[sys->ply_id][0]) || (id2 == standard[sys->ply_id][1]))
 #endif
@@ -7951,8 +7951,8 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 		{
 			for (x = 0; x < max; x++)
 			{
-				id1    = (st->pip[(unsigned int)x + 2] >> 16) & 0xFF;   
-                bullet = (st->pip[(unsigned int)x + 2] >> 0)  & 0xFFFF;      
+				id1    = (P32(unsigned int *, st->pip)[(unsigned int)x + 2] >> 16) & 0xFF;   
+                bullet = (P32(unsigned int *, st->pip)[(unsigned int)x + 2] >> 0)  & 0xFFFF;      
  
 				if ((id1 == id2) && (bullet < 999))
 				{
@@ -7968,17 +7968,17 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
     
 	if (chk2 != 2)
 	{
-		id1 = (st->pip[lt_c]  >> 16) & 0xFF;
-		id2 = (st->bxp[ibcsr] >> 16) & 0xFF;
+		id1 = (P32(unsigned int *, st->pip)[lt_c]  >> 16) & 0xFF;
+		id2 = (P32(unsigned int *, st->bxp)[ibcsr] >> 16) & 0xFF;
 	}
     
 	if (chk2 == 1)
 	{
-		if (*st->pip == lt_c)
+		if (*P32(unsigned int *, st->pip) == lt_c)
 		{
 			parts_14b->atr &= ~0x20;
             
-			*st->pip = 0;
+			*P32(unsigned int *, st->pip) = 0;
             
 			plp->mode3 = 0;
             
@@ -7987,15 +7987,15 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 			*(int*)&sys->mn_mode0 = 3;
 		}
         
-		st->bxp[ibcsr] = itemid1;
-		st->pip[lt_c2] = itemid2;
+		P32(unsigned int *, st->bxp)[ibcsr] = itemid1;
+		P32(unsigned int *, st->pip)[lt_c2] = itemid2;
 		
         if (lt_c3)
 		{
-			st->pip[lt_c3] = itemid3;
+			P32(unsigned int *, st->pip)[lt_c3] = itemid3;
 		}
         
-		if ((*st->pip > 1) && (lt_c != 1))
+		if ((*P32(unsigned int *, st->pip) > 1) && (lt_c != 1))
 		{
 #ifdef TARGET_PC   /* the cell was emptied: nothing came in, or the item went to the special slot (lt_c3, above) */
 			if ((!id2) || (lt_c3 == lt_c))
@@ -8003,9 +8003,9 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 			if ((!id2) || ((id2 == standard[sys->ply_id][0]) || (id2 == standard[sys->ply_id][1])))
 #endif
 			{
-				if (lt_c < *st->pip)
+				if (lt_c < *P32(unsigned int *, st->pip))
 				{
-					*st->pip -= 1;
+					*P32(unsigned int *, st->pip) -= 1;
 				}
 			}
 			else if (id2)
@@ -8014,30 +8014,30 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
                 {
                     if ((itemdata[id2].type & 0x100)) 
                     {
-                        if (((!(itemdata[id1].type & 0x100)) && (!(itemdata[arms].type & 0x100))) && (*st->pip < lt_c)) 
+                        if (((!(itemdata[id1].type & 0x100)) && (!(itemdata[arms].type & 0x100))) && (*P32(unsigned int *, st->pip) < lt_c)) 
                         {
-                            *st->pip += 1;
+                            *P32(unsigned int *, st->pip) += 1;
                         }
                     } 
-                    else if (((!(itemdata[id2].type & 0x100)) && ((itemdata[id1].type & 0x100))) && (*st->pip > lt_c) && ((itemdata[arms].type & 0x100))) 
+                    else if (((!(itemdata[id2].type & 0x100)) && ((itemdata[id1].type & 0x100))) && (*P32(unsigned int *, st->pip) > lt_c) && ((itemdata[arms].type & 0x100))) 
                     {
-                        *st->pip -= 1;
+                        *P32(unsigned int *, st->pip) -= 1;
                     }
                 } 
                 else if (((itemdata[id2].type & 0x100)) && (!(itemdata[arms].type & 0x100))) 
                 {
-                    *st->pip += 1;
+                    *P32(unsigned int *, st->pip) += 1;
                 }
 			}
 		}
-		else if ((*st->pip > 1) && (lt_c == 1))
+		else if ((*P32(unsigned int *, st->pip) > 1) && (lt_c == 1))
 		{
-			chk  = *st->pip;
-			arms = (st->pip[chk] >> 16) & 0xFF;
+			chk  = *P32(unsigned int *, st->pip);
+			arms = (P32(unsigned int *, st->pip)[chk] >> 16) & 0xFF;
             
 			if (((itemdata[id2].type & 0x100)) && (!(itemdata[arms].type & 0x100)))
 			{
-				*st->pip += 1;
+				*P32(unsigned int *, st->pip) += 1;
 			}
 		}
         
@@ -8072,7 +8072,7 @@ void ItemBoxChange(S_WORK* st, unsigned short ibcsr)
 			{
 				if (id1 == combidata[x]) 
                 {
-                    Combi_01(x, &st->bxp[ibcsr], &st->pip[num1]);
+                    Combi_01(x, &P32(unsigned int *, st->bxp)[ibcsr], &P32(unsigned int *, st->pip)[num1]);
                 }
 
                 x += 3;
@@ -8126,102 +8126,102 @@ void BorderLineSet(S_WORK* st, unsigned char border, float ypos)
         flg2++;
     }
     
-    p2c->p = p;
-    p2c->col = col;
-    p2c->tex = NULL;
+    p2c->p = S32(p);
+    p2c->col = S32(col);
+    p2c->tex = S32(NULL);
     
     if (border) 
     {
-        p2c->p[0].x = 44.0f;
-        p2c->p[0].y = floorf(ypos + cen_pos[10][1]);
+        P32(NJS_POINT2 *, p2c->p)[0].x = 44.0f;
+        P32(NJS_POINT2 *, p2c->p)[0].y = floorf(ypos + cen_pos[10][1]);
         
-        p2c->p[1].x = 408.0f;
-        p2c->p[1].y = floorf(ypos + cen_pos[10][1]);
+        P32(NJS_POINT2 *, p2c->p)[1].x = 408.0f;
+        P32(NJS_POINT2 *, p2c->p)[1].y = floorf(ypos + cen_pos[10][1]);
         
-        p2c->col[0].argb.a = 0xFF;
-        p2c->col[0].argb.r = 0xFF;
-        p2c->col[0].argb.g = 0;
-        p2c->col[0].argb.b = 0;
+        P32(NJS_COLOR *, p2c->col)[0].argb.a = 0xFF;
+        P32(NJS_COLOR *, p2c->col)[0].argb.r = 0xFF;
+        P32(NJS_COLOR *, p2c->col)[0].argb.g = 0;
+        P32(NJS_COLOR *, p2c->col)[0].argb.b = 0;
         
-        p2c->col[1].argb.a = 0xFF;
-        p2c->col[1].argb.r = 0xFF;
-        p2c->col[1].argb.g = 0; 
-        p2c->col[1].argb.b = 0;
+        P32(NJS_COLOR *, p2c->col)[1].argb.a = 0xFF;
+        P32(NJS_COLOR *, p2c->col)[1].argb.r = 0xFF;
+        P32(NJS_COLOR *, p2c->col)[1].argb.g = 0; 
+        P32(NJS_COLOR *, p2c->col)[1].argb.b = 0;
         
         num1 += 2;
     }
     
-    p2c->p[num1].x = 44.0f;
-    p2c->p[num1].y = floorf(145.0f + cen_pos[10][1]);
+    P32(NJS_POINT2 *, p2c->p)[num1].x = 44.0f;
+    P32(NJS_POINT2 *, p2c->p)[num1].y = floorf(145.0f + cen_pos[10][1]);
     
-    p2c->p[num1 + 1].x = 408.0f;
-    p2c->p[num1 + 1].y = floorf(145.0f + cen_pos[10][1]);
+    P32(NJS_POINT2 *, p2c->p)[num1 + 1].x = 408.0f;
+    P32(NJS_POINT2 *, p2c->p)[num1 + 1].y = floorf(145.0f + cen_pos[10][1]);
     
-    p2c->col[num1].argb.a = 0x80;
-    
-    if ((st->testmode == 2) && (!(sys->st_flg & 0x200))) 
-    {
-        p2c->col[num1].argb.r = 0xFF - colset;
-        p2c->col[num1].argb.g = 0xFF - colset;
-    } 
-    else 
-    {
-        p2c->col[num1].argb.r = 0x9F;
-        p2c->col[num1].argb.g = 0x9F;
-    }
-    
-    p2c->col[num1].argb.b = 0;
-    p2c->col[num1 + 1].argb.a = 0x80;
+    P32(NJS_COLOR *, p2c->col)[num1].argb.a = 0x80;
     
     if ((st->testmode == 2) && (!(sys->st_flg & 0x200))) 
     {
-        p2c->col[num1 + 1].argb.r = 0xFF - colset;
-        p2c->col[num1 + 1].argb.g = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.r = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.g = 0xFF - colset;
     } 
     else 
     {
-        p2c->col[num1 + 1].argb.r = 0x9F;
-        p2c->col[num1 + 1].argb.g = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.r = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.g = 0x9F;
     }
     
-    p2c->col[num1 + 1].argb.b = 0;
+    P32(NJS_COLOR *, p2c->col)[num1].argb.b = 0;
+    P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.a = 0x80;
+    
+    if ((st->testmode == 2) && (!(sys->st_flg & 0x200))) 
+    {
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.r = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.g = 0xFF - colset;
+    } 
+    else 
+    {
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.r = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.g = 0x9F;
+    }
+    
+    P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.b = 0;
 
     num1 += 2;
 
-    p2c->p[num1].x = 36.0f;
-    p2c->p[num1].y = floorf(183.0f + cen_pos[10][1]);
+    P32(NJS_POINT2 *, p2c->p)[num1].x = 36.0f;
+    P32(NJS_POINT2 *, p2c->p)[num1].y = floorf(183.0f + cen_pos[10][1]);
     
-    p2c->p[num1 + 1].x = 408.0f;
-    p2c->p[num1 + 1].y = floorf(183.0f + cen_pos[10][1]);
+    P32(NJS_POINT2 *, p2c->p)[num1 + 1].x = 408.0f;
+    P32(NJS_POINT2 *, p2c->p)[num1 + 1].y = floorf(183.0f + cen_pos[10][1]);
     
-    p2c->col[num1].argb.a = 0;
+    P32(NJS_COLOR *, p2c->col)[num1].argb.a = 0;
     
     if ((st->testmode == 2) && (!(sys->st_flg & 0x200))) 
     {
-        p2c->col[num1].argb.r = 0xFF - colset;
-        p2c->col[num1].argb.g = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.r = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.g = 0xFF - colset;
     } 
     else
     {
-        p2c->col[num1].argb.r = 0x9F;
-        p2c->col[num1].argb.g = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.r = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1].argb.g = 0x9F;
     }
     
-    p2c->col[num1].argb.b = 0;
-    p2c->col[num1 + 1].argb.a = 0x80;
+    P32(NJS_COLOR *, p2c->col)[num1].argb.b = 0;
+    P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.a = 0x80;
     
     if ((st->testmode == 2) && (!(sys->st_flg & 0x200))) 
     {
-        p2c->col[num1 + 1].argb.r = 0xFF - colset;
-        p2c->col[num1 + 1].argb.g = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.r = 0xFF - colset;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.g = 0xFF - colset;
     } 
     else 
     {
-        p2c->col[num1 + 1].argb.r = 0x9F;
-        p2c->col[num1 + 1].argb.g = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.r = 0x9F;
+        P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.g = 0x9F;
     }
     
-    p2c->col[num1 + 1].argb.b = 0x80;
+    P32(NJS_COLOR *, p2c->col)[num1 + 1].argb.b = 0x80;
 
     num1 += 2;
     
@@ -8333,7 +8333,7 @@ void SpriteOnOff(S_WORK* st)
   
     while (num1) 
     {
-        if (st->bxp[num1 - 1] != 0)  
+        if (P32(unsigned int *, st->bxp)[num1 - 1] != 0)  
         {
             parts_15b[18].anim = 17;
             parts_15b[19].anim = 17;
@@ -8373,7 +8373,7 @@ void SpriteOnOff(S_WORK* st)
     
     if (!(st->subscreenmode & 0x88)) 
     {
-        st->itemid = (unsigned char)(st->pip[st->listcsr_0] >> 16);
+        st->itemid = (unsigned char)(P32(unsigned int *, st->pip)[st->listcsr_0] >> 16);
     }
     
     if ((!(st->subscreenmode & 0x8)) && (st->subcsr != 3)) 
@@ -8404,7 +8404,7 @@ void SpriteOnOff(S_WORK* st)
                 ips2 &= 0x7F;
             }
             
-            itemid = (unsigned char)(st->bxp[ips2] >> 16);
+            itemid = (unsigned char)(P32(unsigned int *, st->bxp)[ips2] >> 16);
             
             ipos.x = 16.0f + cen_pos[10][0];
             ipos.y = pb->pos[1] + cen_pos[10][1];
@@ -8414,14 +8414,14 @@ void SpriteOnOff(S_WORK* st)
                 switch (itemid)
                 {            
                 case 0x48:                      
-                    if ((st->bxp[ips2] & 0x80000000)) 
+                    if ((P32(unsigned int *, st->bxp)[ips2] & 0x80000000)) 
                     {
                         itemid = 158;
                     }
                     
                     break;
                 case 0x52:                      
-                    if ((unsigned char)st->bxp[ips2] == 0)
+                    if ((unsigned char)P32(unsigned int *, st->bxp)[ips2] == 0)
                     {
                         itemid = 149;
                     }
@@ -8448,14 +8448,14 @@ void SpriteOnOff(S_WORK* st)
         switch (itemid)
         {                         
         case 0x48:                                  
-            if ((st->pip[st->listcsr_0] & 0x80000000))
+            if ((P32(unsigned int *, st->pip)[st->listcsr_0] & 0x80000000))
             {
                 itemid = 158;
             }
             
             break;
         case 0x52:                                  
-            if ((unsigned char)st->pip[st->listcsr_0] == 0)
+            if ((unsigned char)P32(unsigned int *, st->pip)[st->listcsr_0] == 0)
             {
                 itemid = 149;
             }
@@ -8509,7 +8509,7 @@ void AllItemInit()
     unsigned int j;             
     int temp;                 
     
-    swork.pip = sys->itm;
+    swork.pip = S32(sys->itm);
     
     for (num1 = 0; num1 < 384; num1++)
     {
@@ -8561,8 +8561,8 @@ void AllItemInit()
     {
         temp = 0;
         
-        swork.pip[1] = 0x370001;
-        swork.pip[2] = 0x910001;
+        P32(unsigned int *, swork.pip)[1] = 0x370001;
+        P32(unsigned int *, swork.pip)[2] = 0x910001;
         
         sys->ic_flg[15] &= ~0x80000000;
         
@@ -8570,41 +8570,41 @@ void AllItemInit()
         
         if ((sys->ssd_flg & 0x2))
         {
-            swork.pip[temp + 2] = 0x8010001;
+            P32(unsigned int *, swork.pip)[temp + 2] = 0x8010001;
             
             temp++; 
         }
         
         if (sys->gm_mode == 2)
         {
-            swork.pip[temp + 2] = 0x81F0001;
+            P32(unsigned int *, swork.pip)[temp + 2] = 0x81F0001;
         }
     }
     
     if (sys->gm_mode != 3) 
     {
-        swork.pip = &sys->itm[16];
+        swork.pip = S32(&sys->itm[16]);
         
-        swork.pip[1] = 0;
-        swork.pip[2] = 0x80001;
-        swork.pip[3] = 0x50012;
-        swork.pip[4] = 0xC001E;
-        swork.pip[5] = 0x140001;
+        P32(unsigned int *, swork.pip)[1] = 0;
+        P32(unsigned int *, swork.pip)[2] = 0x80001;
+        P32(unsigned int *, swork.pip)[3] = 0x50012;
+        P32(unsigned int *, swork.pip)[4] = 0xC001E;
+        P32(unsigned int *, swork.pip)[5] = 0x140001;
         
         if (sys->gm_mode == 2) 
         {
-            swork.pip[6] = 0x81F0001;
+            P32(unsigned int *, swork.pip)[6] = 0x81F0001;
         }
     }
     
-    swork.pip = &sys->itm[32];
+    swork.pip = S32(&sys->itm[32]);
     
-    swork.pip[1] = 0x8A0001;
+    P32(unsigned int *, swork.pip)[1] = 0x8A0001;
     
     if (sys->gm_mode != 3) 
     {
-        swork.pip[0] = 2;
-        swork.pip[2] = 0x220190;
+        P32(unsigned int *, swork.pip)[0] = 2;
+        P32(unsigned int *, swork.pip)[2] = 0x220190;
     }
     
     sys->itm[383] = 1;
@@ -8635,14 +8635,14 @@ void ExtraGameItemInit()
         ply_id = sys->cng_pid;
     }
     
-    st->pip = &sys->itm[sys->cng_pid * 16];
+    st->pip = S32(&sys->itm[sys->cng_pid * 16]);
     
     if ((sys->ssd_flg & 0x80000000)) 
     {
         i = 1;
         j = 0;
         
-        st->pip[2] = 0x80B0001;
+        P32(unsigned int *, st->pip)[2] = 0x80B0001;
     } 
     else 
     {
@@ -8654,9 +8654,9 @@ void ExtraGameItemInit()
     {
         itemid = itemset[ply_id][j + 1];
          
-        st->gb = (unsigned int*)&getbulletmax[(unsigned char)itemid][sys->gm_mode];
+        st->gb = S32((unsigned int*)&getbulletmax[(unsigned char)itemid][sys->gm_mode]);
         
-        st->pip[i + 2] = (itemid << 16) | *st->gb;
+        P32(unsigned int *, st->pip)[i + 2] = (itemid << 16) | *P32(unsigned int *, st->gb);
     }
 }
 
@@ -8740,7 +8740,7 @@ void ItemBoxIconSet(S_WORK* st)
             ips2 &= 0x7F;
         }
         
-        itemid = (st->bxp[ips2] >> 16) & 0xFF;
+        itemid = (P32(unsigned int *, st->bxp)[ips2] >> 16) & 0xFF;
         
         itemno = itemid; 
         
@@ -8948,9 +8948,9 @@ int bhSearchBullet()
         max = 10;
     }
 
-    wpn = (st->pip[*st->pip] >> 16) & 0xFF;
+    wpn = (P32(unsigned int *, st->pip)[*P32(unsigned int *, st->pip)] >> 16) & 0xFF;
     
-    bullettype = (st->pip[*st->pip] >> 16) & 0xFF00;
+    bullettype = (P32(unsigned int *, st->pip)[*P32(unsigned int *, st->pip)] >> 16) & 0xFF00;
 
     if ((wpn == 7) && ((bullettype & 0x2000)))
     {
@@ -8961,7 +8961,7 @@ int bhSearchBullet()
     
     for (i = 0; i < max; i++)
     {
-        y = ((st->pip + i)[2] >> 16) & 0xFF;
+        y = ((P32(unsigned int *, st->pip) + i)[2] >> 16) & 0xFF;
         
         if ((itemdata[y].type & 0x2))
         {
@@ -8973,11 +8973,11 @@ int bhSearchBullet()
             {
                 if ((wpn == combidata[it]) && ((combidata[it + 2] & 0xF000)))
                 {
-                    x = Combi_99(it, i + 2, (unsigned short)*st->pip);
+                    x = Combi_99(it, i + 2, (unsigned short)*P32(unsigned int *, st->pip));
                     
-                    if ((x == 1) && (*st->pip > (i + 2)))
+                    if ((x == 1) && (*P32(unsigned int *, st->pip) > (i + 2)))
                     {
-                        *st->pip = *st->pip - 1;
+                        *P32(unsigned int *, st->pip) = *P32(unsigned int *, st->pip) - 1;
                     }
                     
                     ItemSort();
@@ -9037,7 +9037,7 @@ void BgColorInit()
 // 100% matching!
 void CursorInit(NJS_TEXANIM* disp_a00, PARTS* disp_b00, S_WORK* st)
 {
-    if ((((unsigned short*)&itemdata->type)[((st->pip[2] >> 16) & 0xFF) * 3] & 0x100))  
+    if ((((unsigned short*)&itemdata->type)[((P32(unsigned int *, st->pip)[2] >> 16) & 0xFF) * 3] & 0x100))  
     {
         disp_a00->sx = 144;
     }
@@ -9076,7 +9076,7 @@ unsigned int* ItemSearch(unsigned short itemid)
 	unsigned int searchid; 
 	unsigned short num1;  
 
-    wp = &swork.pip[1];
+    wp = &P32(unsigned int *, swork.pip)[1];
 
 	for (num1 = 0; num1 < 11; num1++) 
 	{
@@ -9100,12 +9100,12 @@ void EraseItem(unsigned int* wp)
 
 	st = &swork;
 
-	if (wp >= (st->pip + *st->pip)) 
+	if (wp >= (P32(unsigned int *, st->pip) + *P32(unsigned int *, st->pip))) 
 	{
 		return;
 	}
 
-	*st->pip -= 1;
+	*P32(unsigned int *, st->pip) -= 1;
 
 	ItemSort();
 }
@@ -9131,8 +9131,8 @@ void SbsTextureInit()
 {
 	PushPalletBuffer();
     
-    swork.subtx_list.textures = swork.subtx;
-    swork.subtx_list.nbTexture = bhSetMemPvpTexture(&swork.subtx_list, sys->subtxp, 0);
+    swork.subtx_list.textures = S32(swork.subtx);
+    swork.subtx_list.nbTexture = bhSetMemPvpTexture(&swork.subtx_list, P32(unsigned char *, sys->subtxp), 0);
 	
     fvwork.tex_flg = 0;
 }
@@ -9988,16 +9988,16 @@ void DrawPoly2D(NJS_POINT2* pos00, NJS_COLOR* col00, NJS_COLOR* uv00, float pri,
     njSetTexture(&swork.subtx_list);
     njSetTextureNum(texnum);
     
-    p2c.p = p;
-    p2c.col = col;
+    p2c.p = S32(p);
+    p2c.col = S32(col);
     
     if ((atr & 0x80000000))
     {
-        p2c.tex = uv;
+        p2c.tex = S32(uv);
     } 
     else 
     {
-        p2c.tex = NULL;
+        p2c.tex = S32(NULL);
     }
     
     p2c.num = 1;
@@ -10052,9 +10052,9 @@ void FadePolyDisp()
 
     sfe->alpha = sfe->cnt00;
     
-    p2c.p = p;
-    p2c.col = col;
-    p2c.tex = NULL;
+    p2c.p = S32(p);
+    p2c.col = S32(col);
+    p2c.tex = S32(NULL);
     p2c.num = 4;
     
     if ((sfe->flg & 0x1)) 
