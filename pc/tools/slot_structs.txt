@@ -117,3 +117,5 @@ NJS_TEXPALETTE
 NJS_TEXSURFACE
 cnkobj
 obj
+# Katana SDK structures embedded in the game's (SYS_WORK.ms_per)
+PDS_PERIPHERAL
