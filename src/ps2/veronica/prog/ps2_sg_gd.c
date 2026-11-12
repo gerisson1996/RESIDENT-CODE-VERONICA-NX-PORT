@@ -135,20 +135,20 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
     __gds_fs_work->pathtbl_fad = 0;
     __gds_fs_work->pathtbl_size = 0;
     
-    __gds_fs_work->dcf = NULL;
+    __gds_fs_work->dcf = S32(NULL);
     
-    __gds_fs_work->curdir = dirbuf;
+    __gds_fs_work->curdir = S32(dirbuf);
     
-    __gds_fs_work->syshdl = NULL;
+    __gds_fs_work->syshdl = S32(NULL);
     
-    __gds_fs_work->hndtbl = NULL;
+    __gds_fs_work->hndtbl = S32(NULL);
     
-    __gds_fs_work->now_work = NULL;
+    __gds_fs_work->now_work = S32(NULL);
     
     __gds_fs_work->f_svr = 0;
     
-    __gds_fs_work->g_errcb = NULL;
-    __gds_fs_work->g_errcb_1st = NULL;
+    __gds_fs_work->g_errcb = S32(NULL);
+    __gds_fs_work->g_errcb_1st = S32(NULL);
     
     __gds_fs_work->gdc_ver = 65792;
     
@@ -160,7 +160,7 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
     
     __gds_fs_work->daplayed = 0;
     
-    __gds_fs_work->liftbl = NULL;
+    __gds_fs_work->liftbl = S32(NULL);
 
     for (i = 0; i < 1040; i++) 
     {
@@ -169,7 +169,7 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
     
     for (i = 0; i < max_open; i++) 
     {
-        __file_handle[i].wk = gdfs_work;
+        __file_handle[i].wk = S32(gdfs_work);
         
         __file_handle[i].fid = 0;
         __file_handle[i].fad = 0;
@@ -184,14 +184,14 @@ Sint32  gdFsInit(Sint32 max_open, void *gdfs_work, Sint32 max_dirent, void *dirb
         __file_handle[i].rsize = 0;
         __file_handle[i].trsize = 0;
         
-        __file_handle[i].rdendcb = NULL;
-        __file_handle[i].rdcb_1st = NULL;
+        __file_handle[i].rdendcb = S32(NULL);
+        __file_handle[i].rdcb_1st = S32(NULL);
         
-        __file_handle[i].trendcb = NULL;
-        __file_handle[i].trcb_1st = NULL;
+        __file_handle[i].trendcb = S32(NULL);
+        __file_handle[i].trcb_1st = S32(NULL);
         
-        __file_handle[i].errcb = NULL;
-        __file_handle[i].errcb_1st = NULL;
+        __file_handle[i].errcb = S32(NULL);
+        __file_handle[i].errcb_1st = S32(NULL);
         
         __file_handle[i].gdchn = 0;
         __file_handle[i].gdchn_wait = 0;

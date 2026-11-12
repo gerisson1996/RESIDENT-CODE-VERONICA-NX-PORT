@@ -160,7 +160,7 @@ typedef struct GDS_FS_LIF GDFS_LIF;
 
 /* GDFS File Handle */
 typedef struct GDS_FS_HANDLE {
-	GDFS_WORK *wk;		/* pointer of lib work */
+	ps2ptr_t wk; /* GDFS_WORK *wk */		/* pointer of lib work */
 	Sint32 fid;		/* file id */
 	Sint32 fad;		/* fad */
 	Sint32 fsize;		/* file size */
@@ -169,12 +169,12 @@ typedef struct GDS_FS_HANDLE {
 	Sint32 trnsed;		/* transfered size */
 	Sint32 rsize;		/* reading size */
 	Sint32 trsize;		/* transfering size */
-	void (*rdendcb)(void *);		/* read_end callback */
-	void *rdcb_1st;		/* read_end callback 1st arg. */
-	void (*trendcb)(void *);		/* trans_end callback */
-	void *trcb_1st;		/* trans_end callback 1st arg. */
-	void (*errcb)(void *, Sint32);		/* error callback */
-	void *errcb_1st;		/* error callback 1st arg. */
+	ps2ptr_t rdendcb; /* void (*rdendcb)(void *) */		/* read_end callback */
+	ps2ptr_t rdcb_1st; /* void *rdcb_1st */		/* read_end callback 1st arg. */
+	ps2ptr_t trendcb; /* void (*trendcb)(void *) */		/* trans_end callback */
+	ps2ptr_t trcb_1st; /* void *trcb_1st */		/* trans_end callback 1st arg. */
+	ps2ptr_t errcb; /* void (*errcb)(void *, Sint32) */		/* error callback */
+	ps2ptr_t errcb_1st; /* void *errcb_1st */		/* error callback 1st arg. */
 	Sint32 gdchn;			/* gdc handle */
 	volatile Sint32 gdchn_wait;		/* gdc wait type */
 	Sint32 ex_errcode;		/* extra error code */
@@ -227,20 +227,20 @@ struct GDS_FS_WORK {
 	Sint32 max_open;		/* max open files */
 	Sint32 pathtbl_fad;		/* fad of path table */
 	Sint32 pathtbl_size;	/* size of path table */
-	GD_DCF *dcf;		/* device control function table */
-	GDFS_DIRREC curdir;		/* current directory handle */
-	GDFS syshdl;		/* handle for system command */
-	GDFS hndtbl;		/* handle */
-	volatile GDFS now_work;		/* working handle */
+	ps2ptr_t dcf; /* GD_DCF *dcf */		/* device control function table */
+	ps2ptr_t curdir; /* GDFS_DIRREC curdir */		/* current directory handle */
+	ps2ptr_t syshdl; /* GDFS syshdl */		/* handle for system command */
+	ps2ptr_t hndtbl; /* GDFS hndtbl */		/* handle */
+	ps2ptr_t now_work; /* volatile GDFS now_work */		/* working handle */
 	volatile Sint32 f_svr;		/* server flag */
-	void (*g_errcb)(void *, Sint32);		/* error callback */
-	void *g_errcb_1st;		/* error callback 1st arg. */
+	ps2ptr_t g_errcb; /* void (*g_errcb)(void *, Sint32) */		/* error callback */
+	ps2ptr_t g_errcb_1st; /* void *g_errcb_1st */		/* error callback 1st arg. */
 	Sint32 gdc_ver;		/* gdc version */
 	Sint32 errstat;		/* global error */
 	Sint32 istray;		/* tray open flag */
 	Sint16 f_init;		/* init flag */
 	Sint16 daplayed;		/* da playing flag */
-	GDFS_LIF *liftbl;		/* lif table */
+	ps2ptr_t liftbl; /* GDFS_LIF *liftbl */		/* lif table */
 	Uint32 sctbuf[(GDD_FS_SCTSIZE*2+64)/4];		/* sector buffer */
 	GDFS_HANDLE hndlist[1];		/* handle table */
 }; /* 64 + 4160 + handles */

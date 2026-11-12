@@ -144,7 +144,7 @@ void njUserInit(void)
     
     njpmemp = freemem + (12255232 + PC_ARENA_EXTRA - hws->vtx_total); 
     
-    Ps2_PXLCONV = njpmemp + 4294639616;
+    Ps2_PXLCONV = njpmemp - 327680;   /* + 4294639616 in the original: -0x50000 in 32-bit pointer arithmetic */
     
     vwbmemp = freemem + (12517376 + PC_ARENA_EXTRA - hws->vtx_total); 
     vebmemp = freemem + (12845056 + PC_ARENA_EXTRA - hws->vtx_total); 
