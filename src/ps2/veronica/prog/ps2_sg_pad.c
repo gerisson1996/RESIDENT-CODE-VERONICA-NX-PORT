@@ -112,11 +112,11 @@ const PDS_PERIPHERAL* pdGetPeripheral(Uint32 port)
         pp.x2 = 0;
         pp.y2 = 0;
         
-        pp.name = NULL;
+        pp.name = S32(NULL);
         
         pp.old = 0;
         
-        pp.info = &pp_info;
+        pp.info = S32(&pp_info);
 
         Old_sys_cnt = Ps2_sys_cnt;
         
@@ -376,15 +376,15 @@ void Ps2_Read_Key(PDS_PERIPHERAL* per, PAD_WORK* pad_wk)
     {
         pp[i].OldPerType = pp[i].PerType;
         
-        if (per->info->type == 0) 
+        if (P32(PDS_PERIPHERALINFO *, per->info)->type == 0) 
         {
             pp[i].PerType = 0;
         } 
-        else if ((per->info->type & 0x40)) 
+        else if ((P32(PDS_PERIPHERALINFO *, per->info)->type & 0x40)) 
         {
             pp[i].PerType = 6;
         } 
-        else if ((per->info->type & 0x80))
+        else if ((P32(PDS_PERIPHERALINFO *, per->info)->type & 0x80))
         {
             pp[i].PerType = 5;
         } 
@@ -392,7 +392,7 @@ void Ps2_Read_Key(PDS_PERIPHERAL* per, PAD_WORK* pad_wk)
         {
             pp[i].PerType = -1;
             
-            if ((per->info->type & 0x1)) 
+            if ((P32(PDS_PERIPHERALINFO *, per->info)->type & 0x1)) 
             { 
                 for (j = 0; ButtonInfo[j].Button != 0; j++)
                 {

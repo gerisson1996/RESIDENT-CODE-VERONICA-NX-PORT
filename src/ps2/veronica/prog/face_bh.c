@@ -779,9 +779,9 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
     LIST_WORK* con;  
     VLIST_WORK* list; 
     float* param; 
-    NJS_POINT3* mvec[32]; 
+    ps2ptr_t mvec[32];   /* PC: slots (NJS_POINT3*): the translated asm below reads them as 32-bit words */
     float mrate[32];     
-    NJS_POINT3** mvp;  
+    ps2ptr_t* mvp;  
     float* mrp; 
     float sum; 
     float rate;
@@ -886,7 +886,7 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
             
             if (para != 0) 
             {
-                *mvp++ = &con->vec;
+                *mvp++ = S32(&con->vec);
                 
                 rate = con->scal * ((para < 0) ? -para : para);
                 

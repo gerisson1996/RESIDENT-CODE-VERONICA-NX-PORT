@@ -303,13 +303,13 @@ typedef struct {
 	                                      /* Axis X2       (  -128- 127  ) */
 	Sint16 y2;                            /* 軸データY2    (  -128～127  ) */
 	                                      /* Axis Y2       (  -128- 127  ) */
-	char* name;                           /* デバイス名称                  */
+	ps2ptr_t name; /* char* name */                           /* デバイス名称                  */
 	                                      /* Controller name               */
-	void* extend;                         /* 拡張データアドレス            */
+	ps2ptr_t extend; /* void* extend */                         /* 拡張データアドレス            */
 	                                      /* Extended data address         */
 	Uint32 old;                           /* 予約                          */
 	                                      /* Reserved                      */
-	PDS_PERIPHERALINFO* info;             /* ペリフェラル情報へのポインタ  */
+	ps2ptr_t info; /* PDS_PERIPHERALINFO* info */             /* ペリフェラル情報へのポインタ  */
 	                                      /* Pointer to peripheral info.   */
 } PDS_PERIPHERAL;
 
