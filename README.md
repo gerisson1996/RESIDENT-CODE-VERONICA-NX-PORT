@@ -12,7 +12,9 @@
 ![Gyro](https://img.shields.io/badge/mira-girosc%C3%B3pio-8250df?style=for-the-badge)
 ![License](https://img.shields.io/badge/licen%C3%A7a-MIT-2ea44f?style=for-the-badge)
 
-[**Download**](../../releases/latest) · [Instalação](#-instalação) · [Controles](#-controles) · [Compilar](#-compilar) · [Créditos](#-créditos)
+🇧🇷 **Português** · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)
+
+[**Download**](../../releases/latest) · [Instalação](#-instalação) · [Controles](#-controles) · [Compilar](#%EF%B8%8F-compilar) · [Créditos](#-créditos)
 
 </div>
 
