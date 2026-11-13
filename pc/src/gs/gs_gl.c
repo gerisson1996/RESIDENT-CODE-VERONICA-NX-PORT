@@ -855,6 +855,40 @@ static GLuint compile(const char* vs, const char* fs)
 
 static void* gl_getproc(const char* name) { return hdr_gl_proc(name); }
 
+/* The loading screen, before the game's first image: a dark screen with a red bar, drawn with
+   scissored clears only (no shader needed, so it works while the shaders are still compiling).
+   pos < 0: a bar sliding back and forth (waiting for the game); otherwise its progress 0..1. */
+void gs_splash(float pos)
+{
+    int w = 0, h = 0;
+    if (hdr_active()) return;
+    SDL_GetWindowSizeInPixels(g_window, &w, &h);
+    if (w <= 0 || h <= 0) return;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDisable(GL_SCISSOR_TEST);
+    glClearColor(0.02f, 0.02f, 0.025f, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_SCISSOR_TEST);
+    {
+        int bw = w / 3, bh = h / 120 > 2 ? h / 120 : 2, bx = (w - bw) / 2, by = h / 6;
+        glScissor(bx, by, bw, bh);
+        glClearColor(0.16f, 0.03f, 0.03f, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        if (pos >= 0) glScissor(bx, by, (int)(bw * (pos > 1 ? 1 : pos)), bh);
+        else {
+            double c = SDL_GetTicksNS() * 1e-9 * 0.8;
+            float f = (float)(c - SDL_floor(c)), k = f < 0.5f ? f * 2 : 2 - f * 2;
+            glScissor(bx + (int)((bw - bw / 4) * k), by, bw / 4, bh);
+        }
+        glClearColor(0.75f, 0.06f, 0.05f, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    glDisable(GL_SCISSOR_TEST);
+    glClearColor(0, 0, 0, 0);
+    SDL_GL_SwapWindow(g_window);
+}
+
 void gs_renderer_init(void)
 {
     if (!gl_load(gl_getproc)) host_fatal("OpenGL 3.3 entry points missing");
@@ -877,6 +911,7 @@ void gs_renderer_init(void)
                              !!(v & V_ATEST), !!(v & V_TEX), !!(v & V_REGION), !!(v & V_FOG), !!(v & V_LIGHT), ls_vec4,
                              STREAM_FSET_MAX, FOG_CURVE, FOG_SAT, FOG_LIGHT0, FOG_LIGHT1, FOG_GLOW, FOG_BEAM, BEAM_STEPS, BEAM_FWD, fs_src) >= (int)sizeof(fs))
                 host_fatal("gs: fragment shader source too long");
+            if (!(n & 7)) gs_splash((float)v / NPROG);   /* (seconds of compiling on the Switch's Mesa) */
             progs[v] = compile(vs_src, fs);
             n++;
 #define U(x) pu[v].x = glGetUniformLocation(progs[v], "u_" #x)

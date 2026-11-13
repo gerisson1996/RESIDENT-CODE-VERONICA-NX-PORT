@@ -85,7 +85,7 @@ void render_loop(void)
             prev = cur;
             cur = f;
         }
-        if (!cur) continue;
+        if (!cur) { if (!f) gs_splash(-1.0f); continue; }   /* the game is still starting: not a black screen */
         now = SDL_GetTicksNS();
         if (pace_until > now) {   /* the refresh is not due yet: a frame that arrived is executed, its
                                      image waits for the refresh like any other (shown at once, it cut
