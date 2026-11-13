@@ -231,7 +231,7 @@ void vu1SetDiffuseMaterial(VU1_COLOR* pDiffuse)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}}, R11 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pDiffuse);
+        op0.sd[0] = (int32_t)EE_IN(pDiffuse);
         op1.f[0] = (float)(128.0f);
         ee_lq(&R11, (op0.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR))));
         R8.sd[0] = (int32_t)(ee_f2u(op1.f[0]));
@@ -310,7 +310,7 @@ void vu1SetAmbient(VU1_COLOR* pAmbient)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pAmbient);
+        op0.sd[0] = (int32_t)EE_IN(pAmbient);
         vu_load_vf(22, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
     }
 #endif
@@ -376,7 +376,7 @@ void InitNodeArraySet(SCISSOR* scissor)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}};
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(scissor);
+        op0.sd[0] = (int32_t)EE_IN(scissor);
         R8.sd[0] = (int32_t)(ee_zero.w[0] + op0.w[0]);
         R10.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(3));
         R8.sd[0] = (int32_t)(R8.w[0] + (uint32_t)(offsetof(SCISSOR, narray)));
@@ -449,8 +449,8 @@ int _Clip_ViewVolume(float* clip, float local_clip[4], float* vertex)
         ee_reg R2 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip);
-        op1.sd[0] = (int32_t)(uintptr_t)(vertex);
+        op0.sd[0] = (int32_t)EE_IN(clip);
+        op1.sd[0] = (int32_t)EE_IN(vertex);
         vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
         vu_upper(U_MULA, 15, 0, 24, 4, BC_X);
         vu_upper(U_MADDA, 15, 0, 25, 4, BC_Y);
@@ -516,8 +516,8 @@ void PushTriangleNodeArray(SCISSOR* scissor, NODE* nod)
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(scissor);
-        op1.sd[0] = (int32_t)(uintptr_t)(&node);
+        op0.sd[0] = (int32_t)EE_IN(scissor);
+        op1.sd[0] = (int32_t)EE_IN(&node);
         R3.d[0] = op1.d[0];
         R8.sd[0] = EE_LW((op0.w[0] + (uint32_t)(offsetof(SCISSOR, rotflag))));
         R1.sd[0] = ee_zero.sd[0] + (int64_t)((sizeof(NODE)));
@@ -571,7 +571,7 @@ void ResetNodeArraySet(SCISSOR* scissor)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}};
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(scissor);
+        op0.sd[0] = (int32_t)EE_IN(scissor);
         R8.sd[0] = (int32_t)(ee_zero.w[0] + op0.w[0]);
         R10.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(3));
         R8.sd[0] = (int32_t)(R8.w[0] + (uint32_t)(offsetof(SCISSOR, narray)));
@@ -1142,8 +1142,8 @@ void DrawScissorPolygonOpaque(SCISSOR* scissor, unsigned long ulType)
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(scissor);
-        op1.sd[0] = (int32_t)(uintptr_t)(vu1ScessorBuf);
+        op0.sd[0] = (int32_t)EE_IN(scissor);
+        op1.sd[0] = (int32_t)EE_IN(vu1ScessorBuf);
         R14.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(offsetof(SCISSOR, in)));
         R14.sd[0] = EE_LW((R14.w[0] + (uint32_t)(offsetof(SCISSOR, triangle.node[0]))));
         R15.sd[0] = (int32_t)(ee_zero.w[0] + op1.w[0]);
@@ -1595,9 +1595,9 @@ int _Clip_Screen(float* clip)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(ret);
-        op1.sd[0] = (int32_t)(uintptr_t)(clip); /* decomp declares this operand "f" but it is the clip-vector pointer */
-        op2.sd[0] = (int32_t)(uintptr_t)(&para);
+        op0.sd[0] = (int32_t)EE_IN(ret);
+        op1.sd[0] = (int32_t)EE_IN(clip); /* decomp declares this operand "f" but it is the clip-vector pointer */
+        op2.sd[0] = (int32_t)EE_IN(&para);
         vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(0))));
         vu_load_vf(6, EE_PTR((op2.w[0] + (uint32_t)(16))));
@@ -1605,7 +1605,7 @@ int _Clip_Screen(float* clip)
         vu_upper(U_MUL, 15, 4, 4, 6, BC_NONE);
         vu_clipw(4, 5);
         op0.sd[0] = (int32_t)(vu_cfc2(18));
-        ret = (__typeof__(ret))(uintptr_t)op0.w[0];
+        ret = (__typeof__(ret))EE_OUT(ret, op0.w[0]);
     }
 #endif
 
@@ -1647,12 +1647,12 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
         ee_reg R2 = {{0}}, R8 = {{0}};
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(usMode);
+        op0.sd[0] = (int32_t)EE_IN(usMode);
         R2.d[0] = op0.d[0] & (uint64_t)(uint16_t)(15);
         R8.sd[0] = (int32_t)(ee_zero.w[0] + R2.w[0]);
         vu_ctc2(1, R8.w[0]);
         vu0_callms(VU0_ADDR_VU0_INIT_CALC_COLOR);
-        usMode = (__typeof__(usMode))(uintptr_t)op0.w[0];
+        usMode = (__typeof__(usMode))EE_OUT(usMode, op0.w[0]);
     }
 #endif
    
@@ -1710,8 +1710,8 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
             ee_reg op3 = {{0}};
             op0.f[0] = (float)(fVu1OffsetX);
             op1.f[0] = (float)(fVu1OffsetY);
-            op2.sd[0] = (int32_t)(uintptr_t)(pS);
-            op3.sd[0] = (int32_t)(uintptr_t)(pP);
+            op2.sd[0] = (int32_t)EE_IN(pS);
+            op3.sd[0] = (int32_t)EE_IN(pP);
             PC_PRIM_SRC(pP, pS);   /* (per-pixel lighting: which vertex) */
             vu_load_vf(4, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
             vu_load_vf(14, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fVx)))));
@@ -1750,7 +1750,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
         { /* asm2c */
             ee_reg R8 = {{0}};
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pP);
+            op0.sd[0] = (int32_t)EE_IN(pP);
             vu_store_vf(&R8, 4);
             ee_sq((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR))), &R8);
         }
@@ -1807,8 +1807,8 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
             ee_reg op3 = {{0}};
             op0.f[0] = (float)(fVu1OffsetX);
             op1.f[0] = (float)(fVu1OffsetY);
-            op2.sd[0] = (int32_t)(uintptr_t)(pS);
-            op3.sd[0] = (int32_t)(uintptr_t)(pP);
+            op2.sd[0] = (int32_t)EE_IN(pS);
+            op3.sd[0] = (int32_t)EE_IN(pP);
             PC_PRIM_SRC(pP, pS);   /* (per-pixel lighting: which vertex) */
             vu_load_vf(4, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
             vu_load_vf(14, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fVx)))));
@@ -1847,7 +1847,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
         { /* asm2c */
             ee_reg R8 = {{0}};
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pP);
+            op0.sd[0] = (int32_t)EE_IN(pP);
             vu_store_vf(&R8, 4);
             ee_sq((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR))), &R8);
         }
@@ -1906,8 +1906,8 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
                 ee_reg op3 = {{0}};
                 op0.f[0] = (float)(fVu1OffsetX);
                 op1.f[0] = (float)(fVu1OffsetY);
-                op2.sd[0] = (int32_t)(uintptr_t)(pS);
-                op3.sd[0] = (int32_t)(uintptr_t)(pP);
+                op2.sd[0] = (int32_t)EE_IN(pS);
+                op3.sd[0] = (int32_t)EE_IN(pP);
                 PC_PRIM_SRC(pP, pS);   /* (per-pixel lighting: which vertex) */
                 vu_load_vf(4, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
                 vu_load_vf(14, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fVx)))));
@@ -1951,13 +1951,13 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
                 ee_reg R8 = {{0}};
                 ee_reg op0 = {{0}};
                 ee_reg op1 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(clipflag);
-                op1.sd[0] = (int32_t)(uintptr_t)(pP);
+                op0.sd[0] = (int32_t)EE_IN(clipflag);
+                op1.sd[0] = (int32_t)EE_IN(pP);
                 vu_store_vf(&R8, 4);
                 ee_sq((op1.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR))), &R8);
                 op0.sd[0] = (int32_t)(vu_cfc2(18));
                 op0.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(0));
-                clipflag = (__typeof__(clipflag))(uintptr_t)op0.w[0];
+                clipflag = (__typeof__(clipflag))EE_OUT(clipflag, op0.w[0]);
             }
 #endif
 
@@ -1997,7 +1997,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
         { /* asm2c */
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pS);
+            op0.sd[0] = (int32_t)EE_IN(pS);
             vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
             vu0_callms(VU0_ADDR_VU0_CALC_COLOR);
         }
@@ -2029,7 +2029,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
         { /* asm2c */
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pP);
+            op0.sd[0] = (int32_t)EE_IN(pP);
             vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR)))), 4);
         }
 #endif
@@ -2053,7 +2053,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
         { /* asm2c */
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pS);
+            op0.sd[0] = (int32_t)EE_IN(pS);
             vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
             vu0_callms(VU0_ADDR_VU0_CALC_COLOR);
         }
@@ -2085,7 +2085,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
         { /* asm2c */
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(pP);
+            op0.sd[0] = (int32_t)EE_IN(pP);
             vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR)))), 4);
         }
 #endif
@@ -2111,7 +2111,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
             { /* asm2c */
                 ee_reg op0 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(pS);
+                op0.sd[0] = (int32_t)EE_IN(pS);
                 vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
                 vu0_callms(VU0_ADDR_VU0_CALC_COLOR);
             }
@@ -2143,7 +2143,7 @@ void vu1DrawTriangleStripTransDouble(unsigned long ulType, VU1_STRIP_BUF* pS, un
 #else
             { /* asm2c */
                 ee_reg op0 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(pP);
+                op0.sd[0] = (int32_t)EE_IN(pP);
                 vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR)))), 4);
             }
 #endif
@@ -2193,8 +2193,8 @@ void vu1GetVertexColor(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
         op2.f[0] = (float)(128.0f);
         op3.f[0] = (float)(256.0f);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
@@ -2234,10 +2234,10 @@ void vu1GetVertexColorCM(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim) // first pa
         ee_reg R8 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op1.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
+        op0.sd[0] = (int32_t)EE_IN(pPrim);
+        op1.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
         vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(5, &R8);
         vu_upper(U_MUL, 1, 4, 0, 5, BC_X);
         vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_PRIM_BUF, fR)))), 4);
@@ -2272,11 +2272,11 @@ void vu1GetVertexColorIgnore(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim) // firs
         ee_reg R8 = {{0}}, R9 = {{0}};
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pPrim);
+        op0.sd[0] = (int32_t)EE_IN(pPrim);
         R8.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(128));
         vu_load_vf(5, &R8);
         vu_upper(U_ITOF0, 15, 5, 5, 0, BC_NONE);
-        R9.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R9.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(6, &R9);
         vu_upper(U_ADD, 14, 4, 0, 5, BC_X);
         vu_upper(U_MUL, 1, 4, 0, 6, BC_X);
@@ -2313,12 +2313,12 @@ void vu1GetVertexColorDif(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_upper(U_MINI, 14, 4, 4, 0, BC_W);
         vu_upper(U_MAX, 14, 4, 4, 0, BC_X);
         vu_load_vf(6, &R8);
@@ -2357,10 +2357,10 @@ void vu1GetVertexColorDifAmb(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg R8 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         vu_upper(U_ADD, 14, 7, 4, 22, BC_NONE);
         vu_upper(U_MAX, 14, 7, 7, 0, BC_X);
@@ -2410,10 +2410,10 @@ void vu1GetVertexColorDifSpe1(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg R8 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_move(15, 5, 4);
         vu_move(15, 6, 4);
         vu_load_vf(8, &R8);
@@ -2473,16 +2473,16 @@ void vu1GetVertexColorDifSpe2(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
         ee_reg op4 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Ambient);
-        op3.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
-        op4.sd[0] = (int32_t)(uintptr_t)(&vu1Specula);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Ambient);
+        op3.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
+        op4.sd[0] = (int32_t)EE_IN(&vu1Specula);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(6, EE_PTR((op3.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(7, EE_PTR((op4.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         vu_upper(U_ADD, 14, 5, 4, 5, BC_NONE);
         vu_upper(U_SUB, 14, 5, 5, 0, BC_W);
@@ -2552,14 +2552,14 @@ void vu1GetVertexColorDifSpe3(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
-        op3.sd[0] = (int32_t)(uintptr_t)(&vu1Specula);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
+        op3.sd[0] = (int32_t)EE_IN(&vu1Specula);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(6, EE_PTR((op3.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         R9.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(17));
         vu_upper(U_ADD, 14, 7, 0, 0, BC_W);
@@ -2623,16 +2623,16 @@ void vu1GetVertexColorDifSpe1Amb(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
         ee_reg op4 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Ambient);
-        op3.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
-        op4.sd[0] = (int32_t)(uintptr_t)(&vu1Specula);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Ambient);
+        op3.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
+        op4.sd[0] = (int32_t)EE_IN(&vu1Specula);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(6, EE_PTR((op3.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(7, EE_PTR((op4.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         vu_upper(U_SUB, 14, 9, 4, 0, BC_W);
         vu_upper(U_MAX, 14, 9, 9, 0, BC_X);
@@ -2691,16 +2691,16 @@ void vu1GetVertexColorDifSpe2Amb(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
         ee_reg op4 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Ambient);
-        op3.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
-        op4.sd[0] = (int32_t)(uintptr_t)(&vu1Specula);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Ambient);
+        op3.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
+        op4.sd[0] = (int32_t)EE_IN(&vu1Specula);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(6, EE_PTR((op3.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(7, EE_PTR((op4.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         vu_upper(U_ADD, 14, 4, 4, 5, BC_NONE);
         vu_upper(U_SUB, 14, 9, 4, 0, BC_W);
@@ -2774,16 +2774,16 @@ void vu1GetVertexColorDifSpe3Amb(VU1_STRIP_BUF* pStrip, VU1_PRIM_BUF* pPrim)
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
         ee_reg op4 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pStrip);
-        op1.sd[0] = (int32_t)(uintptr_t)(pPrim);
-        op2.sd[0] = (int32_t)(uintptr_t)(&vu1Ambient);
-        op3.sd[0] = (int32_t)(uintptr_t)(&vu1Diffuse);
-        op4.sd[0] = (int32_t)(uintptr_t)(&vu1Specula);
+        op0.sd[0] = (int32_t)EE_IN(pStrip);
+        op1.sd[0] = (int32_t)EE_IN(pPrim);
+        op2.sd[0] = (int32_t)EE_IN(&vu1Ambient);
+        op3.sd[0] = (int32_t)EE_IN(&vu1Diffuse);
+        op4.sd[0] = (int32_t)EE_IN(&vu1Specula);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fIr)))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(6, EE_PTR((op3.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
         vu_load_vf(7, EE_PTR((op4.w[0] + (uint32_t)(offsetof(VU1_COLOR, fR)))));
-        R8.sd[0] = EE_LW((uint32_t)(uintptr_t)&fVu1AlphaRatio);
+        R8.sd[0] = EE_LW(PS2_ADDR(&fVu1AlphaRatio));
         vu_load_vf(8, &R8);
         vu_upper(U_ADD, 14, 4, 4, 5, BC_NONE);
         R9.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(17));
@@ -2922,10 +2922,10 @@ void vu1DrawTriangleStripTransDoubleI(unsigned long ulType, VU1_STRIP_BUF* pS, u
             ee_reg op1 = {{0}};
             ee_reg op2 = {{0}};
             ee_reg op3 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(&scissorflip);
-            op1.sd[0] = (int32_t)(uintptr_t)(&clipflag);
-            op2.sd[0] = (int32_t)(uintptr_t)(pS);
-            op3.sd[0] = (int32_t)(uintptr_t)(pP);
+            op0.sd[0] = (int32_t)EE_IN(&scissorflip);
+            op1.sd[0] = (int32_t)EE_IN(&clipflag);
+            op2.sd[0] = (int32_t)EE_IN(pS);
+            op3.sd[0] = (int32_t)EE_IN(pP);
             PC_PRIM_SRC(pP, pS);   /* (per-pixel lighting: which vertex) */
             vu_load_vf(4, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fSx)))));
             vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(offsetof(VU1_STRIP_BUF, fU)))));
@@ -3058,8 +3058,8 @@ void DrawScissorPolygonTrans1P(SCISSOR* scissor, unsigned long ulType)
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(scissor);
-        op1.sd[0] = (int32_t)(uintptr_t)(vu1ScessorBuf);
+        op0.sd[0] = (int32_t)EE_IN(scissor);
+        op1.sd[0] = (int32_t)EE_IN(vu1ScessorBuf);
         R14.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(offsetof(SCISSOR, in)));
         R14.sd[0] = EE_LW((R14.w[0] + (uint32_t)(offsetof(SCISSOR, triangle.node[0]))));
         R15.sd[0] = (int32_t)(ee_zero.w[0] + op1.w[0]);

@@ -1509,7 +1509,7 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
     { /* asm2c */
         ee_reg R3 = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(v);
+        op0.sd[0] = (int32_t)EE_IN(v);
         R3.d[0] = op0.d[0];
         vu_load_vf(4, EE_PTR((R3.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((R3.w[0] + (uint32_t)(16))));
@@ -1577,8 +1577,8 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         op0.f[0] = (float)(fog);
-        op1.sd[0] = (int32_t)(uintptr_t)(pBuffer);
-        op2.sd[0] = (int32_t)(uintptr_t)(fpCnk);
+        op1.sd[0] = (int32_t)EE_IN(pBuffer);
+        op2.sd[0] = (int32_t)EE_IN(fpCnk);
         vu0_callms(VU0_ADDR_VU0_CALCPOINT_INIT);
         vu_load_vf(4, EE_PTR((op2.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(16))));
@@ -1644,7 +1644,7 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
 #else
         { /* asm2c */
             ee_reg op0 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(fpCnk);
+            op0.sd[0] = (int32_t)EE_IN(fpCnk);
             vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
             vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
             vu0_callms(VU0_ADDR_VU0_CALCPOINT);
@@ -1682,8 +1682,8 @@ CHUNK_HEAD* njCnkCvVnPs2(CHUNK_HEAD* pCnk)
             ee_reg op1 = {{0}};
             ee_reg op2 = {{0}};
             op0.f[0] = (float)(fog);
-            op1.sd[0] = (int32_t)(uintptr_t)(&Vu0ClipFlag);
-            op2.sd[0] = (int32_t)(uintptr_t)(pBuffer);
+            op1.sd[0] = (int32_t)EE_IN(&Vu0ClipFlag);
+            op2.sd[0] = (int32_t)EE_IN(pBuffer);
             vu_store_vf(&R8, 7);
             vu_store_vf(&R9, 18);
             vu_store_vf(&R10, 6);
@@ -2230,7 +2230,7 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
             Ps2_tex_load_tp_cancel = 0;
         }
         
-        ulpP = (u_long*)SPR_ADDR(0x3E80);
+        ulpP = (u_long*)PS2_HOST(SPR_ADDR(0x3E80));
         
         ulpP[0] = DMAend | 0x10;
         ulpP[1] = 0;
@@ -2290,7 +2290,7 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
             
             while (TRUE) 
             {
-                ulpP = (Ps2_chunk_buff_flip != 0) ? (void*)0x70002000 : (void*)0x70002F40;
+                ulpP = (Ps2_chunk_buff_flip != 0) ? (void*)PS2_HOST(0x70002000) : (void*)PS2_HOST(0x70002F40);
                 
                 p = (void*)&ulpP[6];
                 
@@ -2417,7 +2417,7 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
 #else
                     { /* asm2c */
                         ee_reg op0 = {{0}};
-                        op0.sd[0] = (int32_t)(uintptr_t)(zbuff);
+                        op0.sd[0] = (int32_t)EE_IN(zbuff);
                         vu_load_vf(8, EE_PTR((op0.w[0] + (uint32_t)(0))));
                     }
 #endif  
@@ -2508,11 +2508,11 @@ CHUNK_HEAD* njCnkCsUvh(CHUNK_HEAD* pCnk)
                         ee_reg op2 = {{0}};
                         ee_reg op3 = {{0}};
                         ee_reg op4 = {{0}};
-                        op0.sd[0] = (int32_t)(uintptr_t)(pS);
-                        op1.sd[0] = (int32_t)(uintptr_t)(uspCnk);
-                        op2.sd[0] = (int32_t)(uintptr_t)(pNaCnkVerBufTop);
-                        op3.sd[0] = (int32_t)(uintptr_t)(usMax);
-                        op4.sd[0] = (int32_t)(uintptr_t)(usColorCalc);
+                        op0.sd[0] = (int32_t)EE_IN(pS);
+                        op1.sd[0] = (int32_t)EE_IN(uspCnk);
+                        op2.sd[0] = (int32_t)EE_IN(pNaCnkVerBufTop);
+                        op3.sd[0] = (int32_t)EE_IN(usMax);
+                        op4.sd[0] = (int32_t)EE_IN(usColorCalc);
                         op3.d[0] = op3.d[0] & (uint64_t)(uint16_t)(65535);
                         R11.d[0] = op0.d[0];
                         R12.d[0] = op1.d[0];
@@ -2752,7 +2752,7 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
             Ps2_tex_load_tp_cancel = 0;
         }
         
-        ulpP = (u_long*)SPR_ADDR(0x3E80);
+        ulpP = (u_long*)PS2_HOST(SPR_ADDR(0x3E80));
         
         ulpP[0] = DMAend | 0x10;
         ulpP[1] = 0;
@@ -2812,7 +2812,7 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
             
             while (TRUE) 
             {
-                ulpP = (Ps2_chunk_buff_flip != 0) ? (void*)0x70002000 : (void*)0x70002F40;
+                ulpP = (Ps2_chunk_buff_flip != 0) ? (void*)PS2_HOST(0x70002000) : (void*)PS2_HOST(0x70002F40);
                 
                 p = (void*)&ulpP[6];
                 
@@ -2939,7 +2939,7 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
 #else
                     { /* asm2c */
                         ee_reg op0 = {{0}};
-                        op0.sd[0] = (int32_t)(uintptr_t)(zbuff);
+                        op0.sd[0] = (int32_t)EE_IN(zbuff);
                         vu_load_vf(8, EE_PTR((op0.w[0] + (uint32_t)(0))));
                     }
 #endif  
@@ -3030,11 +3030,11 @@ CHUNK_HEAD* njCnkCsUvn(CHUNK_HEAD* pCnk)
                         ee_reg op2 = {{0}};
                         ee_reg op3 = {{0}};
                         ee_reg op4 = {{0}};
-                        op0.sd[0] = (int32_t)(uintptr_t)(pS);
-                        op1.sd[0] = (int32_t)(uintptr_t)(uspCnk);
-                        op2.sd[0] = (int32_t)(uintptr_t)(pNaCnkVerBufTop);
-                        op3.sd[0] = (int32_t)(uintptr_t)(usMax);
-                        op4.sd[0] = (int32_t)(uintptr_t)(usColorCalc);
+                        op0.sd[0] = (int32_t)EE_IN(pS);
+                        op1.sd[0] = (int32_t)EE_IN(uspCnk);
+                        op2.sd[0] = (int32_t)EE_IN(pNaCnkVerBufTop);
+                        op3.sd[0] = (int32_t)EE_IN(usMax);
+                        op4.sd[0] = (int32_t)EE_IN(usColorCalc);
                         op3.d[0] = op3.d[0] & (uint64_t)(uint16_t)(65535);
                         R11.d[0] = op0.d[0];
                         R12.d[0] = op1.d[0];

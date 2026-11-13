@@ -212,10 +212,10 @@ void	njCalcPoints(NJS_MATRIX *m, NJS_POINT3 *ps, NJS_POINT3 *pd, Int num)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(ps);
-        op2.sd[0] = (int32_t)(uintptr_t)(pd);
-        op3.sd[0] = (int32_t)(uintptr_t)(&num);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(ps);
+        op2.sd[0] = (int32_t)EE_IN(pd);
+        op3.sd[0] = (int32_t)EE_IN(&num);
         R8.sd[0] = EE_LW((op3.w[0] + (uint32_t)(0)));
         R10.d[0] = ee_ldl(R10.d[0], (op1.w[0] + (uint32_t)(7)));
         R10.d[0] = ee_ldr(R10.d[0], (op1.w[0] + (uint32_t)(0)));
@@ -277,8 +277,8 @@ void    njGetTranslation(NJS_MATRIX *m, NJS_POINT3 *p)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(p);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(p);
         R8.sd[0] = EE_LW((op0.w[0] + (uint32_t)(48)));
         R9.sd[0] = EE_LW((op0.w[0] + (uint32_t)(52)));
         R10.sd[0] = EE_LW((op0.w[0] + (uint32_t)(56)));
@@ -308,7 +308,7 @@ void    njUnitTransPortion(NJS_MATRIX *m)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(48))), 0);
     }
 #endif
@@ -341,7 +341,7 @@ void    njUnitRotPortion(NJS_MATRIX *m)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         vu_upper(U_MUL, 15, 4, 0, 0, BC_W);
         vu_mr32(15, 5, 4);
         vu_mr32(15, 6, 5);
@@ -409,8 +409,8 @@ Bool	njPushMatrix(NJS_MATRIX *m)
     { /* asm2c */
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(fpSrc);
-        op1.sd[0] = (int32_t)(uintptr_t)(fpDst);
+        op0.sd[0] = (int32_t)EE_IN(fpSrc);
+        op1.sd[0] = (int32_t)EE_IN(fpDst);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));
@@ -473,7 +473,7 @@ void	njUnitMatrix(register NJS_MATRIX *m)
 #else
     { /* asm2c */
         ee_reg cv_m = {{0}};
-        cv_m.sd[0] = (int32_t)(uintptr_t)(m);
+        cv_m.sd[0] = (int32_t)EE_IN(m);
         vu_upper(U_MUL, 15, 4, 0, 0, BC_W);
         vu_mr32(15, 5, 4);
         vu_mr32(15, 6, 5);
@@ -516,8 +516,8 @@ void	njSetMatrix(NJS_MATRIX *md, NJS_MATRIX *ms)
     { /* asm2c */
         ee_reg cv_fpDst = {{0}};
         ee_reg cv_fpSrc = {{0}};
-        cv_fpDst.sd[0] = (int32_t)(uintptr_t)(fpDst);
-        cv_fpSrc.sd[0] = (int32_t)(uintptr_t)(fpSrc);
+        cv_fpDst.sd[0] = (int32_t)EE_IN(fpDst);
+        cv_fpSrc.sd[0] = (int32_t)EE_IN(fpSrc);
         vu_load_vf(4, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(32))));
@@ -547,7 +547,7 @@ void njSetMatrixCN(NJS_MATRIX* pMat)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pMat);
+        op0.sd[0] = (int32_t)EE_IN(pMat);
         vu_load_vf(28, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(29, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(30, EE_PTR((op0.w[0] + (uint32_t)(32))));
@@ -586,8 +586,8 @@ void	njGetMatrix(NJS_MATRIX *m)
     { /* asm2c */
         ee_reg cv_fpDst = {{0}};
         ee_reg cv_fpSrc = {{0}};
-        cv_fpDst.sd[0] = (int32_t)(uintptr_t)(fpDst);
-        cv_fpSrc.sd[0] = (int32_t)(uintptr_t)(fpSrc);
+        cv_fpDst.sd[0] = (int32_t)EE_IN(fpDst);
+        cv_fpSrc.sd[0] = (int32_t)EE_IN(fpSrc);
         vu_load_vf(4, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((cv_fpSrc.w[0] + (uint32_t)(32))));
@@ -653,8 +653,8 @@ void	njMultiMatrix(NJS_MATRIX *md, NJS_MATRIX *ms)
     { /* asm2c */
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(md);
-        op1.sd[0] = (int32_t)(uintptr_t)(ms);
+        op0.sd[0] = (int32_t)EE_IN(md);
+        op1.sd[0] = (int32_t)EE_IN(ms);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));
@@ -726,7 +726,7 @@ void	njTranslate(NJS_MATRIX *m, Float x, Float y, Float z)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         op1.f[0] = (float)(x);
         op2.f[0] = (float)(y);
         op3.f[0] = (float)(z);
@@ -790,8 +790,8 @@ void	njTranslateV(NJS_MATRIX *m, NJS_VECTOR *v)
         ee_reg R8 = {{0}}, R9 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(v);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -859,7 +859,7 @@ void	njRotateX(NJS_MATRIX *m, Angle ang)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         op1.f[0] = (float)(fSin);
         op2.f[0] = (float)(fCos);
         R14.sd[0] = (int32_t)(ee_f2u(op1.f[0]));
@@ -930,7 +930,7 @@ void	njRotateY(NJS_MATRIX *m, Angle ang)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         op1.f[0] = (float)(fSin);
         op2.f[0] = (float)(fCos);
         R14.sd[0] = (int32_t)(ee_f2u(op1.f[0]));
@@ -1001,7 +1001,7 @@ void	njRotateZ(NJS_MATRIX *m, Angle ang)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         op1.f[0] = (float)(fSin);
         op2.f[0] = (float)(fCos);
         R14.sd[0] = (int32_t)(ee_f2u(op1.f[0]));
@@ -1069,7 +1069,7 @@ void njRotXYZ(NJS_MATRIX* pMatrix, int lAngleX, int lAngleY, int lAngleZ)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pMatrix);
+        op0.sd[0] = (int32_t)EE_IN(pMatrix);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));
@@ -1142,7 +1142,7 @@ void njRotXYZ(NJS_MATRIX* pMatrix, int lAngleX, int lAngleY, int lAngleZ)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pMatrix);
+        op0.sd[0] = (int32_t)EE_IN(pMatrix);
         vu_upper(U_SUB, 8, 10, 0, 11, BC_NONE);
         vu_upper(U_MUL, 14, 7, 4, 12, BC_X);
         vu_upper(U_MUL, 14, 8, 5, 11, BC_X);
@@ -1274,8 +1274,8 @@ void	njRotate(NJS_MATRIX *m, NJS_VECTOR *v, Angle ang)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(v);
         op2.f[0] = (float)(fSin);
         op3.f[0] = (float)(fCos);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
@@ -1386,7 +1386,7 @@ void	njScale(NJS_MATRIX *m, Float sx, Float sy, Float sz)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         op1.f[0] = (float)(sx);
         op2.f[0] = (float)(sy);
         op3.f[0] = (float)(sz);
@@ -1449,8 +1449,8 @@ void	njScaleV(NJS_MATRIX *m, NJS_VECTOR *v)
         ee_reg R8 = {{0}}, R9 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(v);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -1526,7 +1526,7 @@ Bool	njInvertMatrix(NJS_MATRIX *m)
     { /* asm2c */
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}}, R11 = {{0}}, R12 = {{0}}, R13 = {{0}}, R14 = {{0}}, R15 = {{0}};
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         ee_lq(&R8, (op0.w[0] + (uint32_t)(0)));
         ee_lq(&R9, (op0.w[0] + (uint32_t)(16)));
         ee_lq(&R10, (op0.w[0] + (uint32_t)(32)));
@@ -1596,7 +1596,7 @@ void	njTransposeMatrix(NJS_MATRIX *m)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
+        op0.sd[0] = (int32_t)EE_IN(m);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));
@@ -1937,9 +1937,9 @@ void	njCalcPoint(NJS_MATRIX *m, NJS_POINT3 *ps, NJS_POINT3 *pd)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(ps);
-        op2.sd[0] = (int32_t)(uintptr_t)(pd);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(ps);
+        op2.sd[0] = (int32_t)EE_IN(pd);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(8)));
@@ -1995,9 +1995,9 @@ void njCalcPoint4(NJS_MATRIX* pMatrix, NJS_POINT4* pSrcPoint, NJS_POINT4* pDstPo
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pMatrix);
-        op1.sd[0] = (int32_t)(uintptr_t)(pSrcPoint);
-        op2.sd[0] = (int32_t)(uintptr_t)(pDstPoint);
+        op0.sd[0] = (int32_t)EE_IN(pMatrix);
+        op1.sd[0] = (int32_t)EE_IN(pSrcPoint);
+        op2.sd[0] = (int32_t)EE_IN(pDstPoint);
         vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(16))));
@@ -2051,8 +2051,8 @@ void njCalcPointCN(NJS_POINT3* pSrcPoint, NJS_POINT3* pDstPoint)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}}, R11 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pSrcPoint);
-        op1.sd[0] = (int32_t)(uintptr_t)(pDstPoint);
+        op0.sd[0] = (int32_t)EE_IN(pSrcPoint);
+        op1.sd[0] = (int32_t)EE_IN(pDstPoint);
         R10.d[0] = ee_ldl(R10.d[0], (op0.w[0] + (uint32_t)(7)));
         R10.d[0] = ee_ldr(R10.d[0], (op0.w[0] + (uint32_t)(0)));
         R11.sd[0] = EE_LW((op0.w[0] + (uint32_t)(8)));
@@ -2101,8 +2101,8 @@ void	njAddVector(NJS_VECTOR *vd, NJS_VECTOR *vs)
 	    float F8 = 0.0f, F9 = 0.0f, F10 = 0.0f, F11 = 0.0f, F12 = 0.0f, F13 = 0.0f;
 	    ee_reg op0 = {{0}};
 	    ee_reg op1 = {{0}};
-	    op0.sd[0] = (int32_t)(uintptr_t)(vd);
-	    op1.sd[0] = (int32_t)(uintptr_t)(vs);
+	    op0.sd[0] = (int32_t)EE_IN(vd);
+	    op1.sd[0] = (int32_t)EE_IN(vs);
 	    F8 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, x))));
 	    F9 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, y))));
 	    F10 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2149,8 +2149,8 @@ void	njSubVector(NJS_VECTOR *vd, NJS_VECTOR *vs)
 	    float F8 = 0.0f, F9 = 0.0f, F10 = 0.0f, F11 = 0.0f, F12 = 0.0f, F13 = 0.0f;
 	    ee_reg op0 = {{0}};
 	    ee_reg op1 = {{0}};
-	    op0.sd[0] = (int32_t)(uintptr_t)(vd);
-	    op1.sd[0] = (int32_t)(uintptr_t)(vs);
+	    op0.sd[0] = (int32_t)EE_IN(vd);
+	    op1.sd[0] = (int32_t)EE_IN(vs);
 	    F8 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, x))));
 	    F9 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, y))));
 	    F10 = EE_LWF((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2214,9 +2214,9 @@ void	njCalcVector(NJS_MATRIX *m, NJS_VECTOR *vs, NJS_VECTOR *vd)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(m);
-        op1.sd[0] = (int32_t)(uintptr_t)(vs);
-        op2.sd[0] = (int32_t)(uintptr_t)(vd);
+        op0.sd[0] = (int32_t)EE_IN(m);
+        op1.sd[0] = (int32_t)EE_IN(vs);
+        op2.sd[0] = (int32_t)EE_IN(vd);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(8)));
@@ -2288,7 +2288,7 @@ Float	njUnitVector(NJS_VECTOR *v)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         op0.f[0] = (float)(ret);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op1.sd[0] = (int32_t)EE_IN(v);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2355,7 +2355,7 @@ Float	njScalor(NJS_VECTOR *v)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         op0.f[0] = (float)(ret);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op1.sd[0] = (int32_t)EE_IN(v);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2410,7 +2410,7 @@ Float	njScalor2(NJS_VECTOR *v)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         op0.f[0] = (float)(ret);
-        op1.sd[0] = (int32_t)(uintptr_t)(v);
+        op1.sd[0] = (int32_t)EE_IN(v);
         R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2484,14 +2484,14 @@ void	njProjectScreen(NJS_MATRIX *m, NJS_POINT3 *p3, NJS_POINT2 *p2)
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(p2);
-        op1.sd[0] = (int32_t)(uintptr_t)(&Point);
+        op0.sd[0] = (int32_t)EE_IN(p2);
+        op1.sd[0] = (int32_t)EE_IN(&Point);
         op2.f[0] = (float)(_nj_screen_.dist);
         R8.sd[0] = (int32_t)(ee_f2u(op2.f[0]));
         vu_load_vf(4, &R8);
         vu_div(4, 0, 18, 2);
-        R9.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetX);
-        R10.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetY);
+        R9.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetX));
+        R10.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetY));
         vu_load_vf(5, &R9);
         vu_load_vf(6, &R10);
         vu_upper(U_ADD, 2, 8, 0, 0, BC_Q);
@@ -2569,9 +2569,9 @@ Float	njOuterProduct(NJS_VECTOR *v1, NJS_VECTOR *v2, NJS_VECTOR *ov)
 	    ee_reg op2 = {{0}};
 	    ee_reg op3 = {{0}};
 	    op0.f[0] = (float)(ret);
-	    op1.sd[0] = (int32_t)(uintptr_t)(v1);
-	    op2.sd[0] = (int32_t)(uintptr_t)(v2);
-	    op3.sd[0] = (int32_t)(uintptr_t)(ov);
+	    op1.sd[0] = (int32_t)EE_IN(v1);
+	    op2.sd[0] = (int32_t)EE_IN(v2);
+	    op3.sd[0] = (int32_t)EE_IN(ov);
 	    R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
 	    R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
 	    R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2646,8 +2646,8 @@ Float	njInnerProduct(NJS_VECTOR *v1, NJS_VECTOR *v2)
 	    ee_reg op1 = {{0}};
 	    ee_reg op2 = {{0}};
 	    op0.f[0] = (float)(ret);
-	    op1.sd[0] = (int32_t)(uintptr_t)(v1);
-	    op2.sd[0] = (int32_t)(uintptr_t)(v2);
+	    op1.sd[0] = (int32_t)EE_IN(v1);
+	    op2.sd[0] = (int32_t)EE_IN(v2);
 	    R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
 	    R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
 	    R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2706,8 +2706,8 @@ void njTranslateEx(NJS_VECTOR *v)
         ee_reg R8 = {{0}}, R9 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(v);
-        op1.sd[0] = (int32_t)(uintptr_t)(pNaMatMatrixStuckPtr);
+        op0.sd[0] = (int32_t)EE_IN(v);
+        op1.sd[0] = (int32_t)EE_IN(pNaMatMatrixStuckPtr);
         R8.d[0] = ee_ldl(R8.d[0], (op0.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op0.w[0] + (uint32_t)(0)));
         R9.sd[0] = EE_LW((op0.w[0] + (uint32_t)(offsetof(NJS_VECTOR, z))));
@@ -2778,8 +2778,8 @@ void njScaleEx(NJS_VECTOR *v)
         ee_reg R8 = {{0}}, R9 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(v);
-        op1.sd[0] = (int32_t)(uintptr_t)(pNaMatMatrixStuckPtr);
+        op0.sd[0] = (int32_t)EE_IN(v);
+        op1.sd[0] = (int32_t)EE_IN(pNaMatMatrixStuckPtr);
         vu_load_vf(28, EE_PTR((op1.w[0] + (uint32_t)(0))));
         vu_load_vf(29, EE_PTR((op1.w[0] + (uint32_t)(16))));
         vu_load_vf(30, EE_PTR((op1.w[0] + (uint32_t)(32))));
@@ -2859,12 +2859,12 @@ void njRotTransPers(NJS_POINT3* pPoint, NJS_SCRVECTOR* pScreen)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}}, R11 = {{0}};
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
-        op1.sd[0] = (int32_t)(uintptr_t)(pScreen);
+        op1.sd[0] = (int32_t)EE_IN(pScreen);
         op2.f[0] = (float)(_nj_screen_.dist);
         vu_div(0, 3, 18, 2);
         R8.sd[0] = (int32_t)(ee_f2u(op2.f[0]));
-        R9.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetX);
-        R10.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetY);
+        R9.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetX));
+        R10.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetY));
         vu_load_vf(4, &R8);
         vu_load_vf(5, &R9);
         vu_load_vf(6, &R10);
@@ -2946,7 +2946,7 @@ void njPers(NJS_SCRVECTOR* pScreen)
         ee_reg R8 = {{0}}, R9 = {{0}}, R10 = {{0}}, R11 = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pScreen);
+        op0.sd[0] = (int32_t)EE_IN(pScreen);
         op1.f[0] = (float)(_nj_screen_.dist);
         R8.d[0] = ee_ldl(R8.d[0], (op0.w[0] + (uint32_t)(7)));
         R8.d[0] = ee_ldr(R8.d[0], (op0.w[0] + (uint32_t)(0)));
@@ -2955,8 +2955,8 @@ void njPers(NJS_SCRVECTOR* pScreen)
         vu_load_vf(18, &R8);
         vu_div(0, 3, 18, 2);
         R8.sd[0] = (int32_t)(ee_f2u(op1.f[0]));
-        R9.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetX);
-        R10.sd[0] = EE_LW((uint32_t)(uintptr_t)&fNaViwOffsetY);
+        R9.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetX));
+        R10.sd[0] = EE_LW(PS2_ADDR(&fNaViwOffsetY));
         vu_load_vf(4, &R8);
         vu_load_vf(5, &R9);
         vu_load_vf(6, &R10);
@@ -2997,8 +2997,8 @@ void njCopyMatrix(NJS_MATRIX* pDstMat, NJS_MATRIX* pSrcMat)
     { /* asm2c */
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pDstMat);
-        op1.sd[0] = (int32_t)(uintptr_t)(pSrcMat);
+        op0.sd[0] = (int32_t)EE_IN(pDstMat);
+        op1.sd[0] = (int32_t)EE_IN(pSrcMat);
         vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op1.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op1.w[0] + (uint32_t)(32))));
@@ -3059,8 +3059,8 @@ void njMulMatrixCN(NJS_MATRIX* pSrcMat1, NJS_MATRIX* pSrcMat2)
     { /* asm2c */
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pSrcMat1);
-        op1.sd[0] = (int32_t)(uintptr_t)(pSrcMat2);
+        op0.sd[0] = (int32_t)EE_IN(pSrcMat1);
+        op1.sd[0] = (int32_t)EE_IN(pSrcMat2);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(16))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));

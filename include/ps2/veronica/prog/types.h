@@ -2464,10 +2464,10 @@ typedef struct {
 
 #ifndef TARGET_PC
 #define UNCACHED_BASE 0x20000000
-#define UNCACHED(x) ((u_int)(x)|UNCACHED_BASE)
+#define UNCACHED(x) ((u_int)PS2_ADDR(x)|UNCACHED_BASE)
 #else /* no uncached alias on the host: identity */
 #define UNCACHED_BASE 0
-#define UNCACHED(x) ((u_int)(x))
+#define UNCACHED(x) ((u_int)PS2_ADDR(x))
 #endif
 
 // TODO: include the following define from cpureg.h

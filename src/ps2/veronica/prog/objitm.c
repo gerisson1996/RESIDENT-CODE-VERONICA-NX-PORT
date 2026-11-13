@@ -1496,11 +1496,11 @@ void bhObj005(O_WRK* op)
             ee_reg op2 = {{0}};
             ee_reg op5 = {{0}};
             ee_reg op6 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(nb);
-            op1.sd[0] = (int32_t)(uintptr_t)(pCnk);
-            op2.sd[0] = (int32_t)(uintptr_t)(pOrg);
-            op5.sd[0] = (int32_t)(uintptr_t)(j);
-            op6.sd[0] = (int32_t)(uintptr_t)(sys->wt_zp);
+            op0.sd[0] = (int32_t)EE_IN(nb);
+            op1.sd[0] = (int32_t)EE_IN(pCnk);
+            op2.sd[0] = (int32_t)EE_IN(pOrg);
+            op5.sd[0] = (int32_t)EE_IN(j);
+            op6.sd[0] = (int32_t)EE_IN(sys->wt_zp);
             vu0_callms(VU0_ADDR_VU0_WAVE_INIT);
             R8.sd[0] = (int32_t)(op0.w[0] >> 1);
             R9.sd[0] = (int32_t)(op6.w[0] * (uint32_t)(4));
@@ -1621,8 +1621,8 @@ void bhObj005(O_WRK* op)
             ee_reg op0 = {{0}};
             ee_reg op1 = {{0}};
             ee_reg op2 = {{0}};
-            op0.sd[0] = (int32_t)(uintptr_t)(sys->wt_nbpt);
-            op1.sd[0] = (int32_t)(uintptr_t)(sys->wt_wvp);
+            op0.sd[0] = (int32_t)EE_IN(sys->wt_nbpt);
+            op1.sd[0] = (int32_t)EE_IN(sys->wt_wvp);
             op2.f[0] = (float)(0.2f);
             R8.sd[0] = (int32_t)(op0.w[0] >> 2);
             R9.sd[0] = (int32_t)(ee_f2u(op2.f[0]));

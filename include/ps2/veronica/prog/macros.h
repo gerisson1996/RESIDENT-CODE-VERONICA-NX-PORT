@@ -18,8 +18,8 @@
 #define MAKE_MAGIC(A, B, C, D) ((A) | (B) << 8 | (C) << 16 | (D) << 24)
 
 #define ALIGN(x, y) (((((int)x) + (y-1)) / y) * y)
-#define GET_DATA_PTR(x) ((void*)(((unsigned int)x) + sizeof(HM)))
-#define GET_NEXT_WRK(x) ((int)search_work) + (int)search_work->Use_size + (int)sizeof(HM)
+#define GET_DATA_PTR(x) ((void*)PS2_HOST(((unsigned int)PS2_ADDR(x)) + sizeof(HM)))   /* PC: x is a pointer or a slot */
+#define GET_NEXT_WRK(x) ((int)PS2_ADDR(search_work)) + (int)search_work->Use_size + (int)sizeof(HM)
 
 #define	CheckCmdReq(vol, pan, pitch) (0x00|0|((vol)&1)|(((pan)&1)<<1)|(((pitch)&1)<<2))
 #define	CheckCmdChg(vol, pan, pitch) (0x00|8|((vol)&1)|(((pan)&1)<<1)|(((pitch)&1)<<2))

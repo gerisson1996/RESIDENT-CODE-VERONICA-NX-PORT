@@ -113,7 +113,9 @@ void Ps2SwapDBuff()
 
     Ps2_vcount = 0; 
 
-    printf("TICK = %d\n", *(volatile unsigned int*)SR_CU0); 
+#ifndef __SWITCH__   /* every frame: the log on the SD card costs time */
+    printf("TICK = %d\n", *(volatile unsigned int*)SR_CU0);
+#endif
     
     *(volatile unsigned int*)SR_CU0 = 0; 
     
@@ -173,8 +175,8 @@ void	njSetBackColor( Uint32 col1, Uint32 col2, Uint32 col3 )
 
     tmp = SCE_GS_SET_RGBAQ((col1 >> 16) & 0xFF, (col1 >> 8) & 0xFF, col1 & 0xFF, (col1 >> 24) & 0xFF, 0); 
     
-    *(unsigned long*)UNCACHED(&Db.clear0.rgbaq) = tmp; 
-    *(unsigned long*)UNCACHED(&Db.clear1.rgbaq) = tmp; 
+    *(unsigned long*)PS2_HOST(UNCACHED(&Db.clear0.rgbaq)) = tmp; 
+    *(unsigned long*)PS2_HOST(UNCACHED(&Db.clear1.rgbaq)) = tmp; 
 } 
 
 // 100% matching! 
@@ -415,20 +417,20 @@ void njColorBlendingModeSys(int s_mode, int d_mode) // this function is not on t
     
     D2_SyncTag(); 
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x4; 
-    ((u_long*)WORKBASE)[1] = 0; 
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x4; 
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0; 
 
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(3, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1); 
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD; 
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(3, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1); 
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD; 
     
-    ((u_long*)WORKBASE)[4] = Ps2_gs_save.ALPHA = alpha_value; 
-    ((u_long*)WORKBASE)[5] = SCE_GS_ALPHA_1; 
+    ((u_long*)PS2_HOST(WORKBASE))[4] = Ps2_gs_save.ALPHA = alpha_value; 
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_ALPHA_1; 
     
-    ((u_long*)WORKBASE)[6] = 0; 
-    ((u_long*)WORKBASE)[7] = SCE_GS_PABE; 
+    ((u_long*)PS2_HOST(WORKBASE))[6] = 0; 
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_PABE; 
     
-    ((u_long*)WORKBASE)[8] = Ps2_gs_save.FBA = 0; 
-    ((u_long*)WORKBASE)[9] = SCE_GS_FBA_1; 
+    ((u_long*)PS2_HOST(WORKBASE))[8] = Ps2_gs_save.FBA = 0; 
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_FBA_1; 
     
     loadImage((void*)0xF0000000); 
     
@@ -466,7 +468,7 @@ void	njUserClipping(Int mode ,NJS_POINT2 *p)
     sceVu0FVECTOR posf;
     sceVu0IVECTOR posi;
 
-    np = (unsigned long*)WORKBASE;
+    np = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag(); 
     

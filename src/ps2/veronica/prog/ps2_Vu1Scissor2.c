@@ -61,8 +61,8 @@ void DrawScissorPolygonOpaque2(int count, unsigned long ulType)
         const ee_reg ee_zero = {{0}};
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(vu1ScessorBuf);
-        op1.sd[0] = (int32_t)(uintptr_t)(&count);
+        op0.sd[0] = (int32_t)EE_IN(vu1ScessorBuf);
+        op1.sd[0] = (int32_t)EE_IN(&count);
         R8.sd[0] = EE_LW((op1.w[0] + (uint32_t)(0)));
         R9.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(80));
         vu_ctc2(3, R9.w[0]);
@@ -131,7 +131,7 @@ unsigned int _Clip_ViewVolume2(NJS_POINT4* vec)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(vec);
+        op0.sd[0] = (int32_t)EE_IN(vec);
         vu_load_vf(14, EE_PTR((op0.w[0] + (uint32_t)(offsetof(NJS_POINT4, x)))));
         vu0_callms(VU0_ADDR_VU0_CLIP_VIEW_VOLUME);
     }
@@ -158,10 +158,10 @@ unsigned int _Get_ClipViewVolume2()
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(ret);
+        op0.sd[0] = (int32_t)EE_IN(ret);
         op0.sd[0] = (int32_t)(vu_cfc2(18));
         op0.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(0));
-        ret = (__typeof__(ret))(uintptr_t)op0.w[0];
+        ret = (__typeof__(ret))EE_OUT(ret, op0.w[0]);
     }
 #endif
 
@@ -188,10 +188,10 @@ int _Get_ClipVolumePlane()
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(ret);
+        op0.sd[0] = (int32_t)EE_IN(ret);
         op0.sd[0] = (int32_t)(vu_cfc2(2));
         op0.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(0));
-        ret = (__typeof__(ret))(uintptr_t)op0.w[0];
+        ret = (__typeof__(ret))EE_OUT(ret, op0.w[0]);
     }
 #endif
 
@@ -214,7 +214,7 @@ void _Check_ClipViewAll(NJS_POINT4* vec)
 #else
     { /* asm2c */
         ee_reg op0 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(vec);
+        op0.sd[0] = (int32_t)EE_IN(vec);
         vu_load_vf(14, EE_PTR((op0.w[0] + (uint32_t)(offsetof(NJS_POINT4, x)))));
         vu0_callms(VU0_ADDR_VU0_CLIP_VIEW_VOLUME_ALL);
     }
@@ -246,8 +246,8 @@ void _Set_NodeArray(VU1_STRIP_BUF* pS, VU1_PRIM_BUF* pP)
     { /* asm2c */
         ee_reg op0 = {{0}};
         ee_reg op1 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(pS);
-        op1.sd[0] = (int32_t)(uintptr_t)(pP);
+        op0.sd[0] = (int32_t)EE_IN(pS);
+        op1.sd[0] = (int32_t)EE_IN(pP);
         vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(-96))));
         vu_load_vf(5, EE_PTR((op0.w[0] + (uint32_t)(-32))));
         vu_load_vf(6, EE_PTR((op0.w[0] + (uint32_t)(32))));

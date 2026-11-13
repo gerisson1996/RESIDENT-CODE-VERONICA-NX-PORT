@@ -292,7 +292,7 @@ void _Make_ClipMatrix(sceVu0FMATRIX sc, float scr, float near, float far)
 #else
     { /* asm2c */
         ee_reg cv_mp2 = {{0}};
-        cv_mp2.sd[0] = (int32_t)(uintptr_t)(mp2);
+        cv_mp2.sd[0] = (int32_t)EE_IN(mp2);
         vu_load_vf(24, EE_PTR((cv_mp2.w[0] + (uint32_t)(0))));
         vu_load_vf(25, EE_PTR((cv_mp2.w[0] + (uint32_t)(16))));
         vu_load_vf(26, EE_PTR((cv_mp2.w[0] + (uint32_t)(32))));
@@ -324,9 +324,9 @@ void _Make_ClipMatrix(sceVu0FMATRIX sc, float scr, float near, float far)
         ee_reg cv_fM = {{0}};
         ee_reg cv_fh = {{0}};
         ee_reg cv_fw = {{0}};
-        cv_fM.sd[0] = (int32_t)(uintptr_t)(fM);
-        cv_fh.sd[0] = (int32_t)(uintptr_t)(fh);
-        cv_fw.sd[0] = (int32_t)(uintptr_t)(fw);
+        cv_fM.sd[0] = (int32_t)EE_IN(fM);
+        cv_fh.sd[0] = (int32_t)EE_IN(fh);
+        cv_fw.sd[0] = (int32_t)EE_IN(fw);
         F8 = EE_LWF((cv_fw.w[0] + (uint32_t)(0)));
         F9 = EE_LWF((cv_fh.w[0] + (uint32_t)(0)));
         EE_SWF((cv_fM.w[0] + (uint32_t)(44)), F8);

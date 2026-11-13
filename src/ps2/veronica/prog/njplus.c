@@ -789,10 +789,10 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
                 ee_reg cv_fp = {{0}};
                 ee_reg cv_no = {{0}};
                 ee_reg cv_sp = {{0}};
-                cv_dp.sd[0] = (int32_t)(uintptr_t)(dp);
-                cv_fp.sd[0] = (int32_t)(uintptr_t)(fp);
+                cv_dp.sd[0] = (int32_t)EE_IN(dp);
+                cv_fp.sd[0] = (int32_t)EE_IN(fp);
                 cv_no.f[0] = no;
-                cv_sp.sd[0] = (int32_t)(uintptr_t)(sp);
+                cv_sp.sd[0] = (int32_t)EE_IN(sp);
                 R8.sd[0] = (int32_t)(ee_f2u(cv_no.f[0]));
                 vu_load_vf(4, EE_PTR((cv_sp.w[0] + (uint32_t)(0))));
                 vu_load_vf(5, EE_PTR((cv_dp.w[0] + (uint32_t)(0))));
@@ -833,8 +833,8 @@ void npTransform(NJS_CNK_OBJECT* srcobj, NJS_CNK_OBJECT* dstobj, register float 
             { /* asm2c */
                 ee_reg cv_fp = {{0}};
                 ee_reg cv_sp = {{0}};
-                cv_fp.sd[0] = (int32_t)(uintptr_t)(fp);
-                cv_sp.sd[0] = (int32_t)(uintptr_t)(sp);
+                cv_fp.sd[0] = (int32_t)EE_IN(fp);
+                cv_sp.sd[0] = (int32_t)EE_IN(sp);
                 vu_load_vf(4, EE_PTR((cv_sp.w[0] + (uint32_t)(0))));
                 vu_load_vf(6, EE_PTR((cv_sp.w[0] + (uint32_t)(16))));
                 vu_store_vf(EE_PTR((cv_fp.w[0] + (uint32_t)(0))), 4);
@@ -1681,11 +1681,11 @@ void npSetOffsetUV(NJS_CNK_MODEL* mdlp, short offu, short offv)
                     ee_reg op2 = {{0}};
                     ee_reg op3 = {{0}};
                     ee_reg op4 = {{0}};
-                    op0.sd[0] = (int32_t)(uintptr_t)(plp);
-                    op1.sd[0] = (int32_t)(uintptr_t)(offu);
-                    op2.sd[0] = (int32_t)(uintptr_t)(offv);
-                    op3.sd[0] = (int32_t)(uintptr_t)(usr_num);
-                    op4.sd[0] = (int32_t)(uintptr_t)(srp_num);
+                    op0.sd[0] = (int32_t)EE_IN(plp);
+                    op1.sd[0] = (int32_t)EE_IN(offu);
+                    op2.sd[0] = (int32_t)EE_IN(offv);
+                    op3.sd[0] = (int32_t)EE_IN(usr_num);
+                    op4.sd[0] = (int32_t)EE_IN(srp_num);
                 l_0012DE68:;
                     R10.sd[0] = EE_LH((op0.w[0] + (uint32_t)(0)));
                     ee_cond = (R10.sd[0] >= 0);
@@ -1709,7 +1709,7 @@ void npSetOffsetUV(NJS_CNK_MODEL* mdlp, short offu, short offv)
                     op0.sd[0] = (int32_t)(op0.w[0] + op3.w[0]);
                     if (ee_cond) goto l_0012DE68;
                     op0.sd[0] = (int32_t)(op0.w[0] + ee_zero.w[0]);
-                    plp = (__typeof__(plp))(uintptr_t)op0.w[0];
+                    plp = (__typeof__(plp))EE_OUT(plp, op0.w[0]);
                 }
 #endif
             }
@@ -1800,11 +1800,11 @@ void npSetOffsetUV2(NJS_CNK_MODEL* mdlp, short offu, short offv)
                 ee_reg op2 = {{0}};
                 ee_reg op3 = {{0}};
                 ee_reg op4 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(plp);
-                op1.sd[0] = (int32_t)(uintptr_t)(offu);
-                op2.sd[0] = (int32_t)(uintptr_t)(offv);
-                op3.sd[0] = (int32_t)(uintptr_t)(usr_num);
-                op4.sd[0] = (int32_t)(uintptr_t)(srp_num);
+                op0.sd[0] = (int32_t)EE_IN(plp);
+                op1.sd[0] = (int32_t)EE_IN(offu);
+                op2.sd[0] = (int32_t)EE_IN(offv);
+                op3.sd[0] = (int32_t)EE_IN(usr_num);
+                op4.sd[0] = (int32_t)EE_IN(srp_num);
             l_0012DFA8:;
                 R10.sd[0] = EE_LH((op0.w[0] + (uint32_t)(0)));
                 ee_cond = (R10.sd[0] >= 0);
@@ -1827,7 +1827,7 @@ void npSetOffsetUV2(NJS_CNK_MODEL* mdlp, short offu, short offv)
                 ee_cond = (op4.sd[0] > 0);
                 op0.sd[0] = (int32_t)(op0.w[0] + op3.w[0]);
                 if (ee_cond) goto l_0012DFA8;
-                plp = (__typeof__(plp))(uintptr_t)op0.w[0];
+                plp = (__typeof__(plp))EE_OUT(plp, op0.w[0]);
             }
 #endif
 
@@ -1963,9 +1963,9 @@ void npInitCalcSkin(void* pwp, int obj_n, int* sknp)
                 ee_reg op0 = {{0}};
                 ee_reg op1 = {{0}};
                 ee_reg op2 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(&owp->mtx);
-                op1.sd[0] = (int32_t)(uintptr_t)(&((BH_PWORK*)pwp)->px);
-                op2.sd[0] = (int32_t)(uintptr_t)(np.mxp[i][0]);
+                op0.sd[0] = (int32_t)EE_IN(&owp->mtx);
+                op1.sd[0] = (int32_t)EE_IN(&((BH_PWORK*)pwp)->px);
+                op2.sd[0] = (int32_t)EE_IN(np.mxp[i][0]);
                 R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
                 R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
                 R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(8)));
@@ -2113,10 +2113,10 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                                 ee_reg op3 = {{0}};
                                 ee_reg op4 = {{0}};
                                 op0.f[0] = (float)(lv);
-                                op1.sd[0] = (int32_t)(uintptr_t)(p0);
-                                op2.sd[0] = (int32_t)(uintptr_t)(p1);
-                                op3.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][0]);
-                                op4.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                op1.sd[0] = (int32_t)EE_IN(p0);
+                                op2.sd[0] = (int32_t)EE_IN(p1);
+                                op3.sd[0] = (int32_t)EE_IN(np.mxp[rg0][0]);
+                                op4.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                 R8.sd[0] = (int32_t)(ee_f2u(op0.f[0]));
                                 vu_load_vf(13, &R8);
                                 vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -2195,10 +2195,10 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                                 ee_reg op3 = {{0}};
                                 ee_reg op4 = {{0}};
                                 op0.f[0] = (float)(lv);
-                                op1.sd[0] = (int32_t)(uintptr_t)(p0);
-                                op2.sd[0] = (int32_t)(uintptr_t)(p1);
-                                op3.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][0]);
-                                op4.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                op1.sd[0] = (int32_t)EE_IN(p0);
+                                op2.sd[0] = (int32_t)EE_IN(p1);
+                                op3.sd[0] = (int32_t)EE_IN(np.mxp[rg0][0]);
+                                op4.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                 R8.sd[0] = (int32_t)(ee_f2u(op0.f[0]));
                                 vu_load_vf(13, &R8);
                                 vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -2262,9 +2262,9 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                                 ee_reg op0 = {{0}};
                                 ee_reg op1 = {{0}};
                                 ee_reg op2 = {{0}};
-                                op0.sd[0] = (int32_t)(uintptr_t)(p0);
-                                op1.sd[0] = (int32_t)(uintptr_t)(p1);
-                                op2.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                op0.sd[0] = (int32_t)EE_IN(p0);
+                                op1.sd[0] = (int32_t)EE_IN(p1);
+                                op2.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                 vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
                                 vu_load_vf(11, EE_PTR((op0.w[0] + (uint32_t)(16))));
                                 vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(0))));
@@ -2288,16 +2288,16 @@ void npCalcSkin(void* pwp, int obj_n, int* sknp)
                         }
                     } 
                     
-                    *(int*)p1 = 255; 
-                } 
-                else 
-                { 
+                    *(int*)p1 = 255;
+                }
+                else
+                {
                     P32_POSTINC(int *, np.sknp);
-                } 
+                }
             }
-        } 
-    
-        njPopMatrixEx(); 
+        }
+
+        njPopMatrixEx();
     }
 } 
 
@@ -2392,9 +2392,9 @@ void npInitCalcSkinFM(void* pwp, int obj_n, int* sknp)
                     ee_reg op0 = {{0}};
                     ee_reg op1 = {{0}};
                     ee_reg op2 = {{0}};
-                    op0.sd[0] = (int32_t)(uintptr_t)(&owp->mtx);
-                    op1.sd[0] = (int32_t)(uintptr_t)(&((BH_PWORK*)pwp)->px);
-                    op2.sd[0] = (int32_t)(uintptr_t)(np.mxp[i][0]);
+                    op0.sd[0] = (int32_t)EE_IN(&owp->mtx);
+                    op1.sd[0] = (int32_t)EE_IN(&((BH_PWORK*)pwp)->px);
+                    op2.sd[0] = (int32_t)EE_IN(np.mxp[i][0]);
                     R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
                     R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
                     R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(8)));
@@ -2550,10 +2550,10 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
                                     ee_reg op3 = {{0}};
                                     ee_reg op4 = {{0}};
                                     op0.f[0] = (float)(lv);
-                                    op1.sd[0] = (int32_t)(uintptr_t)(p0);
-                                    op2.sd[0] = (int32_t)(uintptr_t)(p1);
-                                    op3.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][0]);
-                                    op4.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                    op1.sd[0] = (int32_t)EE_IN(p0);
+                                    op2.sd[0] = (int32_t)EE_IN(p1);
+                                    op3.sd[0] = (int32_t)EE_IN(np.mxp[rg0][0]);
+                                    op4.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                     R8.sd[0] = (int32_t)(ee_f2u(op0.f[0]));
                                     vu_load_vf(13, &R8);
                                     vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -2632,10 +2632,10 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
                                     ee_reg op3 = {{0}};
                                     ee_reg op4 = {{0}};
                                     op0.f[0] = (float)(lv);
-                                    op1.sd[0] = (int32_t)(uintptr_t)(p0);
-                                    op2.sd[0] = (int32_t)(uintptr_t)(p1);
-                                    op3.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][0]);
-                                    op4.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                    op1.sd[0] = (int32_t)EE_IN(p0);
+                                    op2.sd[0] = (int32_t)EE_IN(p1);
+                                    op3.sd[0] = (int32_t)EE_IN(np.mxp[rg0][0]);
+                                    op4.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                     R8.sd[0] = (int32_t)(ee_f2u(op0.f[0]));
                                     vu_load_vf(13, &R8);
                                     vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -2699,9 +2699,9 @@ void npCalcSkinFM(void* pwp, int obj_n, int* sknp)
                                     ee_reg op0 = {{0}};
                                     ee_reg op1 = {{0}};
                                     ee_reg op2 = {{0}};
-                                    op0.sd[0] = (int32_t)(uintptr_t)(p0);
-                                    op1.sd[0] = (int32_t)(uintptr_t)(p1);
-                                    op2.sd[0] = (int32_t)(uintptr_t)(np.mxp[rg0][1]);
+                                    op0.sd[0] = (int32_t)EE_IN(p0);
+                                    op1.sd[0] = (int32_t)EE_IN(p1);
+                                    op2.sd[0] = (int32_t)EE_IN(np.mxp[rg0][1]);
                                     vu_load_vf(4, EE_PTR((op0.w[0] + (uint32_t)(0))));
                                     vu_load_vf(11, EE_PTR((op0.w[0] + (uint32_t)(16))));
                                     vu_load_vf(5, EE_PTR((op2.w[0] + (uint32_t)(0))));

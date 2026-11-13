@@ -1351,14 +1351,14 @@ void Ps2ZbuffOffI()
 {
 	D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x2;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x2;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GEQUAL, 128, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[5] = SCE_GS_TEST_1;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GEQUAL, 128, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_TEST_1;
     
     loadImage((void*)0xF0000000);
     

@@ -256,7 +256,7 @@ int LoadToVram(unsigned long tbp, u_long128* addr, int tbw, int psm, int pos, in
     *pBuff++ = SCE_GIF_SET_TAG(size, SCE_GS_FALSE, SCE_GS_FALSE, 0, SCE_GIF_IMAGE, 0);
     *pBuff++ = 0;
     
-    *pBuff++ = (u_long)(DMAref | size) | ((u_long)addr << 32);
+    *pBuff++ = (u_long)(DMAref | size) | ((u_long)PS2_ADDR(addr) << 32);
     *pBuff++ = 0;
     
     *pBuff++ = DMAend | 2;
@@ -298,7 +298,7 @@ int Send_1024_Clut_data(void* clt_adr, unsigned long send_clut_adr)
         {
             D2_SyncTag();
 
-            pBuff = (unsigned long*)UNCACHED(data);
+            pBuff = (unsigned long*)PS2_HOST(UNCACHED(data));
             
             *pBuff++ = DMAcnt | 6;
             *pBuff++ = 0;
@@ -321,7 +321,7 @@ int Send_1024_Clut_data(void* clt_adr, unsigned long send_clut_adr)
             *pBuff++ = SCE_GIF_SET_TAG(64, SCE_GS_FALSE, SCE_GS_FALSE, 0, SCE_GIF_IMAGE, 0);
             *pBuff++ = 0;
             
-            *pBuff++ = (unsigned long)(DMAref | 64) | ((unsigned long)pClut << 32);
+            *pBuff++ = (unsigned long)(DMAref | 64) | ((unsigned long)PS2_ADDR(pClut) << 32);
             *pBuff++ = 0;
             
             *pBuff++ = DMAend | 2;

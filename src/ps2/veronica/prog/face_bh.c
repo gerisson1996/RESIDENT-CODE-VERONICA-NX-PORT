@@ -839,10 +839,10 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
         ee_reg op1 = {{0}};
         ee_reg op3 = {{0}};
         ee_reg op4 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(n);
-        op1.sd[0] = (int32_t)(uintptr_t)(jaw);
-        op3.sd[0] = (int32_t)(uintptr_t)(svp);
-        op4.sd[0] = (int32_t)(uintptr_t)(dvp);
+        op0.sd[0] = (int32_t)EE_IN(n);
+        op1.sd[0] = (int32_t)EE_IN(jaw);
+        op3.sd[0] = (int32_t)EE_IN(svp);
+        op4.sd[0] = (int32_t)EE_IN(dvp);
         ee_cond = (op0.sd[0] <= ee_zero.sd[0]);
         R8.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(TANG_WORK, id))));
         if (ee_cond) goto lbl_8C;
@@ -858,8 +858,8 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
         ee_sq((R9.w[0] + (uint32_t)(0)), &R11);
         if (ee_cond) goto lbl_5C;
     lbl_8C:;
-        n = (__typeof__(n))(uintptr_t)op0.w[0];
-        jaw = (__typeof__(jaw))(uintptr_t)op1.w[0];
+        n = (__typeof__(n))EE_OUT(n, op0.w[0]);
+        jaw = (__typeof__(jaw))EE_OUT(jaw, op1.w[0]);
     }
 #endif
     
@@ -981,13 +981,13 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
             ee_reg op5 = {{0}};
             ee_reg op6 = {{0}};
             ee_reg op7 = {{0}};
-            op1.sd[0] = (int32_t)(uintptr_t)(dvp);
-            op2.sd[0] = (int32_t)(uintptr_t)(p0);
-            op3.sd[0] = (int32_t)(uintptr_t)(p1);
+            op1.sd[0] = (int32_t)EE_IN(dvp);
+            op2.sd[0] = (int32_t)EE_IN(p0);
+            op3.sd[0] = (int32_t)EE_IN(p1);
             op4.f[0] = (float)(rsum);
-            op5.sd[0] = (int32_t)(uintptr_t)(mvp);
-            op6.sd[0] = (int32_t)(uintptr_t)(mrp);
-            op7.sd[0] = (int32_t)(uintptr_t)(m);
+            op5.sd[0] = (int32_t)EE_IN(mvp);
+            op6.sd[0] = (int32_t)EE_IN(mrp);
+            op7.sd[0] = (int32_t)EE_IN(m);
             ee_cond = (op7.sd[0] <= ee_zero.sd[0]);
             R8.sd[0] = (int32_t)(ee_f2u(op4.f[0]));
             if (ee_cond) goto lbl_220;
@@ -1022,9 +1022,9 @@ void _fmCnkCalcMuscle(MASK_WORK* fm)
             EE_SWF((op1.w[0] + (uint32_t)(4)), F2);
             EE_SWF((op1.w[0] + (uint32_t)(8)), F3);
         lbl_220:;
-            dvp = (__typeof__(dvp))(uintptr_t)op1.w[0];
-            p0 = (__typeof__(p0))(uintptr_t)op2.w[0];
-            p1 = (__typeof__(p1))(uintptr_t)op3.w[0];
+            dvp = (__typeof__(dvp))EE_OUT(dvp, op1.w[0]);
+            p0 = (__typeof__(p0))EE_OUT(p0, op2.w[0]);
+            p1 = (__typeof__(p1))EE_OUT(p1, op3.w[0]);
         }
 #endif
     }
@@ -1115,9 +1115,9 @@ void _fmCnkCalcJaw(MASK_WORK* fm)
                     ee_reg op0 = {{0}};
                     ee_reg op1 = {{0}};
                     ee_reg op2 = {{0}};
-                    op0.sd[0] = (int32_t)(uintptr_t)(&vec);
-                    op1.sd[0] = (int32_t)(uintptr_t)(mat);
-                    op2.sd[0] = (int32_t)(uintptr_t)(dvp1);
+                    op0.sd[0] = (int32_t)EE_IN(&vec);
+                    op1.sd[0] = (int32_t)EE_IN(mat);
+                    op2.sd[0] = (int32_t)EE_IN(dvp1);
                     R8.d[0] = ee_ldl(R8.d[0], (op2.w[0] + (uint32_t)(7)));
                     R8.d[0] = ee_ldr(R8.d[0], (op2.w[0] + (uint32_t)(0)));
                     R9.sd[0] = EE_LW((op2.w[0] + (uint32_t)(offsetof(NJS_POINT4, z))));
@@ -1224,10 +1224,10 @@ void _fmCnkCalcJaw(MASK_WORK* fm)
                     ee_reg op2 = {{0}};
                     ee_reg op3 = {{0}};
                     ee_reg op4 = {{0}};
-                    op0.sd[0] = (int32_t)(uintptr_t)(&vec);
-                    op1.sd[0] = (int32_t)(uintptr_t)(dvp1);
-                    op2.sd[0] = (int32_t)(uintptr_t)(jmat1);
-                    op3.sd[0] = (int32_t)(uintptr_t)(mat2);
+                    op0.sd[0] = (int32_t)EE_IN(&vec);
+                    op1.sd[0] = (int32_t)EE_IN(dvp1);
+                    op2.sd[0] = (int32_t)EE_IN(jmat1);
+                    op3.sd[0] = (int32_t)EE_IN(mat2);
                     op4.f[0] = (float)(jawtrans);
                     R8.sd[0] = (int32_t)(ee_f2u(op4.f[0]));
                     vu_load_vf(5, EE_PTR((op3.w[0] + (uint32_t)(0))));
@@ -1388,12 +1388,12 @@ void _fmCnkCalcEye(MASK_WORK* fm)
                 ee_reg op3 = {{0}};
                 ee_reg op4 = {{0}};
                 ee_reg op5 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(&fm->eyemat[i]);
-                op1.sd[0] = (int32_t)(uintptr_t)(&obj->pos);
-                op2.sd[0] = (int32_t)(uintptr_t)(&q3);
-                op3.sd[0] = (int32_t)(uintptr_t)(&t3);
-                op4.sd[0] = (int32_t)(uintptr_t)(&r3);
-                op5.sd[0] = (int32_t)(uintptr_t)(&fm->param.eye);
+                op0.sd[0] = (int32_t)EE_IN(&fm->eyemat[i]);
+                op1.sd[0] = (int32_t)EE_IN(&obj->pos);
+                op2.sd[0] = (int32_t)EE_IN(&q3);
+                op3.sd[0] = (int32_t)EE_IN(&t3);
+                op4.sd[0] = (int32_t)EE_IN(&r3);
+                op5.sd[0] = (int32_t)EE_IN(&fm->param.eye);
                 R8.d[0] = ee_ldl(R8.d[0], (op1.w[0] + (uint32_t)(7)));
                 R8.d[0] = ee_ldr(R8.d[0], (op1.w[0] + (uint32_t)(0)));
                 R9.sd[0] = EE_LW((op1.w[0] + (uint32_t)(offsetof(NJS_POINT3, z))));
@@ -1516,7 +1516,7 @@ void _fmCnkCalcTang(MASK_WORK* fm)
 #else
             { /* asm2c */
                 ee_reg op0 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(mat);
+                op0.sd[0] = (int32_t)EE_IN(mat);
                 vu_upper(U_MUL, 15, 4, 0, 0, BC_W);
                 vu_mr32(15, 5, 4);
                 vu_mr32(15, 6, 5);
@@ -1579,10 +1579,10 @@ void _fmCnkCalcTang(MASK_WORK* fm)
                 ee_reg op1 = {{0}};
                 ee_reg op2 = {{0}};
                 ee_reg op3 = {{0}};
-                op0.sd[0] = (int32_t)(uintptr_t)(&svp[calc_ofs]);
-                op1.sd[0] = (int32_t)(uintptr_t)(&dvp[calc_ofs]);
+                op0.sd[0] = (int32_t)EE_IN(&svp[calc_ofs]);
+                op1.sd[0] = (int32_t)EE_IN(&dvp[calc_ofs]);
                 op2.f[0] = (float)(tangz);
-                op3.sd[0] = (int32_t)(uintptr_t)(mat);
+                op3.sd[0] = (int32_t)EE_IN(mat);
                 R10.sd[0] = (int32_t)(ee_f2u(op2.f[0]));
                 R8.d[0] = ee_ldl(R8.d[0], (op0.w[0] + (uint32_t)(7)));
                 R8.d[0] = ee_ldr(R8.d[0], (op0.w[0] + (uint32_t)(0)));

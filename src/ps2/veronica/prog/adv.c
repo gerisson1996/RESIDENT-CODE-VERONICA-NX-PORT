@@ -1653,10 +1653,10 @@ void FlushPlate()
         ap->FlushSpeed2 = -2.0f; 
     }
 
-    ap->FontBaseColor = (unsigned int)ap->FlushCount2 + 255; 
+    ap->FontBaseColor = (unsigned int)(int)ap->FlushCount2 + 255; 
     
-    ap->FontBaseColor |= ((unsigned int)ap->FlushCount2 + 255) << 16;
-    ap->FontBaseColor |= ((unsigned int)ap->FlushCount2 + 255) << 8;
+    ap->FontBaseColor |= ((unsigned int)(int)ap->FlushCount2 + 255) << 16;
+    ap->FontBaseColor |= ((unsigned int)(int)ap->FlushCount2 + 255) << 8;
 } 
 
 // 98.31% matching
@@ -1736,7 +1736,7 @@ void DisplayGameModePlate(int Cursor, int CursorMax, float FadeRate, int Flag)
         
         if (DivTbl[i] == 1) 
         {
-            Alpha += (unsigned int)ap->FlushCount2;
+            Alpha += (unsigned int)(int)ap->FlushCount2;
             
             Alpha <<= 24;
             
@@ -1799,7 +1799,7 @@ void DisplayNewGamePlate(int Cursor, float FadeRate, int Flag)
         
         if (DivTbl[i] == 1) 
         {
-            Alpha += (unsigned int)ap->FlushCount2;
+            Alpha += (unsigned int)(int)ap->FlushCount2;
                        
             Alpha <<= 24;
             
@@ -1858,7 +1858,7 @@ void DisplayExtraGamePlate(int Cursor, float FadeRate, int Flag)
         
         if (DivTbl[i] == 1) 
         {
-            Alpha += (unsigned int)ap->FlushCount2;
+            Alpha += (unsigned int)(int)ap->FlushCount2;
                        
             Alpha <<= 24;
             
@@ -3082,7 +3082,7 @@ int DisplayOptionPlateLevel0(int PortId, int Flag)
         
         if (OptionDef[i].SelectFlag != 0) 
         {
-            Alpha += (unsigned int)ap->FlushCount2;
+            Alpha += (unsigned int)(int)ap->FlushCount2;
             
             Alpha <<= 24;
             
@@ -3252,12 +3252,12 @@ int DisplayOptionPlateLevel1(int PortId, int Flag)
     SetQuadPos(224.0f, 148.0f, 32.0f, 32.0f, qp);
     SetQuadUv2(224.0f, 288.0f, 32.0f, 32.0f, 0, qp);
     
-    AdvEasyDrawTexture(0, (((unsigned int)ap->FlushCount2 + 255) << 24) | 0xFFFFFF, qp, 0.05f, 1);
+    AdvEasyDrawTexture(0, (((unsigned int)(int)ap->FlushCount2 + 255) << 24) | 0xFFFFFF, qp, 0.05f, 1);
     
     SetQuadPos(392.0f, 148.0f, 32.0f, 32.0f, qp);
     SetQuadUv2(256.0f, 288.0f, 32.0f, 32.0f, 0, qp);
     
-    AdvEasyDrawTexture(0, (((unsigned int)ap->FlushCount2 + 255) << 24) | 0xFFFFFF, qp, 0.05f, 1);
+    AdvEasyDrawTexture(0, (((unsigned int)(int)ap->FlushCount2 + 255) << 24) | 0xFFFFFF, qp, 0.05f, 1);
     
     for (i = 0; i < 3; i++) 
     {
@@ -3562,7 +3562,7 @@ int DisplayOptionPlateLevel3(int PortId, int Flag)
     SetQuadPos(32.0f, 408.0f, 576.0f, 32.0f, qp);
     SetQuadUv2(400.0f, 320.0f, 576.0f, 32.0f, 0, qp);
     
-    AdvEasyDrawTexture(0, (((unsigned int)ap->FlushCount2 + 255) << 24) | 0xBFBFBF, qp, 0.05f, 1);
+    AdvEasyDrawTexture(0, (((unsigned int)(int)ap->FlushCount2 + 255) << 24) | 0xBFBFBF, qp, 0.05f, 1);
     
     SetQuadPos(56.0f, 232.0f, 528.0f, 160.0f, qp);
     SetQuadUv2(400.0f, 0, 528.0f, 160.0f, 0, qp);

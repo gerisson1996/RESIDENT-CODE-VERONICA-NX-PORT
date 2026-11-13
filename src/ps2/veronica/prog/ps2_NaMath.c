@@ -252,10 +252,10 @@ void njSinCos(int lAngle, float* sin, float* cos)
         ee_reg op1 = {{0}};
         ee_reg op2 = {{0}};
         ee_reg op3 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(&lAngle);
-        op1.sd[0] = (int32_t)(uintptr_t)(sin);
-        op2.sd[0] = (int32_t)(uintptr_t)(cos);
-        op3.sd[0] = (int32_t)(uintptr_t)(SinTable);
+        op0.sd[0] = (int32_t)EE_IN(&lAngle);
+        op1.sd[0] = (int32_t)EE_IN(sin);
+        op2.sd[0] = (int32_t)EE_IN(cos);
+        op3.sd[0] = (int32_t)EE_IN(SinTable);
         R3.d[0] = op3.d[0];
         R8.sd[0] = EE_LW((op0.w[0] + (uint32_t)(0)));
         R10.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(16383));
@@ -437,8 +437,8 @@ void	njLinear(Float *idata, Float *odata, NJS_SPLINE *attr, Float frame)
 	    ee_reg op0 = {{0}};
 	    ee_reg op1 = {{0}};
 	    ee_reg op3 = {{0}};
-	    op0.sd[0] = (int32_t)(uintptr_t)(idata);
-	    op1.sd[0] = (int32_t)(uintptr_t)(odata);
+	    op0.sd[0] = (int32_t)EE_IN(idata);
+	    op1.sd[0] = (int32_t)EE_IN(odata);
 	    op3.f[0] = (float)(frame);
 	    R8.sd[0] = (int32_t)(op0.w[0] + (uint32_t)(12));
 	    R9.sd[0] = (int32_t)(ee_f2u(op3.f[0]));
@@ -570,8 +570,8 @@ void	njOverhauserSpline(Float *idata, Float *odata, NJS_SPLINE *attr, Float fram
 	    ee_reg op1 = {{0}};
 	    ee_reg op3 = {{0}};
 	    ee_reg op4 = {{0}};
-	    op0.sd[0] = (int32_t)(uintptr_t)(idata);
-	    op1.sd[0] = (int32_t)(uintptr_t)(odata);
+	    op0.sd[0] = (int32_t)EE_IN(idata);
+	    op1.sd[0] = (int32_t)EE_IN(odata);
 	    op3.f[0] = (float)(frame);
 	    op4.f[0] = (float)(ftmp);
 	    R8.sd[0] = (int32_t)(ee_f2u(op3.f[0]));

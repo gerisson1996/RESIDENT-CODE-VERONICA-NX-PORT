@@ -29,8 +29,8 @@ void sceVu0ITOF12Vector(sceVu0FVECTOR v0, sceVu0IVECTOR v1)
 	{ /* asm2c */
 	    ee_reg op0 = {{0}};
 	    ee_reg op1 = {{0}};
-	    op0.sd[0] = (int32_t)(uintptr_t)(v0);
-	    op1.sd[0] = (int32_t)(uintptr_t)(v1);
+	    op0.sd[0] = (int32_t)EE_IN(v0);
+	    op1.sd[0] = (int32_t)EE_IN(v1);
 	    vu_load_vf(4, EE_PTR((op1.w[0] + (uint32_t)(0))));
 	    vu_upper(U_ITOF12, 15, 5, 4, 0, BC_NONE);
 	    vu_store_vf(EE_PTR((op0.w[0] + (uint32_t)(0))), 5);

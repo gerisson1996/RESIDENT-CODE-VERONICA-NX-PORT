@@ -257,7 +257,7 @@ void PS2_swap()
 {
     unsigned long *p;
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
 
     D2_SyncTag();
 
@@ -385,12 +385,12 @@ void Ps2AddPrim(unsigned long prim, void* dp, unsigned int num, unsigned int cli
         {
             pc_ot_pretext = 0;
             pc_native_packet_test(NATIVE_PRETEXT, SCE_GS_SET_TEST(1, 6, 0, 0, 0, 0, 1, 2));
-            Ps2AddOT((void*)WORKBASE, 1, key, prim);
+            Ps2AddOT((void*)PS2_HOST(WORKBASE), 1, key, prim);
         }
         pc_native_packet_test(h, SCE_GS_SET_TEST(1, 6, 0, 0, 0, 0, 1, 2));
         if ((prim & 0x20000000000000)) 
         {
-            Ps2AddOT((void*)WORKBASE, 1, key, prim);
+            Ps2AddOT((void*)PS2_HOST(WORKBASE), 1, key, prim);
         }
         else
         {
@@ -400,7 +400,7 @@ void Ps2AddPrim(unsigned long prim, void* dp, unsigned int num, unsigned int cli
         return;
     }
 #endif
-    p = (unsigned long*)WORKBASE; 
+    p = (unsigned long*)PS2_HOST(WORKBASE); 
     
     D2_SyncTag(); 
     
@@ -518,7 +518,7 @@ void Ps2AddPrim(unsigned long prim, void* dp, unsigned int num, unsigned int cli
     
     if ((prim & 0x20000000000000)) 
     { 
-        Ps2AddOT((void*)WORKBASE, num, sz, prim); 
+        Ps2AddOT((void*)PS2_HOST(WORKBASE), num, sz, prim); 
     } 
     else
     { 
@@ -582,7 +582,7 @@ void Ps2AddPrim3D(unsigned long prim, void* dp, unsigned int num)
         }
     } 
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag();
 
@@ -702,13 +702,13 @@ void Ps2AddPrim3D(unsigned long prim, void* dp, unsigned int num)
         ee_reg op4 = {{0}};
         ee_reg op5 = {{0}};
         ee_reg op6 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip_vec);
-        op1.sd[0] = (int32_t)(uintptr_t)(near_far_vec);
-        op2.sd[0] = (int32_t)(uintptr_t)(zclip_ab_vec);
-        op3.sd[0] = (int32_t)(uintptr_t)(zbuff_ab_vec);
-        op4.sd[0] = (int32_t)(uintptr_t)(dp);
-        op5.sd[0] = (int32_t)(uintptr_t)(p);
-        op6.sd[0] = (int32_t)(uintptr_t)(num);
+        op0.sd[0] = (int32_t)EE_IN(clip_vec);
+        op1.sd[0] = (int32_t)EE_IN(near_far_vec);
+        op2.sd[0] = (int32_t)EE_IN(zclip_ab_vec);
+        op3.sd[0] = (int32_t)EE_IN(zbuff_ab_vec);
+        op4.sd[0] = (int32_t)EE_IN(dp);
+        op5.sd[0] = (int32_t)EE_IN(p);
+        op6.sd[0] = (int32_t)EE_IN(num);
         vu_load_vf(10, EE_PTR((op3.w[0] + (uint32_t)(0))));
         vu_load_vf(13, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(12, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -769,7 +769,7 @@ void Ps2AddPrim3D(unsigned long prim, void* dp, unsigned int num)
 #ifdef TARGET_PC
         pc_ot_poly = pc_effect_poly();   /* frame interpolation: drawn later from the ordering table */
 #endif
-        Ps2AddOT((void*)0x70000000, num, ((float*)p)[(12 * num) + 3], prim);
+        Ps2AddOT((void*)PS2_HOST(0x70000000), num, ((float*)p)[(12 * num) + 3], prim);
     }
     else 
     {
@@ -830,7 +830,7 @@ void Ps2AddPrim3DEx(unsigned long prim, void* dp, unsigned int num)
         }
     } 
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag();
 
@@ -952,13 +952,13 @@ void Ps2AddPrim3DEx(unsigned long prim, void* dp, unsigned int num)
         ee_reg op4 = {{0}};
         ee_reg op5 = {{0}};
         ee_reg op6 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip_vec);
-        op1.sd[0] = (int32_t)(uintptr_t)(near_far_vec);
-        op2.sd[0] = (int32_t)(uintptr_t)(zclip_ab_vec);
-        op3.sd[0] = (int32_t)(uintptr_t)(zbuff_ab_vec);
-        op4.sd[0] = (int32_t)(uintptr_t)(dp);
-        op5.sd[0] = (int32_t)(uintptr_t)(p);
-        op6.sd[0] = (int32_t)(uintptr_t)(num);
+        op0.sd[0] = (int32_t)EE_IN(clip_vec);
+        op1.sd[0] = (int32_t)EE_IN(near_far_vec);
+        op2.sd[0] = (int32_t)EE_IN(zclip_ab_vec);
+        op3.sd[0] = (int32_t)EE_IN(zbuff_ab_vec);
+        op4.sd[0] = (int32_t)EE_IN(dp);
+        op5.sd[0] = (int32_t)EE_IN(p);
+        op6.sd[0] = (int32_t)EE_IN(num);
         vu_load_vf(10, EE_PTR((op3.w[0] + (uint32_t)(0))));
         vu_load_vf(13, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(12, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -1017,7 +1017,7 @@ void Ps2AddPrim3DEx(unsigned long prim, void* dp, unsigned int num)
 
     if ((prim & 0x20000000000000)) 
     {
-        Ps2AddOT((void*)0x70000000, num, ((float*)p)[(12 * num) + 3], prim);
+        Ps2AddOT((void*)PS2_HOST(0x70000000), num, ((float*)p)[(12 * num) + 3], prim);
     }
     else 
     {
@@ -1040,7 +1040,7 @@ l_002CC2B0:
    original entry). */
 static void pc_native_packet_test(unsigned int h, unsigned long test)
 {
-    unsigned long* p = (unsigned long*)WORKBASE;
+    unsigned long* p = (unsigned long*)PS2_HOST(WORKBASE);
     D2_SyncTag();
     *p++ = 6 | 0x70000000;
     *p++ = 0;
@@ -1118,14 +1118,14 @@ void Ps2AddPrim3DExNative(unsigned long prim, void* dp, unsigned int num, int mo
             else if (ViewType == 1) key = 0.33333334f * ((float)(int)(v[j].fX * 16.0f) / 16.0f + (float)(int)(v[j].fY * 16.0f) / 16.0f + z0);
             else key = MAX(MAX(z0, z1), z2);
             pc_native_packet(h);
-            Ps2AddOT((void*)0x70000000, 1, key, prim);
+            Ps2AddOT((void*)PS2_HOST(0x70000000), 1, key, prim);
         }
         return;
     }
     pc_native_packet(pc_native_prim3d((unsigned int)((prim >> 47) & 0x7FF), (const VU1_PRIM_BUF*)dp, (int)num, ot, &zavg));
     if (ot) 
     {
-        Ps2AddOT((void*)0x70000000, 1, zavg, prim);
+        Ps2AddOT((void*)PS2_HOST(0x70000000), 1, zavg, prim);
     }
     else 
     {
@@ -1191,7 +1191,7 @@ void Ps2AddPrim3DEx1P(unsigned long prim, void* dp, unsigned int num)
         }
     } 
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag();
 
@@ -1313,13 +1313,13 @@ void Ps2AddPrim3DEx1P(unsigned long prim, void* dp, unsigned int num)
         ee_reg op4 = {{0}};
         ee_reg op5 = {{0}};
         ee_reg op6 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip_vec);
-        op1.sd[0] = (int32_t)(uintptr_t)(near_far_vec);
-        op2.sd[0] = (int32_t)(uintptr_t)(zclip_ab_vec);
-        op3.sd[0] = (int32_t)(uintptr_t)(zbuff_ab_vec);
-        op4.sd[0] = (int32_t)(uintptr_t)(dp);
-        op5.sd[0] = (int32_t)(uintptr_t)(p);
-        op6.sd[0] = (int32_t)(uintptr_t)(num);
+        op0.sd[0] = (int32_t)EE_IN(clip_vec);
+        op1.sd[0] = (int32_t)EE_IN(near_far_vec);
+        op2.sd[0] = (int32_t)EE_IN(zclip_ab_vec);
+        op3.sd[0] = (int32_t)EE_IN(zbuff_ab_vec);
+        op4.sd[0] = (int32_t)EE_IN(dp);
+        op5.sd[0] = (int32_t)EE_IN(p);
+        op6.sd[0] = (int32_t)EE_IN(num);
         vu_load_vf(10, EE_PTR((op3.w[0] + (uint32_t)(0))));
         vu_load_vf(13, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(12, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -1378,7 +1378,7 @@ void Ps2AddPrim3DEx1P(unsigned long prim, void* dp, unsigned int num)
 
     if ((Ps2_albinoid_flag == 0) && ((prim & 0x20000000000000))) 
     {
-        Ps2AddOT((void*)0x70000000, num, Ps2AddPrimPrio, prim);
+        Ps2AddOT((void*)PS2_HOST(0x70000000), num, Ps2AddPrimPrio, prim);
     }
     else 
     {
@@ -1407,7 +1407,7 @@ void Ps2AddPrim3DMod(unsigned long prim, void* dp, unsigned int num)
     zbuff_ab_vec[2] = -Ps2_zbuff_a;
     zbuff_ab_vec[3] = *(float*)&num;  
     
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag();
     
@@ -1531,13 +1531,13 @@ void Ps2AddPrim3DMod(unsigned long prim, void* dp, unsigned int num)
         ee_reg op4 = {{0}};
         ee_reg op5 = {{0}};
         ee_reg op6 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip_vec);
-        op1.sd[0] = (int32_t)(uintptr_t)(near_far_vec);
-        op2.sd[0] = (int32_t)(uintptr_t)(zclip_ab_vec);
-        op3.sd[0] = (int32_t)(uintptr_t)(zbuff_ab_vec);
-        op4.sd[0] = (int32_t)(uintptr_t)(dp);
-        op5.sd[0] = (int32_t)(uintptr_t)(p);
-        op6.sd[0] = (int32_t)(uintptr_t)(num);
+        op0.sd[0] = (int32_t)EE_IN(clip_vec);
+        op1.sd[0] = (int32_t)EE_IN(near_far_vec);
+        op2.sd[0] = (int32_t)EE_IN(zclip_ab_vec);
+        op3.sd[0] = (int32_t)EE_IN(zbuff_ab_vec);
+        op4.sd[0] = (int32_t)EE_IN(dp);
+        op5.sd[0] = (int32_t)EE_IN(p);
+        op6.sd[0] = (int32_t)EE_IN(num);
         vu_load_vf(10, EE_PTR((op3.w[0] + (uint32_t)(0))));
         vu_load_vf(13, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(12, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -1694,9 +1694,9 @@ void Ps2AddOT(void* p, unsigned int num, float z, unsigned long prim)
         otz >>= 4; 
     }
         
-    if (otz > 4095) 
+    if (otz > 4095)
     {
-        otz = 4095; 
+        otz = 4095;
     }
         
     if (Ps2_OT[otz][0] != NULL) 
@@ -1895,7 +1895,7 @@ int Ps2DrawOTagSub(int start_no)
                         } 
                         else 
                         { 
-                            ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
+                            ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)PS2_ADDR(&Ps2_tp_tag[t_no]) << 32); 
                             ((long*)P32(void *, p->p))[1] = 0; 
                             
                             goto loop_end; 
@@ -1946,7 +1946,7 @@ int Ps2DrawOTagSub(int start_no)
                     Ps2_tp_tag[tex_cache_num].CLAMP = SCE_GS_SET_CLAMP_1(SCE_GS_CLAMP, SCE_GS_CLAMP, 255, 0, 255, 0); 
                     Ps2_tp_tag[tex_cache_num].CLAMP_TAG = SCE_GS_CLAMP_1; 
                     
-                    ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[tex_cache_num] << 32); 
+                    ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)PS2_ADDR(&Ps2_tp_tag[tex_cache_num]) << 32); 
                     ((long*)P32(void *, p->p))[1] = 0; 
                     
                     tex_cache_num++; 
@@ -1954,7 +1954,7 @@ int Ps2DrawOTagSub(int start_no)
             } 
             else 
             { 
-                ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)&Ps2_tp_tag[t_no] << 32); 
+                ((long*)P32(void *, p->p))[0] = DMAref | 0x4 | ((long)PS2_ADDR(&Ps2_tp_tag[t_no]) << 32); 
                 ((long*)P32(void *, p->p))[1] = 0; 
             }
             
@@ -2021,7 +2021,7 @@ unsigned int Ps2BitCount(register unsigned int value)
         ee_reg R2 = {{0}}, R3 = {{0}};
         const ee_reg ee_zero = {{0}};
         ee_reg cv_value = {{0}};
-        cv_value.sd[0] = (int32_t)(uintptr_t)(value);
+        cv_value.sd[0] = (int32_t)EE_IN(value);
         R2.sd[0] = (int32_t)(cv_value.w[0] + (uint32_t)(-1));
         R3.sd[0] = (int32_t)(ee_zero.w[0] + (uint32_t)(31));
         ee_plzcw(&R2, &R2);
@@ -2120,7 +2120,7 @@ label:
         }
     }
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
 
     D2_SyncTag();
 
@@ -2209,14 +2209,14 @@ void Ps2SetFogColor()
 {
 	D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x2;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x2;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = Ps2_gs_save.FOGCOL = SCE_GS_SET_RGBAQ(ulNaFogR, ulNaFogG, ulNaFogB, 0, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_FOGCOL;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = Ps2_gs_save.FOGCOL = SCE_GS_SET_RGBAQ(ulNaFogR, ulNaFogG, ulNaFogB, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FOGCOL;
     
     loadImage((void*)0xF0000000); 
     
@@ -2228,14 +2228,14 @@ void Ps2SetFogColorSys(unsigned int r, unsigned int g, unsigned int b)
 {
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x2;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x2;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = Ps2_gs_save.FOGCOL = SCE_GS_SET_RGBAQ(r, g, b, 0, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_FOGCOL;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = Ps2_gs_save.FOGCOL = SCE_GS_SET_RGBAQ(r, g, b, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FOGCOL;
     
     loadImage((void*)0xF0000000); 
     
@@ -2441,32 +2441,32 @@ void Ps2ScreenClear()
 {
     SyncPath();
 
-    ((u_long*)WORKBASE)[0] = DMAend | 0x8; 
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x8; 
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
 
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(7, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(7, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
-    ((u_long*)WORKBASE)[9] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_RGBAQ;
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_RGBAQ;
     
-    ((u_long*)WORKBASE)[12] = SCE_GS_SET_XYZF(GS_X_COORD(0), GS_Y_COORD(-128), 0, 0);
-    ((u_long*)WORKBASE)[13] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[12] = SCE_GS_SET_XYZF(GS_X_COORD(0), GS_Y_COORD(-128), 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[13] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[14] = SCE_GS_SET_XYZF(GS_X_COORD(640), GS_Y_COORD(352), 0, 0);
-    ((u_long*)WORKBASE)[15] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[14] = SCE_GS_SET_XYZF(GS_X_COORD(640), GS_Y_COORD(352), 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[15] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[16] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[17] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[16] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[17] = SCE_GS_TEST_2;
     
     loadImage((void*)0xF0000000);
  
@@ -2479,32 +2479,32 @@ void Ps2DispScreenClear()
 {
     SyncPath();
 
-    ((u_long*)WORKBASE)[0] = DMAend | 0x8; 
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x8; 
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
 
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(7, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(7, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0) | 0x96;
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0) | 0x96;
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
-    ((u_long*)WORKBASE)[9] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_RGBAQ;
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_RGBAQ;
     
-    ((u_long*)WORKBASE)[12] = SCE_GS_SET_XYZF(GS_X_COORD(0), GS_Y_COORD(-128), 0, 0);
-    ((u_long*)WORKBASE)[13] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[12] = SCE_GS_SET_XYZF(GS_X_COORD(0), GS_Y_COORD(-128), 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[13] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[14] = SCE_GS_SET_XYZF(GS_X_COORD(640), GS_Y_COORD(352), 0, 0);
-    ((u_long*)WORKBASE)[15] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[14] = SCE_GS_SET_XYZF(GS_X_COORD(640), GS_Y_COORD(352), 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[15] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[16] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[17] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[16] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[17] = SCE_GS_TEST_2;
     
     loadImage((void*)0xF0000000);
  
@@ -2517,14 +2517,14 @@ void Ps2ZbuffOff()
 {
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x2;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x2;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GEQUAL, 128, SCE_GS_AFAIL_FB_ONLY, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[5] = SCE_GS_TEST_1;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GEQUAL, 128, SCE_GS_AFAIL_FB_ONLY, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_TEST_1;
     
     loadImage((void*)0xF0000000);
     
@@ -2536,17 +2536,17 @@ void Ps2ZbuffOff2()
 {
 	D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x3;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x3;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(2, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(2, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
 
-	((u_long*)WORKBASE)[4] = SCE_GS_SET_ZBUF_1(300, SCE_GS_PSMCT16S, 1);
-    ((u_long*)WORKBASE)[5] = SCE_GS_ZBUF_1;
+	((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_ZBUF_1(300, SCE_GS_PSMCT16S, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_ZBUF_1;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_1(1, SCE_GS_DEPTH_GEQUAL, 128, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_1;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_1(1, SCE_GS_DEPTH_GEQUAL, 128, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_1;
 
     loadImage((void*)0xF0000000);
     
@@ -2558,17 +2558,17 @@ void Ps2ZbuffOn()
 {
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x3;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x3;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(2, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(2, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_ZBUF_1(300, SCE_GS_PSMCT16S, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_ZBUF_1;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_ZBUF_1(300, SCE_GS_PSMCT16S, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_ZBUF_1;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GREATER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_1;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_1(1, SCE_GS_ALPHA_GREATER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_1;
     
     loadImage((void*)0xF0000000);
     
@@ -2582,38 +2582,38 @@ void Ps2ShadowStart()
     
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0xA;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0xA;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(9, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(9, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(380, 10, SCE_GS_PSMCT16S, 0); 
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(380, 10, SCE_GS_PSMCT16S, 0); 
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_2(0, 0, 0, 0, 0, 0, 3, 0);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_2(0, 0, 0, 0, 0, 0, 3, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_ZBUF_2(300, SCE_GS_PSMZ16S, 1);
-    ((u_long*)WORKBASE)[9] = SCE_GS_ZBUF_2;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_ZBUF_2(300, SCE_GS_PSMZ16S, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_ZBUF_2;
     
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_PRIM(6, 0, 0, 0, 0, 0, 2, 0, 0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_PRIM; 
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_PRIM(6, 0, 0, 0, 0, 0, 2, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_PRIM; 
 
-    ((u_long*)WORKBASE)[12] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
-    ((u_long*)WORKBASE)[13] = SCE_GS_RGBAQ; 
+    ((u_long*)PS2_HOST(WORKBASE))[12] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[13] = SCE_GS_RGBAQ; 
     
-    ((u_long*)WORKBASE)[14] = SCE_GS_SET_XYZ2(GS_X_COORD_MOD(0),          GS_Y_COORD_MOD(0),           0);
-    ((u_long*)WORKBASE)[15] = SCE_GS_XYZ2;
+    ((u_long*)PS2_HOST(WORKBASE))[14] = SCE_GS_SET_XYZ2(GS_X_COORD_MOD(0),          GS_Y_COORD_MOD(0),           0);
+    ((u_long*)PS2_HOST(WORKBASE))[15] = SCE_GS_XYZ2;
     
-    ((u_long*)WORKBASE)[16] = SCE_GS_SET_XYZ2(GS_X_COORD_MOD(SCR_WIDTH2), GS_Y_COORD_MOD(SCR_HEIGHT2), 0);
-    ((u_long*)WORKBASE)[17] = SCE_GS_XYZ2;
+    ((u_long*)PS2_HOST(WORKBASE))[16] = SCE_GS_SET_XYZ2(GS_X_COORD_MOD(SCR_WIDTH2), GS_Y_COORD_MOD(SCR_HEIGHT2), 0);
+    ((u_long*)PS2_HOST(WORKBASE))[17] = SCE_GS_XYZ2;
     
-    ((u_long*)WORKBASE)[18] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[19] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[18] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[19] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[20] = SCE_GS_SET_TEXA(0, 1, 128); 
-    ((u_long*)WORKBASE)[21] = SCE_GS_TEXA; 
+    ((u_long*)PS2_HOST(WORKBASE))[20] = SCE_GS_SET_TEXA(0, 1, 128); 
+    ((u_long*)PS2_HOST(WORKBASE))[21] = SCE_GS_TEXA; 
     
     loadImage((void*)0xF0000000);
 }
@@ -2704,59 +2704,59 @@ void Ps2ShadowDraw()
 
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x11;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x11;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_TRUE, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 1, 0), SCE_GIF_PACKED, 0);
-    ((u_long*)WORKBASE)[3] = 0xE44EEEEE4E4EEEEE;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, SCE_GS_TRUE, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 1, 0), SCE_GIF_PACKED, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = 0xE44EEEEE4E4EEEEE;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_2(1, SCE_GS_ALPHA_GREATER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_2(1, SCE_GS_ALPHA_GREATER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_TEX0_2(12160, 10, SCE_GS_PSMCT16S, 10, 9, 1, SCE_GS_MODULATE, 0, SCE_GS_PSMCT32, 0, 0, 0);
-    ((u_long*)WORKBASE)[9] = SCE_GS_TEX0_2;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_TEX0_2(12160, 10, SCE_GS_PSMCT16S, 10, 9, 1, SCE_GS_MODULATE, 0, SCE_GS_PSMCT32, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_TEX0_2;
 
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_RGBAQ(((unsigned int)Ps2_shadow_fog * 3) / 16, ((unsigned int)Ps2_shadow_fog * 3) / 16, ((unsigned int)Ps2_shadow_fog * 3) / 16, 128, 0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_RGBAQ;
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_RGBAQ(((unsigned int)Ps2_shadow_fog * 3) / 16, ((unsigned int)Ps2_shadow_fog * 3) / 16, ((unsigned int)Ps2_shadow_fog * 3) / 16, 128, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_RGBAQ;
     
-    ((u_long*)WORKBASE)[12] = uv0;
-    ((u_long*)WORKBASE)[13] = SCE_GS_UV;
+    ((u_long*)PS2_HOST(WORKBASE))[12] = uv0;
+    ((u_long*)PS2_HOST(WORKBASE))[13] = SCE_GS_UV;
     
-    ((u_long*)WORKBASE)[14] = xy0;
-    ((u_long*)WORKBASE)[15] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[14] = xy0;
+    ((u_long*)PS2_HOST(WORKBASE))[15] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[16] = uv1;
-    ((u_long*)WORKBASE)[17] = SCE_GS_UV;
+    ((u_long*)PS2_HOST(WORKBASE))[16] = uv1;
+    ((u_long*)PS2_HOST(WORKBASE))[17] = SCE_GS_UV;
     
-    ((u_long*)WORKBASE)[18] = xy1;
-    ((u_long*)WORKBASE)[19] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[18] = xy1;
+    ((u_long*)PS2_HOST(WORKBASE))[19] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[20] = 0;
-    ((u_long*)WORKBASE)[21] = SCE_GS_TEXFLUSH;
+    ((u_long*)PS2_HOST(WORKBASE))[20] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[21] = SCE_GS_TEXFLUSH;
     
-    ((u_long*)WORKBASE)[22] = SCE_GS_SET_FRAME_2(380, 10, SCE_GS_PSMCT16S, 0);
-    ((u_long*)WORKBASE)[23] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[22] = SCE_GS_SET_FRAME_2(380, 10, SCE_GS_PSMCT16S, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[23] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[24] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
-    ((u_long*)WORKBASE)[25] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[24] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_ALWAYS);
+    ((u_long*)PS2_HOST(WORKBASE))[25] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[26] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
-    ((u_long*)WORKBASE)[27] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[26] = SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 1, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[27] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[28] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
-    ((u_long*)WORKBASE)[29] = SCE_GS_RGBAQ;
+    ((u_long*)PS2_HOST(WORKBASE))[28] = SCE_GS_SET_RGBAQ(0, 0, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[29] = SCE_GS_RGBAQ;
     
-    ((u_long*)WORKBASE)[30] = xy0;
-    ((u_long*)WORKBASE)[31] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[30] = xy0;
+    ((u_long*)PS2_HOST(WORKBASE))[31] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[32] = xy1;
-    ((u_long*)WORKBASE)[33] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[32] = xy1;
+    ((u_long*)PS2_HOST(WORKBASE))[33] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[34] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[35] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[34] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[35] = SCE_GS_TEST_2;
     
     loadImage((void*)0xF0000000);
 }
@@ -2788,23 +2788,23 @@ void Ps2ShadowEnd()
 {
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0x5;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0x5;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(4, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(4, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0); 
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(0, 10, SCE_GS_PSMCT32, 0); 
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_ZBUF_2(300, SCE_GS_PSMZ16S, 0);
-    ((u_long*)WORKBASE)[9] = SCE_GS_ZBUF_2;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_ZBUF_2(300, SCE_GS_PSMZ16S, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_ZBUF_2;
     
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_ALPHA_2(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CS, 0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_ALPHA_2;
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_ALPHA_2(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CS, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_ALPHA_2;
     
     loadImage((void*)0xF0000000);
 }
@@ -2886,7 +2886,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
         }
     } 
 
-    p = (unsigned long*)WORKBASE;
+    p = (unsigned long*)PS2_HOST(WORKBASE);
     
     D2_SyncTag();
 
@@ -3007,16 +3007,16 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
         ee_reg op7 = {{0}};
         ee_reg op8 = {{0}};
         ee_reg op9 = {{0}};
-        op0.sd[0] = (int32_t)(uintptr_t)(clip_vec);
-        op1.sd[0] = (int32_t)(uintptr_t)(near_far_vec);
-        op2.sd[0] = (int32_t)(uintptr_t)(zclip_ab_vec);
-        op3.sd[0] = (int32_t)(uintptr_t)(zbuff_ab_vec);
-        op4.sd[0] = (int32_t)(uintptr_t)(dp);
-        op5.sd[0] = (int32_t)(uintptr_t)(p);
-        op6.sd[0] = (int32_t)(uintptr_t)(num);
-        op7.sd[0] = (int32_t)(uintptr_t)(clip_flag);
-        op8.sd[0] = (int32_t)(uintptr_t)(st_clip_flag);
-        op9.sd[0] = (int32_t)(uintptr_t)(clut_flag);
+        op0.sd[0] = (int32_t)EE_IN(clip_vec);
+        op1.sd[0] = (int32_t)EE_IN(near_far_vec);
+        op2.sd[0] = (int32_t)EE_IN(zclip_ab_vec);
+        op3.sd[0] = (int32_t)EE_IN(zbuff_ab_vec);
+        op4.sd[0] = (int32_t)EE_IN(dp);
+        op5.sd[0] = (int32_t)EE_IN(p);
+        op6.sd[0] = (int32_t)EE_IN(num);
+        op7.sd[0] = (int32_t)EE_IN(clip_flag);
+        op8.sd[0] = (int32_t)EE_IN(st_clip_flag);
+        op9.sd[0] = (int32_t)EE_IN(clut_flag);
         vu_load_vf(10, EE_PTR((op3.w[0] + (uint32_t)(0))));
         vu_load_vf(13, EE_PTR((op0.w[0] + (uint32_t)(0))));
         vu_load_vf(12, EE_PTR((op1.w[0] + (uint32_t)(0))));
@@ -3076,7 +3076,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
     {
         if (((ViewType < 3) && (num > 3)) && ((prim & 0x3800000000000) == 0x2000000000000) && (((num * 3) - 6) < 167)) 
         {
-            pp = (unsigned long*)WORKBASE;
+            pp = (unsigned long*)PS2_HOST(WORKBASE);
 
             *pp++ = WORKBASE + 12;
             *pp++ = 0;
@@ -3092,7 +3092,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
             *pp++ = SCE_GIF_SET_TAG(3, 1, SCE_GIF_REGLIST, SCE_GS_SET_PRIM(SCE_GS_PRIM_TRI, 0, 0, 0, 0, 0, 0, 0, 0), 0, 3) | prim;  
             *pp++ = GIF_REGLIST(SCE_GS_ST, SCE_GS_RGBAQ, SCE_GS_XYZF2);
             
-            p128 = (u_long128*)(WORKBASE + 64);
+            p128 = (u_long128*)PS2_HOST(WORKBASE + 64);
             
             for (j = num - 1; j >= 0; j--) 
             {
@@ -3132,7 +3132,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
                         max = fz[2][2];
                     }
                     
-                    Ps2AddOT((void*)0x70000000, 3, max, prim);
+                    Ps2AddOT((void*)PS2_HOST(0x70000000), 3, max, prim);
                     break;
                 }
                 case 1:
@@ -3141,7 +3141,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
                     
                     max = zsum = fz[0][0] + fz[0][1] + fz[0][2]; 
                     
-                    Ps2AddOT((void*)0x70000000, 3, 0.33333334f * max, prim);
+                    Ps2AddOT((void*)PS2_HOST(0x70000000), 3, 0.33333334f * max, prim);
                     break;
                 }
                 case 2:
@@ -3164,7 +3164,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
                         max = fz[2][2];
                     }
                     
-                    Ps2AddOT((void*)0x70000000, 3, max, prim);
+                    Ps2AddOT((void*)PS2_HOST(0x70000000), 3, max, prim);
                     break;
                 }
                 }
@@ -3173,7 +3173,7 @@ void Ps2AddPrim3DExI(unsigned long prim, void* dp, unsigned int num)
             return;
         }
         
-        Ps2AddOT((void*)0x70000000, num, ((float*)p)[(12 * num) + 3], prim);
+        Ps2AddOT((void*)PS2_HOST(0x70000000), num, ((float*)p)[(12 * num) + 3], prim);
     }
     else 
     {
@@ -3193,50 +3193,50 @@ void PS2_Render_Tex_Sub()
     
     D2_SyncTag();
     
-    ((u_long*)WORKBASE)[0] = DMAend | 0xE;
-    ((u_long*)WORKBASE)[1] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[0] = DMAend | 0xE;
+    ((u_long*)PS2_HOST(WORKBASE))[1] = 0;
     
-    ((u_long*)WORKBASE)[2] = SCE_GIF_SET_TAG(13, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
-    ((u_long*)WORKBASE)[3] = SCE_GIF_PACKED_AD;
+    ((u_long*)PS2_HOST(WORKBASE))[2] = SCE_GIF_SET_TAG(13, SCE_GS_TRUE, SCE_GS_FALSE, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[3] = SCE_GIF_PACKED_AD;
     
-    ((u_long*)WORKBASE)[4] = SCE_GS_SET_FRAME_2(476, 4, SCE_GS_PSMCT32, 0);
-    ((u_long*)WORKBASE)[5] = SCE_GS_FRAME_2;
+    ((u_long*)PS2_HOST(WORKBASE))[4] = SCE_GS_SET_FRAME_2(476, 4, SCE_GS_PSMCT32, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[5] = SCE_GS_FRAME_2;
     
-    ((u_long*)WORKBASE)[6] = 0;
-    ((u_long*)WORKBASE)[7] = SCE_GS_TEXFLUSH;
+    ((u_long*)PS2_HOST(WORKBASE))[6] = 0;
+    ((u_long*)PS2_HOST(WORKBASE))[7] = SCE_GS_TEXFLUSH;
     
-    ((u_long*)WORKBASE)[8] = SCE_GS_SET_TEX1_2(0, 0, 1, 1, 0, 0, 0);
-    ((u_long*)WORKBASE)[9] = SCE_GS_TEX1_2;
+    ((u_long*)PS2_HOST(WORKBASE))[8] = SCE_GS_SET_TEX1_2(0, 0, 1, 1, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[9] = SCE_GS_TEX1_2;
     
-    ((u_long*)WORKBASE)[10] = SCE_GS_SET_PABE(0);
-    ((u_long*)WORKBASE)[11] = SCE_GS_PABE;
+    ((u_long*)PS2_HOST(WORKBASE))[10] = SCE_GS_SET_PABE(0);
+    ((u_long*)PS2_HOST(WORKBASE))[11] = SCE_GS_PABE;
     
-    ((u_long*)WORKBASE)[12] = SCE_GS_SET_TEST_2(0, 0, 0, 0, 0, 0, 1, 1);
-    ((u_long*)WORKBASE)[13] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[12] = SCE_GS_SET_TEST_2(0, 0, 0, 0, 0, 0, 1, 1);
+    ((u_long*)PS2_HOST(WORKBASE))[13] = SCE_GS_TEST_2;
     
-    ((u_long*)WORKBASE)[14] = SCE_GS_SET_TEX0_2(0, 10, 0, 10, 9, 1, 0, 0, 0, 0, 0, 0);
-    ((u_long*)WORKBASE)[15] = SCE_GS_TEX0_2;
+    ((u_long*)PS2_HOST(WORKBASE))[14] = SCE_GS_SET_TEX0_2(0, 10, 0, 10, 9, 1, 0, 0, 0, 0, 0, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[15] = SCE_GS_TEX0_2;
     
-    ((u_long*)WORKBASE)[16] = SCE_GS_SET_PRIM(6, 0, 1, 0, 0, 0, 1, 1, 0);
-    ((u_long*)WORKBASE)[17] = SCE_GS_PRIM;
+    ((u_long*)PS2_HOST(WORKBASE))[16] = SCE_GS_SET_PRIM(6, 0, 1, 0, 0, 0, 1, 1, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[17] = SCE_GS_PRIM;
     
-    ((u_long*)WORKBASE)[18] = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
-    ((u_long*)WORKBASE)[19] = SCE_GS_RGBAQ;
+    ((u_long*)PS2_HOST(WORKBASE))[18] = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[19] = SCE_GS_RGBAQ;
 
-    ((u_long*)WORKBASE)[20] = SCE_GS_SET_UV(GS_COORD(0.5f), GS_COORD(0.5f));
-    ((u_long*)WORKBASE)[21] = SCE_GS_UV;
+    ((u_long*)PS2_HOST(WORKBASE))[20] = SCE_GS_SET_UV(GS_COORD(0.5f), GS_COORD(0.5f));
+    ((u_long*)PS2_HOST(WORKBASE))[21] = SCE_GS_UV;
     
-    ((u_long*)WORKBASE)[22] = SCE_GS_SET_XYZF2(GS_X_COORD_MOD(0), GS_Y_COORD_MOD(-16), 256, 0);
-    ((u_long*)WORKBASE)[23] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[22] = SCE_GS_SET_XYZF2(GS_X_COORD_MOD(0), GS_Y_COORD_MOD(-16), 256, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[23] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[24] = SCE_GS_SET_UV(GS_COORD(SCR_WIDTH2 + 0.5f), GS_COORD(SCR_HEIGHT2 + 0.5f));
-    ((u_long*)WORKBASE)[25] = SCE_GS_UV;
+    ((u_long*)PS2_HOST(WORKBASE))[24] = SCE_GS_SET_UV(GS_COORD(SCR_WIDTH2 + 0.5f), GS_COORD(SCR_HEIGHT2 + 0.5f));
+    ((u_long*)PS2_HOST(WORKBASE))[25] = SCE_GS_UV;
     
-    ((u_long*)WORKBASE)[26] = SCE_GS_SET_XYZF2(GS_X_COORD_MOD(SCR_WIDTH2 / 2), GS_Y_COORD_MOD(SCR_HEIGHT2 / 2), 256, 0);
-    ((u_long*)WORKBASE)[27] = SCE_GS_XYZF2;
+    ((u_long*)PS2_HOST(WORKBASE))[26] = SCE_GS_SET_XYZF2(GS_X_COORD_MOD(SCR_WIDTH2 / 2), GS_Y_COORD_MOD(SCR_HEIGHT2 / 2), 256, 0);
+    ((u_long*)PS2_HOST(WORKBASE))[27] = SCE_GS_XYZF2;
     
-    ((u_long*)WORKBASE)[28] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
-    ((u_long*)WORKBASE)[29] = SCE_GS_TEST_2;
+    ((u_long*)PS2_HOST(WORKBASE))[28] = SCE_GS_SET_TEST_2(0, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, 0, 0, 1, SCE_GS_DEPTH_GEQUAL);
+    ((u_long*)PS2_HOST(WORKBASE))[29] = SCE_GS_TEST_2;
     
     loadImage((void*)0xF0000000);
     
