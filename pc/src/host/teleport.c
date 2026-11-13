@@ -314,7 +314,12 @@ static int SDLCALL scan(void* ud)
         if (h && size > (uint32_t)pcap) { unsigned char* p = realloc(in, size); if (p) { in = p; pcap = size; } }
         if (h && size <= (uint32_t)pcap && fread(in, 1, size, h) == size) n = size;
         if (h && h != iso) fclose(h);
-        if (n < 0 || (m = expand(in, n, &out, &cap)) < 0x80) { bad++; host_log("teleport: cannot read %s%s\n", f[i].mod ? "mods/" : "", f[i].name); continue; }
+        if (n < 0 || (m = expand(in, n, &out, &cap)) < 0x80) {
+            bad++;
+            host_log("teleport: cannot read %s%s (%s, %u bytes)\n", f[i].mod ? "mods/" : "", f[i].name,
+                     !h ? "not found" : n < 0 ? "read failed" : "bad data", h ? (unsigned)size : 0u);
+            continue;
+        }
         parse(out, m, at[file_key(f[i].name)]);
     }
     for (i = 0; i < nrows; i++) {

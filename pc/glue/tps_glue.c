@@ -24,6 +24,7 @@
 TpsConfig g_tps = { .fov = 75, .aim_fov = 65, .dist = 140, .aim_dist = 100, .height = 165, .shoulder = 35,
                     .sens_x = 100, .sens_y = 100, .aim_sens = 70, .crosshair = 1, .precise = 1, .atmos = 1, .key = 62 /* F5 */,
                     .pad_modern = 1, .pad_sens_x = 100, .pad_sens_y = 100, .pad_aim_sens = 50, .pad_dead_move = 20, .pad_dead_look = 15,
+                    .pad_gyro = 1, .pad_gyro_sens = 150,
                     .aim_move = 1 };
 int tps_on;            /* hooks active (changes only at the frame hand-off) */
 int tps_cam_active;    /* our camera is the view of the current frame */
@@ -55,6 +56,12 @@ static unsigned move_keys;        /* camera A (g_tps.free_cam): the WASD keys he
 static int pad_steer;             /* the game rows (arrows, gamepad) press a direction: tank controls, the camera follows */
 /* gamepad, modern scheme (docs/THIRDPERSON.md "Gamepad") */
 static int pad_cam;               /* the gamepad was used last: free camera on the right stick, the left stick walks */
+#ifdef __SWITCH__
+int nx_gyro_read(float* yaw, float* pitch);   /* pc/switch/nx_gyro.c */
+#else
+static int nx_gyro_read(float* yaw, float* pitch) { *yaw = *pitch = 0; return 0; }
+#endif
+static float gyro_yaw, gyro_pitch;     /* this frame's controller turn (Switch motion), game units, as stick_yaw */
 static float stick_yaw, stick_pitch;   /* this frame's right stick as camera turn, game units (consumed like the mouse) */
 static int stick_moved;           /* the right stick moved this frame (pc_input_active) */
 static int pad_move;              /* the left stick walks this frame: tps_player turns towards pad_target */
@@ -256,8 +263,13 @@ static void mesh_model(const NJS_CNK_MODEL* md, NJS_MATRIX* m)
     for (p = (const unsigned char*)P32(int *, md->vlist); *p != 255; p += 4 + 4 * *(const unsigned short*)(p + 2)) {
         int first = *p == 51 ? 64 : *p == 41 ? 8 : 0, stride = *p == 51 ? 32 : 24;
         int i0 = *(const unsigned short*)(p + 4), n = *(const unsigned short*)(p + 6);
-        for (int i = 0; first && i < n; i++)
-            njCalcPoint(m, (NJS_POINT3*)(p + first + stride * i), (NJS_POINT3*)&w[3 * (i0 + i)]);
+        for (int i = 0; first && i < n; i++) {
+            /* through a stack point: w is heap memory, which need not have a PS2 address (the
+               Switch's heap never does) and njCalcPoint takes 32-bit pointers */
+            NJS_POINT3 q;
+            njCalcPoint(m, (NJS_POINT3*)(p + first + stride * i), &q);
+            memcpy(&w[3 * (i0 + i)], &q, sizeof q);
+        }
     }
     for (p = (const unsigned char*)P32(short *, md->plist); *p != 255;) {
         int t = *p, size = *(const unsigned short*)(p + 2);
@@ -487,7 +499,7 @@ void tps_camera(void)
     aim = aiming() && !lock_aim();
     if (g_tps.aiming && !aiming() && !g_tps.pad_modern) recenter = 20;   /* Classic gamepad: lowering the weapon recenters */
     g_tps.aiming = aiming();
-    if (!(sys->sp_flg & 0x40)) mouse_dx = mouse_dy = stick_yaw = stick_pitch = 0;   /* frozen (above): no mouse look */
+    if (!(sys->sp_flg & 0x40)) mouse_dx = mouse_dy = stick_yaw = stick_pitch = gyro_yaw = gyro_pitch = 0;   /* frozen (above): no mouse look */
     if (recenter > 0 && !aiming()) {   /* gamepad: the camera eases behind the character */
     recenter--;
     yaw = wrap(yaw + wrap(plp->ay - yaw) * 0.35f);
@@ -497,6 +509,12 @@ void tps_camera(void)
         pitch += (DEG(-8.0f) - pitch) * 0.15f;   /* Classic: slower pitch */
     }
 
+    if (!aiming() && (gyro_yaw != 0 || gyro_pitch != 0)) {   /* motion turns the camera (gyro "aim and camera") */
+        yaw = wrap(yaw + gyro_yaw);
+        stick_pitch += gyro_pitch;
+        recenter = 0;
+    }
+    gyro_yaw = gyro_pitch = 0;
     if ((g_tps.free_cam || pad_cam) && !aiming()) {   /* camera A, the gamepad: mouse / right stick orbit the camera (aiming: tps_player) */
         yaw = wrap(yaw - mouse_dx * TURN_PER_PIXEL * g_tps.sens_x / 100.0f + stick_yaw);
         mouse_dx = stick_yaw = 0;
@@ -894,6 +912,14 @@ static int pad_sticks(unsigned int* pad)
     if (!g_tps.pad_modern) pad_cam = 0;
     stick_yaw = stick_pitch = 0;
     stick_moved = pad_move = 0;
+    {   /* Switch motion: read every frame (its time step), used while aiming, or always at "aim and camera" */
+        float gy, gp, k = 32768.0f / 3.14159265f * g_tps.pad_gyro_sens / 100.0f;
+        gyro_yaw = gyro_pitch = 0;
+        if (nx_gyro_read(&gy, &gp) && g_tps.pad_gyro && (g_tps.pad_gyro == 2 || aiming())) {
+            gyro_yaw = (g_tps.pad_gyro_invert_x ? -gy : gy) * k;
+            gyro_pitch = (g_tps.pad_gyro_invert_y ? -gp : gp) * k;
+        }
+    }
     aim_mag = 0;
     {   /* the right stick turns the camera (Modern) and aims. Classic keeps the game's buttons, whose turn while aiming
            cannot move free aim's crosshair (the shot follows the crosshair), so there the right stick (free in every key
@@ -1561,7 +1587,9 @@ static void scope_look(void)
     /* the gamepad's right stick (pad_sticks: its speed and invert Y) at the stick aiming speed, likewise scaled */
     fy += stick_yaw * g_tps.pad_aim_sens / 100.0f * z;
     fp += stick_pitch * g_tps.pad_aim_sens / 100.0f * z;
-    mouse_dx = mouse_dy = stick_yaw = stick_pitch = 0;
+    fy += gyro_yaw * z;   /* Switch motion, likewise */
+    fp += gyro_pitch * z;
+    mouse_dx = mouse_dy = stick_yaw = stick_pitch = gyro_yaw = gyro_pitch = 0;
     dy = (int)fy; fy -= dy;
     dp = (int)fp; fp -= dp;
     plp->ay += dy;
@@ -1771,8 +1799,9 @@ void tps_player(void)
         printf("tps: weapon mode %d/%d motion %d frame %d/%d at (%.1f %.1f) ay %.1f hand y %.1f\n", plp->mode2, plp->mode3, plp->mtn_no, plp->frm_no >> 16,
                P32(struct MN_WORK *, plp->mnwP) ? P32(struct MN_WORK *, plp->mnwP)[plp->mtn_no].frm_num : -1, plp->px, plp->pz, (short)plp->ay * (360.0f / 65536.0f), P32(struct O_WORK *, P32(struct ML_WORK *, plp->mlwP)->owP)[9].mtx[13] - plp->py);
     if (plp->mode1 == 1 && !lock_aim()) {
-        float dy = stick_yaw * g_tps.pad_aim_sens / 100.0f;
-        stick_pitch *= g_tps.pad_aim_sens / 100.0f;
+        float dy = stick_yaw * g_tps.pad_aim_sens / 100.0f + gyro_yaw;   /* (Switch motion: its own speed) */
+        stick_pitch = stick_pitch * g_tps.pad_aim_sens / 100.0f + gyro_pitch;
+        gyro_yaw = gyro_pitch = 0;
         if (pad_cam && g_tps.auto_aim) assist(&dy, &stick_pitch);
         yaw = wrap(yaw - mouse_dx * TURN_PER_PIXEL * g_tps.sens_x / 100.0f * g_tps.aim_sens / 100.0f + dy);
         mouse_dx = stick_yaw = 0;

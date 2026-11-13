@@ -84,7 +84,7 @@ static int is_font(const void* tim2)
     if (!(sys->ss_flg & 0x40)) return 0;   /* not loaded (the title and other screens release it, and the
                                               texture slots its list points to are reused) */
     for (int i = 0; i < 4; i++) {
-        const NJS_TEXMEMLIST* m = (const NJS_TEXMEMLIST*)(uintptr_t)sys->ef_tex[i].texaddr;
+        const NJS_TEXMEMLIST* m = P32(const NJS_TEXMEMLIST*, sys->ef_tex[i].texaddr);
         if (m && P32(unsigned int *, m->texinfo.texsurface.pSurface) == tim2) return 1;
     }
     return 0;
@@ -103,7 +103,7 @@ void pc_tex_keep_original(int texno)
     const NJS_TEXMEMLIST* m;
     const void* t;
     if (!Ps2_current_texlist || texno < 0 || texno >= (int)Ps2_current_texlist->nbTexture) return;
-    m = (const NJS_TEXMEMLIST*)(uintptr_t)P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[texno].texaddr;
+    m = P32(const NJS_TEXMEMLIST*, P32(NJS_TEXNAME *, Ps2_current_texlist->textures)[texno].texaddr);
     if (!m || !(t = P32(unsigned int *, m->texinfo.texsurface.pSurface))) return;
     for (int i = 0; i < NKEEP; i++) if (keep[i] == t) return;
     keep[nkeep++ % NKEEP] = t;

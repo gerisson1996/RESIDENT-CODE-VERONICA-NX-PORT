@@ -35,6 +35,8 @@ done:
     if (s) WinHttpCloseHandle(s);
     return status == 200 ? len : 0;
 }
+#elif defined(__SWITCH__)
+int update_fetch(char* buf, int n) { (void)buf; (void)n; return 0; }   /* no curl: no update check */
 #else
 int update_fetch(char* buf, int n)
 {

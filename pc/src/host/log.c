@@ -30,7 +30,11 @@
 #define LAST_W 200
 static char last[LAST_N][LAST_W];
 static SDL_AtomicInt last_n;
+#ifdef __SWITCH__
+static const char crash_path[] = "sdmc:/switch/recvx/recvx-crash.log";
+#else
 static const char crash_path[] = "recvx-crash.log";
+#endif
 static char crash_head[128];
 
 /* host.c host_log: every message, also with --quiet (best effort across threads: each takes a slot of its own) */
@@ -71,7 +75,58 @@ static void last_dump(void (*out)(void*, const char*, size_t), void* ud)
         if (!len || l[len - 1] != '\n') out(ud, "\n", 1);
     }
 }
-#ifndef _WIN32
+#if defined(__SWITCH__)
+/* Switch: libnx calls __libnx_exception_handler on a CPU exception in the program (when no debugger
+   is attached); it writes recvx-crash.log with pc/lr relative to the NRO's start, for
+   aarch64-none-elf-addr2line -f -e recvx.elf (add 0 - the ELF links at 0). No --log tee: stdout
+   goes to the file itself. */
+#include <unistd.h>
+#include <fcntl.h>
+
+typedef struct { uint32_t error_desc, pad[3]; uint64_t gpr[29], fp, lr, sp, pc; } nx_exc_dump;
+extern char __executable_start;   /* the image's first byte (pc/CMakeLists.txt's recvx.ld) */
+#define __start__ (&__executable_start)
+__attribute__((aligned(16))) unsigned char __nx_exception_stack[0x4000];
+uint64_t __nx_exception_stack_size = sizeof(__nx_exception_stack);
+
+static void out_fd(void* ud, const char* p, size_t n) { (void)!write((int)(intptr_t)ud, p, n); }
+
+void __libnx_exception_handler(const nx_exc_dump* d)
+{
+    char b[256];
+    int fd = open(crash_path, O_WRONLY | O_CREAT | O_TRUNC, 0644), n;
+    if (fd >= 0) {
+        out_fd((void*)(intptr_t)fd, crash_head, strlen(crash_head));
+        n = snprintf(b, sizeof(b), "exception 0x%x at pc 0x%llx lr 0x%llx (NRO offsets) sp 0x%llx\n", (unsigned)d->error_desc,
+                     (unsigned long long)(d->pc - (uintptr_t)__start__), (unsigned long long)(d->lr - (uintptr_t)__start__), (unsigned long long)d->sp);
+        out_fd((void*)(intptr_t)fd, b, (size_t)n);
+        for (uint64_t fp = d->fp, i = 0; fp && i < 32; i++) {   /* the frame chain */
+            uint64_t ret = ((uint64_t*)(uintptr_t)fp)[1];
+            n = snprintf(b, sizeof(b), "  0x%llx\n", (unsigned long long)(ret - (uintptr_t)__start__));
+            out_fd((void*)(intptr_t)fd, b, (size_t)n);
+            fp = ((uint64_t*)(uintptr_t)fp)[0];
+        }
+        last_dump(out_fd, (void*)(intptr_t)fd);
+        fsync(fd); close(fd);
+    }
+    _exit(1);
+}
+
+void crash_thread_init(void) {}
+void log_watchdog(int seconds) { (void)seconds; }
+void crash_init(const char* version)
+{
+    snprintf(crash_head, sizeof(crash_head), "recvx-enhanced-port %s crashed (Switch; addresses: aarch64-none-elf-addr2line -f -e recvx.elf)\n", version);
+}
+
+void log_start(const char* path)
+{
+    if (!freopen(path, "w", stdout)) return;
+    setvbuf(stdout, NULL, _IONBF, 0);
+    dup2(fileno(stdout), 2);
+    host_log("log: writing %s\n", path);
+}
+#elif !defined(_WIN32)
 #include <execinfo.h>
 #include <fcntl.h>
 #include <pthread.h>

@@ -55,7 +55,7 @@ u_int sceSifSetDma(sceSifDmaData* sdd, int len)
 {
     for (int i = 0; i < len; i++) {
         /* EE -> IOP: data is an EE address, addr an IOP address */
-        memcpy(iop_ptr(sdd[i].addr), (void*)(uintptr_t)sdd[i].data, (size_t)sdd[i].size);
+        memcpy(iop_ptr(sdd[i].addr), PS2_HOST(sdd[i].data),(size_t)sdd[i].size);
     }
     return 1;
 }

@@ -17,7 +17,9 @@ void render_loop(void);
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
+#ifndef __SWITCH__
 #include <execinfo.h>
+#endif
 #include <signal.h>
 #include <unistd.h>
 #endif
@@ -167,7 +169,11 @@ void host_fatal(const char* fmt, ...)
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     fprintf(stderr, "fatal: %s\n", buf);
+#ifdef __SWITCH__
+    { extern void sdl3c_fatal_screen(const char*); sdl3c_fatal_screen(buf); }   /* no message boxes: libnx's text console */
+#else
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "recvx", buf, g_window);
+#endif
     exit(1);
 }
 
@@ -176,6 +182,16 @@ void host_pump_events(void)
     SDL_Event ev;
     bind_test_frame();
     while (SDL_PollEvent(&ev)) {
+#ifdef __SWITCH__
+        {   /* Switch bring-up: the first gamepad buttons SDL delivers */
+            static int n;
+            if (ev.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN && n < 20) { n++; host_log("sdl: gamepad %u button %d down\n", (unsigned)ev.gbutton.which, ev.gbutton.button); }
+            if ((ev.type == SDL_EVENT_KEY_DOWN || ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN) && n < 20) {
+                n++;
+                host_log("sdl: %s %d down\n", ev.type == SDL_EVENT_KEY_DOWN ? "key" : "mouse button", ev.type == SDL_EVENT_KEY_DOWN ? (int)ev.key.scancode : (int)ev.button.button);
+            }
+        }
+#endif
         if (ev.type == SDL_EVENT_GAMEPAD_ADDED || ev.type == SDL_EVENT_GAMEPAD_REMOVED) { extern void pad_devices_changed(void); pad_devices_changed(); }
         if (bind_event(&ev)) continue;   /* a "press a key" of the settings */
         if (overlay_event(&ev)) continue;
@@ -215,7 +231,7 @@ void host_request_quit(void)
     SDL_PushEvent(&e);
 }
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__SWITCH__)
 /* debugging aid: RECVX_WATCHDOG=<seconds> prints a backtrace and exits (headless runs) */
 static void watchdog(int sig)
 {
@@ -287,7 +303,11 @@ static void parse_args(int argc, char** argv)
 {
     const char* env = SDL_getenv("RECVX_ISO");   /* UTF-8 on Windows too */
     if (env) iso_from(env);
+#ifdef __SWITCH__
+    SDL_strlcpy(g_config.save_dir, "sdmc:/switch/recvx/save", sizeof(g_config.save_dir));
+#else
     SDL_strlcpy(g_config.save_dir, "save", sizeof(g_config.save_dir));
+#endif
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--save-dir") && i + 1 < argc) { SDL_strlcpy(g_config.save_dir, argv[++i], sizeof(g_config.save_dir)); save_given = 1; }
         else if (!strcmp(argv[i], "--size") && i + 1 < argc) {   /* a window of that size (the default display mode is borderless fullscreen) */
@@ -355,22 +375,79 @@ static int SDLCALL game_thread(void* ud)
 int main(int argc, char** argv)
 {
     setvbuf(stdout, NULL, _IONBF, 0); /* the game's printf diagnostics */
-    ps2_memory_init();   /* first: a DLL loaded later (the GPU driver's) moves aside, one loaded before can't */
+#ifdef __SWITCH__
+    /* always a log, opened first, in the NRO's folder (no command line from the homebrew menu) */
+    SDL_CreateDirectory("sdmc:/switch/recvx");
+    pc_chdir("sdmc:/switch/recvx/");
+    SDL_strlcpy(log_path, "sdmc:/switch/recvx/recvx.log", sizeof(log_path));
+    { extern void log_start(const char*); log_start(log_path); }
+    host_log("switch: boot, argc %d argv0 %s\n", argc, argc > 0 && argv[0] ? argv[0] : "-");
+    {   /* debugging aid: sdmc:/switch/recvx/env.txt, one NAME=value per line, sets environment
+           variables (RECVX_INPUT, RECVX_DUMP_FRAMES, ...: no shell on the Switch) */
+        FILE* e = fopen("sdmc:/switch/recvx/env.txt", "rb");
+        char line[4096];
+        while (e && fgets(line, sizeof(line), e)) {
+            char* eq = strchr(line, '=');
+            line[strcspn(line, "\r\n")] = 0;
+            if (!eq || line[0] == '#') continue;
+            *eq = 0;
+            setenv(line, eq + 1, 1);
+            host_log("switch: env %s=%s\n", line, eq + 1);
+        }
+        if (e) fclose(e);
+    }
+    SDL_SetHint(SDL_HINT_THREAD_STACK_SIZE, "8388608");   /* the game thread: SDL2's Switch default is small */
+#endif
+    ps2_memory_init();
+    host_log("switch: memory ok\n");   /* first: a DLL loaded later (the GPU driver's) moves aside, one loaded before can't */
     argv = pc_utf8_argv(argc, argv);   /* paths are UTF-8 everywhere (fileio.h) */
     { char* cwd = SDL_GetCurrentDirectory(); if (cwd) { SDL_strlcpy(start_dir, cwd, sizeof(start_dir)); SDL_free(cwd); } }
     parse_args(argc, argv);
     home_dir();
     { extern void crash_init(const char*); crash_init(RECVX_VERSION); }   /* recvx-crash.log on a crash, with or without --log */
+#ifndef __SWITCH__
     if (log_path[0]) { extern void log_start(const char*); log_start(log_path); }
+#endif
     host_log("cvx-port " RECVX_VERSION "\n");
     if (profile_path[0]) { extern void prof_open_csv(const char*); prof_open_csv(profile_path); }
-#ifndef _WIN32
+#ifdef __SWITCH__
+    { extern void profile_start(void); profile_start(); }
+#elif !defined(_WIN32)
     if (getenv("RECVX_WATCHDOG")) { signal(SIGALRM, watchdog); alarm((unsigned)atoi(getenv("RECVX_WATCHDOG"))); }
     { extern void profile_start(void); profile_start(); }
 #else
     if (getenv("RECVX_WATCHDOG")) { extern void log_watchdog(int); log_watchdog(atoi(getenv("RECVX_WATCHDOG"))); }
 #endif
     config_load();
+#ifdef __SWITCH__
+    {   /* Switch defaults, applied once over any recvx.ini (a marker file records it; bump the
+           name to apply new ones): the frame rate on screen, a brighter picture for OLED blacks,
+           a 1x internal resolution upscaled by FSR to 720p (auto picked 2x, four times the
+           pixels), no display-rate frames (each is a second full draw) and the costliest effects off */
+        const char* mark = "sdmc:/switch/recvx/save/switch-defaults-2";
+        FILE* m = fopen(mark, "rb");
+        if (m) fclose(m);
+        else {
+            g_config.show_fps = 1;
+            g_config.brightness = 12;
+            g_config.gamma = 13;
+            g_config.scale = 1;
+            g_config.fsr = 1;
+            g_config.interpolate = 0;
+            g_config.smaa = 0;
+            g_config.aniso = 2;
+            g_config.ao = 0;
+            g_config.bloom = 0;
+            g_config.flash_shadow = 0;
+            g_config.fog_glow = 0;
+            g_config.light_soft = 0;
+            SDL_CreateDirectory("sdmc:/switch/recvx/save");
+            if ((m = fopen(mark, "wb"))) fclose(m);
+            config_save();
+            host_log("switch: performance defaults applied\n");
+        }
+    }
+#endif
     parse_args(argc, argv);   /* command line overrides the saved settings */
     { extern void variants_load(void); variants_load(); }   /* mods/enemies.ini: custom enemies (variants.h) */
 
@@ -381,6 +458,7 @@ int main(int argc, char** argv)
 #endif
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD))
         host_fatal("SDL_Init: %s", SDL_GetError());
+    host_log("sdl: init ok, iso '%s'\n", g_config.iso_path);
     bind_apply_source();   /* Gamepad only: gamepads also in the background */
     { extern void update_start(void); update_start(); }   /* Check for updates: GitHub's latest release, in the background */
 
@@ -469,11 +547,15 @@ int main(int argc, char** argv)
         SDL_ShowWindow(g_window);
         g_gl = SDL_GL_CreateContext(g_window);
         if (!g_gl) host_fatal("SDL_GL_CreateContext: %s", SDL_GetError());
+        host_log("gl: context ok\n");
         SDL_GL_SetSwapInterval(g_config.vsync ? 1 : 0);
         gs_renderer_init();
+        host_log("gl: renderer ok\n");
     }
     overlay_init(g_window, g_gl);
+    host_log("overlay ok\n");
     audio_init();
+    host_log("audio ok\n");
 
     stream_init();
     if (!SDL_CreateThread(game_thread, "game", NULL)) host_fatal("cannot start the game thread: %s", SDL_GetError());

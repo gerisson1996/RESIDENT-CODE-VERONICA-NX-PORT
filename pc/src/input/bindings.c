@@ -241,6 +241,7 @@ void bind_set_gamepad(void* g)
     const char* nm = g ? SDL_GetGamepadName((SDL_Gamepad*)g) : NULL;
     char name[96];
     SDL_snprintf(name, sizeof(name), "%s", nm ? nm : "Gamepad");
+    if (g != gamepad) host_log("pad: %s %s (type %d)\n", g ? "using" : "none", g ? name : "", (int)t);
     gamepad = (SDL_Gamepad*)g;
     SDL_LockSpinlock(&pad_info_lock);
     pad_info.id = id; pad_info.type = t;
@@ -301,7 +302,11 @@ void bind_apply_source(void)
 {
     /* SDL drops joystick input while none of our windows has keyboard focus unless this is set;
        an SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS environment variable wins over it */
+#ifdef __SWITCH__
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");   /* SDL2 never gives the window keyboard focus here */
+#else
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, g_input_source == INPUT_PAD ? "1" : "0");
+#endif
 }
 
 /* what the player reads on the pad: by the connected pad's family */
@@ -341,8 +346,8 @@ const char* bind_code_name(int dev, int code, char* buf, int n)
                                      : t == SDL_GAMEPAD_TYPE_XBOXONE ? "View" : nin ? "-" : "Back"; break;
     case SDL_GAMEPAD_BUTTON_START: s = t == SDL_GAMEPAD_TYPE_PS4 || t == SDL_GAMEPAD_TYPE_PS5 ? "Options" : t == SDL_GAMEPAD_TYPE_XBOXONE ? "Menu" : nin ? "+" : "Start"; break;
     case SDL_GAMEPAD_BUTTON_GUIDE: s = ps ? "PS" : xb ? "Xbox" : nin ? "Home" : "Guide"; break;
-    case SDL_GAMEPAD_BUTTON_LEFT_STICK: s = ps ? "L3" : xb ? "LS" : "Left stick press"; break;
-    case SDL_GAMEPAD_BUTTON_RIGHT_STICK: s = ps ? "R3" : xb ? "RS" : "Right stick press"; break;
+    case SDL_GAMEPAD_BUTTON_LEFT_STICK: s = ps ? "L3" : xb ? "LS" : nin ? "L stick press" : "Left stick press"; break;
+    case SDL_GAMEPAD_BUTTON_RIGHT_STICK: s = ps ? "R3" : xb ? "RS" : nin ? "R stick press" : "Right stick press"; break;
     case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER: s = ps ? "L1" : xb ? "LB" : nin ? "L" : "Left shoulder"; break;
     case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: s = ps ? "R1" : xb ? "RB" : nin ? "R" : "Right shoulder"; break;
     case SDL_GAMEPAD_BUTTON_DPAD_UP: s = "D-pad up"; break;

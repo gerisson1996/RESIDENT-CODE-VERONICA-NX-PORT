@@ -28,7 +28,10 @@ static int native;          /* the open save/load screen's save system, taken wh
 static int listing_save;    /* it is the save screen (pc_save_list) */
 static SaveEntry* saves;    /* the files of its rows; a row past them is a new save */
 static int saves_n, rows_n;
-static SELECTFILEINFO* rows;
+/* static, not the heap: the game holds the rows through a 32-bit pointer (pRecordTop), and a
+   heap block can lie outside the PS2 address window (the Switch's heap always does) */
+#define ROWS_MAX 512
+static SELECTFILEINFO rows[ROWS_MAX];
 
 int pc_saves_native(int state)
 {
@@ -45,8 +48,9 @@ void pc_save_list(SELECTFILEWINDOW* win, MEMORYCARDSTATE* mc, int saving)
     listing_save = saving;
     free(saves);
     saves_n = savestore_list(dir, &saves);
+    if (saves_n > ROWS_MAX - 1) saves_n = ROWS_MAX - 1;   /* room for the new save's row */
     n = saves_n + (saving || !saves_n);   /* loading with no saves: one empty row ("no save data") */
-    rows = realloc(rows, sizeof(*rows) * (rows_n = n));
+    rows_n = n;
     memset(rows, 0, sizeof(*rows) * n);
     for (i = 0; i < saves_n; i++) {
         const SaveEntry* e = &saves[i];

@@ -13,13 +13,28 @@ if(WIN32)
     add_compile_options(-fno-omit-frame-pointer)
 endif()
 set(PROG ${DECOMP}/src/ps2/veronica/prog)
+# x86: SSE for single-precision floats (x87 keeps extended intermediates); AArch64 has them natively
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86|i[3-6]86|AMD64|amd64)" OR WIN32)
+    set(RECVX_X86_FP -msse2 -mfpmath=sse)
+else()
+    set(RECVX_X86_FP)
+endif()
 set(KATANA_INC ${DECOMP}/include/recvx-decomp-katana/KATANA/Include)
 
 # SDL3 is built from source and linked statically by default, so the binary does not
 # depend on a (32-bit) SDL3 package being installed. SDL still dlopen()s the system's
 # X11/Wayland/audio libraries at runtime.
 option(RECVX_VENDORED_SDL "Build SDL3 from source and link it statically" ON)
-if(RECVX_VENDORED_SDL)
+if(NINTENDO_SWITCH)
+    # devkitPro ships SDL2 only: the SDL3 calls go through a compatibility layer over it (pc/switch)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(NXSDL2 REQUIRED IMPORTED_TARGET sdl2)
+    pkg_check_modules(NXSDL2IMG REQUIRED IMPORTED_TARGET SDL2_image)
+    add_library(sdl3compat STATIC switch/sdl3compat.c switch/nx_fatal.c switch/fcast_log.c switch/nx_gyro.c)
+    target_include_directories(sdl3compat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/switch/include)
+    target_link_libraries(sdl3compat PUBLIC PkgConfig::NXSDL2IMG PkgConfig::NXSDL2 EGL glapi drm_nouveau)
+    add_library(SDL3::SDL3 ALIAS sdl3compat)
+elseif(RECVX_VENDORED_SDL)
     include(FetchContent)
     set(SDL_SHARED OFF CACHE BOOL "" FORCE)
     set(SDL_STATIC ON CACHE BOOL "" FORCE)
@@ -35,10 +50,21 @@ endif()
 include(FetchContent)
 FetchContent_Declare(imgui GIT_REPOSITORY https://github.com/ocornut/imgui.git GIT_TAG v1.92.9b GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(imgui)
+if(NINTENDO_SWITCH)   # the SDL2 backend, behind switch/imgui/imgui_impl_sdl3.h
+    set(IMGUI_PLATFORM ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp switch/imgui_sdl2_shim.cpp)
+else()
+    set(IMGUI_PLATFORM ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp)
+endif()
 add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp ${imgui_SOURCE_DIR}/imgui_draw.cpp
     ${imgui_SOURCE_DIR}/imgui_tables.cpp ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-    ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+    ${IMGUI_PLATFORM} ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+if(NINTENDO_SWITCH)
+    target_include_directories(imgui BEFORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/switch/imgui)
+    target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS)
+    set_source_files_properties(${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp PROPERTIES COMPILE_OPTIONS "-include;glad/glad.h")
+    target_link_libraries(imgui PUBLIC glad)   # libglad.pc is broken ($(DEVKITPRO) prefix)
+endif()
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
@@ -95,7 +121,7 @@ target_compile_options(recvx_game PRIVATE
     -fwrapv
     -fsigned-char             # EE char is signed
     -ffp-contract=off         # no FMA fusion: keep the PS2's operation order
-    -msse2 -mfpmath=sse       # IEEE single precision, no x87 extended intermediates
+    ${RECVX_X86_FP}           # IEEE single precision, no x87 extended intermediates
     -fno-tree-vectorize
     -ftrivial-auto-var-init=zero  # deterministic stand-in for MWCC's stale registers (docs/dev/uninitialized-locals.txt)
 )
@@ -156,12 +182,16 @@ target_include_directories(recvx_platform PRIVATE
 )
 target_compile_options(recvx_platform PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-std=gnu11>
-    -fno-strict-aliasing -fwrapv -ffp-contract=off -msse2 -mfpmath=sse
+    -fno-strict-aliasing -fwrapv -ffp-contract=off ${RECVX_X86_FP}
     -Wall -Wno-unused-function
 )
 if(RECVX_64)
     target_compile_definitions(recvx_game PRIVATE RECVX_64=1)
     target_compile_definitions(recvx_platform PRIVATE RECVX_64=1)
+    if(RECVX_PIE)
+        target_compile_definitions(recvx_game PRIVATE RECVX_PIE=1)
+        target_compile_definitions(recvx_platform PRIVATE RECVX_PIE=1)
+    endif()
     target_compile_options(recvx_platform PRIVATE
         $<$<COMPILE_LANGUAGE:C>:-Werror=pointer-to-int-cast -Werror=int-to-pointer-cast -Werror=int-conversion -Werror=incompatible-pointer-types -Werror=implicit-function-declaration>)
     set_source_files_properties(${GLUE_SOURCES} PROPERTIES COMPILE_OPTIONS
@@ -198,14 +228,53 @@ if(WIN32)
     # Same address window as Linux: fixed image base, no ASLR relocation; large-address-aware
     # gives the 32-bit exe 4 GB on 64-bit Windows (Linux already uses addresses above 2 GB). -static: libstdc++,
     # libgcc and winpthread go into the exe, only system DLLs (UCRT, opengl32, ...) remain.
-    if(RECVX_64)
-        # stage 1a: same window, so every game object and the heap's first gigabytes fit a 32-bit slot
+    if(RECVX_PIE)
+        # the image loads anywhere (ASLR, above 4 GB): PS2 addresses are relative to it (pc/include/pc_ptr.h)
+        target_link_options(recvx PRIVATE -static -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--stack,8388608)
+    elseif(RECVX_64)
+        # same window as the 32-bit build, so every game object fits a 32-bit slot as it is
         target_link_options(recvx PRIVATE -static -Wl,--image-base,0x30000000 -Wl,--disable-dynamicbase
                             -Wl,--disable-high-entropy-va -Wl,--stack,8388608)
     else()
     target_link_options(recvx PRIVATE -static -Wl,--image-base,0x30000000 -Wl,--disable-dynamicbase -Wl,--large-address-aware
                         -Wl,--stack,8388608)
     endif()
+endif()
+if(NINTENDO_SWITCH)
+    # libnx's linker script with the read-only data moved into the writable data segment (after the
+    # RELRO part libnx protects at start): the decomp writes into string literals, as on the PS2.
+    # __executable_start: the image's first byte, PS2 address 0x30000000 (pc_ptr.h).
+    file(READ ${NX_ROOT}/switch.ld NX_LD)
+    set(nx_ro "*(.rodata .rodata.* .gnu.linkonce.r.*)")
+    set(nx_rw "*(.data .data.* .gnu.linkonce.d.*)")
+    string(FIND "${NX_LD}" "${nx_ro}" nx_ro_at)
+    string(FIND "${NX_LD}" "${nx_rw}" nx_rw_at)
+    string(FIND "${NX_LD}" "KEEP (*(.crt0))" nx_crt0_at)
+    if(nx_ro_at LESS 0 OR nx_rw_at LESS 0 OR nx_crt0_at LESS 0)
+        message(FATAL_ERROR "libnx's switch.ld changed: update the edits in pc/CMakeLists.txt")
+    endif()
+    # inside .text, not at the top level: there it would be an absolute 0, not moved with the image
+    string(REPLACE "KEEP (*(.crt0))" "__executable_start = .; KEEP (*(.crt0))" NX_LD "${NX_LD}")
+    string(REPLACE "${nx_ro}" "" NX_LD "${NX_LD}")
+    string(REPLACE "${nx_rw}" "${nx_rw} ${nx_ro}" NX_LD "${NX_LD}")
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/recvx.ld "${NX_LD}")
+    # switch.specs names its own script (-T): the same specs without it, and ours on the command line
+    file(READ ${NX_ROOT}/switch.specs NX_SPECS)
+    string(REPLACE "-T %:getenv(DEVKITPRO /libnx/switch.ld) " "" NX_SPECS "${NX_SPECS}")
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/recvx.specs "${NX_SPECS}")
+    set(nx_ld ${CMAKE_CURRENT_BINARY_DIR}/recvx.ld)
+    set(nx_specs ${CMAKE_CURRENT_BINARY_DIR}/recvx.specs)
+    find_program(CYGPATH cygpath)
+    if(CYGPATH)   # the compiler is a native Windows program: it reads C:/ paths
+        execute_process(COMMAND ${CYGPATH} -m ${nx_ld} OUTPUT_VARIABLE nx_ld OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND ${CYGPATH} -m ${nx_specs} OUTPUT_VARIABLE nx_specs OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif()
+    string(REGEX REPLACE "-specs=[^ ]*switch.specs" "" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+    target_link_options(recvx PRIVATE -specs=${nx_specs} -T${nx_ld} -Wl,-Map,${CMAKE_CURRENT_BINARY_DIR}/recvx.map)
+    target_link_libraries(recvx PRIVATE stdc++)
+    set_target_properties(recvx PROPERTIES OUTPUT_NAME recvx SUFFIX .elf)
+    nx_generate_nacp(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/recvx.nacp NAME "Code: Veronica X" AUTHOR "cvx-port" VERSION ${PROJECT_VERSION})
+    nx_create_nro(recvx NACP ${CMAKE_CURRENT_BINARY_DIR}/recvx.nacp ICON ${CMAKE_CURRENT_SOURCE_DIR}/switch/icon.jpg)
 endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Place the image inside the PS2 address window (see docs/ARCHITECTURE.md, "Data model and memory").
@@ -260,6 +329,12 @@ target_compile_options(test_rules PRIVATE $<TARGET_PROPERTY:recvx_game,COMPILE_O
 target_link_libraries(test_rules PRIVATE m)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_options(test_rules PRIVATE -no-pie)   # (the game's flags include -fno-pie)
+endif()
+if(RECVX_PIE)
+    target_compile_definitions(test_rules PRIVATE RECVX_PIE=1)
+elseif(RECVX_64 AND WIN32)
+    # its game structures hold slots: the image must lie in the PS2 window, as the game's
+    target_link_options(test_rules PRIVATE -Wl,--image-base,0x30000000 -Wl,--disable-dynamicbase -Wl,--disable-high-entropy-va)
 endif()
 add_test(NAME rules COMMAND test_rules)
 

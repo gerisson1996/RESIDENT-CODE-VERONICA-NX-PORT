@@ -37,11 +37,11 @@ static int view_taken;
 void pc_mesh_begin(const void* model)
 {
     if (!view_taken) take_view();   /* the first mesh of a frame: the camera it is drawn with */
-    pc_cur_mesh = (uint32_t)(uintptr_t)model; pc_cur_strip = 0; stream_tag(pc_cur_mesh);
+    pc_cur_mesh = PS2_ADDR(model); pc_cur_strip = 0; stream_tag(pc_cur_mesh);
     pc_margin_mesh = margin_next; margin_next = 0;
 }
 void pc_mesh_end(void) { pc_cur_mesh = 0; pc_margin_mesh = 0; stream_tag(0); }
-void pc_mesh_strip(const void* strip) { pc_cur_strip = (uint32_t)(uintptr_t)strip; stream_strip(pc_cur_strip); }
+void pc_mesh_strip(const void* strip) { pc_cur_strip = PS2_ADDR(strip); stream_strip(pc_cur_strip); }
 
 /* effect.c draw loops: the following output is this effect (O_WRK; NULL: none). The tag is odd
    (meshes are aligned pointers): its eff[] slot and that slot's life, which starts again when

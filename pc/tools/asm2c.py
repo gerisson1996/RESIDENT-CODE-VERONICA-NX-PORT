@@ -323,7 +323,7 @@ class Block:
         if not m:
             t = tok.strip()
             if re.match(r'^[A-Za-z_]\w*$', t) and t not in GPR:
-                return '(uint32_t)(uintptr_t)&%s' % t      # absolute address of a global
+                return 'PS2_ADDR(&%s)' % t      # absolute address of a global
             raise TranslateError('bad memory operand ' + tok)
         off = m.group(1).strip() or '0'
         base = self.reg(m.group(2))
@@ -673,7 +673,7 @@ class Block:
                     # mwcc hands "m" operands to the asm as a register holding the
                     # object's value (used as 'add t2, %2, t1' on a pointer global)
                     decl.append('ee_reg %s = {{0}};' % key)
-                    pre.append('%s.sd[0] = (int32_t)(uintptr_t)(%s);' % (key, expr))
+                    pre.append('%s.sd[0] = (int32_t)EE_IN(%s);' % (key, expr))
                     continue
                 decl.append('ee_reg %s = {{0}};' % key)
                 is_lvalue = re.match(r'^[A-Za-z_][\w.\->\[\]]*$', expr) is not None
@@ -682,12 +682,12 @@ class Block:
                         pre.append('%s.f[0] = (float)(%s);' % (key, expr))
                 else:
                     if not o['out'] or is_lvalue:
-                        pre.append('%s.sd[0] = (int32_t)(uintptr_t)(%s);' % (key, expr))
+                        pre.append('%s.sd[0] = (int32_t)EE_IN(%s);' % (key, expr))
                 if o['out']:
                     if fk:
                         post.append('%s = %s.f[0];' % (expr, key))
                     else:
-                        post.append('%s = (__typeof__(%s))(uintptr_t)%s.w[0];' % (expr, expr, key))
+                        post.append('%s = (__typeof__(%s))EE_OUT(%s, %s.w[0]);' % (expr, expr, expr, key))
             else:
                 decl.append('ee_reg %s = {{0}};' % key)
                 if fk:
@@ -695,9 +695,9 @@ class Block:
                     if key in self.written:
                         post.append('%s = %s.f[0];' % (ref, key))
                 else:
-                    pre.append('%s.sd[0] = (int32_t)(uintptr_t)(%s);' % (key, ref))
+                    pre.append('%s.sd[0] = (int32_t)EE_IN(%s);' % (key, ref))
                     if key in self.written:
-                        post.append('%s = (__typeof__(%s))(uintptr_t)%s.w[0];' % (ref, ref, key))
+                        post.append('%s = (__typeof__(%s))EE_OUT(%s, %s.w[0]);' % (ref, ref, ref, key))
         lines = ['{ /* asm2c */']
         lines += ['    ' + d for d in decl]
         lines += ['    ' + p for p in pre]

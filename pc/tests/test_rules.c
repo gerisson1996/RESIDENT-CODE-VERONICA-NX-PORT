@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#if UINTPTR_MAX != 0xFFFFFFFFu
+/* pc_ptr.h (64-bit): the program's version is in pc/src/ps2/memory.c */
+void ps2_ptr_fail(const void* p, const char* file, int line) { fprintf(stderr, "pointer %p does not fit a PS2 address (%s:%d)%c", p, file, line, 10); abort(); }
+#endif
+
 static int fails;
 #define CHECK(c) do { if (!(c)) { printf("FAIL %s:%d: %s\n", __FILE__, __LINE__, #c); fails++; } } while (0)
 

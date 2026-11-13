@@ -7,6 +7,7 @@
 #include "fileio.h"
 #include <SDL3/SDL.h>
 #include <stdio.h>
+void host_log(const char* fmt, ...);
 
 const char* const prof_names[PROF_COUNT] = { "logic", "vu0", "vu1", "gif", "queue", "wait",
                                              "r_exec", "r_interp", "r_present", "r_idle" };
@@ -61,6 +62,9 @@ void prof_frame_end(void)
 {
     ProfFrame f;
     uint64_t now;
+    static int log_on = -1, log_n;   /* RECVX_GPU_TIME: also the categories, averaged, every 120 frames to the log */
+    static double log_sum[PROF_COUNT + 1];
+    if (log_on < 0 && (log_on = SDL_getenv("RECVX_GPU_TIME") && SDL_atoi(SDL_getenv("RECVX_GPU_TIME")))) prof_enabled = 1;
     if (!prof_enabled) { frame_start = 0; return; }
     charge();
     now = last_ns;
@@ -69,6 +73,16 @@ void prof_frame_end(void)
     for (int i = 0; i < PROF_COUNT; i++) f.ms[i] = (float)(__atomic_exchange_n(&acc[i], 0, __ATOMIC_RELAXED) / 1e6);
     frame_start = now;
     hist[hist_n++ % HISTORY] = f;
+    if (log_on > 0) {
+        for (int i = 0; i < PROF_COUNT; i++) log_sum[i] += f.ms[i];
+        log_sum[PROF_COUNT] += f.total;
+        if (++log_n == 120) {
+            char b[512]; int o = snprintf(b, sizeof(b), "prof: game frame %.2f ms |", log_sum[PROF_COUNT] / log_n);
+            for (int i = 0; i < PROF_COUNT && o < (int)sizeof(b); i++) o += snprintf(b + o, sizeof(b) - o, " %s %.2f", prof_names[i], log_sum[i] / log_n);
+            host_log("%s\n", b);
+            log_n = 0; for (int i = 0; i <= PROF_COUNT; i++) log_sum[i] = 0;
+        }
+    }
     if (csv) {
         fprintf(csv, "%llu,%.3f", (unsigned long long)frame_no, f.total);
         for (int i = 0; i < PROF_COUNT; i++) fprintf(csv, ",%.3f", f.ms[i]);

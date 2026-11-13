@@ -21,5 +21,8 @@ __pycache__/
 /RE4PortTest/
 /XTool/
 
+# local run logs
+/recvx-crash.log
+
 # editor state
 /.claude/

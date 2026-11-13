@@ -174,12 +174,13 @@ int audio_stream_start_adx(const char* path, uint64_t base, uint32_t size, int v
     AdxVoice* v = NULL;
     int id = -1;
     for (int i = 0; i < MAX_VOICES; i++) if (!voices[i].used) { v = &voices[i]; id = i; break; }
-    if (!v || !dev) return -1;
+    host_log("adx: start %s @%llu (%u bytes)\n", path, (unsigned long long)base, size);
+    if (!v || !dev) { host_log("adx: no free voice or no device\n"); return -1; }
     memset(v, 0, sizeof(*v));
     v->f = pc_fopen(path, "rb");
-    if (!v->f) return -1;
+    if (!v->f) { host_log("adx: cannot open %s\n", path); return -1; }
     v->base = base; v->size = size;
-    if (fseeko(v->f, (off_t)v->base, SEEK_SET) != 0 || fread(hdr, 1, SECTOR, v->f) < 0x34 || hdr[0] != 0x80) { fclose(v->f); return -1; }
+    if (fseeko(v->f, (off_t)v->base, SEEK_SET) != 0 || fread(hdr, 1, SECTOR, v->f) < 0x34 || hdr[0] != 0x80) { host_log("adx: bad header in %s\n", path); fclose(v->f); return -1; }
     v->data_ofs = be16(hdr + 2) + 4;
     v->frame_bytes = hdr[5] ? hdr[5] : 18;
     v->channels = hdr[7] ? hdr[7] : 1;
@@ -209,7 +210,7 @@ int audio_stream_start_adx(const char* path, uint64_t base, uint32_t size, int v
         SDL_AudioSpec dst = { SDL_AUDIO_S16, 2, 48000 };
         v->stream = SDL_CreateAudioStream(&src, &dst);
     }
-    if (!v->stream) { fclose(v->f); return -1; }
+    if (!v->stream) { host_log("adx: no stream: %s\n", SDL_GetError()); fclose(v->f); return -1; }
     v->vol_cdb = vol_cdb;
     SDL_SetAudioStreamGetCallback(v->stream, feed, v);
     SDL_LockMutex(lock);

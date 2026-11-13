@@ -1080,8 +1080,11 @@ float gs_wanted_scale(void)
 {
     int ww, wh;
     float s;
-    if (g_config.scale > 0) return (float)g_config.scale;
+    if (g_config.scale > 0 && g_config.scale != GS_SCALE_WINDOW) return (float)g_config.scale;
     SDL_GetWindowSizeInPixels(g_window, &ww, &wh);
+    /* the window's own lines: 448 PS2 lines drawn at exactly its height (720p on the Switch:
+       1.607x), not a whole multiple, so neither FSR nor a downscale is needed */
+    if (g_config.scale == GS_SCALE_WINDOW) return wh >= 448 ? (float)wh / 448.0f : 1.0f;
     s = floorf((float)wh / 448.0f + 0.5f);
     /* FSR: the scale at or below the window when FSR has at most 1.5x left to upscale (AMD's
        Quality mode: 2160 lines 4x, 1080 2x, 1200 2x); beyond that the nearest, as without it
@@ -1472,13 +1475,15 @@ int gs_batch_two_pass(void) { return batch_valid && icount && two_pass(batch_sta
 
 /* the batch: ibuf's indices from ibo_first on (vertices from vbo_first), with the static runs in
    their places (one draw call each part, in order: the same primitives in the same order as one call) */
+static uint64_t gt_draw_ns, gt_flush_ns;   /* RECVX_GPU_TIME: render-thread CPU in the draw calls / in gs_flush (state, textures, uploads, draws) */
 static uint32_t gt_cnt[4];   /* RECVX_GPU_TIME: GL draws (at most), GS-path sprites, other GS-path primitives, native triangles */
 static void draw_batch(int afail_pass)
 {
     int at = 0;
+    uint64_t t0 = SDL_GetTicksNS();
     uni1i(pcur->afail_pass, afail_pass);
     gt_cnt[0] += 1 + 2 * (uint32_t)nsruns;
-    if (!nsruns) { glDrawElementsBaseVertex(batch_mode, icount, GL_UNSIGNED_SHORT, (void*)((size_t)ibo_first * sizeof(uint16_t)), vbo_first); return; }
+    if (!nsruns) { glDrawElementsBaseVertex(batch_mode, icount, GL_UNSIGNED_SHORT, (void*)((size_t)ibo_first * sizeof(uint16_t)), vbo_first); gt_draw_ns += SDL_GetTicksNS() - t0; return; }
     for (int r = 0; r <= nsruns; r++) {
         int end = r < nsruns ? sruns[r].start : icount;
         if (end > at) { glBindVertexArray(vao); glDrawElementsBaseVertex(batch_mode, end - at, GL_UNSIGNED_SHORT, (void*)((size_t)(ibo_first + at) * sizeof(uint16_t)), vbo_first); }
@@ -1488,6 +1493,7 @@ static void draw_batch(int afail_pass)
         at = sruns[r].start + sruns[r].count;
     }
     glBindVertexArray(vao);
+    gt_draw_ns += SDL_GetTicksNS() - t0;
 }
 
 /* ---------------- RECVX_GPU_TIME (test aid) ----------------
@@ -1510,7 +1516,8 @@ static struct {
     uint64_t cpu_exec0, cpu_exec, cpu_pres0;
     double sum_cpu[3], sum_gpu[3];   /* exec, in-between, frame image */
     double part[4];                  /* in-between: start copy, replay draws, display + overlay, restore */
-    double cnt[2][4];                /* gt_cnt summed: executed frames, in-between images */
+    double cnt[2][4];
+    double draw_ms, flush_ms;         /* gt_draw_ns / gt_flush_ns summed over executed frames */                /* gt_cnt summed: executed frames, in-between images */
     int n_cpu[3], n_gpu[3];
     uint64_t last_log;
 } gt;
@@ -1554,6 +1561,7 @@ static void gt_exec_begin(void)
     gt_collect(gt.slot, 1);
     gt_mark(GT_EXEC0);
     memset(gt_cnt, 0, sizeof(gt_cnt));
+    gt_draw_ns = gt_flush_ns = 0;
     gt.cpu_exec0 = SDL_GetTicksNS();
 }
 static void gt_exec_end(void)
@@ -1561,6 +1569,7 @@ static void gt_exec_end(void)
     if (!gt.on) return;
     gt_mark(GT_EXEC1);
     for (int i = 0; i < 4; i++) gt.cnt[0][i] += gt_cnt[i];
+    gt.draw_ms += gt_draw_ns / 1e6; gt.flush_ms += gt_flush_ns / 1e6;
     gt.kind[gt.slot] = 4;
     gt.sum_cpu[0] += (SDL_GetTicksNS() - gt.cpu_exec0) / 1e6; gt.n_cpu[0]++;
 }
@@ -1593,6 +1602,7 @@ static void gt_present_end(int inbetween)
                  gt.n_cpu[1] / s, A(gt.sum_cpu[1], gt.n_cpu[1]), A(gt.sum_gpu[1], gt.n_gpu[1]),
                  A(gt.part[0], gt.n_gpu[1]), A(gt.part[1], gt.n_gpu[1]), A(gt.part[2], gt.n_gpu[1]), A(gt.part[3], gt.n_gpu[1]),
                  gt.n_cpu[2] / s, A(gt.sum_cpu[2], gt.n_cpu[2]), A(gt.sum_gpu[2], gt.n_gpu[2]));
+        host_log("gputime: per frame cpu in gs_flush %.2f ms, of it in draw calls %.2f ms\n", A(gt.flush_ms, gt.n_cpu[0]), A(gt.draw_ms, gt.n_cpu[0]));
         for (int k = 0; k < 2; k++)
             host_log("gputime: %s draws %.0f, GS-path sprites %.0f, other GS-path primitives %.0f, native triangles %.0f\n", k ? "per in-between" : "per frame",
                      A(gt.cnt[k][0], gt.n_cpu[k]), A(gt.cnt[k][1], gt.n_cpu[k]), A(gt.cnt[k][2], gt.n_cpu[k]), A(gt.cnt[k][3], gt.n_cpu[k]));
@@ -1600,6 +1610,7 @@ static void gt_present_end(int inbetween)
         memset(gt.sum_cpu, 0, sizeof(gt.sum_cpu)); memset(gt.sum_gpu, 0, sizeof(gt.sum_gpu));
         memset(gt.n_cpu, 0, sizeof(gt.n_cpu)); memset(gt.n_gpu, 0, sizeof(gt.n_gpu)); memset(gt.part, 0, sizeof(gt.part));
         memset(gt.cnt, 0, sizeof(gt.cnt));
+        gt.draw_ms = gt.flush_ms = 0;
         gt.last_log = now;
     }
 }
@@ -2018,7 +2029,15 @@ void gs_pretext_mark(void)
    copy is of a full-screen target of the same size, not of the displayed buffer itself. */
 static GLuint pretext_for(int k, int pw, int ph) { return pretext[k].valid && pretext[k].pw == pw && pretext[k].ph == ph ? pretext[k].tex : 0; }
 
-void gs_flush(void)
+static void flush_batch(void);
+void gs_flush(void)   /* (timed: RECVX_GPU_TIME) */
+{
+    static int depth;
+    uint64_t t0 = depth++ ? 0 : SDL_GetTicksNS();
+    flush_batch();
+    if (!--depth) gt_flush_ns += SDL_GetTicksNS() - t0;
+}
+static void flush_batch(void)
 {
     const DrawState* st = &batch_state;
     TexMemo *replay_memo = NULL, *record_memo = NULL;

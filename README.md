@@ -1,125 +1,169 @@
+<div align="center">
+
+<img src="pc/switch/icon.jpg" alt="Project Veronica NX" width="180">
+
+# Project Veronica NX
+
+**A native Nintendo Switch port of *Resident Evil Code: Veronica X***
+
+![Platform](https://img.shields.io/badge/platform-Nintendo%20Switch-e60012?style=for-the-badge&logo=nintendoswitch&logoColor=white)
+![Format](https://img.shields.io/badge/format-homebrew%20NRO-222222?style=for-the-badge)
+![Renderer](https://img.shields.io/badge/renderer-OpenGL%203.3-5586a4?style=for-the-badge&logo=opengl&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-2ea44f?style=for-the-badge)
+
+[Features](#features) · [Installation](#installation) · [Controls](#controls) · [Building](#building-from-source) · [Credits](#credits)
+
+</div>
+
 > [!IMPORTANT]
-> No game data is included. You need your own legally obtained copy of *Resident Evil Code: Veronica X* (PS2, NTSC-U, SLUS-20184).
+> **No game data is included.** You need your own legally obtained copy of *Resident Evil Code: Veronica X*
+> (PS2, NTSC-U, **SLUS-20184**), dumped by you to an `.iso` disc image.
 
-# Project Veronica
+---
 
-A native PC port of *Resident Evil Code: Veronica X* (PS2) for Linux and Windows, built from the
-community decompilation [recvx-decomp](https://github.com/AshfordFamily/recvx-decomp). The
-original game code and its PS2 platform are compiled for the PC; the PS2 hardware
-underneath (GS, VU, DMA, sound driver, disc, memory card, pad) is emulated at its boundaries, and
-native paths replace the expensive parts. The game reads your own disc image in place.
+## About
+
+Project Veronica NX brings [Project Veronica](https://github.com/camybiohazard/Project-Veronica), the native
+PC port built on the [recvx-decomp](https://github.com/AshfordFamily/recvx-decomp) decompilation, to the
+Nintendo Switch as a homebrew application.
+
+The original game code is compiled natively for the Switch's ARM64 CPU. It is not an emulator. Only the PS2
+hardware at the game's boundaries (GS, VU, DMA, sound driver, disc, memory card and pad) is reproduced, and
+native paths replace the expensive parts. The game reads your disc image straight from the SD card.
 
 ## Features
 
-- **Enhanced renderer**: native 3D and textures on the GPU, widescreen (hor+, up to ultrawide),
-  internal resolution up to 8x, in-between frames up to the display's refresh rate while the game
-  logic stays at its original 30 FPS, a frame rate limit, optional PS2 motion trail.
-- **Third-person mode** (optional): over-the-shoulder camera with mouse/keyboard controls, free
-  aim and two camera styles.
-- **Modern controls** (optional) for the fixed cameras: the stick walks where it points on screen,
-  as in the RE HD remasters, and keeps its direction through camera cuts.
-- **Model swaps**: play as other characters and creatures, with matching voices and cutscene
-  doubles.
-- **Enemy options**: extra enemies, rearranged placements, a seeded randomizer, and an enemy
-  spawner.
-- **Save files**: every save its own file, as many as you like, in the game's own save screens
-  without the memory card screens (the emulated memory card stays available).
-- **Enhanced settings** in the game's own OPTION menu and an F1 overlay; full rebinding of keyboard,
-  mouse and gamepad; per-window input source for local co-op on one PC.
-- **Cheats and debug tools** (F2), co-op window (F3).
-- **HD texture packs**: PCSX2 HD texture packs for the game load as they come, from
-  `mods/textures/` (see [HD texture packs](#hd-texture-packs)).
-- **Mods**: replacement room files and archive entries from a `mods/` folder, plus tools to build
-  new rooms.
+| | |
+|---|---|
+| 🎮 **Native performance** | Game code compiled for ARM64; GPU rendering through OpenGL 3.3 (Mesa / nouveau) |
+| 🖥️ **Enhanced picture** | Widescreen, higher internal resolution, in-between frames for smooth motion while the game logic stays at its original 30 FPS |
+| 🎯 **Gyro aiming** | Motion aiming with the Joy-Con, Pro Controller or handheld mode, adjustable speed and inversion |
+| 🧍 **Third-person mode** | Optional over-the-shoulder camera with free aim and auto-aim |
+| ⚡ **Quick menu** | L3 + R3 opens a console-style menu for the settings that matter most, without leaving the game |
+| 🧪 **Cheats** | Infinite health and ammo, heal, give any item, noclip, unlock all |
+| 💾 **Modern saves** | Every save is its own file, as many as you like, on the SD card |
+| 🧩 **Mods and HD textures** | Replacement rooms and archive entries; PCSX2 HD texture packs load as they come |
+| 🔁 **Model swaps and enemy options** | Play as other characters, extra enemies, a seeded randomizer |
 
 ## Requirements
 
+- A Nintendo Switch able to run homebrew (Atmosphère with the Homebrew Menu).
 - Your own disc image of *Resident Evil Code: Veronica X*, PS2 NTSC-U, **SLUS-20184** (`.iso`).
-- **Linux**: an x86 PC; the game is a 32-bit (i686) program and needs glibc 2.34 or newer plus
-  the 32-bit (multilib) OpenGL, X11/Wayland and audio libraries.
-- **Windows**: Windows 10 or later (32-bit executable, runs on 64-bit Windows).
-- A GPU with OpenGL 3.3.
+- About 4 GB of free space on the SD card for the disc image.
 
-## Download
+> [!TIP]
+> Launch the Homebrew Menu by **holding R while opening a game** (title takeover), not from the album
+> applet. Applet mode has much less memory and the game may not start.
 
-Prebuilt Linux and Windows builds and the co-op server are on the
-[Releases](https://github.com/camybiohazard/Project-Veronica/releases) page (no game data
-included). Unpack and run `recvx.exe` (Windows) or `./recvx` (Linux); see
-[docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+## Installation
 
-## HD texture packs
+1. Download `recvx.nro` from the [Releases](../../releases) page.
+2. Copy it to the SD card:
+   ```
+   sdmc:/switch/recvx/recvx.nro
+   ```
+3. Copy **your** disc image into the same folder (any name ending in `.iso`):
+   ```
+   sdmc:/switch/recvx/Code Veronica X.iso
+   ```
+4. Start **Code: Veronica X** from the Homebrew Menu.
 
-HD texture packs made for the PCSX2 emulator (for SLUS-20184, the US release) work without
-conversion. None are included; use a pack you have.
+Everything the game writes lives next to it:
 
-1. Create a `textures` folder inside the `mods` folder, which sits next to the game (beside
-   `recvx.exe` / `recvx` and the `save` folder): `mods/textures/`.
-2. Put the pack in there as it comes. Any of these layouts works:
-   - `mods/textures/SLUS-20184/replacements/...` (the folder from PCSX2's `textures` directory)
-   - `mods/textures/replacements/...`
-   - `mods/textures/<pack name>/...`, or the `.dds` files themselves
-3. Start the game. The log says `hd textures: N replacements in <folder>`.
+```
+sdmc:/switch/recvx/
+├── recvx.nro          the game
+├── *.iso              your disc image
+├── recvx.ini          settings (written on the first start)
+├── recvx.log          log, for bug reports
+├── save/              save files
+└── mods/              optional: mods and HD texture packs (mods/textures/)
+```
 
-**Several packs and load order:** put each pack in its own folder and number the folders, for
-example `mods/textures/1_addon/` and `mods/textures/2_base/`. When two packs replace the same
-texture, the one in the folder that comes first by name wins, so `1_...` overrides `2_...`.
+## Controls
 
-Settings (F1 or ENHANCED SETTINGS, DISPLAY): **HD textures** turns packs on or off, **HD
-textures: UI** also uses redesigned menus, title and inventory (on), **HD textures: font** uses
-the pack's font (off). A pack in another folder: `hd_textures_dir = <path>` in `recvx.ini` or
-`--hd-textures <path>`. Details: [docs/USER_GUIDE.md](docs/USER_GUIDE.md#hd-texture-packs).
+The game plays with its original controls. On top of them, the port adds three menus:
+
+| Buttons | Opens |
+|---|---|
+| **L3 + R3** | **Quick menu**: camera and aim, gyro, picture, sound, game options, and a **Cheats** tab |
+| **−** and **+** together | All settings, page by page |
+| **−** and **+** together, holding **ZR** | The full cheats and debug menu |
+
+Inside the quick menu:
+
+| Button | Action |
+|---|---|
+| D-pad / left stick | Choose an option (up / down), change it (left / right) |
+| **A** | Change or confirm |
+| **L** / **R** | Switch between the **Settings** and **Cheats** tabs |
+| **B** | Close |
+
+The game keeps running while a menu is open; game input is paused until you close it.
+
+## Gyro aiming
+
+With third-person mode on, the controller's motion sensor aims like a mouse:
+
+- **Gyro aiming**: *Off*, *While aiming* (default) or *Aim and camera*.
+- **Gyro speed**: 10 % to 400 %.
+- **Gyro invert X / Y**.
+
+All of them are in the quick menu (L3 + R3) under **Camera and aim**. The gyro works in handheld mode,
+with a Pro Controller, and with a pair of Joy-Con (the right one aims).
 
 ## Building from source
 
+The Switch build uses [devkitPro](https://devkitpro.org/) (devkitA64, libnx, switch-sdl2, switch-mesa).
+
 ```sh
-git clone --recursive https://github.com/camybiohazard/Project-Veronica.git
-cd Project-Veronica
-scripts/build-linux.sh      # or scripts/build-windows.sh (mingw-w64 cross-build)
-scripts/run-linux.sh
+git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA---NX---PORT.git
+cd RESIDENT-CODE-VERONICA---NX---PORT
+# from devkitPro's msys2 shell (Windows) or a shell with $DEVKITPRO set (Linux / macOS)
+bash scripts/build-switch.sh -- recvx_nro
 ```
 
-`--recursive` fetches the decompilation and its header submodules; the decomp's large compiler
-submodule is skipped by design (the PC build does not use it). On the first start a file
-selector asks for the disc image; the choice is remembered. The Windows build is cross-compiled
-with mingw-w64: see [docs/BUILDING.md](docs/BUILDING.md).
+The output is `build-switch/pc/recvx.nro`. The PC builds (Linux and Windows) from the upstream project still
+work from this tree: see [docs/BUILDING.md](docs/BUILDING.md).
+
+### Debugging
+
+`sdmc:/switch/recvx/env.txt` sets environment variables at start, one `NAME=value` per line. For example,
+`RECVX_GPU_TIME=1` writes per-frame CPU and GPU timings to `recvx.log`.
 
 ## Documentation
 
 | Document | For |
 |---|---|
-| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | players: first start, settings, controls, cheats, saves, troubleshooting |
-| [docs/COOP.md](docs/COOP.md) | players and developers: online and local co-op, protocol reference |
-| [docs/SERVER.md](docs/SERVER.md) | running the co-op rendezvous/relay server |
-| [docs/BUILDING.md](docs/BUILDING.md) | building on Linux and for Windows, CMake options, tests |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | developers: how the port works, renderer, determinism, test aids |
-| [docs/THIRDPERSON.md](docs/THIRDPERSON.md) | third-person mode internals |
-| [docs/ACTORS.md](docs/ACTORS.md) | models, skeletons, animation, model swaps |
-| [docs/ENEMIES.md](docs/ENEMIES.md) | enemy data, spawner, enemy options |
-| [docs/HD_PACK.md](docs/HD_PACK.md) | how PCSX2 HD texture packs are matched and loaded |
-| [docs/modding/](docs/modding/README.md) | room format and building custom rooms |
-| [CHANGELOG.md](CHANGELOG.md) | feature history |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | how to contribute |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Every setting, controls, cheats, saves, troubleshooting |
+| [docs/THIRDPERSON.md](docs/THIRDPERSON.md) | Third-person mode |
+| [docs/HD_PACK.md](docs/HD_PACK.md) | HD texture packs |
+| [docs/modding/](docs/modding/README.md) | Room format and building custom rooms |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the port works |
+| [docs/BUILDING.md](docs/BUILDING.md) | Building for every platform |
+| [CHANGELOG.md](CHANGELOG.md) | Feature history |
 
 ## Credits
 
-- **[recvx-decomp](https://github.com/AshfordFamily/recvx-decomp)** by AshfordFamily and its
-  contributors: the decompilation this port is built on (MIT).
-- Libraries: [SDL 3](https://github.com/libsdl-org/SDL) (zlib),
-  [Dear ImGui](https://github.com/ocornut/imgui) (MIT),
-  [miniupnpc and libnatpmp](https://github.com/miniupnp) (BSD-3-Clause),
-  [Monocypher](https://github.com/LoupVaillant/Monocypher) (BSD-2-Clause or CC0). Versions and
-  details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **[Project Veronica](https://github.com/camybiohazard/Project-Veronica)** by camybiohazard: the native PC
+  port this Switch version is based on.
+- **[recvx-decomp](https://github.com/AshfordFamily/recvx-decomp)** by AshfordFamily and its contributors:
+  the decompilation everything is built on (MIT).
+- **[devkitPro](https://devkitpro.org/)**: the Switch toolchain, libnx and the SDL2 / Mesa ports.
+- Libraries: [SDL](https://github.com/libsdl-org/SDL) (zlib), [Dear ImGui](https://github.com/ocornut/imgui)
+  (MIT), [miniupnpc and libnatpmp](https://github.com/miniupnp) (BSD-3-Clause),
+  [Monocypher](https://github.com/LoupVaillant/Monocypher) (BSD-2-Clause or CC0). Details:
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
-The code in this repository is released under the [MIT License](LICENSE). The decompilation in
-`decomp/` is MIT-licensed by its authors; third-party components keep their own licenses (see
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
+The code in this repository is released under the [MIT License](LICENSE). The decompilation in `decomp/` is
+MIT-licensed by its authors; third-party components keep their own licenses.
 
 ## Legal
 
-This is an unofficial fan project, not affiliated with or endorsed by Capcom, Sony Interactive
-Entertainment, Sega or CRI Middleware. *Resident Evil* and *Code: Veronica* are trademarks of
-Capcom; PlayStation is a trademark of Sony Interactive Entertainment. No game assets are
-distributed: you must supply your own legally obtained copy of the game. Files you generate from
-your copy (for example modded rooms) contain game-derived data and must not be shared.
+This is an unofficial fan project, not affiliated with or endorsed by Capcom, Nintendo, Sony Interactive
+Entertainment, Sega or CRI Middleware. *Resident Evil* and *Code: Veronica* are trademarks of Capcom; Nintendo
+Switch is a trademark of Nintendo; PlayStation is a trademark of Sony Interactive Entertainment. No game assets
+are distributed: you must supply your own legally obtained copy of the game. Do not share disc images or files
+generated from them.

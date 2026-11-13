@@ -20,7 +20,11 @@ typedef union {
     float    f[4];
 } ee_reg;
 
-#define EE_PTR(a) ((void*)(uintptr_t)(uint32_t)(a))
+#include "pc_ptr.h"
+#define EE_PTR(a) PS2_HOST((uint32_t)(a))   /* a register holds a PS2 address */
+/* a C variable <-> a register of the translated block: a pointer goes as its PS2 address */
+#define EE_IN(x)       PS2_ADDR(x)
+#define EE_OUT(var, r) (__builtin_classify_type(var) == 5 /* pointer */ ? (uintptr_t)PS2_HOST(r) : (uintptr_t)(r))
 
 static inline uint32_t ee_f2u(float f)    { uint32_t u; memcpy(&u, &f, 4); return u; }
 static inline float    ee_u2f(uint32_t u) { float f; memcpy(&f, &u, 4); return f; }
@@ -39,9 +43,13 @@ static inline float    ee_u2f(uint32_t u) { float f; memcpy(&f, &u, 4); return f
 #define EE_SD(a, v) (*(uint64_t*)EE_PTR(a) = (uint64_t)(v))
 #define EE_SWF(a, v) (*(float*)EE_PTR(a) = (v))
 
-/* lq/sq ignore the low 4 address bits */
-static inline void ee_lq(ee_reg* r, uint32_t a) { memcpy(r, EE_PTR(a & ~15u), 16); }
-static inline void ee_sq(uint32_t a, const ee_reg* r) { memcpy(EE_PTR(a & ~15u), r, 16); }
+/* lq/sq ignore the low 4 address bits on the PS2, where the game's qword data is 16-byte
+   aligned. The host's need not be (AArch64 aligns arrays and stack objects only to their
+   element type: on the Switch a strip or primitive buffer can be 8 mod 16), so the access is
+   at the address itself, the qword the game meant, instead of 8 bytes before it (which left
+   the translucent primitives' depth unset: wrong draw order and depth on the Switch) */
+static inline void ee_lq(ee_reg* r, uint32_t a) { memcpy(r, EE_PTR(a), 16); }
+static inline void ee_sq(uint32_t a, const ee_reg* r) { memcpy(EE_PTR(a), r, 16); }
 
 /* little-endian unaligned doubleword load/store halves */
 static inline uint64_t ee_ldl(uint64_t rt, uint32_t a)

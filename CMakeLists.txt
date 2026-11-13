@@ -6,11 +6,15 @@ include(cmake/version.cmake)
 # x86-32; RECVX_64 opts into the 64-bit build, where disc structures keep 32-bit pointer slots
 # (pc/include/pc_ptr.h, docs/superpowers/specs/2026-11-11-build-64bit-pc-design.md).
 option(RECVX_64 "64-bit build (work in progress)" OFF)
+option(RECVX_PIE "64-bit build that loads at any address: PS2 addresses relative to the image (needs RECVX_64)" OFF)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT RECVX_64)
     message(FATAL_ERROR "recvx_pc is built as 32-bit unless -DRECVX_64=ON. "
                         "Linux: -DCMAKE_TOOLCHAIN_FILE=cmake/linux-i686.cmake; Windows: cmake/mingw-i686.cmake")
 elseif(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
     message(FATAL_ERROR "unsupported pointer size")
+endif()
+if(NINTENDO_SWITCH AND NOT (RECVX_64 AND RECVX_PIE))
+    message(FATAL_ERROR "the Switch build is the position-independent 64-bit one: -DRECVX_64=ON -DRECVX_PIE=ON")
 endif()
 if(RECVX_64 AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
     message(FATAL_ERROR "RECVX_64 needs a 64-bit toolchain (cmake/mingw-x86_64.cmake)")

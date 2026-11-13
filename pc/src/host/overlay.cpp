@@ -32,6 +32,7 @@ extern "C" void pad_set_game_input_enabled(int on);
 
 static SDL_Window* win;
 static bool ready, visible, cheats_visible;
+static bool quick_visible;   /* Switch: the L3 + R3 quick menu */
 static bool tps_key_wait;   /* the next key pressed becomes the third-person toggle key */
 
 void overlay_init(void* window, void* gl_context)
@@ -47,7 +48,313 @@ void overlay_init(void* window, void* gl_context)
     const char* show = SDL_getenv("RECVX_SHOW_OVERLAY");   /* debugging aid (screenshots): 1 F1, 2 the cheats (F2) */
     visible = show && strcmp(show, "2");
     cheats_visible = show && !strcmp(show, "2");
+#ifdef __SWITCH__
+    quick_visible = show && !strcmp(show, "3");   /* 3: the quick menu (L3 + R3) */
+    if (quick_visible) visible = false;
+#endif
+#ifdef __SWITCH__
+    /* no keyboard: the menus are driven by the pad (A select, B back, D-pad/stick move, L/R
+       change tab) or the touch screen, in a larger font for the handheld screen */
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    ImGui::GetStyle().FontScaleMain = 1.5f;
+#endif
 }
+
+#ifdef __SWITCH__
+static char sw_help[512];   /* the focused row's help, shown in the footer */
+static int sw_tab_step;     /* L / R pressed: the previous / next tab */
+static bool sw_open;        /* the menu was just opened: focus it */
+
+/* - and + held together: F1 (settings); with ZR also held: F2 (cheats). L / R change the tab */
+static int switch_combo(const SDL_Event* ev)
+{
+    static bool minus, plus;
+    if (ev->type != SDL_EVENT_GAMEPAD_BUTTON_DOWN && ev->type != SDL_EVENT_GAMEPAD_BUTTON_UP) return 0;
+    bool down = ev->type == SDL_EVENT_GAMEPAD_BUTTON_DOWN;
+    if (visible && !cheats_visible && down && (ev->gbutton.button == SDL_GAMEPAD_BUTTON_LEFT_SHOULDER || ev->gbutton.button == SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER)) {
+        sw_tab_step = ev->gbutton.button == SDL_GAMEPAD_BUTTON_LEFT_SHOULDER ? -1 : 1;
+        return 1;
+    }
+    if (ev->gbutton.button == SDL_GAMEPAD_BUTTON_BACK) minus = down;
+    else if (ev->gbutton.button == SDL_GAMEPAD_BUTTON_START) plus = down;
+    else return 0;
+    if (!down || !minus || !plus) return 0;
+    SDL_Gamepad* g = SDL_GetGamepadFromID(ev->gbutton.which);
+    if (g && SDL_GetGamepadAxis(g, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) > 16000) cheats_visible = !cheats_visible;
+    else sw_open = visible = !visible;
+    return 1;
+}
+
+/* ---- L3 + R3: the quick menu, the settings that matter most on the Switch on one page ----
+   D-pad / left stick up and down choose, left and right (or A) change, B or L3 + R3 close */
+static int quick_sel = -1;
+enum { Q_HEAD, Q_SET, Q_ALL, Q_CLOSE };
+struct QuickRow { int kind; const void* var; const char* text; };
+static const QuickRow quick_rows[] = {
+    { Q_HEAD, nullptr, "CAMERA AND AIM" },
+    { Q_SET, (const void*)&g_tps.on }, { Q_SET, &g_tps.pad_gyro }, { Q_SET, &g_tps.pad_gyro_sens },
+    { Q_SET, &g_tps.pad_gyro_invert_x }, { Q_SET, &g_tps.pad_gyro_invert_y },
+    { Q_SET, &g_tps.pad_sens_x }, { Q_SET, &g_tps.pad_aim_sens }, { Q_SET, &g_tps.auto_aim }, { Q_SET, &g_tps.crosshair },
+    { Q_HEAD, nullptr, "PICTURE" },
+    { Q_SET, &g_config.scale }, { Q_SET, &g_config.interpolate }, { Q_SET, &g_config.aspect },
+    { Q_SET, &g_config.brightness }, { Q_SET, &g_config.show_fps },
+    { Q_HEAD, nullptr, "SOUND" },
+    { Q_SET, &g_config.music_volume }, { Q_SET, &g_config.sfx_volume },
+    { Q_HEAD, nullptr, "GAME" },
+    { Q_SET, &g_config.skip_doors }, { Q_SET, &g_config.fast_loading },
+    { Q_HEAD, nullptr, "" },
+    { Q_ALL, nullptr, "All settings..." }, { Q_CLOSE, nullptr, "Back to the game" },
+};
+enum { QUICK_N = (int)(sizeof quick_rows / sizeof *quick_rows) };
+
+static const Setting* quick_setting(const QuickRow* r)
+{
+    if (r->kind != Q_SET) return nullptr;
+    for (int i = 0; i < g_settings_n; i++)
+        if (g_settings[i].val == (const int*)r->var) return (g_settings[i].shown && !g_settings[i].shown()) ? nullptr : &g_settings[i];
+    return nullptr;
+}
+static bool quick_selectable(int i) { return quick_rows[i].kind == Q_ALL || quick_rows[i].kind == Q_CLOSE || quick_setting(&quick_rows[i]); }
+
+static int quick_combo(const SDL_Event* ev)
+{
+    static bool l3, r3;
+    if (ev->type != SDL_EVENT_GAMEPAD_BUTTON_DOWN && ev->type != SDL_EVENT_GAMEPAD_BUTTON_UP) return 0;
+    bool down = ev->type == SDL_EVENT_GAMEPAD_BUTTON_DOWN;
+    if (ev->gbutton.button == SDL_GAMEPAD_BUTTON_LEFT_STICK) l3 = down;
+    else if (ev->gbutton.button == SDL_GAMEPAD_BUTTON_RIGHT_STICK) r3 = down;
+    else return 0;
+    if (!down || !l3 || !r3) return 0;
+    quick_visible = !quick_visible;
+    if (quick_visible) visible = cheats_visible = false;
+    return 1;
+}
+
+/* the cheats tab (L / R switch tabs): the F2 menu's essentials */
+static int quick_tab, quick_csel;
+enum { QC_HEALTH, QC_HEAL, QC_AMMO, QC_ITEM, QC_COUNT, QC_GIVE, QC_N };
+static const char* const quick_cheat_help[QC_N] = {
+    "Your health stays full.",
+    "Fills your health once.",
+    "The equipped weapon never runs out.",
+    "The item to add: left and right go through the list (hold to go fast).",
+    "How many to add: left and right change it by 1, A adds 10.",
+    "Puts the item in your inventory (needs a free slot).",
+};
+static int quick_next_item(int id, int dir)
+{
+    for (int n = 0; n < CHEAT_ITEMS; n++) {
+        id += dir;
+        if (id < 1) id = CHEAT_ITEMS - 1;
+        if (id >= CHEAT_ITEMS) id = 1;
+        if (g_cheat.names[id][0]) return id;
+    }
+    return 0;   /* (names not loaded yet) */
+}
+
+static void quick_window(void)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 ds = io.DisplaySize;
+    const ImU32 accent = IM_COL32(200, 30, 30, 255), accent_dim = IM_COL32(200, 30, 30, 90);
+    const ImVec4 head_col(0.86f, 0.25f, 0.22f, 1.0f), dim(0.62f, 0.62f, 0.66f, 1.0f), on_col(0.45f, 0.9f, 0.5f, 1.0f);
+    bool changed = false;
+    char val[96];
+
+    if (quick_sel < 0 || !quick_selectable(quick_sel)) { quick_sel = 0; while (quick_sel < QUICK_N - 1 && !quick_selectable(quick_sel)) quick_sel++; }
+    /* input: held directions repeat */
+    int move = 0, adj = 0;
+    if (ImGui::IsKeyPressed(ImGuiKey_GamepadDpadUp, true) || ImGui::IsKeyPressed(ImGuiKey_GamepadLStickUp, true)) move = -1;
+    if (ImGui::IsKeyPressed(ImGuiKey_GamepadDpadDown, true) || ImGui::IsKeyPressed(ImGuiKey_GamepadLStickDown, true)) move = 1;
+    if (ImGui::IsKeyPressed(ImGuiKey_GamepadDpadLeft, true) || ImGui::IsKeyPressed(ImGuiKey_GamepadLStickLeft, true)) adj = -1;
+    if (ImGui::IsKeyPressed(ImGuiKey_GamepadDpadRight, true) || ImGui::IsKeyPressed(ImGuiKey_GamepadLStickRight, true)) adj = 1;
+    /* the Switch's A is on the right (SDL2's controller B, as ImGui reads it), B at the bottom */
+    bool press = ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight, false);   /* A */
+    bool back = ImGui::IsKeyPressed(ImGuiKey_GamepadFaceDown, false);     /* B */
+    if (ImGui::IsKeyPressed(ImGuiKey_GamepadL1, false) || ImGui::IsKeyPressed(ImGuiKey_GamepadR1, false)) quick_tab ^= 1;
+    CheatState* c = &g_cheat;
+    if (c->give_count < 1) c->give_count = 1;
+    if (quick_tab == 1) {
+        if (move) quick_csel = (quick_csel + move + QC_N) % QC_N;
+        switch (quick_csel) {
+        case QC_HEALTH: if (adj || press) c->inf_health = !c->inf_health; break;
+        case QC_AMMO: if (adj || press) c->inf_ammo = !c->inf_ammo; break;
+        case QC_HEAL: if (press) __atomic_or_fetch(&c->request, CHEAT_HEAL, __ATOMIC_ACQ_REL); break;
+        case QC_ITEM:
+            if (adj || press) c->give_id = quick_next_item(c->give_id, adj ? adj : 1);
+            else if (!c->give_id || !c->names[c->give_id][0]) c->give_id = quick_next_item(0, 1);
+            break;
+        case QC_COUNT: c->give_count = SDL_clamp(c->give_count + adj + (press ? 10 : 0), 1, 999); break;
+        case QC_GIVE: if (press && c->give_id) __atomic_or_fetch(&c->request, CHEAT_GIVE, __ATOMIC_ACQ_REL); break;
+        }
+    } else if (move) {
+        int i = quick_sel;
+        do i = (i + move + QUICK_N) % QUICK_N; while (!quick_selectable(i));
+        quick_sel = i;
+    }
+    if (quick_tab == 0) {
+        const QuickRow* r = &quick_rows[quick_sel];
+        const Setting* s = quick_setting(r);
+        if (s && !settings_locked(s) && (adj || press)) {
+            if (settings_is_bool(s)) settings_set(s, !settings_get(s));
+            else settings_step(s, adj ? adj : 1);
+            changed = true;
+        } else if (press && r->kind == Q_ALL) { quick_visible = false; sw_open = visible = true; }
+        else if (press && r->kind == Q_CLOSE) quick_visible = false;
+    }
+    if (back) quick_visible = false;
+
+    /* the panel: a dark card in the middle, a red bar on top */
+    float w = SDL_min(ds.x * 0.62f, ImGui::GetFontSize() * 34.0f), h = ds.y * 0.88f;
+    ImGui::SetNextWindowPos(ImVec2(ds.x * 0.5f, ds.y * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiCond_Always);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 14.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(ImGui::GetFontSize() * 1.2f, ImGui::GetFontSize() * 0.9f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.05f, 0.07f, 0.94f));
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.78f, 0.12f, 0.12f, 0.55f));
+    ImGui::Begin("##quick", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav |
+                                     ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollWithMouse);
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    ImVec2 wp = ImGui::GetWindowPos();
+    dl->AddRectFilled(wp, ImVec2(wp.x + w, wp.y + 6.0f), accent, 14.0f, ImDrawFlags_RoundCornersTop);
+
+    ImGui::SetWindowFontScale(1.25f);
+    ImGui::TextColored(ImVec4(0.95f, 0.95f, 0.97f, 1.0f), "QUICK MENU");
+    ImGui::SetWindowFontScale(1.0f);
+    ImGui::SameLine(ImGui::GetContentRegionAvail().x + ImGui::GetStyle().WindowPadding.x - ImGui::CalcTextSize("000 fps").x);
+    ImGui::TextColored(dim, "%3.0f fps", io.Framerate);
+    ImGui::TextColored(dim, "Code: Veronica X  " RECVX_VERSION);
+    ImGui::Dummy(ImVec2(0, ImGui::GetFontSize() * 0.3f));
+    {   /* the tabs: (L) SETTINGS  CHEATS (R) */
+        static const char* const tabs[2] = { "SETTINGS", "CHEATS" };
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        float x = p.x, th = ImGui::GetTextLineHeight(), gap = ImGui::GetFontSize() * 1.4f;
+        dl->AddText(ImVec2(x, p.y), ImGui::GetColorU32(dim), "(L)");
+        x += ImGui::CalcTextSize("(L)").x + gap * 0.6f;
+        for (int t = 0; t < 2; t++) {
+            float tw = ImGui::CalcTextSize(tabs[t]).x;
+            dl->AddText(ImVec2(x, p.y), ImGui::GetColorU32(t == quick_tab ? ImVec4(1, 1, 1, 1) : dim), tabs[t]);
+            if (t == quick_tab) dl->AddRectFilled(ImVec2(x, p.y + th + 3.0f), ImVec2(x + tw, p.y + th + 6.0f), accent, 1.5f);
+            x += tw + gap;
+        }
+        dl->AddText(ImVec2(x - gap * 0.4f, p.y), ImGui::GetColorU32(dim), "(R)");
+        ImGui::Dummy(ImVec2(0, th + ImGui::GetFontSize() * 0.6f));
+    }
+
+    float foot = ImGui::GetTextLineHeightWithSpacing() * 4.2f;
+    ImGui::BeginChild("##qrows", ImVec2(0, -foot), ImGuiChildFlags_None, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoScrollbar);
+    float rw = ImGui::GetContentRegionAvail().x, lh = ImGui::GetTextLineHeight() * 1.55f;
+    const char* help = nullptr;
+    if (quick_tab == 1) {   /* the cheats */
+        float pad = ImGui::GetFontSize() * 0.7f;
+        auto row = [&](int i, const char* label, const char* value, ImVec4 vc) {
+            ImDrawList* cl = ImGui::GetWindowDrawList();
+            bool sel = i == quick_csel;
+            ImVec2 p = ImGui::GetCursorScreenPos();
+            if (sel) {
+                cl->AddRectFilled(p, ImVec2(p.x + rw, p.y + lh), IM_COL32(200, 30, 30, 70), 6.0f);
+                cl->AddRectFilled(p, ImVec2(p.x + 4.0f, p.y + lh), accent, 2.0f);
+                help = quick_cheat_help[i];
+            }
+            float ty = p.y + (lh - ImGui::GetTextLineHeight()) * 0.5f;
+            cl->AddText(ImVec2(p.x + pad, ty), ImGui::GetColorU32(sel ? ImVec4(1, 1, 1, 1) : ImVec4(0.82f, 0.82f, 0.85f, 1.0f)), label);
+            char shown[96];
+            SDL_snprintf(shown, sizeof shown, sel && value[0] != '(' ? "<  %s  >" : "%s", value);
+            if (value[0] == '(' && !sel) shown[0] = 0;
+            cl->AddText(ImVec2(p.x + rw - pad - ImGui::CalcTextSize(shown).x, ty), ImGui::GetColorU32(vc), shown);
+            ImGui::Dummy(ImVec2(rw, lh));
+        };
+        auto head = [&](const char* t) {
+            ImGui::Dummy(ImVec2(0, ImGui::GetFontSize() * 0.35f));
+            ImVec2 p = ImGui::GetCursorScreenPos();
+            ImGui::TextColored(head_col, "%s", t);
+            float tx = ImGui::CalcTextSize(t).x + ImGui::GetFontSize() * 0.6f, my = p.y + ImGui::GetTextLineHeight() * 0.55f;
+            ImGui::GetWindowDrawList()->AddLine(ImVec2(p.x + tx, my), ImVec2(p.x + rw, my), accent_dim, 1.0f);
+        };
+        const ImVec4 num(1.0f, 0.86f, 0.55f, 1.0f);
+        head("PLAYER");
+        ImGui::TextColored(dim, "  %s   HP %d", c->player ? "Chris" : "Claire", c->hp);
+        row(QC_HEALTH, "Infinite health", c->inf_health ? "On" : "Off", c->inf_health ? on_col : dim);
+        row(QC_HEAL, "Heal now", "(A)", dim);
+        row(QC_AMMO, "Infinite ammo", c->inf_ammo ? "On" : "Off", c->inf_ammo ? on_col : dim);
+        head("GIVE ITEM");
+        const char* nm = c->give_id > 0 && c->give_id < CHEAT_ITEMS && c->names[c->give_id][0] ? c->names[c->give_id] : "-";
+        row(QC_ITEM, "Item", nm, num);
+        SDL_snprintf(val, sizeof val, "%d", c->give_count);
+        row(QC_COUNT, "Count", val, num);
+        row(QC_GIVE, "Add to inventory", "(A)", dim);
+        if (c->result && c->result[0]) ImGui::TextColored(on_col, "  %s", c->result);
+        head("INVENTORY");
+        for (int i = 2; i < 2 + c->slots && i < 12; i++) {
+            unsigned id = c->inv[i] >> 16 & 0xFF;
+            if (!id) continue;
+            ImGui::TextColored(ImVec4(0.82f, 0.82f, 0.85f, 1.0f), "  %s%s  x%u", (unsigned)i == c->inv[0] ? "> " : "",
+                               id < CHEAT_ITEMS && c->names[id][0] ? c->names[id] : "?", c->inv[i] & 0xFFFF);
+        }
+    }
+    for (int i = 0; quick_tab == 0 && i < QUICK_N; i++) {
+        const QuickRow* r = &quick_rows[i];
+        ImDrawList* cl = ImGui::GetWindowDrawList();
+        if (r->kind == Q_HEAD) {
+            ImGui::Dummy(ImVec2(0, ImGui::GetFontSize() * 0.35f));
+            if (r->text[0]) {
+                ImVec2 p = ImGui::GetCursorScreenPos();
+                ImGui::TextColored(head_col, "%s", r->text);
+                float tx = ImGui::CalcTextSize(r->text).x + ImGui::GetFontSize() * 0.6f, my = p.y + ImGui::GetTextLineHeight() * 0.55f;
+                cl->AddLine(ImVec2(p.x + tx, my), ImVec2(p.x + rw, my), accent_dim, 1.0f);
+            }
+            continue;
+        }
+        const Setting* s = quick_setting(r);
+        if (r->kind == Q_SET && !s) continue;
+        bool sel = i == quick_sel, lock = s && settings_locked(s);
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        if (sel) {
+            cl->AddRectFilled(p, ImVec2(p.x + rw, p.y + lh), IM_COL32(200, 30, 30, 70), 6.0f);
+            cl->AddRectFilled(p, ImVec2(p.x + 4.0f, p.y + lh), accent, 2.0f);
+            if (ImGui::GetScrollMaxY() > 0) ImGui::SetScrollHereY(0.5f);
+            help = s ? (lock ? settings_locked(s) : s->help) : r->kind == Q_ALL ? "Every setting, page by page (also - and + together)." : "Closes this menu (also B, or L3 and R3 again).";
+        }
+        float ty = p.y + (lh - ImGui::GetTextLineHeight()) * 0.5f, pad = ImGui::GetFontSize() * 0.7f;
+        ImVec4 lc = lock ? ImVec4(0.45f, 0.45f, 0.48f, 1.0f) : sel ? ImVec4(1, 1, 1, 1) : ImVec4(0.82f, 0.82f, 0.85f, 1.0f);
+        cl->AddText(ImVec2(p.x + pad, ty), ImGui::GetColorU32(lc), s ? s->label : r->text);
+        if (s) {
+            settings_value(s, val, sizeof val);
+            bool b = settings_is_bool(s);
+            ImVec4 vc = lock ? lc : b ? (settings_get(s) ? on_col : dim) : ImVec4(1.0f, 0.86f, 0.55f, 1.0f);
+            char shown[112];
+            SDL_snprintf(shown, sizeof shown, sel && !lock ? "<  %s  >" : "%s", val);
+            float vx = p.x + rw - pad - ImGui::CalcTextSize(shown).x;
+            if (!b && !s->names && !s->name && settings_hi(s) > s->lo) {   /* a number: a bar under the value */
+                float bw = ImGui::GetFontSize() * 6.0f, bx = p.x + rw - pad - bw, by = p.y + lh - 4.0f;
+                float t = (float)(settings_get(s) - s->lo) / (float)(settings_hi(s) - s->lo);
+                cl->AddRectFilled(ImVec2(bx, by), ImVec2(bx + bw, by + 2.5f), IM_COL32(255, 255, 255, 40), 1.0f);
+                cl->AddRectFilled(ImVec2(bx, by), ImVec2(bx + bw * t, by + 2.5f), sel ? accent : IM_COL32(200, 30, 30, 150), 1.0f);
+            }
+            cl->AddText(ImVec2(vx, ty), ImGui::GetColorU32(vc), shown);
+        } else if (sel) {
+            const char* a = "(A)";
+            cl->AddText(ImVec2(p.x + rw - pad - ImGui::CalcTextSize(a).x, ty), ImGui::GetColorU32(dim), a);
+        }
+        ImGui::Dummy(ImVec2(rw, lh));
+    }
+    ImGui::EndChild();
+
+    ImVec2 fp = ImGui::GetCursorScreenPos();
+    dl->AddLine(fp, ImVec2(fp.x + ImGui::GetContentRegionAvail().x, fp.y), accent_dim, 1.0f);
+    ImGui::Dummy(ImVec2(0, ImGui::GetFontSize() * 0.3f));
+    ImGui::PushTextWrapPos(0.0f);
+    ImGui::TextColored(ImVec4(0.85f, 0.85f, 0.88f, 1.0f), "%s", help ? help : "");
+    ImGui::PopTextWrapPos();
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing() - ImGui::GetStyle().WindowPadding.y);
+    ImGui::TextColored(dim, "D-pad  choose / change     (A) change     (L)(R) tab     (B) close");
+    ImGui::End();
+    ImGui::PopStyleColor(2);
+    ImGui::PopStyleVar(3);
+    if (changed) settings_save_later();
+}
+#endif
 
 int overlay_event(const void* e)
 {
@@ -58,6 +365,10 @@ int overlay_event(const void* e)
         tps_key_wait = false;
         return 1;
     }
+#ifdef __SWITCH__
+    if (quick_combo(ev)) return 1;
+    if (switch_combo(ev)) { quick_visible = false; return 1; }
+#endif
     if (bind_hotkey(ev, B_SETTINGS)) {
         visible = !visible;
         return 1;
@@ -133,6 +444,12 @@ static bool settings_imgui(int page, bool all = true)
             }
         }
         ImGui::EndDisabled();
+#ifdef __SWITCH__
+        /* no mouse to hover with: the focused row's help goes to the menu's footer */
+        if ((ImGui::IsItemFocused() || ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) && (s->help || lock))
+            SDL_snprintf(sw_help, sizeof sw_help, "%s%s%s", lock ? lock : "", lock && s->help ? "\n" : "", s->help ? s->help : "");
+        if (false)
+#endif
         if ((ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) || ((s->flags & SET_CALIB) && ImGui::IsItemActive())) && (s->help || lock)) {
             ImGui::BeginTooltip();
             ImGui::Text("%s%s%s", lock ? lock : "", lock && s->help ? "\n" : "", s->help ? s->help : "");
@@ -169,16 +486,24 @@ static void controls_section(void)
         }
     }
     settings_imgui(SP_CONTROLS);   /* input source, which gamepad */
+#ifdef __SWITCH__
+    if (dev != BIND_PAD) { dev = BIND_PAD; cap_row = -1; }   /* no keyboard to bind */
+#else
     if (ImGui::BeginTabBar("##dev")) {
         if (ImGui::BeginTabItem("Keyboard / mouse")) { if (dev != BIND_KB) cap_row = -1; dev = BIND_KB; ImGui::EndTabItem(); }
         if (ImGui::BeginTabItem("Gamepad")) { if (dev != BIND_PAD) cap_row = -1; dev = BIND_PAD; ImGui::EndTabItem(); }
         ImGui::EndTabBar();
     }
+#endif
     char pad_name[96];
     if (dev == BIND_PAD) ImGui::TextDisabled("%s; the left stick also moves, as on the DS2. The third-person rows play in third\n"
                                              "person with Modern gamepad controls, instead of the game rows of the same buttons.", bind_pad_desc(pad_name, sizeof pad_name));
+#ifdef __SWITCH__
+    ImGui::TextDisabled("Press A on a binding, then the new button. Reload can share a button: then Aim + button reloads.");
+#else
     ImGui::TextDisabled("Click a binding, then press the key/button (Esc cancels, Delete clears); right click clears.\n"
                         "Reload can share a button: then Aim + button reloads.");
+#endif
     if (msg[0]) ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "%s", msg);
     if (ImGui::BeginTable("##binds", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchProp)) {
         ImGui::TableSetupColumn("action", ImGuiTableColumnFlags_WidthStretch, 2.2f);
@@ -217,6 +542,9 @@ static void controls_section(void)
     ImGui::TextDisabled("Also in the game's OPTION menu: ENHANCED SETTINGS -> CONTROLS.");
 }
 
+static bool tps_section(void);
+static void perf_section(void);
+
 static void settings_window(void)
 {
     bool changed = false;
@@ -243,26 +571,41 @@ static void settings_window(void)
     if (ImGui::CollapsingHeader("Graphics")) changed |= settings_imgui(SP_GRAPHICS);
     if (ImGui::CollapsingHeader("Gameplay")) changed |= settings_imgui(SP_GAMEPLAY);
     if (ImGui::CollapsingHeader("Controls")) controls_section();
-    if (ImGui::CollapsingHeader("Third person")) {
-        changed |= settings_imgui(SP_TPS);
-        char key[96];
-        SDL_snprintf(key, sizeof key, tps_key_wait ? "Press a key (Esc cancels)" : "Toggle key: %s (change)", SDL_GetScancodeName((SDL_Scancode)g_tps.key));
-        if (ImGui::Button(key)) tps_key_wait = true;
-        ImGui::TextDisabled(g_tps.free_cam
-                            ? "W/A/S/D walk toward that screen direction, Shift run, mouse turns the camera; right mouse aim, left fire;\n"
-                              "E action, R reload, Q cancel, Tab status, M map (Controls changes them). F1 frees the mouse."
-                            : "W/S walk, A/D turn, Shift run, mouse look; right mouse aim, left fire;\n"
-                              "E action, R reload, Q cancel, Tab status, M map (Controls changes them). F1 frees the mouse.");
-        if (g_tps.pad_modern)
-            ImGui::TextDisabled("Gamepad: left stick walks (pushed far runs), right stick camera / aim; LT aim, RT fire, A action,\n"
-                                "X run, B cancel, Y inventory, Back map, LB knife, RB reload, d-pad down quick turn, RS camera behind.");
-    }
+    if (ImGui::CollapsingHeader("Third person")) changed |= tps_section();
     if (ImGui::CollapsingHeader("Audio")) changed |= settings_imgui(SP_AUDIO);
     if (ImGui::CollapsingHeader("Appearance")) changed |= settings_imgui(SP_APPEAR);
     if (settings_imgui_any(SP_EXTRAS) && ImGui::CollapsingHeader("Extras"))   /* a page with its own window (F2): the SET_F1 rows */
         changed |= settings_imgui(SP_EXTRAS, false);
+    if (ImGui::CollapsingHeader("Performance")) perf_section();
+    ImGui::End();
+    if (changed) settings_save_later();
+}
 
-    if (ImGui::CollapsingHeader("Performance")) {
+static bool tps_section(void)
+{
+    bool changed = settings_imgui(SP_TPS);
+#ifdef __SWITCH__
+    ImGui::TextDisabled("Gamepad (Modern): left stick walks (pushed far runs), right stick camera / aim; ZL aim, ZR fire,\n"
+                        "A action, X run, B cancel, Y inventory, - map, L knife, R reload, d-pad down quick turn, R3 camera behind.");
+#else
+    char key[96];
+    SDL_snprintf(key, sizeof key, tps_key_wait ? "Press a key (Esc cancels)" : "Toggle key: %s (change)", SDL_GetScancodeName((SDL_Scancode)g_tps.key));
+    if (ImGui::Button(key)) tps_key_wait = true;
+    ImGui::TextDisabled(g_tps.free_cam
+                        ? "W/A/S/D walk toward that screen direction, Shift run, mouse turns the camera; right mouse aim, left fire;\n"
+                          "E action, R reload, Q cancel, Tab status, M map (Controls changes them). F1 frees the mouse."
+                        : "W/S walk, A/D turn, Shift run, mouse look; right mouse aim, left fire;\n"
+                          "E action, R reload, Q cancel, Tab status, M map (Controls changes them). F1 frees the mouse.");
+    if (g_tps.pad_modern)
+        ImGui::TextDisabled("Gamepad: left stick walks (pushed far runs), right stick camera / aim; LT aim, RT fire, A action,\n"
+                            "X run, B cancel, Y inventory, Back map, LB knife, RB reload, d-pad down quick turn, RS camera behind.");
+#endif
+    return changed;
+}
+
+static void perf_section(void)
+{
+    {
         static ProfFrame h[240];
         bool on = prof_enabled != 0;
         if (ImGui::Checkbox("Measure (small overhead; always on with --profile)", &on)) prof_enabled = on;
@@ -286,9 +629,81 @@ static void settings_window(void)
             ImGui::TextDisabled("'wait' is idle time; run with --profile for a CSV.");
         }
     }
+}
+
+#ifdef __SWITCH__
+/* the Switch's settings: a full-screen window, one page per tab (L / R), the focused row's
+   help in a footer instead of a tooltip, the pad's buttons spelled out; B on a page closes it */
+static void switch_settings_window(void)
+{
+    static const char* const tabs[] = { "Display", "Graphics", "Gameplay", "Controls", "Third person", "Audio", "Appearance", "Extras", "Performance" };
+    const int ntabs = (int)(sizeof tabs / sizeof *tabs);
+    static int tab;
+    static bool busy_last;
+    bool changed = false;
+    ImVec2 ds = ImGui::GetIO().DisplaySize;
+    int want = -1;
+    if (sw_tab_step) { want = (tab + sw_tab_step + ntabs) % ntabs; sw_tab_step = 0; }
+    if (sw_open) { ImGui::SetNextWindowFocus(); sw_open = false; busy_last = true; }
+    sw_help[0] = 0;
+
+    ImGui::SetNextWindowPos(ImVec2(ds.x * 0.04f, ds.y * 0.05f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(ds.x * 0.92f, ds.y * 0.90f), ImGuiCond_Always);
+    ImGui::SetNextWindowBgAlpha(0.92f);
+    ImGui::Begin("Code: Veronica X  -  settings  -  " RECVX_VERSION "##sw", nullptr,
+                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::TextDisabled("%.0f fps", ImGui::GetIO().Framerate);
+    ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize("(L) previous tab   next tab (R)").x);
+    ImGui::TextDisabled("(L) previous tab   next tab (R)");
+
+    float footer = ImGui::GetTextLineHeightWithSpacing() * 4 + ImGui::GetStyle().ItemSpacing.y * 2;
+    if (ImGui::BeginTabBar("##swtabs", ImGuiTabBarFlags_FittingPolicyScroll)) {
+        for (int i = 0; i < ntabs; i++) {
+            if (i == 7 && !settings_imgui_any(SP_EXTRAS)) continue;
+            if (!ImGui::BeginTabItem(tabs[i], nullptr, i == want ? ImGuiTabItemFlags_SetSelected : 0)) continue;
+            tab = i;
+            ImGui::BeginChild("##page", ImVec2(0, -footer), ImGuiChildFlags_NavFlattened);
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.45f);
+            switch (i) {
+            case 0: {
+                int ww, wh;
+                SDL_GetWindowSizeInPixels(win, &ww, &wh);
+                changed |= settings_imgui(SP_DISPLAY);
+                ImGui::TextDisabled("Output %d x %d, %.1f fps presented", ww, wh, ImGui::GetIO().Framerate);
+                break;
+            }
+            case 1: changed |= settings_imgui(SP_GRAPHICS); break;
+            case 2: changed |= settings_imgui(SP_GAMEPLAY); break;
+            case 3: controls_section(); break;
+            case 4: changed |= tps_section(); break;
+            case 5: changed |= settings_imgui(SP_AUDIO); break;
+            case 6: changed |= settings_imgui(SP_APPEAR); break;
+            case 7: changed |= settings_imgui(SP_EXTRAS, false); break;
+            case 8: perf_section(); break;
+            }
+            ImGui::PopItemWidth();
+            ImGui::EndChild();
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+    ImGui::Separator();
+    ImGui::PushTextWrapPos(0.0f);
+    if (sw_help[0]) ImGui::TextUnformatted(sw_help);
+    else ImGui::TextDisabled("Move to a setting to see what it does.");
+    ImGui::PopTextWrapPos();
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing() - ImGui::GetStyle().WindowPadding.y);
+    ImGui::TextDisabled("(A) select   (B) back / close   D-pad / stick move   (L)(R) tab   (-)+(+) close   (-)+(+) with ZR: cheats");
+
+    /* B with nothing open (a list, a slider being changed) closes the menu: last frame's state,
+       since the B that closed a list has already closed it by now */
+    bool busy = ImGui::IsAnyItemActive() || ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId);
+    if (!busy && !busy_last && ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight, false)) visible = false;
+    busy_last = busy;
     ImGui::End();
     if (changed) settings_save_later();
 }
+#endif
 
 /* F2 teleport: location, room and entry by name (teleport.c), a search over all rooms, or the raw numbers */
 static void teleport_pick(CheatState* c)
@@ -457,7 +872,11 @@ static void cheat_window(void)
 void overlay_render(void)
 {
     if (!ready) return;
+#ifdef __SWITCH__
+    bool windows = visible || cheats_visible || quick_visible;
+#else
     bool windows = visible || cheats_visible;
+#endif
     pad_set_game_input_enabled(!windows);
     tps_update_mouse_mode(win, windows);
     menu_mouse_update(win, windows);
@@ -467,7 +886,7 @@ void overlay_render(void)
     bool crosshair = g_tps.on && g_tps.crosshair && g_tps.cam_active && g_tps.aiming;
     char upd[32];
     bool notice = !visible && update_title_up() && update_newer(upd, sizeof upd);   /* the title screen: an update */
-    if (!visible && !cheats_visible && !g_config.show_fps && !crosshair && !notice) return;
+    if (!windows && !g_config.show_fps && !crosshair && !notice) return;
     {   /* readable on large displays: scale text with the window height (1080p = 1x) */
         int ww, wh;
         SDL_GetWindowSizeInPixels(win, &ww, &wh);
@@ -476,7 +895,12 @@ void overlay_render(void)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
+#ifdef __SWITCH__
+    if (visible) switch_settings_window();
+    else if (quick_visible) quick_window();
+#else
     if (visible) settings_window();
+#endif
     if (cheats_visible) cheat_window();
     else if (mat_was_open) gs_mat_highlight(0);   /* the window closed: no highlight */
     mat_was_open = cheats_visible;

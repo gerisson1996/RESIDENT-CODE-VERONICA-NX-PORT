@@ -28,6 +28,9 @@ typedef struct TpsConfig {
     int pad_sens_x, pad_sens_y;   /* right stick camera speed, percent (100: 180 / 120 degrees a second) */
     int pad_aim_sens;             /* right stick while aiming, percent of the above */
     int pad_invert_y;
+    /* Switch motion aiming: 0 off, 1 while aiming, 2 also the camera; its speed (percent: 100 turns as the
+       controller does) and inverted axes */
+    int pad_gyro, pad_gyro_sens, pad_gyro_invert_x, pad_gyro_invert_y;
     int aim_move;             /* modern gamepad: the left stick walks while aiming (tps_glue.c aim_walk) */
     int pad_dead_move, pad_dead_look;   /* dead zones of the left / right stick, percent */
     /* published by the game thread */

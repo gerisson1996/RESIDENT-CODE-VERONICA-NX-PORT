@@ -18,6 +18,7 @@ unsigned int hdr_begin(int w, int h);   /* the GL framebuffer of the shared text
 uint64_t hdr_present(int vsync);   /* hand it over, present; ns the present blocked */
 void* hdr_gl_proc(const char* name);   /* a GL entry point of the current context (SDL's, or the headless one) */
 #else
+#include <SDL3/SDL.h>
 static inline int hdr_init(void* sdl_window) { (void)sdl_window; return 0; }
 static inline int hdr_active(void) { return 0; }
 static inline int hdr_pq(void) { return 0; }

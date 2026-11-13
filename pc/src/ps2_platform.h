@@ -2,6 +2,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include "pc_ptr.h"
 #include "ps2sdk_shim.h"
 #include "ps2_hw.h"
 #include "host/fileio.h"
@@ -24,7 +25,7 @@ typedef struct {
     int  fps_limit;          /* presents per second: 0 display rate, else index into render.c fps_limits (30/60/90/120/144) */
     int  log_level;
     /* user settings (F1 overlay, saved in <save_dir>/recvx.ini) */
-    int  scale;              /* internal resolution multiplier, 0 = auto */
+    int  scale;              /* internal resolution multiplier, 0 = auto, GS_SCALE_WINDOW = the window's height */
     int  fsr;                /* FSR 1 upscaling of the internal resolution to the window (gs_gl.c fsr_upscale), 0/1; auto scale then stays at or below the window */
     int  aspect;             /* ASPECT_* */
     int  show_fps;
@@ -97,6 +98,7 @@ void overlay_render(void);
 
 /* gs_gl.c */
 float gs_wanted_scale(void);
+#define GS_SCALE_WINDOW 9   /* g_config.scale: drawn at the window's exact height (720p on the Switch) */
 void  gs_set_scale(float scale);
 void  gs_update_widescreen(void);   /* apply g_config.aspect / window aspect (between frames) */
 float gs_picture(float c);          /* a 0..1 grey through brightness/contrast/gamma, as the present shader */

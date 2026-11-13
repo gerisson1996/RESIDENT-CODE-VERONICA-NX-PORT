@@ -183,6 +183,14 @@ static void build_report(unsigned char* r)
     {   /* RECVX_PAD_TRACE=1: log the DS2 buttons when they change */
         static int trace = -1; static uint32_t last;
         if (trace < 0) trace = SDL_getenv("RECVX_PAD_TRACE") != NULL;
+#ifdef __SWITCH__
+        {   /* Switch bring-up: whether the game takes input, and the first button changes */
+            static int n, en = -1;
+            static uint32_t seen;
+            if (en != input_enabled) { host_log("pad: game input %s, pad %p\n", input_enabled ? "on" : "off", (void*)gamepad); en = input_enabled; }
+            if (b != seen && n < 40) { n++; host_log("pad: frame %llu buttons %04x\n", (unsigned long long)gs_frame_count(), b); seen = b; }
+        }
+#endif
         if (trace && b != last) { host_log("pad: frame %llu buttons %04x\n", (unsigned long long)gs_frame_count(), b); last = b; }
     }
     memset(r, 0, 32);

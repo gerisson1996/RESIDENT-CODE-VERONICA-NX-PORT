@@ -215,7 +215,8 @@ static const char* fsres_name(int v, char* b, int n)
 static int exclusive_on(void) { return g_config.fullscreen && g_config.fullscreen_exclusive; }
 static const char* scale_name(int v, char* b, int n)
 {
-    if (v) snprintf(b, n, "%dx (%d x %d)", v, 640 * v, 448 * v);
+    if (v == GS_SCALE_WINDOW) snprintf(b, n, "Native window (%.2fx)", gs_wanted_scale());
+    else if (v) snprintf(b, n, "%dx (%d x %d)", v, 640 * v, 448 * v);
     else snprintf(b, n, "Auto (%dx)", (int)gs_wanted_scale());
     return b;
 }
@@ -368,6 +369,7 @@ static const char* const atmos_names[] = { "Per cut (original)", "Smooth" };
 static const char* const free_cam_names[] = { "B (behind character)", "A (free)" };
 static const char* const fixed_cam_names[] = { "Classic (tank)", "Modern (camera-relative)" };
 static const char* const tps_pad_names[] = { "Classic (tank, camera behind)", "Modern (twin-stick)" };
+static const char* const gyro_names[] = { "Off", "While aiming", "Aim and camera" };
 static const char* const noclips[] = { "Off", "Through walls", "Walls + fly" };
 static const char* const sources[] = { "Auto", "Keyboard/mouse only", "Gamepad only" };
 static const char* const extras[] = { "Off", "Up to 1 per room", "Up to 2 per room", "Up to 3 per room" };
@@ -384,7 +386,8 @@ const Setting g_settings[] = {
     { SP_DISPLAY, "Frame rate limit", V(g_config.fps_limit), 0, 5, 1, fps_limits, .help = "Caps the images shown per second (enhanced in-between frames included) below the display rate, e.g. 60 on a 175 Hz monitor. The game itself always runs at 30." },
     { SP_DISPLAY, "Show frame rate", V(g_config.show_fps), 0, 1, 1 },
     { SP_DISPLAY, "Aspect ratio", V(g_config.aspect), 0, 2, 1, aspects, .help = "Widescreen: 3D fills the window, 2D and menus stay 4:3 in the middle.", .group = "PICTURE" },
-    { SP_DISPLAY, "Internal resolution", V(g_config.scale), 0, 8, 1, .name = scale_name, .help = "The resolution the game is drawn at; Auto follows the window." },
+    { SP_DISPLAY, "Internal resolution", V(g_config.scale), 0, GS_SCALE_WINDOW, 1, .name = scale_name,
+      .help = "The resolution the game is drawn at; Auto follows the window. Native window draws at exactly the window's height (720p on the Switch), between 1x and 2x in cost." },
     { SP_DISPLAY, "FSR upscaling", V(g_config.fsr), 0, 1, 1,
       .help = "AMD FSR 1: a picture drawn below the window's resolution is upscaled with sharp edges instead of a plain stretch. Use auto internal resolution or below when using FSR." },
     { SP_GRAPHICS, "Anisotropic filtering", V(g_config.aniso), 0, 4, 1, .name = aniso_name, .group = "QUALITY",
@@ -537,6 +540,10 @@ const Setting g_settings[] = {
     { SP_TPS, "Stick camera speed Y", V(g_tps.pad_sens_y), 10, 300, 5, .fmt = "%d%%" },
     { SP_TPS, "Stick aiming speed", V(g_tps.pad_aim_sens), 10, 200, 5, .fmt = "%d%%", .help = "Right stick while aiming, relative to the above." },
     { SP_TPS, "Stick invert Y", V(g_tps.pad_invert_y), 0, 1, 1 },
+    { SP_TPS, "Gyro aiming", V(g_tps.pad_gyro), 0, 2, 1, gyro_names, .help = "Switch: turn the controller to aim (handheld, Pro Controller, right Joy-Con)." },
+    { SP_TPS, "Gyro speed", V(g_tps.pad_gyro_sens), 10, 400, 10, .fmt = "%d%%", .help = "100%: the aim turns as much as the controller." },
+    { SP_TPS, "Gyro invert X", V(g_tps.pad_gyro_invert_x), 0, 1, 1 },
+    { SP_TPS, "Gyro invert Y", V(g_tps.pad_gyro_invert_y), 0, 1, 1 },
     { SP_TPS, "Left stick dead zone", V(g_tps.pad_dead_move), 0, 50, 5, .fmt = "%d%%" },
     { SP_TPS, "Right stick dead zone", V(g_tps.pad_dead_look), 0, 50, 5, .fmt = "%d%%" },
 

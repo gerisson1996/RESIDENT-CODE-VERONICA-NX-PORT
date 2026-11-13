@@ -10,7 +10,7 @@ enum { TAG_REFE, TAG_CNT, TAG_NEXT, TAG_REF, TAG_REFS, TAG_CALL, TAG_RET, TAG_EN
 
 static int channel_of(const void* chan)
 {
-    uint32_t a = (uint32_t)(uintptr_t)chan;
+    uint32_t a = PS2_ADDR(chan);
     switch (a & 0xFFFFFF00u) {
     case 0x10008000: return 0;
     case 0x10009000: return 1;
@@ -89,7 +89,7 @@ static void run_chain(int ch, uint32_t tadr, int tte)
             return;
         }
         /* keep SPR-relative addressing when the chain lives in the scratchpad */
-        if ((uint32_t)(uintptr_t)tag >= PS2_SPR_BASE && (uint32_t)(uintptr_t)tag < PS2_SPR_BASE + PS2_SPR_SIZE &&
+        if (PS2_ADDR(tag) >= PS2_SPR_BASE && PS2_ADDR(tag) < PS2_SPR_BASE + PS2_SPR_SIZE &&
             id != TAG_NEXT && id != TAG_CALL)
             tadr = PS2_SPR_BASE | (tadr & (PS2_SPR_SIZE - 1));
     }
@@ -102,13 +102,13 @@ void* sceDmaGetChan(int id) { static const uint32_t base[] = { 0x10008000, 0x100
 int sceDmaSend(void* chan, void* tag)
 {
     int ch = channel_of(chan);
-    run_chain(ch, (uint32_t)(uintptr_t)tag, ch == 1);
+    run_chain(ch, PS2_ADDR(tag), ch == 1);
     return 0;
 }
 
 int sceDmaSendN(void* chan, void* addr, int qwc)
 {
-    deliver(channel_of(chan), ps2_dma_ptr((uint32_t)(uintptr_t)addr), (uint32_t)qwc);
+    deliver(channel_of(chan), ps2_dma_ptr(PS2_ADDR(addr)), (uint32_t)qwc);
     return 0;
 }
 

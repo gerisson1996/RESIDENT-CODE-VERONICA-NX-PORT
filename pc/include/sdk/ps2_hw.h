@@ -265,7 +265,7 @@ void ps2_wait_vblank(void);
 #define DGET_GIF_STAT()   (ps2_regs.gif_stat)
 #define DGET_IPU_CTRL()   (ps2_regs.ipu_ctrl)
 #define DGET_IPU_BP()     (ps2_regs.ipu_bp)
-#define DPUT_D2_TADR(v)   (ps2_regs.dma_tadr[2] = (uint32_t)(uintptr_t)(v))
+#define DPUT_D2_TADR(v)   (ps2_regs.dma_tadr[2] = PS2_ADDR(v))
 #define DPUT_D2_CHCR(v)   ps2_dma_put_chcr(2, (uint32_t)(v))
 
 /* libdma: the channel pointer selects the destination (VIF1 / GIF / ...) */

@@ -1,6 +1,8 @@
 /* fileio.h: UTF-8 paths, saving by replace-on-rename. */
 #include "fileio.h"
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <io.h>
@@ -52,6 +54,11 @@ static int replace(const char* from, const char* to)
     free(wf);
     free(wt);
     return ok ? 0 : -1;
+#elif defined(__SWITCH__)
+    /* the SD card's rename does not replace an existing file */
+    if (rename(from, to) == 0) return 0;
+    remove(to);
+    return rename(from, to);
 #else
     return rename(from, to);
 #endif
@@ -83,11 +90,14 @@ int pc_save_file(const char* path, const char* mode, int (*fill)(FILE*, void*), 
     ok = fill(f, ud) == 0 && !ferror(f) && fflush(f) == 0;
 #ifdef _WIN32
     ok = ok && _commit(_fileno(f)) == 0;
-#else
+#elif !defined(__SWITCH__)   /* the Switch's fflush already commits; its fsync can fail */
     ok = ok && fsync(fileno(f)) == 0;
 #endif
     ok = fclose(f) == 0 && ok;
     if (ok && replace(tmp, path) == 0) return 0;
+#ifdef __SWITCH__
+    { extern void host_log(const char* fmt, ...); host_log("save: %s failed (%s)\n", path, strerror(errno)); }
+#endif
     delete_file(tmp);
     return -1;
 }

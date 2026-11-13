@@ -11,7 +11,8 @@
 #           -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRECVX_LAYOUT_PAD=20500 && ninja -C build-pad recvx
 #     pc/tools/layout_check.sh build/pc/recvx build-pad/pc/recvx scratch/layout
 #   Run to run: the same binary twice.
-# Env: VIDEO_DRIVER (default offscreen; "windows" on Windows, where offscreen needs an EGL library),
+# Env: TELEPORT (default 1:0:6:0: at game frame 1 to stage 0 room 6 entry 0),
+#      VIDEO_DRIVER (default offscreen; "windows" on Windows, where offscreen needs an EGL library),
 #      LAST (default 1800), MODES (default "vanilla enhanced"), MAX_SECS per run (default 600),
 #      INI (extra recvx.ini lines, e.g. "save_system = 1" for the memory card; not
 #      "difficulty_select = 1": its menu step moves the game's start off the script's frames).
@@ -32,12 +33,12 @@ run() { # BIN DIR MODE
   # game at once (the script's frames; builds without the difficulty menu compare); INI: more lines
   { echo "show_fps = 0"; echo "difficulty_select = 0"; [ -n "${INI:-}" ] && printf "%s\n" "$INI"; } > "$2/save/recvx.ini"
   SDL_VIDEO_DRIVER=${VIDEO_DRIVER:-offscreen} SDL_AUDIO_DRIVER=dummy RECVX_SKIP_MOVIES=1 RECVX_MODS="$2/mods" \
-  RECVX_TELEPORT=1:0:6:0 RECVX_EQUIP=20:5:60 RECVX_INF_AMMO=1 RECVX_INPUT="$newgame,$walk" \
+  RECVX_TELEPORT=${TELEPORT:-1:0:6:0} RECVX_EQUIP=20:5:60 RECVX_INF_AMMO=1 RECVX_INPUT="$newgame,$walk" \
   RECVX_INTERP_T=0.5 RECVX_DUMP_FRAMES="$2/frames" RECVX_DUMP_EVERY=10 RECVX_DUMP_FROM=300 \
-  timeout -s KILL "$MAX_SECS" "$1" "$ISO" --skip-intro --size 640x480 --"$3" --save-dir "$2/save" \
+  "$1" "$ISO" --skip-intro --size 640x480 --"$3" --save-dir "$2/save" \
       >"$2/log.txt" 2>&1 &
-  local pid=$!
-  until [ -f "$2/frames/$last" ] || ! kill -0 $pid 2>/dev/null; do sleep 1; done
+  local pid=$! t=0   # (no timeout(1) in between: killing it would leave the game running)
+  until [ -f "$2/frames/$last" ] || ! kill -0 $pid 2>/dev/null || [ $t -ge "$MAX_SECS" ]; do sleep 1; t=$((t + 1)); done
   sleep 1; kill -9 $pid 2>/dev/null; wait $pid 2>/dev/null
   rm -f "$2"/frames/rt*.bmp "$2"/frames/win_*.bmp
 }

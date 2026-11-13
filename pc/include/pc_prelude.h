@@ -149,7 +149,7 @@ void  pc_light_forget(int first, int n);   /* per-pixel lighting: vertices witho
 struct VU1_COLOR;
 void  pc_light_ambient_scale(const struct VU1_COLOR* in, struct VU1_COLOR* out);   /* vu1SetAmbient: x the Ambient light option */
 void  pc_effect_tag(const void* op);      /* effect.c: the following output is this effect (O_WRK*, NULL: none) */
-unsigned long long pc_effect_poly(void); /* ps2_dummy.c Ps2AddOT: STREAM_TAG_REG value for an effect polygon (0: none) */
+uint64_t pc_effect_poly(void); /* ps2_dummy.c Ps2AddOT: STREAM_TAG_REG value for an effect polygon (0: none) */
 int   pc_no_ink_ribbon(void);                 /* setting: typewriters save without an ink ribbon (host.c) */
 int   pc_battle_unlocked(void);               /* host.c: setting "Battle Game unlocked" (event.c bhCk: every Battle Game character) */
 int   pc_difficulty_select(void);             /* host.c: setting "Difficulty select" (adv.c CheckButton: NEW GAME opens the difficulty menu) */
