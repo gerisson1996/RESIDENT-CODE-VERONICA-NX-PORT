@@ -11,10 +11,11 @@
 ![OpenGL](https://img.shields.io/badge/OpenGL-3.3-5586a4?style=for-the-badge&logo=opengl&logoColor=white)
 ![Gyro](https://img.shields.io/badge/punter%C3%ADa-giroscopio-8250df?style=for-the-badge)
 ![License](https://img.shields.io/badge/licencia-MIT-2ea44f?style=for-the-badge)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-apoyar-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerissoncassiano)
 
 🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 **Español**
 
-[**Descargar**](../../releases/latest) · [Instalación](#-instalación) · [Controles](#-controles) · [Compilar](#%EF%B8%8F-compilar) · [Créditos](#-créditos)
+[**Descargar**](../../releases/latest) · [Instalación](#-instalación) · [Controles](#-controles) · [Compilar](#%EF%B8%8F-compilar) · [Créditos](#-créditos) · [**Apoyar**](#-apoya-el-proyecto)
 
 </div>
 
@@ -147,6 +148,25 @@ las opciones de depuración (en portugués): [docs/BUILDING.md](docs/BUILDING.md
 | [docs/THIRDPERSON.md](docs/THIRDPERSON.md) | Modo tercera persona (en inglés) |
 | [docs/modding/](docs/modding/README.md) | Formato de las salas y cómo crear salas nuevas (en inglés) |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Cómo funciona el port por dentro (en inglés) |
+
+## ☕ Apoya el proyecto
+
+El port es gratis y de código abierto. Las herramientas que uso para hacer estos ports son **de pago**, y cada
+donación ayuda a mantenerlas y a seguir con el proyecto. ¿Quieres otro juego portado o una mejora? **Haz tu pedido
+junto con tu donación** (escríbelo en el mensaje de Ko-fi, PayPal o Pix).
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-apoyar-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerissoncassiano)
+[![PayPal](https://img.shields.io/badge/PayPal-donar-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=B3YTKT29F5ZLG)
+
+O por **PIX** (Brasil, clave e-mail): `pocketneogames@gmail.com`
+
+<img src=".github/pix-qr.png" alt="Código QR PIX" width="200">
+
+PIX copiar y pegar:
+
+```text
+00020126460014br.gov.bcb.pix0124pocketneogames@gmail.com5204000053039865802BR5911RECOMP GUTO6006BRASIL62070503***63048D6B
+```
 
 ## 🙏 Créditos
 
