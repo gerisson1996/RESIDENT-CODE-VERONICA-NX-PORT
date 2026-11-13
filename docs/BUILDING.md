@@ -17,8 +17,8 @@ dkp-pacman -S switch-dev switch-sdl2 switch-mesa switch-libdrm_nouveau switch-gl
 Clone com os submódulos (o decomp fica no branch `decomp` deste repositório):
 
 ```sh
-git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA---NX---PORT.git
-cd RESIDENT-CODE-VERONICA---NX---PORT
+git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA-NX-PORT.git
+cd RESIDENT-CODE-VERONICA-NX-PORT
 ```
 
 No shell msys2 do devkitPro (Windows) ou num shell com `$DEVKITPRO` definido (Linux / macOS):

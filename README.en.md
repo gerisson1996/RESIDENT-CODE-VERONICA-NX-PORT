@@ -129,8 +129,8 @@ It works in handheld mode, on the Pro Controller and with a pair of Joy-Con (the
 ## 🛠️ Building
 
 ```sh
-git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA---NX---PORT.git
-cd RESIDENT-CODE-VERONICA---NX---PORT
+git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA-NX-PORT.git
+cd RESIDENT-CODE-VERONICA-NX-PORT
 bash scripts/build-switch.sh -- recvx_nro
 ```
 

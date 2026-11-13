@@ -129,8 +129,8 @@ Funciona en modo portátil, con el Pro Controller y con un par de Joy-Con (apunt
 ## 🛠️ Compilar
 
 ```sh
-git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA---NX---PORT.git
-cd RESIDENT-CODE-VERONICA---NX---PORT
+git clone --recursive https://github.com/gerisson1996/RESIDENT-CODE-VERONICA-NX-PORT.git
+cd RESIDENT-CODE-VERONICA-NX-PORT
 bash scripts/build-switch.sh -- recvx_nro
 ```
 
