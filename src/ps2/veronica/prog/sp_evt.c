@@ -1928,7 +1928,11 @@ void bhControlComEvtScript()
             mstb = comevt_message_tab[sys->com_num];
             
             wcpa = (char*)ce->word[*P32_POSTINC(unsigned char *, ce->scp)];
+            #ifndef TARGET_PC
             wcpb = (char*)PS2_HOST(mstb[*P32_POSTINC(unsigned char *, ce->scp)]);
+#else
+            (void)mstb; wcpb = ((char**)comevt_message_tab[sys->com_num])[*P32_POSTINC(unsigned char *, ce->scp)];   /* the tables hold host char pointers (as in case 224), not PS2 addresses */
+#endif
             
             bit = *P32_POSTINC(unsigned char *, ce->scp);
             
