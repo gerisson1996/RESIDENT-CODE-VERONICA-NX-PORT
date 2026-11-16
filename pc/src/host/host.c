@@ -151,14 +151,20 @@ SDL_GLContext g_gl;
 void host_log(const char* fmt, ...)
 {
     extern void log_keep(const char* fmt, va_list ap);
+    static int busy;   /* one message at a time: the room scan's thread logs while the game does
+                          (stderr is unbuffered: messages came out cut into each other) */
     va_list ap;
+    int spin = 0;
+    while (__atomic_exchange_n(&busy, 1, __ATOMIC_ACQUIRE) && ++spin < 1000000) {}   /* bounded: a crash inside a message still gets logged */
     va_start(ap, fmt);
     log_keep(fmt, ap);   /* the last messages, for the crash report (log.c) */
     va_end(ap);
-    if (g_config.log_level <= 0) return;
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    va_end(ap);
+    if (g_config.log_level > 0) {
+        va_start(ap, fmt);
+        vfprintf(stderr, fmt, ap);
+        va_end(ap);
+    }
+    __atomic_store_n(&busy, 0, __ATOMIC_RELEASE);
 }
 
 void host_fatal(const char* fmt, ...)

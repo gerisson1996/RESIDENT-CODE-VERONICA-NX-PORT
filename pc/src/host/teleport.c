@@ -119,7 +119,8 @@ static const char* const stages[10] = {
 /* ---------------------------------------------------------------- reading */
 static unsigned rd32(const unsigned char* d, long n, long o) { return o >= 0 && o + 4 <= n ? d[o] | d[o + 1] << 8 | d[o + 2] << 16 | (unsigned)d[o + 3] << 24 : 0; }
 
-/* expand.c Expand (docs/modding/ROOM_FORMAT.md "Compression") into *out, grown as needed: the size, -1 if broken */
+/* expand.c Expand (docs/modding/ROOM_FORMAT.md "Compression") into *out, grown as needed: the size, -1 if broken
+   (cut inside a token, or a copy from before the start) */
 static long expand(const unsigned char* s, long n, unsigned char** out, long* cap)
 {
     const unsigned char* e = s + n;
@@ -154,7 +155,8 @@ static long expand(const unsigned char* s, long n, unsigned char** out, long* ca
         for (long k = 0; k < len; k++, o++) (*out)[o] = (*out)[o + off];
     }
 #undef BIT
-    return -1;
+    return o;   /* the data ends without the end mark: most rooms on the disc are stored as literals only,
+                   with none (the game's Expand runs on past them) */
 }
 
 static void add_src(int stg, int rom, int pos, int from)
