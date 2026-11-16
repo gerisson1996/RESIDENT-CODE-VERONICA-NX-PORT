@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1-nx
+
+Correções encontradas no Switch de verdade.
+
+- **Crash no computador da senha corrigido:** ao digitar a senha (por exemplo *1971*), o jogo fechava
+  no Switch. A comparação lia os textos da senha como endereços de 32 bits.
+- **Teleport (cheats) lê todas as salas:** 195 das 205 salas apareciam como "bad data", porque a
+  maioria está gravada no disco sem o marcador de fim. Agora as 205 entram na lista.
+- **Log legível:** as mensagens da leitura de salas e do jogo não se misturam mais no `recvx.log`.
+- **Tela de carregamento** enquanto os shaders compilam na abertura, em vez de tela preta.
+- O NRO mostra autor **RECOMP-GUTO** e versão **1.1** no menu do Switch.
+
 ## v1.0-nx
 
 Primeira versão para Nintendo Switch.
